@@ -443,3 +443,67 @@ Pravidla, když se toho budete dotýkat:
   `20260821_095556_trainings_drop_extras` (**destruktivní** — dropne
   `photo_id`, `photo_title`, `photo_subtitle` a `event_*` na
   `pages_blocks_landing_trainings` i na verzovací tabulce).
+
+# Nasazení (Coolify + GitHub Actions)
+
+Produkce běží na Hetzner serveru s Coolify 4.1.2 jako Docker kontejner
+z hotového image v GHCR. Coolify **nestaví** — jen stahuje a spouští.
+
+| co | kde |
+|---|---|
+| build | `.github/workflows/deploy.yml` (GitHub Actions) |
+| image | `ghcr.io/kopeclu2/hccestice:latest` + tag commitu |
+| aplikace | Coolify projekt `hccestice`, app `gjd9nnwmyiavo9nvh5r7wob3` |
+| databáze | Coolify Postgres 17, bez veřejného portu |
+| média | volume `gjd9nnwmyiavo9nvh5r7wob3-media` → `/app/public/media` |
+
+## Proč se nestaví na serveru
+
+Server má 3,7 GB RAM a **nulový swap**. `next build` prerenderuje ~380
+stránek, takže by ho zabil OOM killer (v Coolify se to projeví jako
+`exit code 137`). Build proto běží na runneru.
+
+Prerender ale potřebuje **živý Postgres** — a ten schválně není vystavený
+do internetu. Runner se na něj dostane **SSH tunelem**: workflow si přes SSH
+zjistí IP kontejneru (mění se po každém redeployi databáze) a otevře
+`-L 5432:<ip>:5432`. `docker build --network host` pak vidí `127.0.0.1:5432`.
+Proto tam **není buildx s docker-container driverem** — ten host network
+neumí.
+
+Klíč pro Actions je na serveru svázaný vynuceným příkazem
+(`/usr/local/bin/gh-deploy-cmd`) a povoluje jen `pgip` a `deploy`;
+`authorized_keys` k němu má `restrict,port-forwarding,permitopen="*:5432"`.
+Kompromitovaný runner tedy nedostane shell. Deploy se spouští taky přes SSH,
+ne přes Coolify API — to na serveru poslouchá na portu 8000 **bez TLS**.
+
+## Healthcheck musí mířit na 127.0.0.1, ne na localhost
+
+Coolify generuje test `wget http://localhost:3000/health`. Next standalone
+poslouchá na `0.0.0.0:3000`, tedy **jen IPv4**, ale `localhost` se
+v kontejneru rozsypává na `::1` → `Connection refused`, deset pokusů,
+`New container is unhealthy` a Coolify kontejner zahodí. Aplikace přitom
+v logu tvrdí `✓ Ready`, takže to vypadá na chybu healthchecku, ne sítě.
+Řeší to `health_check_host` = `127.0.0.1` na aplikaci.
+
+Endpoint `/health` (`src/app/health/route.ts`) **nesahá do databáze**
+záměrně — viz komentář v souboru.
+
+## Migrace
+
+V produkci je `push` vypnutý, takže schéma mění jen migrace, a **musí jít
+před buildem** — prerender jinak spadne na `parserOpenTable` (prázdné
+schéma). Pouští se z lokálu tunelem:
+
+```
+PG_CONTAINER=<uuid databáze> ./scripts/db-tunnel.sh   # drží tunel na :5433
+DATABASE_URL=postgres://…@127.0.0.1:5433/postgres bun run migrate
+```
+
+Runner image je standalone, takže `payload migrate` v něm **nejde spustit** —
+nemá `node_modules` ani `src`. Tunel to řeší bez druhého image.
+
+## Co je zapečené v buildu
+
+`NEXT_PUBLIC_*` jdou do klientského bundlu, takže změna
+`NEXT_PUBLIC_SERVER_URL` (např. přechod z Coolify `sslip.io` domény na
+klubovou) **vyžaduje nový build**, ne jen přepnutí env v Coolify.
