@@ -14,7 +14,8 @@ export const populateAuthors: CollectionAfterReadHook = async ({ doc, req, req: 
         const authorDoc = await payload.findByID({
           id: typeof author === 'object' ? author?.id : author,
           collection: 'users',
-          depth: 0,
+          // depth 1, aby se portrét (media) načetl jako objekt s URL
+          depth: 1,
         })
 
         if (authorDoc) {
@@ -25,6 +26,10 @@ export const populateAuthors: CollectionAfterReadHook = async ({ doc, req, req: 
           doc.populatedAuthors = authorDocs.map((authorDoc) => ({
             id: authorDoc.id,
             name: authorDoc.name,
+            role: authorDoc.role,
+            email: authorDoc.email,
+            phone: authorDoc.phone,
+            photo: typeof authorDoc.photo === 'object' ? authorDoc.photo : null,
           }))
         }
       } catch {

@@ -10,6 +10,11 @@ interface Props {
   url: string
 }
 
+// URL prefix cílové kolekce — články žijí na /aktuality, ne /posts.
+// Díky mapě jde legacy redirect (reference na dokument) jedním hopem na finální URL.
+const collectionPrefix = (relationTo: string): string =>
+  relationTo === 'pages' ? '' : relationTo === 'posts' ? '/aktuality' : `/${relationTo}`
+
 /* This component helps us with SSR based dynamic redirects */
 export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }) => {
   const redirects = await getCachedRedirects()()
@@ -28,11 +33,11 @@ export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }
       const id = redirectItem.to?.reference?.value
 
       const document = (await getCachedDocument(collection, id)()) as Page | Post
-      redirectUrl = `${redirectItem.to?.reference?.relationTo !== 'pages' ? `/${redirectItem.to?.reference?.relationTo}` : ''}/${
+      redirectUrl = `${collectionPrefix(redirectItem.to?.reference?.relationTo ?? '')}/${
         document?.slug
       }`
     } else {
-      redirectUrl = `${redirectItem.to?.reference?.relationTo !== 'pages' ? `/${redirectItem.to?.reference?.relationTo}` : ''}/${
+      redirectUrl = `${collectionPrefix(redirectItem.to?.reference?.relationTo ?? '')}/${
         typeof redirectItem.to?.reference?.value === 'object'
           ? redirectItem.to?.reference?.value?.slug
           : ''

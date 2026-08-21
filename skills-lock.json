@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "nextjs16-skills": {
+      "source": "gocallum/nextjs16-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs16-skills/SKILL.md",
+      "computedHash": "5c397757268a55b69b99e8d40c7c454adaf48a12acafd91f262f2cb16128880d"
+    },
+    "resend-integration-skills": {
+      "source": "gocallum/nextjs16-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/resend-integration-skills/SKILL.md",
+      "computedHash": "38eb216fc9d7e85378930a6c19237b7e2f3dada1e6e97d59359043ded45f9b12"
+    }
+  }
+}

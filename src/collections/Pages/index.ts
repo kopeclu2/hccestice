@@ -2,11 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Archive } from '../../blocks/ArchiveBlock/config'
-import { CallToAction } from '../../blocks/CallToAction/config'
-import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { RawHtml } from '../../blocks/RawHtml/config'
+import { landingBlocks } from '../../landing/blocks'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -23,6 +21,10 @@ import {
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
+  labels: {
+    singular: 'Stránka',
+    plural: 'Stránky',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -37,6 +39,7 @@ export const Pages: CollectionConfig<'pages'> = {
     slug: true,
   },
   admin: {
+    group: 'Obsah',
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) =>
@@ -72,7 +75,10 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              // Klubové bloky (viz katalog /widgety) + formulář a RawHtml
+              // (legacy import). Šablonové duplicity odstraněny — jedna
+              // zřejmá volba pro každou potřebu.
+              blocks: [...landingBlocks, FormBlock, RawHtml],
               required: true,
               admin: {
                 initCollapsed: true,
@@ -116,6 +122,15 @@ export const Pages: CollectionConfig<'pages'> = {
       admin: {
         position: 'sidebar',
       },
+    },
+    {
+      name: 'legacy',
+      type: 'group',
+      admin: { description: 'Původ z eStránky (plní import)' },
+      fields: [
+        { name: 'articleId', type: 'number', index: true },
+        { name: 'url', type: 'text', admin: { description: 'Původní slug/URL' } },
+      ],
     },
     slugField(),
   ],

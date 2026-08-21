@@ -72,10 +72,23 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    seasons: Season;
+    teams: Team;
+    players: Player;
+    matches: Match;
+    opponents: Opponent;
+    galleries: Gallery;
+    sponsors: Sponsor;
+    people: Person;
+    products: Product;
+    milestones: Milestone;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
+    'navigation-containers': NavigationContainer;
+    'navigation-items': NavigationItem;
+    'audit-log': AuditLog;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-folders': FolderInterface;
@@ -94,10 +107,23 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    seasons: SeasonsSelect<false> | SeasonsSelect<true>;
+    teams: TeamsSelect<false> | TeamsSelect<true>;
+    players: PlayersSelect<false> | PlayersSelect<true>;
+    matches: MatchesSelect<false> | MatchesSelect<true>;
+    opponents: OpponentsSelect<false> | OpponentsSelect<true>;
+    galleries: GalleriesSelect<false> | GalleriesSelect<true>;
+    sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    people: PeopleSelect<false> | PeopleSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    milestones: MilestonesSelect<false> | MilestonesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
+    'navigation-containers': NavigationContainersSelect<false> | NavigationContainersSelect<true>;
+    'navigation-items': NavigationItemsSelect<false> | NavigationItemsSelect<true>;
+    'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -106,16 +132,22 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {
     header: Header;
     footer: Footer;
+    siteConfig: SiteConfig;
+    sidebar: Sidebar;
+    'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    siteConfig: SiteConfigSelect<false> | SiteConfigSelect<true>;
+    sidebar: SidebarSelect<false> | SidebarSelect<true>;
+    'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -124,6 +156,7 @@ export interface Config {
   user: User;
   jobs: {
     tasks: {
+      'cleanup-payload-auditor-log': TaskCleanupPayloadAuditorLog;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -156,7 +189,7 @@ export interface UserAuthOperations {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: string;
+  id: number;
   title: string;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
@@ -183,11 +216,11 @@ export interface Page {
             reference?:
               | ({
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null)
               | ({
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 } | null);
             url?: string | null;
             label: string;
@@ -199,18 +232,72 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    media?: (string | null) | Media;
+    media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | LandingHeroBlock
+    | LandingHeroModernBlock
+    | LandingNewsBlock
+    | LandingSeasonBlock
+    | LandingStatsBlock
+    | LandingTrainingsBlock
+    | LandingClubBlock
+    | LandingAlbumBlock
+    | LandingHistoryBlock
+    | LandingPeopleBlock
+    | LandingSponsorsBlock
+    | LandingFaqBlock
+    | LandingContactBlock
+    | SectionHeadingBlockType
+    | TextSectionBlockType
+    | PhotoCardsBlockType
+    | CtaBannerBlockType
+    | DataTableBlockType
+    | MatchesWidgetBlock
+    | NextMatchWidgetBlock
+    | PostsGridBlock
+    | GalleriesGridBlock
+    | RosterWidgetBlock
+    | StandingsWidgetBlock
+    | ProductsGridBlock
+    | PlayerCardBlock
+    | PlayersPickerBlock
+    | MatchCardBlock
+    | MatchesPickerBlock
+    | PersonCardBlock
+    | GalleryEmbedBlock
+    | PostFeatureBlock
+    | SponsorCardBlock
+    | ProductCardBlock
+    | FeatureGridBlock
+    | TestimonialsBlock
+    | PricingCardsBlock
+    | DownloadsBlock
+    | MapEmbedBlock
+    | AnnouncementBlock
+    | ExternalEmbedBlock
+    | FormBlock
+    | RawHtmlBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
+  /**
+   * Původ z eStránky (plní import)
+   */
+  legacy?: {
+    articleId?: number | null;
+    /**
+     * Původní slug/URL
+     */
+    url?: string | null;
+  };
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -225,10 +312,22 @@ export interface Page {
  * via the `definition` "posts".
  */
 export interface Post {
-  id: string;
+  id: number;
   title: string;
-  heroImage?: (string | null) | Media;
-  content: {
+  heroImage?: (number | null) | Media;
+  /**
+   * Úvodní odstavec pod titulkem (hero varianty B a C) a fallback pro meta description.
+   */
+  excerpt?: string | null;
+  /**
+   * Přesná podčást titulku, která se zvýrazní (lime). Musí se v titulku vyskytovat doslova — kopírujte přesně, jinak se zvýraznění nezobrazí.
+   */
+  titleHighlight?: string | null;
+  /**
+   * Např. „Foto: Zimní stadion Rychnov n. K." — zobrazí se u hero varianty B.
+   */
+  photoCaption?: string | null;
+  content?: {
     root: {
       type: string;
       children: {
@@ -242,23 +341,58 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
-  relatedPosts?: (string | Post)[] | null;
-  categories?: (string | Category)[] | null;
+  } | null;
+  /**
+   * Původní HTML z eStránky (import). Zobrazuje se místo obsahu, dokud je contentType = html.
+   */
+  legacyHtml?: string | null;
+  relatedPosts?: (number | Post)[] | null;
+  categories?: (number | Category)[] | null;
   meta?: {
     title?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     description?: string | null;
   };
+  /**
+   * Podoba hlavičky článku. Varianta E potřebuje navázaný odehraný zápas, A/B/D hlavní fotku — bez nich se použije typografická varianta.
+   */
+  heroVariant?: ('foto' | 'rozdelene' | 'typograficke' | 'panel' | 'zapas') | null;
+  /**
+   * Zdroj skóre pro hero variantu E · Zápasový výsledek.
+   */
+  match?: (number | null) | Match;
+  showRelated?: boolean | null;
+  /**
+   * Veřejná vizitka autora (jméno, role, e-mail) pod článkem. Bez výběru se zobrazí jen jméno z pole Autoři.
+   */
+  authorPerson?: (number | null) | Person;
+  contentType?: ('richText' | 'html') | null;
+  type?: ('news' | 'report' | 'roster' | 'schedule' | 'standings') | null;
+  season?: (number | null) | Season;
+  team?: (number | null) | Team;
+  /**
+   * Původ z eStránky (plní import)
+   */
+  legacy?: {
+    articleId?: number | null;
+    /**
+     * Původní slug/URL
+     */
+    url?: string | null;
+  };
   publishedAt?: string | null;
-  authors?: (string | User)[] | null;
+  authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
         id?: string | null;
         name?: string | null;
+        role?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        photo?: (number | null) | Media;
       }[]
     | null;
   /**
@@ -275,7 +409,7 @@ export interface Post {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt?: string | null;
   caption?: {
     root: {
@@ -292,7 +426,21 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
-  folder?: (string | null) | FolderInterface;
+  /**
+   * Mapování na původní eStránky zdroj (plní import, needitovat)
+   */
+  legacy?: {
+    source?: ('img_picture' | 'file' | 'photo' | 'ftp') | null;
+    /**
+     * id v původní tabulce (s_pictures / s_files / p_photos)
+     */
+    legacyId?: number | null;
+    /**
+     * Původní cesta (např. /img/picture/3/foto.jpg)
+     */
+    legacyPath?: string | null;
+  };
+  folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -368,18 +516,18 @@ export interface Media {
  * via the `definition` "payload-folders".
  */
 export interface FolderInterface {
-  id: string;
+  id: number;
   name: string;
-  folder?: (string | null) | FolderInterface;
+  folder?: (number | null) | FolderInterface;
   documentsAndFolders?: {
     docs?: (
       | {
           relationTo?: 'payload-folders';
-          value: string | FolderInterface;
+          value: number | FolderInterface;
         }
       | {
           relationTo?: 'media';
-          value: string | Media;
+          value: number | Media;
         }
     )[];
     hasNextPage?: boolean;
@@ -394,17 +542,17 @@ export interface FolderInterface {
  * via the `definition` "categories".
  */
 export interface Category {
-  id: string;
+  id: number;
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
-  parent?: (string | null) | Category;
+  parent?: (number | null) | Category;
   breadcrumbs?:
     | {
-        doc?: (string | null) | Category;
+        doc?: (number | null) | Category;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -415,11 +563,207 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "matches".
+ */
+export interface Match {
+  id: number;
+  displayTitle?: string | null;
+  date: string;
+  season: number | Season;
+  team: number | Team;
+  /**
+   * OLLH, VČHL, přátelák, turnaj…
+   */
+  competition?: string | null;
+  opponent: number | Opponent;
+  home?: boolean | null;
+  venue?: string | null;
+  scoreOurs?: number | null;
+  scoreOpp?: number | null;
+  status: 'scheduled' | 'played' | 'canceled';
+  overtime?: boolean | null;
+  shootout?: boolean | null;
+  /**
+   * Skóre po třetinách (příp. prodloužení/nájezdy). Prázdné = na webu se rozpis třetin nezobrazí.
+   */
+  thirds?:
+    | {
+        ours: number;
+        opp: number;
+        id?: string | null;
+      }[]
+    | null;
+  report?: (number | null) | Post;
+  gallery?: (number | null) | Gallery;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seasons".
+ */
+export interface Season {
+  id: number;
+  /**
+   * Např. „2025 – 2026"
+   */
+  title: string;
+  /**
+   * Rok začátku sezóny (pro řazení), např. 2025
+   */
+  startYear: number;
+  isCurrent?: boolean | null;
+  /**
+   * Průběžná/konečná tabulka soutěže v této sezóně — zobrazuje ji homepage a bloky. Řádek HC Čestice se zvýrazní automaticky.
+   */
+  standings?: {
+    label?: string | null;
+    fullTableUrl?: string | null;
+    rows?:
+      | {
+          pos: number;
+          team: string;
+          games?: number | null;
+          points?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "teams".
+ */
+export interface Team {
+  id: number;
+  /**
+   * Muži, Přípravka, Žáci, Dorost…
+   */
+  name: string;
+  category: 'men' | 'youth' | 'prep';
+  /**
+   * Pořadí v menu/výpisech
+   */
+  order?: number | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "opponents".
+ */
+export interface Opponent {
+  id: number;
+  /**
+   * Např. „HC Skuteč"
+   */
+  name: string;
+  logo?: (number | null) | Media;
+  city?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries".
+ */
+export interface Gallery {
+  id: number;
+  title: string;
+  /**
+   * Datum události (zápas/turnaj)
+   */
+  date?: string | null;
+  /**
+   * Prázdné u tematických alb (Zimní stadion, Historie…)
+   */
+  season?: (number | null) | Season;
+  team?: (number | null) | Team;
+  group?: ('season' | 'theme') | null;
+  cover?: (number | null) | Media;
+  photos?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * p_directories.id z eStránky (pro import/redirecty)
+   */
+  legacyDir?: number | null;
+  /**
+   * Původní /fotoalbum/... cesta
+   */
+  legacyPath?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people".
+ */
+export interface Person {
+  id: number;
+  name: string;
+  /**
+   * Např. „Předseda oddílu", „Trenér mužů"
+   */
+  role: string;
+  /**
+   * Doplněk k roli, např. „Tréninky a sestava A-týmu"
+   */
+  note?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  photo?: (number | null) | Media;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  firstName?: string | null;
+  lastName?: string | null;
+  /**
+   * Skládá se automaticky z jména a příjmení.
+   */
   name?: string | null;
+  /**
+   * Funkce nebo role, např. „Předseda oddílu", „Trenér mužů"
+   */
+  role?: string | null;
+  phone?: string | null;
+  /**
+   * Zobrazuje se ve vizitce autora pod článkem.
+   */
+  photo?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -441,10 +785,367 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock".
+ * via the `definition` "LandingHeroBlock".
  */
-export interface CallToActionBlock {
-  richText?: {
+export interface LandingHeroBlock {
+  photo?: (number | null) | Media;
+  intro?: string | null;
+  headlineLight?: string | null;
+  headlineBold?: string | null;
+  ctaLabel?: string | null;
+  navCtaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingHeroModernBlock".
+ */
+export interface LandingHeroModernBlock {
+  photo?: (number | null) | Media;
+  intro?: string | null;
+  headlineLight?: string | null;
+  headlineBold?: string | null;
+  /**
+   * Vypnuté tlačítko nechá jen perex a headline — hodí se, když sekce nemá kam pobízet (rozehraná sezóna, uzavřený nábor).
+   */
+  showCta?: boolean | null;
+  ctaLabel?: string | null;
+  /**
+   * Kotva na této stránce (#sezona) nebo cesta (/zapasy).
+   */
+  ctaHref?: string | null;
+  ctaVariant?: ('lime' | 'dark' | 'light') | null;
+  showNavCta?: boolean | null;
+  /**
+   * Prázdné = použije se text z Nastavení webu. Cíl tlačítka se spravuje tam (platí pro celý web).
+   */
+  navCtaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingHeroModern';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingNewsBlock".
+ */
+export interface LandingNewsBlock {
+  /**
+   * Nepovinné — první karta v mřížce. Když je prázdné, ukážou se prostě nejnovější publikované články.
+   */
+  pinnedPost?: (number | null) | Post;
+  /**
+   * Sekce je výřez — plný výpis je na /aktuality.
+   */
+  count?: number | null;
+  /**
+   * Náhledová fotka nad textem karty. Články bez vlastní fotky použijí výchozí obrázek z Nastavení webu.
+   */
+  showPhoto?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingNews';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingSeasonBlock".
+ */
+export interface LandingSeasonBlock {
+  reportPhotos?:
+    | {
+        photo?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tabulka se čte z dokumentu sezóny (Sezóny → Tabulka ligy). Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingSeason';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingStatsBlock".
+ */
+export interface LandingStatsBlock {
+  /**
+   * Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  seasonLabel?: string | null;
+  /**
+   * Prázdné = čísla se spočítají automaticky (umístění a body z tabulky sezóny, série výher ze zápasů, počet hráčů ze soupisky). Vyplněná čísla mají přednost.
+   */
+  items?:
+    | {
+        value: string;
+        label: string;
+        accent?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingStats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingTrainingsBlock".
+ */
+export interface LandingTrainingsBlock {
+  /**
+   * Pilulka nad nadpisem, např. „Tréninky". Prázdné = skryje se.
+   */
+  kicker?: string | null;
+  headline?: string | null;
+  headlineHighlight?: string | null;
+  /**
+   * Tečku na konci nepiš — doplní ji design zeleným akcentem.
+   */
+  headlineRest?: string | null;
+  /**
+   * Volitelný text pod nadpisem. Prázdné = jen nadpis a karty.
+   */
+  perex?: string | null;
+  /**
+   * Doplní se u karet bez vlastního místa — např. „ZS Rychnov nad Kněžnou".
+   */
+  defaultVenue?: string | null;
+  /**
+   * Každý řádek je jedna karta v pásu. Pořadí karet se přetahuje myší.
+   */
+  rows?:
+    | {
+        day: string;
+        time: string;
+        /**
+         * Štítek na kartě. Prázdné = karta bez štítku.
+         */
+        group?: string | null;
+        /**
+         * Prázdné = výchozí místo sekce.
+         */
+        venue?: string | null;
+        /**
+         * Drobný řádek pod místem — např. „Od 1. 11." nebo „Bez brankáře".
+         */
+        note?: string | null;
+        joint?: boolean | null;
+        /**
+         * Zrušený trénink se skryje, aniž by se řádek mazal.
+         */
+        hiddenOnWeb?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingTrainings';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingClubBlock".
+ */
+export interface LandingClubBlock {
+  kicker?: string | null;
+  headlineStart?: string | null;
+  headlineHighlight?: string | null;
+  perex?: string | null;
+  ctaLabel?: string | null;
+  stadium?: {
+    photo?: (number | null) | Media;
+    tag?: string | null;
+    caption?: string | null;
+  };
+  youth?: {
+    photo?: (number | null) | Media;
+    tag?: string | null;
+    caption?: string | null;
+  };
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingClub';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingAlbumBlock".
+ */
+export interface LandingAlbumBlock {
+  /**
+   * Nepovinné — bude první velká dlaždice. Prázdné = mozaika ukáže nejnovější galerie.
+   */
+  gallery?: (number | null) | Gallery;
+  /**
+   * Prázdné = 6 nejnovějších galerií. Vyplňujte jen výjimečně — ruční dlaždice se samy neaktualizují. Velikost: velká = 2×2, široká = 2×1, dlaždice = 1×1
+   */
+  mosaic?:
+    | {
+        photo?: (number | null) | Media;
+        span?: ('big' | 'wide' | 'tile') | null;
+        title?: string | null;
+        chip?: string | null;
+        /**
+         * Např. /fotogalerie/play-off-2026. Prázdné = dlaždice není klikatelná.
+         */
+        href?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingAlbum';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingHistoryBlock".
+ */
+export interface LandingHistoryBlock {
+  kicker?: string | null;
+  watermark?: string | null;
+  headlineStart?: string | null;
+  /**
+   * Konec nadpisu na lime podkladu; tečku doplní web.
+   */
+  headlineHighlight?: string | null;
+  /**
+   * Větší text vlevo (jak klub vznikl).
+   */
+  lead?: string | null;
+  /**
+   * Menší text pod ním (kde jsme dnes).
+   */
+  text?: string | null;
+  /**
+   * Např. „založeno 1954 · od dresů na dluh k bronzu 2026".
+   */
+  metaLine?: string | null;
+  /**
+   * Odkazuje na /historie-klubu.
+   */
+  ctaLabel?: string | null;
+  /**
+   * Odkazuje na /fotogalerie.
+   */
+  photosCtaLabel?: string | null;
+  /**
+   * Krátké milníky pod vyprávěním, např. „2015 · VČHL".
+   */
+  chips?:
+    | {
+        label: string;
+        accent?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  quote?: {
+    start?: string | null;
+    /**
+     * Část citátu na lime podkladu.
+     */
+    highlight?: string | null;
+    /**
+     * Pokračování za zvýrazněním, včetně interpunkce.
+     */
+    end?: string | null;
+    source?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingHistory';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingPeopleBlock".
+ */
+export interface LandingPeopleBlock {
+  intro?: string | null;
+  people?: (number | Person)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingPeople';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingSponsorsBlock".
+ */
+export interface LandingSponsorsBlock {
+  /**
+   * Loga se berou automaticky z kolekce Sponzoři (aktivní).
+   */
+  title?: string | null;
+  /**
+   * Konec nadpisu na lime podkladu (jako v sekci O klubu). Prázdné = zvýrazní se poslední dvě slova nadpisu.
+   */
+  titleHighlight?: string | null;
+  ctaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingSponsors';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingFaqBlock".
+ */
+export interface LandingFaqBlock {
+  items?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingFaq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingContactBlock".
+ */
+export interface LandingContactBlock {
+  kicker?: string | null;
+  perex?: string | null;
+  pills?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  topics?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'landingContact';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionHeadingBlockType".
+ */
+export interface SectionHeadingBlockType {
+  kicker?: string | null;
+  title: string;
+  titleHighlight?: string | null;
+  perex?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sectionHeading';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextSectionBlockType".
+ */
+export interface TextSectionBlockType {
+  content: {
     root: {
       type: string;
       children: {
@@ -458,135 +1159,529 @@ export interface CallToActionBlock {
       version: number;
     };
     [k: string]: unknown;
-  } | null;
-  links?:
+  };
+  appearance?: ('plain' | 'card') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'textSection';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhotoCardsBlockType".
+ */
+export interface PhotoCardsBlockType {
+  cards?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
+        photo?: (number | null) | Media;
+        tag?: string | null;
+        badge?: string | null;
+        caption?: string | null;
+        href?: string | null;
         id?: string | null;
       }[]
     | null;
+  columns?: ('1' | '2' | '3') | null;
+  height?: ('sm' | 'md' | 'lg') | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'cta';
+  blockType: 'photoCards';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock".
+ * via the `definition` "CtaBannerBlockType".
  */
-export interface ContentBlock {
-  columns?:
-    | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        enableLink?: boolean | null;
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
+export interface CtaBannerBlockType {
+  kicker?: string | null;
+  title: string;
+  text?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  tone?: ('green' | 'dark') | null;
+  photo?: (number | null) | Media;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'content';
+  blockType: 'ctaBanner';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock".
+ * via the `definition` "DataTableBlockType".
  */
-export interface MediaBlock {
-  media: string | Media;
+export interface DataTableBlockType {
+  title?: string | null;
+  /**
+   * Vlož data z Excelu/Numbers (Ctrl+C → Ctrl+V) — každý řádek tabulky na nový řádek, buňky oddělené tabulátorem, středníkem nebo |. Např.: „Kolo; Soupeř; Skóre".
+   */
+  data: string;
+  firstRowHeader?: boolean | null;
+  numericRight?: boolean | null;
+  /**
+   * Např. „Čestice" — řádek dostane zelené podbarvení.
+   */
+  highlight?: string | null;
+  caption?: string | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'mediaBlock';
+  blockType: 'dataTable';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock".
+ * via the `definition` "MatchesWidgetBlock".
  */
-export interface ArchiveBlock {
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'posts' | null;
-  categories?: (string | Category)[] | null;
+export interface MatchesWidgetBlock {
+  title?: string | null;
+  mode: 'results' | 'schedule';
+  /**
+   * Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  /**
+   * Prázdné = všechny týmy.
+   */
+  team?: (number | null) | Team;
   limit?: number | null;
-  selectedDocs?:
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchesWidget';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NextMatchWidgetBlock".
+ */
+export interface NextMatchWidgetBlock {
+  /**
+   * Např. „Rozpis nové sezóny připravujeme."
+   */
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'nextMatchWidget';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostsGridBlock".
+ */
+export interface PostsGridBlock {
+  title?: string | null;
+  postType?: ('all' | 'news' | 'report') | null;
+  /**
+   * Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  limit?: number | null;
+  /**
+   * Náhledová fotka vlevo na kartě. Články bez vlastní fotky použijí výchozí obrázek z Nastavení webu.
+   */
+  showPhoto?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'postsGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleriesGridBlock".
+ */
+export interface GalleriesGridBlock {
+  title?: string | null;
+  /**
+   * Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'galleriesGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RosterWidgetBlock".
+ */
+export interface RosterWidgetBlock {
+  /**
+   * Zobrazí se všichni aktivní hráči.
+   */
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'rosterWidget';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StandingsWidgetBlock".
+ */
+export interface StandingsWidgetBlock {
+  /**
+   * Tabulka se čte z dokumentu sezóny (Sezóny → Tabulka ligy). Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'standingsWidget';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductsGridBlock".
+ */
+export interface ProductsGridBlock {
+  title?: string | null;
+  /**
+   * Např. „Objednávejte do 5. 1. 2025 e-mailem. Uveďte název předmětu, velikost a počet kusů. Výroba do 30. 1."
+   */
+  orderInfo?: string | null;
+  ctaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'productsGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PlayerCardBlock".
+ */
+export interface PlayerCardBlock {
+  player: number | Player;
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'playerCard';
+}
+/**
+ * Soupiska se skládá z hráčů označených jako „Aktivní hráč".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "players".
+ */
+export interface Player {
+  id: number;
+  /**
+   * Jméno a příjmení, např. „Lukáš Sajdl"
+   */
+  name: string;
+  photo?: (number | null) | Media;
+  number?: number | null;
+  position?: ('G' | 'D' | 'F') | null;
+  /**
+   * Neaktivní hráči se nezobrazují na soupisce.
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PlayersPickerBlock".
+ */
+export interface PlayersPickerBlock {
+  title?: string | null;
+  players: (number | Player)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'playersPicker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchCardBlock".
+ */
+export interface MatchCardBlock {
+  match: number | Match;
+  kicker?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchCard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchesPickerBlock".
+ */
+export interface MatchesPickerBlock {
+  title?: string | null;
+  matches: (number | Match)[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchesPicker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PersonCardBlock".
+ */
+export interface PersonCardBlock {
+  person: number | Person;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'personCard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryEmbedBlock".
+ */
+export interface GalleryEmbedBlock {
+  gallery: number | Gallery;
+  title?: string | null;
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'galleryEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostFeatureBlock".
+ */
+export interface PostFeatureBlock {
+  post: number | Post;
+  fallbackPhoto?: (number | null) | Media;
+  tag?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'postFeature';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SponsorCardBlock".
+ */
+export interface SponsorCardBlock {
+  sponsor: number | Sponsor;
+  kicker?: string | null;
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sponsorCard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors".
+ */
+export interface Sponsor {
+  id: number;
+  name: string;
+  logo?: (number | null) | Media;
+  /**
+   * Web sponzora (volitelné)
+   */
+  url?: string | null;
+  /**
+   * Volitelné — zobrazí se pod názvem partnera
+   */
+  person?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  active?: boolean | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductCardBlock".
+ */
+export interface ProductCardBlock {
+  product: number | Product;
+  kicker?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'productCard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  photo?: (number | null) | Media;
+  price: number;
+  available?: boolean | null;
+  order?: number | null;
+  description?: string | null;
+  /**
+   * Např. „PÁNSKÁ" s poznámkou „24–25 × 23 cm". Prázdné = bez velikostí.
+   */
+  sizes?:
     | {
-        relationTo: 'posts';
-        value: string | Post;
+        label: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Např. „nezapomeňte napsat velikost" nebo „uveďte jméno a číslo na dres".
+   */
+  orderNote?: string | null;
+  /**
+   * Libovolné vlastnosti produktu — materiál, rozměry, barva, výrobce… Zobrazují se na detailu produktu.
+   */
+  params?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock".
+ */
+export interface FeatureGridBlock {
+  title?: string | null;
+  items?:
+    | {
+        icon?:
+          | (
+              | 'snowflake'
+              | 'trophy'
+              | 'medal'
+              | 'users'
+              | 'heart'
+              | 'shield'
+              | 'calendar'
+              | 'clock'
+              | 'flame'
+              | 'handshake'
+              | 'graduation-cap'
+              | 'wallet'
+            )
+          | null;
+        title: string;
+        text: string;
+        id?: string | null;
       }[]
     | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'archive';
+  blockType: 'featureGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  title?: string | null;
+  items?:
+    | {
+        quote: string;
+        name: string;
+        role?: string | null;
+        photo?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingCardsBlock".
+ */
+export interface PricingCardsBlock {
+  title?: string | null;
+  perex?: string | null;
+  cards?:
+    | {
+        name: string;
+        price: string;
+        period?: string | null;
+        description?: string | null;
+        features?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        highlighted?: boolean | null;
+        ctaLabel?: string | null;
+        ctaHref?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pricingCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DownloadsBlock".
+ */
+export interface DownloadsBlock {
+  title?: string | null;
+  items?:
+    | {
+        file: number | Media;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'downloads';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MapEmbedBlock".
+ */
+export interface MapEmbedBlock {
+  title?: string | null;
+  /**
+   * Mapy.cz: Sdílet → Vložit na web. Google Maps: Sdílet → Vložit mapu → zkopírovat src z iframe.
+   */
+  embedUrl: string;
+  pills?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mapEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AnnouncementBlock".
+ */
+export interface AnnouncementBlock {
+  tone?: ('info' | 'warning') | null;
+  text: string;
+  linkLabel?: string | null;
+  linkHref?: string | null;
+  dismissible?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'announcement';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ExternalEmbedBlock".
+ */
+export interface ExternalEmbedBlock {
+  title?: string | null;
+  /**
+   * Např. FB feed plugin, tabulka na ahl.cz…
+   */
+  url: string;
+  height?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'externalEmbed';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
-  form: string | Form;
+  form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
     root: {
@@ -612,7 +1707,7 @@ export interface FormBlock {
  * via the `definition` "forms".
  */
 export interface Form {
-  id: string;
+  id: number;
   title: string;
   fields?:
     | (
@@ -724,9 +1819,6 @@ export interface Form {
       )[]
     | null;
   submitButtonLabel?: string | null;
-  /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
-   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -746,9 +1838,6 @@ export interface Form {
   redirect?: {
     url: string;
   };
-  /**
-   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
-   */
   emails?:
     | {
         emailTo?: string | null;
@@ -757,9 +1846,6 @@ export interface Form {
         replyTo?: string | null;
         emailFrom?: string | null;
         subject: string;
-        /**
-         * Enter the message that should be sent in this email.
-         */
         message?: {
           root: {
             type: string;
@@ -783,10 +1869,49 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RawHtmlBlock".
+ */
+export interface RawHtmlBlock {
+  /**
+   * Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky.
+   */
+  html: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'rawHtml';
+}
+/**
+ * Timeline na stránce Historie klubu. Milníky bez fotky se vykreslí jen textově, prázdné éry se nezobrazí.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "milestones".
+ */
+export interface Milestone {
+  id: number;
+  /**
+   * Např. „1954" nebo „70. léta"
+   */
+  year: string;
+  era: 'zacatky' | 'zazemi' | 'vchl';
+  title: string;
+  text: string;
+  /**
+   * Archivní sken nebo fotka — vykreslí se natočená jako polaroid.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * Vzestupně v rámci celé timeline (nižší = dřív).
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
-  id: string;
+  id: number;
   /**
    * You will need to rebuild the website when changing this field.
    */
@@ -796,11 +1921,11 @@ export interface Redirect {
     reference?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: string | Post;
+          value: number | Post;
         } | null);
     url?: string | null;
   };
@@ -812,8 +1937,8 @@ export interface Redirect {
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
-  id: string;
-  form: string | Form;
+  id: number;
+  form: number | Form;
   submissionData?:
     | {
         field: string;
@@ -831,18 +1956,18 @@ export interface FormSubmission {
  * via the `definition` "search".
  */
 export interface Search {
-  id: string;
+  id: number;
   title?: string | null;
   priority?: number | null;
   doc: {
     relationTo: 'posts';
-    value: string | Post;
+    value: number | Post;
   };
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
   };
   categories?:
     | {
@@ -856,11 +1981,156 @@ export interface Search {
   createdAt: string;
 }
 /**
+ * Sada odkazů v hlavní navigaci. Pořadí položek se přetahuje myší.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation-containers".
+ */
+export interface NavigationContainer {
+  id: number;
+  /**
+   * The name of this navigation menu (e.g. "Main Menu", "Footer")
+   */
+  name: string;
+  /**
+   * Kód pro kód webu — hlavní navigace používá `hlavni`.
+   */
+  slug: string;
+  /**
+   * Optional description of this navigation menu
+   */
+  description?: string | null;
+  /**
+   * Pořadí odkazů v navigaci — přetáhněte myší.
+   */
+  items?: (number | NavigationItem)[] | null;
+  /**
+   * Settings for this navigation container
+   */
+  settings?: {
+    /**
+     * Maximum nesting depth for items in this navigation
+     */
+    maxDepth?: number | null;
+    /**
+     * Types of navigation items allowed in this container
+     */
+    allowedTypes?: ('internal' | 'external' | 'folder')[] | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Jeden odkaz v navigaci. Do menu se zařadí v „Menu → Položky menu".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation-items".
+ */
+export interface NavigationItem {
+  id: number;
+  /**
+   * The display text for this navigation item
+   */
+  title: string;
+  /**
+   * Cesta nebo kotva se zadává textem, odkaz na stránku vybírá dokument z CMS.
+   */
+  type: 'external' | 'internal' | 'folder';
+  /**
+   * Parent item (for nested navigation)
+   */
+  parent?: (number | null) | NavigationItem;
+  /**
+   * Order within the navigation level (lower numbers appear first)
+   */
+  order?: number | null;
+  /**
+   * Např. `/zapasy`. Nechte prázdné, pokud položka žije jen jako sekce na homepage. Ručně psané stránky nejsou v CMS jako dokumenty.
+   */
+  url?: string | null;
+  /**
+   * Na homepage odkaz skočí na tuhle sekci. Nechte prázdné, pokud položka na homepage sekci nemá — pak vede přímo na svou podstránku.
+   */
+  anchor?:
+    | (
+        | 'home'
+        | 'aktuality'
+        | 'sezona'
+        | 'treninky'
+        | 'klub'
+        | 'fotoalbum'
+        | 'historie'
+        | 'lide'
+        | 'sponzori'
+        | 'kontakt'
+      )
+    | null;
+  /**
+   * Internal link settings
+   */
+  internalLink?: {
+    /**
+     * Content to link to
+     */
+    reference: {
+      relationTo: 'pages';
+      value: number | Page;
+    };
+    /**
+     * Přebije cestu odvozenou ze slugu stránky.
+     */
+    customPath?: string | null;
+  };
+  /**
+   * Where to open the link
+   */
+  target?: ('_self' | '_blank') | null;
+  /**
+   * Child navigation items
+   */
+  children?: (number | NavigationItem)[] | null;
+  /**
+   * Control visibility per locale
+   */
+  localeVisibility?:
+    | {
+        locale: string;
+        visible?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Vypnutím položku skryjete, aniž byste ji mazali.
+   */
+  active?: boolean | null;
+  /**
+   * Optional CSS class to apply to this item
+   */
+  className?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log".
+ */
+export interface AuditLog {
+  id: number;
+  operation: string;
+  identifier: string;
+  documentId?: string | null;
+  user?: string | null;
+  scope: 'collection' | 'global';
+  userAgent?: string | null;
+  hook?: string | null;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -877,7 +2147,7 @@ export interface PayloadKv {
  * via the `definition` "payload-jobs".
  */
 export interface PayloadJob {
-  id: string;
+  id: number;
   /**
    * Input data provided to the job
    */
@@ -924,7 +2194,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug: 'inline' | 'cleanup-payload-auditor-log' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -957,10 +2227,19 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'cleanup-payload-auditor-log' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -969,52 +2248,104 @@ export interface PayloadJob {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'pages';
-        value: string | Page;
+        value: number | Page;
       } | null)
     | ({
         relationTo: 'posts';
-        value: string | Post;
+        value: number | Post;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'categories';
-        value: string | Category;
+        value: number | Category;
       } | null)
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'seasons';
+        value: number | Season;
+      } | null)
+    | ({
+        relationTo: 'teams';
+        value: number | Team;
+      } | null)
+    | ({
+        relationTo: 'players';
+        value: number | Player;
+      } | null)
+    | ({
+        relationTo: 'matches';
+        value: number | Match;
+      } | null)
+    | ({
+        relationTo: 'opponents';
+        value: number | Opponent;
+      } | null)
+    | ({
+        relationTo: 'galleries';
+        value: number | Gallery;
+      } | null)
+    | ({
+        relationTo: 'sponsors';
+        value: number | Sponsor;
+      } | null)
+    | ({
+        relationTo: 'people';
+        value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'milestones';
+        value: number | Milestone;
       } | null)
     | ({
         relationTo: 'redirects';
-        value: string | Redirect;
+        value: number | Redirect;
       } | null)
     | ({
         relationTo: 'forms';
-        value: string | Form;
+        value: number | Form;
       } | null)
     | ({
         relationTo: 'form-submissions';
-        value: string | FormSubmission;
+        value: number | FormSubmission;
       } | null)
     | ({
         relationTo: 'search';
-        value: string | Search;
+        value: number | Search;
+      } | null)
+    | ({
+        relationTo: 'navigation-containers';
+        value: number | NavigationContainer;
+      } | null)
+    | ({
+        relationTo: 'navigation-items';
+        value: number | NavigationItem;
+      } | null)
+    | ({
+        relationTo: 'audit-log';
+        value: number | AuditLog;
       } | null)
     | ({
         relationTo: 'payload-folders';
-        value: string | FolderInterface;
+        value: number | FolderInterface;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -1024,10 +2355,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -1047,7 +2378,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -1084,11 +2415,49 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        cta?: T | CallToActionBlockSelect<T>;
-        content?: T | ContentBlockSelect<T>;
-        mediaBlock?: T | MediaBlockSelect<T>;
-        archive?: T | ArchiveBlockSelect<T>;
+        landingHero?: T | LandingHeroBlockSelect<T>;
+        landingHeroModern?: T | LandingHeroModernBlockSelect<T>;
+        landingNews?: T | LandingNewsBlockSelect<T>;
+        landingSeason?: T | LandingSeasonBlockSelect<T>;
+        landingStats?: T | LandingStatsBlockSelect<T>;
+        landingTrainings?: T | LandingTrainingsBlockSelect<T>;
+        landingClub?: T | LandingClubBlockSelect<T>;
+        landingAlbum?: T | LandingAlbumBlockSelect<T>;
+        landingHistory?: T | LandingHistoryBlockSelect<T>;
+        landingPeople?: T | LandingPeopleBlockSelect<T>;
+        landingSponsors?: T | LandingSponsorsBlockSelect<T>;
+        landingFaq?: T | LandingFaqBlockSelect<T>;
+        landingContact?: T | LandingContactBlockSelect<T>;
+        sectionHeading?: T | SectionHeadingBlockTypeSelect<T>;
+        textSection?: T | TextSectionBlockTypeSelect<T>;
+        photoCards?: T | PhotoCardsBlockTypeSelect<T>;
+        ctaBanner?: T | CtaBannerBlockTypeSelect<T>;
+        dataTable?: T | DataTableBlockTypeSelect<T>;
+        matchesWidget?: T | MatchesWidgetBlockSelect<T>;
+        nextMatchWidget?: T | NextMatchWidgetBlockSelect<T>;
+        postsGrid?: T | PostsGridBlockSelect<T>;
+        galleriesGrid?: T | GalleriesGridBlockSelect<T>;
+        rosterWidget?: T | RosterWidgetBlockSelect<T>;
+        standingsWidget?: T | StandingsWidgetBlockSelect<T>;
+        productsGrid?: T | ProductsGridBlockSelect<T>;
+        playerCard?: T | PlayerCardBlockSelect<T>;
+        playersPicker?: T | PlayersPickerBlockSelect<T>;
+        matchCard?: T | MatchCardBlockSelect<T>;
+        matchesPicker?: T | MatchesPickerBlockSelect<T>;
+        personCard?: T | PersonCardBlockSelect<T>;
+        galleryEmbed?: T | GalleryEmbedBlockSelect<T>;
+        postFeature?: T | PostFeatureBlockSelect<T>;
+        sponsorCard?: T | SponsorCardBlockSelect<T>;
+        productCard?: T | ProductCardBlockSelect<T>;
+        featureGrid?: T | FeatureGridBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
+        pricingCards?: T | PricingCardsBlockSelect<T>;
+        downloads?: T | DownloadsBlockSelect<T>;
+        mapEmbed?: T | MapEmbedBlockSelect<T>;
+        announcement?: T | AnnouncementBlockSelect<T>;
+        externalEmbed?: T | ExternalEmbedBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        rawHtml?: T | RawHtmlBlockSelect<T>;
       };
   meta?:
     | T
@@ -1098,6 +2467,12 @@ export interface PagesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  legacy?:
+    | T
+    | {
+        articleId?: T;
+        url?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1106,23 +2481,75 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock_select".
+ * via the `definition` "LandingHeroBlock_select".
  */
-export interface CallToActionBlockSelect<T extends boolean = true> {
-  richText?: T;
-  links?:
+export interface LandingHeroBlockSelect<T extends boolean = true> {
+  photo?: T;
+  intro?: T;
+  headlineLight?: T;
+  headlineBold?: T;
+  ctaLabel?: T;
+  navCtaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingHeroModernBlock_select".
+ */
+export interface LandingHeroModernBlockSelect<T extends boolean = true> {
+  photo?: T;
+  intro?: T;
+  headlineLight?: T;
+  headlineBold?: T;
+  showCta?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
+  ctaVariant?: T;
+  showNavCta?: T;
+  navCtaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingNewsBlock_select".
+ */
+export interface LandingNewsBlockSelect<T extends boolean = true> {
+  pinnedPost?: T;
+  count?: T;
+  showPhoto?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingSeasonBlock_select".
+ */
+export interface LandingSeasonBlockSelect<T extends boolean = true> {
+  reportPhotos?:
     | T
     | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
+        photo?: T;
+        id?: T;
+      };
+  season?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingStatsBlock_select".
+ */
+export interface LandingStatsBlockSelect<T extends boolean = true> {
+  season?: T;
+  seasonLabel?: T;
+  items?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        accent?: T;
         id?: T;
       };
   id?: T;
@@ -1130,25 +2557,25 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock_select".
+ * via the `definition` "LandingTrainingsBlock_select".
  */
-export interface ContentBlockSelect<T extends boolean = true> {
-  columns?:
+export interface LandingTrainingsBlockSelect<T extends boolean = true> {
+  kicker?: T;
+  headline?: T;
+  headlineHighlight?: T;
+  headlineRest?: T;
+  perex?: T;
+  defaultVenue?: T;
+  rows?:
     | T
     | {
-        size?: T;
-        richText?: T;
-        enableLink?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
+        day?: T;
+        time?: T;
+        group?: T;
+        venue?: T;
+        note?: T;
+        joint?: T;
+        hiddenOnWeb?: T;
         id?: T;
       };
   id?: T;
@@ -1156,24 +2583,497 @@ export interface ContentBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock_select".
+ * via the `definition` "LandingClubBlock_select".
  */
-export interface MediaBlockSelect<T extends boolean = true> {
-  media?: T;
+export interface LandingClubBlockSelect<T extends boolean = true> {
+  kicker?: T;
+  headlineStart?: T;
+  headlineHighlight?: T;
+  perex?: T;
+  ctaLabel?: T;
+  stadium?:
+    | T
+    | {
+        photo?: T;
+        tag?: T;
+        caption?: T;
+      };
+  youth?:
+    | T
+    | {
+        photo?: T;
+        tag?: T;
+        caption?: T;
+      };
+  note?: T;
   id?: T;
   blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock_select".
+ * via the `definition` "LandingAlbumBlock_select".
  */
-export interface ArchiveBlockSelect<T extends boolean = true> {
-  introContent?: T;
-  populateBy?: T;
-  relationTo?: T;
-  categories?: T;
+export interface LandingAlbumBlockSelect<T extends boolean = true> {
+  gallery?: T;
+  mosaic?:
+    | T
+    | {
+        photo?: T;
+        span?: T;
+        title?: T;
+        chip?: T;
+        href?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingHistoryBlock_select".
+ */
+export interface LandingHistoryBlockSelect<T extends boolean = true> {
+  kicker?: T;
+  watermark?: T;
+  headlineStart?: T;
+  headlineHighlight?: T;
+  lead?: T;
+  text?: T;
+  metaLine?: T;
+  ctaLabel?: T;
+  photosCtaLabel?: T;
+  chips?:
+    | T
+    | {
+        label?: T;
+        accent?: T;
+        id?: T;
+      };
+  quote?:
+    | T
+    | {
+        start?: T;
+        highlight?: T;
+        end?: T;
+        source?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingPeopleBlock_select".
+ */
+export interface LandingPeopleBlockSelect<T extends boolean = true> {
+  intro?: T;
+  people?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingSponsorsBlock_select".
+ */
+export interface LandingSponsorsBlockSelect<T extends boolean = true> {
+  title?: T;
+  titleHighlight?: T;
+  ctaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingFaqBlock_select".
+ */
+export interface LandingFaqBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LandingContactBlock_select".
+ */
+export interface LandingContactBlockSelect<T extends boolean = true> {
+  kicker?: T;
+  perex?: T;
+  pills?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  topics?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionHeadingBlockType_select".
+ */
+export interface SectionHeadingBlockTypeSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  titleHighlight?: T;
+  perex?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextSectionBlockType_select".
+ */
+export interface TextSectionBlockTypeSelect<T extends boolean = true> {
+  content?: T;
+  appearance?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhotoCardsBlockType_select".
+ */
+export interface PhotoCardsBlockTypeSelect<T extends boolean = true> {
+  cards?:
+    | T
+    | {
+        photo?: T;
+        tag?: T;
+        badge?: T;
+        caption?: T;
+        href?: T;
+        id?: T;
+      };
+  columns?: T;
+  height?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBannerBlockType_select".
+ */
+export interface CtaBannerBlockTypeSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  text?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
+  tone?: T;
+  photo?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DataTableBlockType_select".
+ */
+export interface DataTableBlockTypeSelect<T extends boolean = true> {
+  title?: T;
+  data?: T;
+  firstRowHeader?: T;
+  numericRight?: T;
+  highlight?: T;
+  caption?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchesWidgetBlock_select".
+ */
+export interface MatchesWidgetBlockSelect<T extends boolean = true> {
+  title?: T;
+  mode?: T;
+  season?: T;
+  team?: T;
   limit?: T;
-  selectedDocs?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NextMatchWidgetBlock_select".
+ */
+export interface NextMatchWidgetBlockSelect<T extends boolean = true> {
+  note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostsGridBlock_select".
+ */
+export interface PostsGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  postType?: T;
+  season?: T;
+  limit?: T;
+  showPhoto?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleriesGridBlock_select".
+ */
+export interface GalleriesGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  season?: T;
+  limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RosterWidgetBlock_select".
+ */
+export interface RosterWidgetBlockSelect<T extends boolean = true> {
+  title?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StandingsWidgetBlock_select".
+ */
+export interface StandingsWidgetBlockSelect<T extends boolean = true> {
+  season?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductsGridBlock_select".
+ */
+export interface ProductsGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  orderInfo?: T;
+  ctaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PlayerCardBlock_select".
+ */
+export interface PlayerCardBlockSelect<T extends boolean = true> {
+  player?: T;
+  note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PlayersPickerBlock_select".
+ */
+export interface PlayersPickerBlockSelect<T extends boolean = true> {
+  title?: T;
+  players?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchCardBlock_select".
+ */
+export interface MatchCardBlockSelect<T extends boolean = true> {
+  match?: T;
+  kicker?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchesPickerBlock_select".
+ */
+export interface MatchesPickerBlockSelect<T extends boolean = true> {
+  title?: T;
+  matches?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PersonCardBlock_select".
+ */
+export interface PersonCardBlockSelect<T extends boolean = true> {
+  person?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryEmbedBlock_select".
+ */
+export interface GalleryEmbedBlockSelect<T extends boolean = true> {
+  gallery?: T;
+  title?: T;
+  limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostFeatureBlock_select".
+ */
+export interface PostFeatureBlockSelect<T extends boolean = true> {
+  post?: T;
+  fallbackPhoto?: T;
+  tag?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SponsorCardBlock_select".
+ */
+export interface SponsorCardBlockSelect<T extends boolean = true> {
+  sponsor?: T;
+  kicker?: T;
+  note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductCardBlock_select".
+ */
+export interface ProductCardBlockSelect<T extends boolean = true> {
+  product?: T;
+  kicker?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock_select".
+ */
+export interface FeatureGridBlockSelect<T extends boolean = true> {
+  title?: T;
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  title?: T;
+  items?:
+    | T
+    | {
+        quote?: T;
+        name?: T;
+        role?: T;
+        photo?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingCardsBlock_select".
+ */
+export interface PricingCardsBlockSelect<T extends boolean = true> {
+  title?: T;
+  perex?: T;
+  cards?:
+    | T
+    | {
+        name?: T;
+        price?: T;
+        period?: T;
+        description?: T;
+        features?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        highlighted?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DownloadsBlock_select".
+ */
+export interface DownloadsBlockSelect<T extends boolean = true> {
+  title?: T;
+  items?:
+    | T
+    | {
+        file?: T;
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MapEmbedBlock_select".
+ */
+export interface MapEmbedBlockSelect<T extends boolean = true> {
+  title?: T;
+  embedUrl?: T;
+  pills?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AnnouncementBlock_select".
+ */
+export interface AnnouncementBlockSelect<T extends boolean = true> {
+  tone?: T;
+  text?: T;
+  linkLabel?: T;
+  linkHref?: T;
+  dismissible?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ExternalEmbedBlock_select".
+ */
+export interface ExternalEmbedBlockSelect<T extends boolean = true> {
+  title?: T;
+  url?: T;
+  height?: T;
   id?: T;
   blockName?: T;
 }
@@ -1190,12 +3090,25 @@ export interface FormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RawHtmlBlock_select".
+ */
+export interface RawHtmlBlockSelect<T extends boolean = true> {
+  html?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
+  excerpt?: T;
+  titleHighlight?: T;
+  photoCaption?: T;
   content?: T;
+  legacyHtml?: T;
   relatedPosts?: T;
   categories?: T;
   meta?:
@@ -1205,6 +3118,20 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  heroVariant?: T;
+  match?: T;
+  showRelated?: T;
+  authorPerson?: T;
+  contentType?: T;
+  type?: T;
+  season?: T;
+  team?: T;
+  legacy?:
+    | T
+    | {
+        articleId?: T;
+        url?: T;
+      };
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -1212,6 +3139,10 @@ export interface PostsSelect<T extends boolean = true> {
     | {
         id?: T;
         name?: T;
+        role?: T;
+        email?: T;
+        phone?: T;
+        photo?: T;
       };
   generateSlug?: T;
   slug?: T;
@@ -1226,6 +3157,13 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  legacy?:
+    | T
+    | {
+        source?: T;
+        legacyId?: T;
+        legacyPath?: T;
+      };
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1338,7 +3276,12 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
   name?: T;
+  role?: T;
+  phone?: T;
+  photo?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1355,6 +3298,211 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seasons_select".
+ */
+export interface SeasonsSelect<T extends boolean = true> {
+  title?: T;
+  startYear?: T;
+  isCurrent?: T;
+  standings?:
+    | T
+    | {
+        label?: T;
+        fullTableUrl?: T;
+        rows?:
+          | T
+          | {
+              pos?: T;
+              team?: T;
+              games?: T;
+              points?: T;
+              id?: T;
+            };
+      };
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "teams_select".
+ */
+export interface TeamsSelect<T extends boolean = true> {
+  name?: T;
+  category?: T;
+  order?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "players_select".
+ */
+export interface PlayersSelect<T extends boolean = true> {
+  name?: T;
+  photo?: T;
+  number?: T;
+  position?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "matches_select".
+ */
+export interface MatchesSelect<T extends boolean = true> {
+  displayTitle?: T;
+  date?: T;
+  season?: T;
+  team?: T;
+  competition?: T;
+  opponent?: T;
+  home?: T;
+  venue?: T;
+  scoreOurs?: T;
+  scoreOpp?: T;
+  status?: T;
+  overtime?: T;
+  shootout?: T;
+  thirds?:
+    | T
+    | {
+        ours?: T;
+        opp?: T;
+        id?: T;
+      };
+  report?: T;
+  gallery?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "opponents_select".
+ */
+export interface OpponentsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  city?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries_select".
+ */
+export interface GalleriesSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  season?: T;
+  team?: T;
+  group?: T;
+  cover?: T;
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  legacyDir?: T;
+  legacyPath?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors_select".
+ */
+export interface SponsorsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  url?: T;
+  person?: T;
+  address?: T;
+  phone?: T;
+  email?: T;
+  active?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  note?: T;
+  phone?: T;
+  email?: T;
+  photo?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  photo?: T;
+  price?: T;
+  available?: T;
+  order?: T;
+  description?: T;
+  sizes?:
+    | T
+    | {
+        label?: T;
+        note?: T;
+        id?: T;
+      };
+  orderNote?: T;
+  params?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  gallery?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "milestones_select".
+ */
+export interface MilestonesSelect<T extends boolean = true> {
+  year?: T;
+  era?: T;
+  title?: T;
+  text?: T;
+  photo?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1550,6 +3698,69 @@ export interface SearchSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation-containers_select".
+ */
+export interface NavigationContainersSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  items?: T;
+  settings?:
+    | T
+    | {
+        maxDepth?: T;
+        allowedTypes?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation-items_select".
+ */
+export interface NavigationItemsSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  parent?: T;
+  order?: T;
+  url?: T;
+  anchor?: T;
+  internalLink?:
+    | T
+    | {
+        reference?: T;
+        customPath?: T;
+      };
+  target?: T;
+  children?: T;
+  localeVisibility?:
+    | T
+    | {
+        locale?: T;
+        visible?: T;
+        id?: T;
+      };
+  active?: T;
+  className?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log_select".
+ */
+export interface AuditLogSelect<T extends boolean = true> {
+  operation?: T;
+  identifier?: T;
+  documentId?: T;
+  user?: T;
+  scope?: T;
+  userAgent?: T;
+  hook?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1584,6 +3795,7 @@ export interface PayloadJobsSelect<T extends boolean = true> {
   queue?: T;
   waitUntil?: T;
   processing?: T;
+  meta?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1636,7 +3848,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "header".
  */
 export interface Header {
-  id: string;
+  id: number;
   navItems?:
     | {
         link: {
@@ -1645,11 +3857,11 @@ export interface Header {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: string | Post;
+                value: number | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -1665,7 +3877,7 @@ export interface Header {
  * via the `definition` "footer".
  */
 export interface Footer {
-  id: string;
+  id: number;
   navItems?:
     | {
         link: {
@@ -1674,17 +3886,231 @@ export interface Footer {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: string | Post;
+                value: number | Post;
               } | null);
           url?: string | null;
           label: string;
         };
         id?: string | null;
       }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteConfig".
+ */
+export interface SiteConfig {
+  id: number;
+  /**
+   * Např. „Hokejový klub Čestice - sezóna 2025/2026"
+   */
+  titleText?: string | null;
+  logo?: (number | null) | Media;
+  /**
+   * Použije se u článků bez vlastní fotky — na kartách, ve výpisech i v hero detailu.
+   */
+  defaultPostImage?: (number | null) | Media;
+  /**
+   * Karty na /aktuality budou mít náhledovou fotku. Widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku v layoutu stránky.
+   */
+  postsListShowPhoto?: boolean | null;
+  contactEmail?: string | null;
+  facebook?: string | null;
+  instagram?: string | null;
+  /**
+   * Volitelné (GA4 measurement ID apod.)
+   */
+  analyticsId?: string | null;
+  /**
+   * Zvýrazněné tlačítko vpravo v navigaci — na homepage i na podstránkách. Cíl může být kotva (#kontakt) nebo cesta (/kontakt).
+   */
+  navCta?: {
+    label?: string | null;
+    href?: string | null;
+  };
+  /**
+   * Patička je pevná část stránky — needituje se v layout builderu.
+   */
+  footer?: {
+    photo?: (number | null) | Media;
+    headline?: string | null;
+    perex?: string | null;
+    columns?:
+      | {
+          title: string;
+          links?:
+            | {
+                label: string;
+                href: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    league?: string | null;
+  };
+  /**
+   * Zapnutím schováte celý veřejný web za údržbovou stránku. Administrace zůstává přístupná a vy jako přihlášený správce web vidíte normálně — návštěvníci uvidí údržbu. Náhled stránky: /udrzba
+   */
+  maintenance?: {
+    enabled?: boolean | null;
+    /**
+     * Prázdné = „Rolba právě upravuje led".
+     */
+    headline?: string | null;
+    /**
+     * Prázdné = výchozí text o krátké údržbě.
+     */
+    perex?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebar".
+ */
+export interface Sidebar {
+  id: number;
+  widgets?:
+    | (
+        | MatchWidgetBlock
+        | StandingsTableBlock
+        | SponsorsBlock
+        | PartnerLinksBlock
+        | AlertBlock
+        | ExternalEmbedBlock
+        | RawHtmlBlock
+      )[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchWidgetBlock".
+ */
+export interface MatchWidgetBlock {
+  mode: 'next' | 'last' | 'played';
+  /**
+   * Volitelně omezit na tým
+   */
+  team?: (number | null) | Team;
+  /**
+   * Volitelně omezit na sezónu
+   */
+  season?: (number | null) | Season;
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchWidget';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StandingsTableBlock".
+ */
+export interface StandingsTableBlock {
+  /**
+   * Např. „Tabulka VČLH 2025-2026 Zákl. část"
+   */
+  title?: string | null;
+  season?: (number | null) | Season;
+  /**
+   * Ručně udržovaná ligová tabulka (obsahuje všechny týmy ligy).
+   */
+  rows?:
+    | {
+        rank?: number | null;
+        team: string;
+        gp?: number | null;
+        w?: number | null;
+        otw?: number | null;
+        otl?: number | null;
+        l?: number | null;
+        gf?: number | null;
+        ga?: number | null;
+        pts?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'standingsTable';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SponsorsBlock".
+ */
+export interface SponsorsBlock {
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sponsorsBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PartnerLinksBlock".
+ */
+export interface PartnerLinksBlock {
+  title?: string | null;
+  links?:
+    | {
+        label: string;
+        url: string;
+        logo?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'partnerLinks';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AlertBlock".
+ */
+export interface AlertBlock {
+  message: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  style?: ('warning' | 'danger' | 'info') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'alertBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats".
+ */
+export interface PayloadJobsStat {
+  id: number;
+  stats?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1737,6 +4163,160 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "siteConfig_select".
+ */
+export interface SiteConfigSelect<T extends boolean = true> {
+  titleText?: T;
+  logo?: T;
+  defaultPostImage?: T;
+  postsListShowPhoto?: T;
+  contactEmail?: T;
+  facebook?: T;
+  instagram?: T;
+  analyticsId?: T;
+  navCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  footer?:
+    | T
+    | {
+        photo?: T;
+        headline?: T;
+        perex?: T;
+        columns?:
+          | T
+          | {
+              title?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        league?: T;
+      };
+  maintenance?:
+    | T
+    | {
+        enabled?: T;
+        headline?: T;
+        perex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebar_select".
+ */
+export interface SidebarSelect<T extends boolean = true> {
+  widgets?:
+    | T
+    | {
+        matchWidget?: T | MatchWidgetBlockSelect<T>;
+        standingsTable?: T | StandingsTableBlockSelect<T>;
+        sponsorsBlock?: T | SponsorsBlockSelect<T>;
+        partnerLinks?: T | PartnerLinksBlockSelect<T>;
+        alertBlock?: T | AlertBlockSelect<T>;
+        externalEmbed?: T | ExternalEmbedBlockSelect<T>;
+        rawHtml?: T | RawHtmlBlockSelect<T>;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchWidgetBlock_select".
+ */
+export interface MatchWidgetBlockSelect<T extends boolean = true> {
+  mode?: T;
+  team?: T;
+  season?: T;
+  limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StandingsTableBlock_select".
+ */
+export interface StandingsTableBlockSelect<T extends boolean = true> {
+  title?: T;
+  season?: T;
+  rows?:
+    | T
+    | {
+        rank?: T;
+        team?: T;
+        gp?: T;
+        w?: T;
+        otw?: T;
+        otl?: T;
+        l?: T;
+        gf?: T;
+        ga?: T;
+        pts?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SponsorsBlock_select".
+ */
+export interface SponsorsBlockSelect<T extends boolean = true> {
+  title?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PartnerLinksBlock_select".
+ */
+export interface PartnerLinksBlockSelect<T extends boolean = true> {
+  title?: T;
+  links?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        logo?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AlertBlock_select".
+ */
+export interface AlertBlockSelect<T extends boolean = true> {
+  message?: T;
+  style?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats_select".
+ */
+export interface PayloadJobsStatsSelect<T extends boolean = true> {
+  stats?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -1744,6 +4324,14 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCleanup-payload-auditor-log".
+ */
+export interface TaskCleanupPayloadAuditorLog {
+  input?: unknown;
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1756,16 +4344,39 @@ export interface TaskSchedulePublish {
     doc?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: string | Post;
+          value: number | Post;
         } | null);
     global?: string | null;
-    user?: (string | null) | User;
+    user?: (number | null) | User;
   };
   output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  media: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YouTubeBlock".
+ */
+export interface YouTubeBlock {
+  /**
+   * Odkaz na YouTube video (např. https://www.youtube.com/watch?v=...)
+   */
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'youtube';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1802,6 +4413,27 @@ export interface CodeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'code';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatCardsBlockType".
+ */
+export interface StatCardsBlockType {
+  items: {
+    /**
+     * Např. „31:18", „2/3", „340".
+     */
+    value: string;
+    /**
+     * Např. „Střely na branku".
+     */
+    label: string;
+    dark?: boolean | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'statCards';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

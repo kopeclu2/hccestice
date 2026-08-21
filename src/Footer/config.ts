@@ -5,6 +5,10 @@ import { revalidateFooter } from './hooks/revalidateFooter'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  label: 'Patička (šablona)',
+  admin: {
+    group: 'Nastavení',
+  },
   access: {
     read: () => true,
   },

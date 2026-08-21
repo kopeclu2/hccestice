@@ -14,22 +14,32 @@ import { getClientSideURL } from '@/utilities/getURL'
 
 const baseClass = 'admin-bar'
 
+/**
+ * Popisky kolekcí, které lišta nabízí k úpravě.
+ *
+ * Dřív tu byla i kolekce `projects`, která v tomhle projektu neexistuje,
+ * a labely byly anglické — lišta byla vidět jen na CMS stránkách ve
+ * `(frontend)`, takže si toho nikdo nevšiml. Od zrušení té route group
+ * je na celém webu.
+ */
 const collectionLabels = {
-  pages: {
-    plural: 'Pages',
-    singular: 'Page',
-  },
-  posts: {
-    plural: 'Posts',
-    singular: 'Post',
-  },
-  projects: {
-    plural: 'Projects',
-    singular: 'Project',
-  },
+  pages: { plural: 'Stránky', singular: 'Stránka' },
+  posts: { plural: 'Články', singular: 'Článek' },
+} as const
+
+type CollectionKey = keyof typeof collectionLabels
+
+/**
+ * Mapa první URL části → slug kolekce v Payloadu. Cesty se jmenují česky,
+ * kolekce anglicky, takže se nedají odvodit jedna z druhé: `/aktuality/{slug}`
+ * je kolekce `posts`. Dřív se segment bral jako slug kolekce přímo, takže se
+ * po přejmenování `/posts` na `/aktuality` u článků nabízela `pages`.
+ */
+const ROUTE_TO_COLLECTION: Record<string, CollectionKey> = {
+  aktuality: 'posts',
 }
 
-const Title: React.FC = () => <span>Dashboard</span>
+const Title: React.FC = () => <span>Administrace</span>
 
 export const AdminBar: React.FC<{
   adminBarProps?: PayloadAdminBarProps
@@ -37,9 +47,8 @@ export const AdminBar: React.FC<{
   const { adminBarProps } = props || {}
   const segments = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
-  const collection = (
-    collectionLabels[segments?.[1] as keyof typeof collectionLabels] ? segments[1] : 'pages'
-  ) as keyof typeof collectionLabels
+  // segments[0] je route group („(landing)"), vlastní cesta začíná na [1]
+  const collection: CollectionKey = ROUTE_TO_COLLECTION[segments?.[1] ?? ''] ?? 'pages'
   const router = useRouter()
 
   const onAuthChange = React.useCallback((user: PayloadMeUser) => {
@@ -65,8 +74,8 @@ export const AdminBar: React.FC<{
           cmsURL={getClientSideURL()}
           collectionSlug={collection}
           collectionLabels={{
-            plural: collectionLabels[collection]?.plural || 'Pages',
-            singular: collectionLabels[collection]?.singular || 'Page',
+            plural: collectionLabels[collection].plural,
+            singular: collectionLabels[collection].singular,
           }}
           logo={<Title />}
           onAuthChange={onAuthChange}

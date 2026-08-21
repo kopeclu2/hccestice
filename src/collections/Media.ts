@@ -16,6 +16,13 @@ const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Médium',
+    plural: 'Média',
+  },
+  admin: {
+    group: 'Obsah',
+  },
   folders: true,
   access: {
     create: authenticated,
@@ -37,6 +44,37 @@ export const Media: CollectionConfig = {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
         },
       }),
+    },
+    {
+      name: 'legacy',
+      type: 'group',
+      admin: {
+        description: 'Mapování na původní eStránky zdroj (plní import, needitovat)',
+      },
+      fields: [
+        {
+          name: 'source',
+          type: 'select',
+          options: [
+            { label: 'Obrázek článku (/img/picture)', value: 'img_picture' },
+            { label: 'Soubor (/file)', value: 'file' },
+            { label: 'Fotka alba (p_photos)', value: 'photo' },
+            { label: 'FTP (ostatní)', value: 'ftp' },
+          ],
+          index: true,
+        },
+        {
+          name: 'legacyId',
+          type: 'number',
+          index: true,
+          admin: { description: 'id v původní tabulce (s_pictures / s_files / p_photos)' },
+        },
+        {
+          name: 'legacyPath',
+          type: 'text',
+          admin: { description: 'Původní cesta (např. /img/picture/3/foto.jpg)' },
+        },
+      ],
     },
   ],
   upload: {

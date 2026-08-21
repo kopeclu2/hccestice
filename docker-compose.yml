@@ -1,31 +1,26 @@
-version: '3'
+# Lokální vývoj: jen Postgres. Appka se pouští na hostu (`bun run dev`),
+# protože Next v kontejneru na macOS přes bind mount zbytečně škrtí HMR.
+#
+# Produkce tenhle soubor nepoužívá — tam se nasazuje hotový image z GHCR,
+# viz .github/workflows/deploy.yml.
 
 services:
-  payload:
-    image: node:18-alpine
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
     ports:
-      - '3000:3000'
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: cestice
+      POSTGRES_PASSWORD: cestice
+      POSTGRES_DB: cestice
     volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
-    depends_on:
-      - mongo
-    env_file:
-      - .env
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
-    volumes:
-      - data:/data/db
-    logging:
-      driver: none
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cestice']
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
-  data:
-  node_modules:
+  postgres_data:

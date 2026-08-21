@@ -1,0 +1,597 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@config '../../tailwind.config.mjs';
+
+/* Design handoffy nejsou zdroj utilit — jsou to jen referenční .dc.html návrhy
+ * pro vizuální diff. Bez tohohle je Tailwind skenuje při každém rebuildu
+ * (~120 souborů) a umí z nich vygenerovat utility pro markup, který nikdy
+ * neodejde do produkce. */
+@source not '../../design_*';
+
+@custom-variant dark (&:is([data-theme='dark'] *));
+@custom-variant sm (@media (width >= theme(--breakpoint-sm)));
+@custom-variant md (@media (width >= theme(--breakpoint-md)));
+@custom-variant lg (@media (width >= theme(--breakpoint-lg)));
+@custom-variant xl (@media (width >= theme(--breakpoint-xl)));
+@custom-variant 2xl (@media (width >= theme(--breakpoint-2xl)));
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: unset;
+    font-size: unset;
+  }
+}
+
+@plugin "@tailwindcss/typography";
+
+@source inline("lg:col-span-4");
+@source inline("lg:col-span-6");
+@source inline("lg:col-span-8");
+@source inline("lg:col-span-12");
+@source inline("border-border");
+@source inline("bg-card");
+@source inline("border-error");
+@source inline("bg-error/30");
+@source inline("border-success");
+@source inline("bg-success/30");
+@source inline("border-warning");
+@source inline("bg-warning/30");
+
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 86rem;
+  /* Geist se načítá jen v (frontend)/layout.tsx — na (landing) routách se
+   * `--font-geist-*` nikam neresolvuje. Bez fallbacku bylo `font-mono`
+   * na /vzory a /widgety mrtvé (dědilo se sans-serif). */
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-geist-sans), var(--font-archivo), system-ui, sans-serif;
+}
+
+/* ── Landing page (design handoff „HC Cestice Modern") ──────────────────────
+ * Zdroj pravdy: design_handoff_hc_cestice_web/README.md → Design Tokens.
+ * Vše, co landing používá (barvy, font, radiusy, stíny, animace), žije zde —
+ * komponenty se na hodnoty odkazují výhradně přes utility třídy.
+ */
+/* ── Téma-závislé barvy ─────────────────────────────────────────────────────
+ * Plochy a text se mezi světlým a tmavým režimem mění, takže jejich hodnoty
+ * nemůžou být zapsané přímo v `@theme` (ta je statická). Žijí proto v `:root`
+ * / `[data-theme='dark']` a `@theme inline` níž je vystaví jako utility —
+ * stejný pattern, jaký v tomhle souboru už používá shadcn vrstva.
+ *
+ * KLÍČOVÉ ROZDĚLENÍ: token `ink` dřív dělal dvě práce naráz — barvu textu
+ * (`text-ink`, 51×) a tmavou plochu (`bg-ink`, 25×). V tmavém režimu jdou
+ * ty dvě role opačným směrem, takže jedna hodnota nemůže obsloužit obě:
+ *   - `ink`      = barva hlavního textu     → v dark světlá
+ *   - `contrast` = zvýrazněná tmavá plocha  → tmavá v OBOU režimech
+ *   - `on-contrast` = text na téhle ploše   → bílá v OBOU režimech
+ * Proto zůstává `bg-contrast text-on-contrast` funkční beze změny i v dark
+ * módu a nebylo nutné přepisovat 115 ručních `text-white`.
+ */
+:root {
+  --ds-ink: #0f1512; /* hlavní text */
+  --ds-ink-soft: #3d4a43; /* text kickerů/pilulek */
+  --ds-dim: #535f58; /* odstavce */
+  --ds-faint: #7b837e; /* popisky, meta text */
+  --ds-inactive: #c8d2cb; /* neaktivní číslo stránkování, tečka oddělovače */
+  --ds-prose: #22302a; /* text těla článku (utility `article-prose`) */
+
+  --ds-surface: #ffffff; /* plocha karty/panelu */
+  --ds-paper: #f4f6f4; /* pozadí stránky (světlý konec gradientu) */
+  --ds-paper-mid: #eaf0ec;
+  --ds-paper-deep: #dfe9e2;
+  --ds-chip: #f0f4f1; /* světlé chipy/tagy */
+  --ds-tint: #e8f2ec; /* zvýrazněný řádek tabulky (HC Čestice) */
+  --ds-tint-hover: #f7faf8; /* hover světlých karet/řádků */
+
+  --ds-line: #d3ddd6; /* bordery pilulek */
+  --ds-line-mid: #e2e9e4; /* border bílých karet */
+  --ds-line-soft: #eaefec; /* dělicí linky v tabulkách */
+
+  --ds-contrast: #0f1512; /* zvýrazněný tmavý panel/button */
+}
+
+/*
+ * Tmavý režim. POZOR: pro tmavou variantu landingu neexistuje design handoff
+ * (všech devět `design_*` adresářů je jen světlé) — hodnoty níž jsou odvozené,
+ * ne navržené: plochy jdou po škále pine→ink, text po škále paper→faint,
+ * `contrast` zůstává tmavý, ale o stupeň SVĚTLEJŠÍ než stránka, aby si
+ * udržel zvýraznění. Značkové barvy (club, lime, pine) se nemění.
+ */
+[data-theme='dark'] {
+  --ds-ink: #eef2ef;
+  --ds-ink-soft: #b9c4bd;
+  --ds-dim: #9aa5a0;
+  --ds-faint: #7f8a85;
+  --ds-inactive: #4a544e;
+  --ds-prose: #cdd6d1;
+
+  --ds-surface: #16211b;
+  --ds-paper: #0b120e;
+  --ds-paper-mid: #101a15;
+  --ds-paper-deep: #14201a;
+  --ds-chip: #1b2721;
+  --ds-tint: #16281d;
+  --ds-tint-hover: #121c16;
+
+  --ds-line: #2b382f;
+  --ds-line-mid: #24312a;
+  --ds-line-soft: #1d2822;
+
+  --ds-contrast: #202d26;
+}
+
+/*
+ * Záměrně BEZ `inline`: `@theme inline` hodnotu vlepí přímo do utilit a
+ * `--color-*` do `:root` vůbec neemituje — tím by se rozbilo 20 míst, která
+ * na barvy sahají přímo přes `var(--color-…)` (gradienty `PageCanvas`,
+ * `article-prose`, `TONE_VAR` v `PatternBackground`, stíny). Takhle vznikne
+ * alias `--color-x: var(--ds-x)`, který obslouží utility i `var()` naráz.
+ */
+@theme {
+  --color-ink: var(--ds-ink);
+  --color-ink-soft: var(--ds-ink-soft);
+  --color-dim: var(--ds-dim);
+  --color-faint: var(--ds-faint);
+  --color-inactive: var(--ds-inactive);
+  --color-prose: var(--ds-prose);
+
+  --color-surface: var(--ds-surface);
+  --color-paper: var(--ds-paper);
+  --color-paper-mid: var(--ds-paper-mid);
+  --color-paper-deep: var(--ds-paper-deep);
+  --color-chip: var(--ds-chip);
+  --color-tint: var(--ds-tint);
+  --color-tint-hover: var(--ds-tint-hover);
+
+  --color-line: var(--ds-line);
+  --color-line-mid: var(--ds-line-mid);
+  --color-line-soft: var(--ds-line-soft);
+
+  --color-contrast: var(--ds-contrast);
+}
+
+@theme {
+  /* Značkové a sémantické barvy — na tématu nezávislé.
+   * Klubová zelená, lime a pine jsou identita klubu; pine slouží jako podklad
+   * fotek, takže se s tématem měnit nesmí. Výsledky (V/R/P) a chybová barva
+   * nesou význam, ne náladu. */
+  --color-club: #17703a; /* klubová zelená — akcenty, hover, CTA plochy */
+  --color-club-dark: #0f5c2e; /* hover odkazů/zelených ploch */
+  --color-club-deep: #0a3f22; /* nejtmavší zelená — overlay gradient přes fotku */
+  --color-lime: #c9f24d; /* sekundární akcent — šipky ↗, skóre, zvýraznění */
+  --color-pine: #0f2a1a; /* podklad fotokaret před načtením */
+  --color-pine-deep: #081a10; /* základ tmavých gradientů přes fotky */
+
+  --color-on-contrast: #ffffff; /* text a ikony na ploše `contrast` */
+  --color-faint-dark: #a9b4ad; /* ztišený text na tmavém podkladu */
+
+  /* Výsledky zápasů (V / R / P). Bez téhle rodiny si `Badge` a `FormStrip`
+   * ručně přepisovaly stejné dvojice hex hodnot. */
+  --color-win: #e5f5d9;
+  --color-win-ink: var(--color-club);
+  --color-draw: var(--color-chip);
+  --color-draw-ink: var(--color-ink-soft);
+  --color-loss: #f6e4e0;
+  --color-loss-ink: #8a4437;
+
+  /* Stavy. Landing palette žádnou chybovou barvu neměla, proto formuláře
+   * padaly na `text-red-500` / `text-red-300` mimo design systém. */
+  --color-danger: #b91c1c; /* chyba na světlém podkladu */
+  --color-danger-soft: #f87171; /* chyba na tmavém/zeleném panelu */
+
+  /* Typografie — Archivo se načítá přes next/font (var --font-archivo) */
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+
+  /* Velikosti textu — role, ne čísla. Nadpisy řeší komponenty
+   * `PageTitle`/`SectionTitle`/`CardTitle` (viz landing/components/Heading.tsx),
+   * tyhle tokeny pokrývají všechno ostatní. Nové arbitrární `text-[Xrem]`
+   * v landing komponentách nepřidávat — vždy sáhnout po tokenu.
+   */
+  --text-eyebrow: 0.6875rem; /* 11px — uppercase mikro-label nad nadpisem */
+  --text-caption: 0.75rem; /* 12px — badge, chip, tabulkové popisky */
+  --text-meta: 0.8125rem; /* 13px — meta text, datumy, malé pilulky */
+  --text-body: 0.9375rem; /* 15px — běžný text karet a odstavců */
+  --text-lead: 1.0625rem; /* 17px — perex, název karty, zvýrazněný řádek */
+
+  /* Nadpisová škála — jediný zdroj pro landing/components/Heading.tsx.
+   * Dřív to bylo 9 arbitrárních `text-[Xrem]` uvnitř souboru, který má být
+   * právě tím jediným zdrojem. */
+  --text-card-title: 1.3125rem; /* 21px — CardTitle sm */
+  --text-panel-title: 1.625rem; /* 26px — CardTitle lg (mobil) */
+  --text-panel-title-lg: 1.875rem; /* 30px — CardTitle lg (desktop), h2 článku */
+  --text-section-title: 1.75rem; /* 28px — SectionTitle md/lg (mobil) */
+  --text-section-title-md: 2.125rem; /* 34px — SectionTitle md (desktop) */
+  --text-section-title-lg: 2.375rem; /* 38px — SectionTitle lg (desktop) */
+  --text-claim: 2rem; /* 32px — SectionTitle xl (mobil) */
+  --text-claim-lg: 3.25rem; /* 52px — SectionTitle xl (desktop) */
+
+  /* Obrysové watermarky za hlavičkami (dekorativní, viz utility `text-stroke`).
+   * Škála vznikla z 18 arbitrárních hodnot; dvě nejbližší dvojice se slily. */
+  --text-watermark-xs: 6.875rem; /* 110px */
+  --text-watermark-sm: 9.375rem; /* 150px */
+  --text-watermark-md: 10.625rem; /* 170px */
+  --text-watermark-lg: 11.25rem; /* 180px */
+  --text-watermark-xl: 11.875rem; /* 190px — hlavičky podstránek */
+  --text-watermark-2xl: 12.5rem; /* 200px */
+  --text-watermark-3xl: 13.75rem; /* 220px */
+  --text-watermark-4xl: 16.25rem; /* 260px */
+
+  /* Číselné displaye — skóre, čísla dresů, statistiky, letopočty. Nejsou to
+   * nadpisy (nemají sémantiku ani text-wrap), ale mají vlastní škálu.
+   * Používej přes komponentu `Numeral` (landing/components/Numeral.tsx),
+   * která k velikosti přidá `tabular-nums` a správný tracking.
+   */
+  --text-numeral-xs: 1.1875rem; /* 19px — skóre v řádku výsledků */
+  --text-numeral-sm: 1.375rem; /* 22px — den v měsíci u mini karty */
+  --text-numeral-md: 1.625rem; /* 26px — datum v rozpisu zápasů */
+  --text-numeral-lg: 1.875rem; /* 30px — číslo dresu, monogram sponzora */
+  --text-numeral-xl: 2.25rem; /* 36px — hodnota ve statistické kartě */
+  --text-numeral-2xl: 3rem; /* 48px — skóre karty zápasu, velká statistika */
+
+  /* Tvary — pojmenované radiusy dle rolí v designu.
+   * `section` a `block` byly nejčastější arbitrární hodnoty v celém repu
+   * (13× a 9×), tedy častější než většina tokenů, které tu už byly. */
+  --radius-card: 2.25rem; /* velké sekční karty (36px v handoffu) */
+  --radius-section: 1.875rem; /* CTA pásy, hero panely, embedy (30px) */
+  --radius-panel: 1.75rem; /* vnitřní panely, formulář (28px) */
+  --radius-block: 1.625rem; /* karta v mřížce výpisu (26px) */
+  --radius-tile: 1.5rem; /* fotokarty, řádkové karty (24px) */
+  --radius-thumb: 1.375rem; /* malé dlaždice mozaiky (22px) */
+  --radius-row: 1.25rem; /* řádek výsledku, accordion (20px) */
+  --radius-badge: 1.125rem; /* mini karty, sponzorské dlaždice (18px) */
+  --radius-field: 0.875rem; /* inputy, čtverečky formy, média (14px) */
+
+  /* Elevace — barvy přes `--alpha()`, ne ručně přepsané rgb() trojice. */
+  --shadow-hero: 0 1.875rem 5rem --alpha(var(--color-ink) / 10%);
+  --shadow-tile:
+    0 0.625rem 1.875rem --alpha(var(--color-pine) / 8%),
+    0 0.0625rem 0 --alpha(var(--color-pine) / 4%);
+  --shadow-float: 0 0.5rem 1.5rem --alpha(var(--color-ink) / 10%);
+  --shadow-tooltip: 0 0.625rem 1.875rem --alpha(var(--color-pine-deep) / 30%);
+  --shadow-overlay: 0 0.75rem 2.5rem --alpha(var(--color-pine-deep) / 35%);
+  --shadow-lift: 0 1.125rem 2.75rem --alpha(var(--color-ink) / 14%);
+  /* Prstenec kolem lime tečky „živě". Dřív byl zapsaný třemi způsoby
+   * (0.3125rem, 5px, 0.25rem/30%) na čtyřech místech — token je majoritní. */
+  --shadow-ring-lime: 0 0 0 0.3125rem --alpha(var(--color-lime) / 20%);
+
+  /* Bílý text přes fotku. Široký měkký stín, ne obtažení: na tmavé fotce ho
+   * není vidět, na přeexponovaném ledu drží písmo čitelné i tam, kam gradient
+   * `PhotoTile` nedosáhne. */
+  --text-shadow-photo: 0 0.125rem 1.625rem --alpha(var(--color-pine-deep) / 45%);
+
+  /* Animace */
+  --animate-marquee: marquee 45s linear infinite;
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Druhý pás log jede proti prvnímu (sekce Partneři). */
+  --animate-marquee-reverse: marquee-reverse 55s linear infinite;
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* Čárkovaná trajektorie puku na systémových stránkách (404, údržba).
+   * Posouvá `stroke-dashoffset` v SVG user units — proto bezrozměrné číslo
+   * a ne rem: rem by se počítal z font-size elementu, ne ze souřadnic path. */
+  --animate-puck-trail: puck-trail 3s linear infinite;
+  /* Údržba má hustší čárkování (10/14 proti 6/8), takže při stejné době
+   * působí rychleji — kratší cyklus to srovnává. */
+  --animate-puck-trail-fast: puck-trail 2.4s linear infinite;
+  @keyframes puck-trail {
+    to {
+      stroke-dashoffset: -120;
+    }
+  }
+}
+
+/* Landing utility — diagonální šrafování (podpis designu, viz handoff). */
+@utility hatch {
+  background-image: repeating-linear-gradient(
+    115deg,
+    --alpha(var(--color-club) / 8%) 0 0.0625rem,
+    transparent 0.0625rem 1.625rem
+  );
+}
+
+/* Landing utility — obrysové watermark texty (fill průhledný, tah = currentColor). */
+@utility text-stroke {
+  -webkit-text-stroke: 0.125rem currentColor;
+  -webkit-text-fill-color: transparent;
+}
+
+/*
+ * Landing utility — plné písmeno uvnitř obrysového textu (lime nula v „404"
+ * a „500"). Oba `-webkit-*` řádky jsou nutné: dědí se z rodiče, takže bez
+ * `text-fill-color` by písmeno zůstalo průhledné i s nulovým tahem.
+ */
+@utility text-stroke-none {
+  -webkit-text-stroke: 0;
+  -webkit-text-fill-color: currentColor;
+}
+
+/* Landing utility — horizontální carousel bez viditelného scrollbaru. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Landing utility — bílé diagonální šrafování (zelený panel, patička). */
+@utility hatch-white {
+  background-image: repeating-linear-gradient(
+    115deg,
+    --alpha(var(--color-surface) / 6%) 0 0.0625rem,
+    transparent 0.0625rem 1.625rem
+  );
+}
+
+/*
+ * Landing utility — lime šrafování na tmavém podkladu (stránka 500).
+ * Proti `hatch-white` je barevné: na `contrast` ploše bez zelené fotky pod
+ * sebou by bílé linky vypadaly jako šum, lime je čte jako klubový akcent.
+ */
+@utility hatch-lime {
+  background-image: repeating-linear-gradient(
+    115deg,
+    --alpha(var(--color-lime) / 7%) 0 0.0625rem,
+    transparent 0.0625rem 1.625rem
+  );
+}
+
+/*
+ * Typografie těla článku (/aktuality/[slug]) dle handoffu.
+ * Jeden blok stylů pro lexical výstup i legacy HTML import —
+ * proto elementové selektory místo utility tříd v komponentách.
+ */
+@utility article-prose {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--color-prose);
+
+  & p {
+    margin-top: 1.25em;
+  }
+
+  /* lead — první odstavec větší, tmavší a medium */
+  & > div > p:first-of-type {
+    margin-top: 0;
+    font-size: 1.3125rem;
+    line-height: 1.55;
+    font-weight: 500;
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  & h2 {
+    margin-top: 3.25rem;
+    font-size: 1.875rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+  }
+
+  & h3 {
+    margin-top: 2.5rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  & a {
+    color: var(--color-club);
+    font-weight: 600;
+  }
+  & a:hover {
+    color: var(--color-club-dark);
+  }
+
+  & strong {
+    color: var(--color-ink);
+  }
+
+  & blockquote {
+    margin: 2.75rem 0;
+    border-left: 0.25rem solid var(--color-lime);
+    padding-left: 1.75rem;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  & ul,
+  & ol {
+    margin-top: 1.25em;
+    padding-left: 1.5rem;
+  }
+  & ul {
+    list-style: disc;
+  }
+  & ol {
+    list-style: decimal;
+  }
+  & li {
+    margin-top: 0.5em;
+  }
+
+  & img {
+    border-radius: var(--radius-tile);
+    margin-top: 2.75rem;
+  }
+  & figure {
+    margin: 2.75rem 0 0.625rem;
+  }
+  & figure img {
+    margin-top: 0;
+  }
+  & figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-faint);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @variant sm {
+    .container {
+      max-width: var(--breakpoint-sm);
+    }
+  }
+
+  @variant md {
+    .container {
+      max-width: var(--breakpoint-md);
+      padding-inline: 2rem;
+    }
+  }
+
+  @variant lg {
+    .container {
+      max-width: var(--breakpoint-lg);
+    }
+  }
+
+  @variant xl {
+    .container {
+      max-width: var(--breakpoint-xl);
+    }
+  }
+
+  @variant 2xl {
+    .container {
+      max-width: var(--breakpoint-2xl);
+    }
+  }
+}
+
+:root {
+  --background: oklch(100% 0 0deg);
+  --foreground: oklch(14.5% 0 0deg);
+  --card: oklch(96.5% 0.005 265deg);
+  --card-foreground: oklch(14.5% 0 0deg);
+  --popover: oklch(100% 0 0deg);
+  --popover-foreground: oklch(14.5% 0 0deg);
+  --primary: oklch(20.5% 0 0deg);
+  --primary-foreground: oklch(98.5% 0 0deg);
+  --secondary: oklch(97% 0 0deg);
+  --secondary-foreground: oklch(20.5% 0 0deg);
+  --muted: oklch(97% 0 0deg);
+  --muted-foreground: oklch(55.6% 0 0deg);
+  --accent: oklch(97% 0 0deg);
+  --accent-foreground: oklch(20.5% 0 0deg);
+  --destructive: oklch(57.7% 0.245 27.325deg);
+  /* Dřív shodná s --destructive → červený text na červeném pozadí. */
+  --destructive-foreground: oklch(98.5% 0 0deg);
+  --border: oklch(92.2% 0 0deg);
+  --input: oklch(92.2% 0 0deg);
+  --ring: oklch(70.8% 0 0deg);
+  --success: oklch(78% 0.08 200deg);
+  --warning: oklch(89% 0.1 75deg);
+  --error: oklch(75% 0.15 25deg);
+}
+
+[data-theme='dark'] {
+  --background: oklch(14.5% 0 0deg);
+  --foreground: oklch(98.5% 0 0deg);
+  --card: oklch(17% 0 0deg);
+  --card-foreground: oklch(98.5% 0 0deg);
+  --popover: oklch(14.5% 0 0deg);
+  --popover-foreground: oklch(98.5% 0 0deg);
+  --primary: oklch(98.5% 0 0deg);
+  --primary-foreground: oklch(20.5% 0 0deg);
+  --secondary: oklch(26.9% 0 0deg);
+  --secondary-foreground: oklch(98.5% 0 0deg);
+  --muted: oklch(26.9% 0 0deg);
+  --muted-foreground: oklch(70.8% 0 0deg);
+  --accent: oklch(26.9% 0 0deg);
+  --accent-foreground: oklch(98.5% 0 0deg);
+  --destructive: oklch(39.6% 0.141 25.723deg);
+  /* Stejný problém jako ve světlém režimu — červená na tmavě červené. */
+  --destructive-foreground: oklch(98.5% 0 0deg);
+  --border: oklch(26.9% 0 0deg);
+  --input: oklch(26.9% 0 0deg);
+  --ring: oklch(43.9% 0 0deg);
+  --success: oklch(28% 0.1 200deg);
+  --warning: oklch(35% 0.08 70deg);
+  --error: oklch(45% 0.1 25deg);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground min-h-[100vh] flex flex-col;
+  }
+}
+
+html {
+  opacity: 0;
+}
+
+html[data-theme='dark'],
+html[data-theme='light'] {
+  opacity: initial;
+}

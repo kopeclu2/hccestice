@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 
 import type { Media, Page, Post, Config } from '../payload-types'
 
-import { mergeOpenGraph } from './mergeOpenGraph'
+import { mergeOpenGraph, OG_FALLBACK_IMAGE } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+import { htmlPlainText, snippet } from './plainText'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  let url = serverUrl + '/website-template-OG.webp'
+  let url = serverUrl + OG_FALLBACK_IMAGE
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = image.sizes?.og?.url
@@ -27,13 +28,17 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+    ? htmlPlainText(doc.meta.title) + ' | HC Čestice'
+    : 'HC Čestice'
+
+  // Popisy naimportované z eStránky bývají celý HTML odstavec — do meta tagu
+  // patří prostý text, jinak se do stránky propíšou `&lt;p&gt;…`
+  const description = snippet(htmlPlainText(doc?.meta?.description || ''), 160) || undefined
 
   return {
-    description: doc?.meta?.description,
+    description,
     openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
+      description: description || '',
       images: ogImage
         ? [
             {

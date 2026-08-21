@@ -1,0 +1,500 @@
+[
+  {
+    "legacyId": 62,
+    "name": "1.jpg",
+    "filename": "1.jpg",
+    "filesize": 150715
+  },
+  {
+    "legacyId": 20,
+    "name": ".htaccess",
+    "filename": ".htaccess",
+    "filesize": 24
+  },
+  {
+    "legacyId": 21,
+    "name": "favicon.ico",
+    "filename": "(21)favicon.ico",
+    "filesize": 894
+  },
+  {
+    "legacyId": 22,
+    "name": "stmenu.js",
+    "filename": "stmenu.js",
+    "filesize": 23542
+  },
+  {
+    "legacyId": 23,
+    "name": "mainBkg.png",
+    "filename": "mainbkg.png",
+    "filesize": 7157
+  },
+  {
+    "legacyId": 24,
+    "name": "spot-top.jpg",
+    "filename": "spot-top.jpg",
+    "filesize": 1046
+  },
+  {
+    "legacyId": 25,
+    "name": "spot-bottom.jpg",
+    "filename": "spot-bottom.jpg",
+    "filesize": 1056
+  },
+  {
+    "legacyId": 26,
+    "name": "bg_menu.jpg",
+    "filename": "bg_menu.jpg",
+    "filesize": 4242
+  },
+  {
+    "legacyId": 27,
+    "name": "bg_main_in.jpg",
+    "filename": "bg_main_in.jpg",
+    "filesize": 1043
+  },
+  {
+    "legacyId": 28,
+    "name": "bg_footer.jpg",
+    "filename": "bg_footer.jpg",
+    "filesize": 5069
+  },
+  {
+    "legacyId": 42,
+    "name": "wwb_img3.jpg",
+    "filename": "wwb_img3.jpg",
+    "filesize": 195744
+  },
+  {
+    "legacyId": 41,
+    "name": "starsi-zaci-tabulka.html",
+    "filename": "starsi-zaci-tabulka.html",
+    "filesize": 738
+  },
+  {
+    "legacyId": 53,
+    "name": "znak_dlouhonovice.png",
+    "filename": "znak_dlouhonovice.png",
+    "filesize": 31738
+  },
+  {
+    "legacyId": 52,
+    "name": "znak_semanin.png",
+    "filename": "znak_semanin.png",
+    "filesize": 10678
+  },
+  {
+    "legacyId": 50,
+    "name": "sponzori-2011-2012.gif",
+    "filename": "sponzori-2011-2012.gif",
+    "filesize": 66301
+  },
+  {
+    "legacyId": 65,
+    "name": "sponzori-2012-2013.gif",
+    "filename": "sponzori-2012-2013.gif",
+    "filesize": 86516
+  },
+  {
+    "legacyId": 63,
+    "name": "2.jpg",
+    "filename": "2.jpg",
+    "filesize": 144987
+  },
+  {
+    "legacyId": 64,
+    "name": "Mantaky.gif",
+    "filename": "mantaky.gif",
+    "filesize": 370972
+  },
+  {
+    "legacyId": 51,
+    "name": "Los okresniho preboru  2011-2012.doc",
+    "filename": "los-okresniho-preboru--2011-2012.doc",
+    "filesize": 287232
+  },
+  {
+    "legacyId": 54,
+    "name": "znak_chocen.png",
+    "filename": "znak_chocen.png",
+    "filesize": 279169
+  },
+  {
+    "legacyId": 55,
+    "name": "znak_kraliky.png",
+    "filename": "znak_kraliky.png",
+    "filesize": 8882
+  },
+  {
+    "legacyId": 56,
+    "name": "znak_lanskroun.png",
+    "filename": "znak_lanskroun.png",
+    "filesize": 5548
+  },
+  {
+    "legacyId": 57,
+    "name": "znak_rychnov.png",
+    "filename": "znak_rychnov.png",
+    "filesize": 9707
+  },
+  {
+    "legacyId": 58,
+    "name": "znak_semechnice.png",
+    "filename": "znak_semechnice.png",
+    "filesize": 6457
+  },
+  {
+    "legacyId": 59,
+    "name": "znak_stadion_rychnov.png",
+    "filename": "znak_stadion_rychnov.png",
+    "filesize": 11996
+  },
+  {
+    "legacyId": 61,
+    "name": "znak-zamberk.png",
+    "filename": "znak-zamberk.png",
+    "filesize": 6734
+  },
+  {
+    "legacyId": 66,
+    "name": "vykricnik.gif",
+    "filename": "vykricnik.gif",
+    "filesize": 80984
+  },
+  {
+    "legacyId": 67,
+    "name": "Turnaj_dorostu_2013.doc",
+    "filename": "turnaj_dorostu_2013.doc",
+    "filesize": 20733
+  },
+  {
+    "legacyId": 68,
+    "name": "CSLH1.png",
+    "filename": "cslh1.png",
+    "filesize": 23156
+  },
+  {
+    "legacyId": 69,
+    "name": "DvurKralove1.png",
+    "filename": "dvurkralove1.png",
+    "filesize": 97659
+  },
+  {
+    "legacyId": 70,
+    "name": "Jaromer2.png",
+    "filename": "jaromer2.png",
+    "filesize": 20675
+  },
+  {
+    "legacyId": 71,
+    "name": "NovyBydzov1.png",
+    "filename": "novybydzov1.png",
+    "filesize": 40904
+  },
+  {
+    "legacyId": 72,
+    "name": "Opocno1.png",
+    "filename": "opocno1.png",
+    "filesize": 12569
+  },
+  {
+    "legacyId": 73,
+    "name": "PROPOZICE+2007+16.2.2014.docx",
+    "filename": "propozice-2007-16.2.2014.docx",
+    "filesize": 285968
+  },
+  {
+    "legacyId": 75,
+    "name": "Prac.rozpis 15-16 KSM var. pro 8 poslední verze.xlsx",
+    "filename": "prac.rozpis-15-16-ksm-var.-pro-8-posledni-verze.xlsx",
+    "filesize": 16822
+  },
+  {
+    "legacyId": 76,
+    "name": "logo.png",
+    "filename": "logo.png",
+    "filesize": 18894
+  },
+  {
+    "legacyId": 77,
+    "name": "ZNAK-OPOCNO.png",
+    "filename": "znak-opocno.png",
+    "filesize": 50190
+  },
+  {
+    "legacyId": 78,
+    "name": "ZNAK-CESTICE.png",
+    "filename": "znak-cestice.png",
+    "filesize": 112728
+  },
+  {
+    "legacyId": 79,
+    "name": "znak lanskroun.png",
+    "filename": "znak-lanskroun.png",
+    "filesize": 75731
+  },
+  {
+    "legacyId": 80,
+    "name": "ZNAK-Semechnice.png",
+    "filename": "znak-semechnice.png",
+    "filesize": 23310
+  },
+  {
+    "legacyId": 81,
+    "name": "znak-SKUTEC.png",
+    "filename": "znak-skutec.png",
+    "filesize": 7435
+  },
+  {
+    "legacyId": 82,
+    "name": "teliacom.png",
+    "filename": "teliacom.png",
+    "filesize": 4773
+  },
+  {
+    "legacyId": 83,
+    "name": "Hronov.png",
+    "filename": "hronov.png",
+    "filesize": 18894
+  },
+  {
+    "legacyId": 84,
+    "name": "znak-trebechovice.png",
+    "filename": "znak-trebechovice.png",
+    "filesize": 41427
+  },
+  {
+    "legacyId": 85,
+    "name": "gardener.png",
+    "filename": "gardener.png",
+    "filesize": 194159
+  },
+  {
+    "legacyId": 86,
+    "name": "hokejista-zak.png",
+    "filename": "hokejista-zak.png",
+    "filesize": 130746
+  },
+  {
+    "legacyId": 88,
+    "name": "chocen.png",
+    "filename": "chocen.png",
+    "filesize": 279169
+  },
+  {
+    "legacyId": 89,
+    "name": "hc zamberk.png",
+    "filename": "hc-zamberk.png",
+    "filesize": 332536
+  },
+  {
+    "legacyId": 90,
+    "name": "sponzori-2015-2016.gif",
+    "filename": "sponzori-2015-2016.gif",
+    "filesize": 98862
+  },
+  {
+    "legacyId": 91,
+    "name": "Prac.rozpis 16-17 KLM,KSM.xlsx",
+    "filename": "prac.rozpis-16-17-klm-ksm.xlsx",
+    "filesize": 25977
+  },
+  {
+    "legacyId": 92,
+    "name": "ico-xls.png",
+    "filename": "ico-xls.png",
+    "filesize": 44071
+  },
+  {
+    "legacyId": 93,
+    "name": "nove_mesto.png",
+    "filename": "nove_mesto.png",
+    "filesize": 6642
+  },
+  {
+    "legacyId": 94,
+    "name": "hokejista-pripravka.png",
+    "filename": "hokejista-pripravka.png",
+    "filesize": 903721
+  },
+  {
+    "legacyId": 95,
+    "name": "BRIGOŠ.png",
+    "filename": "brigos.png",
+    "filesize": 385356
+  },
+  {
+    "legacyId": 96,
+    "name": "MP3.png",
+    "filename": "mp3.png",
+    "filesize": 28167
+  },
+  {
+    "legacyId": 97,
+    "name": "rec0112-103627trim.mp3",
+    "filename": "rec0112-103627trim.mp3",
+    "filesize": 3577892
+  },
+  {
+    "legacyId": 98,
+    "name": "Track4.mp3",
+    "filename": "track4.mp3",
+    "filesize": 3062595
+  },
+  {
+    "legacyId": 99,
+    "name": "rk-cestice-hokejovy zapas pod sirym nebem.mp3",
+    "filename": "rk-cestice-hokejovy-zapas-pod-sirym-nebem.mp3",
+    "filesize": 3898240
+  },
+  {
+    "legacyId": 100,
+    "name": "cup.png",
+    "filename": "cup.png",
+    "filesize": 40630
+  },
+  {
+    "legacyId": 101,
+    "name": "HOKEJISTA-DOSPELY.png",
+    "filename": "hokejista-dospely.png",
+    "filesize": 203521
+  },
+  {
+    "legacyId": 102,
+    "name": "HC_Chocen.png",
+    "filename": "hc_chocen.png",
+    "filesize": 279169
+  },
+  {
+    "legacyId": 103,
+    "name": "hc_policka_stop.png",
+    "filename": "hc_policka_stop.png",
+    "filesize": 118996
+  },
+  {
+    "legacyId": 104,
+    "name": "sk_zamberk_preskrtnuty.png",
+    "filename": "sk_zamberk_preskrtnuty.png",
+    "filesize": 205771
+  },
+  {
+    "legacyId": 106,
+    "name": "znak_IHC_Policka.png",
+    "filename": "znak_ihc_policka.png",
+    "filesize": 857623
+  },
+  {
+    "legacyId": 107,
+    "name": "sponzori-2020-2021.gif",
+    "filename": "sponzori-2020-2021.gif",
+    "filesize": 52703
+  },
+  {
+    "legacyId": 108,
+    "name": "hc_ALOHA Lanškroun.jpg",
+    "filename": "hc_aloha-lanskroun.jpg",
+    "filesize": 36446
+  },
+  {
+    "legacyId": 109,
+    "name": "HC_ALOHA Lanškroun.png",
+    "filename": "hc_aloha-lanskroun.png",
+    "filesize": 196526
+  },
+  {
+    "legacyId": 110,
+    "name": "hc_policka.png",
+    "filename": "hc_policka.png",
+    "filesize": 571554
+  },
+  {
+    "legacyId": 111,
+    "name": "hc_skutec.png",
+    "filename": "hc_skutec.png",
+    "filesize": 643093
+  },
+  {
+    "legacyId": 112,
+    "name": "hc_litomysl.png",
+    "filename": "hc_litomysl.png",
+    "filesize": 756599
+  },
+  {
+    "legacyId": 113,
+    "name": "hc_moravska_trebova.png",
+    "filename": "hc_moravska_trebova.png",
+    "filesize": 369456
+  },
+  {
+    "legacyId": 114,
+    "name": "zákaz.png",
+    "filename": "zakaz.png",
+    "filesize": 61199
+  },
+  {
+    "legacyId": 115,
+    "name": "IMG_2475 světlé pozadí světlejší.png",
+    "filename": "img_2475-svetle-pozadi-svetlejsi.png",
+    "filesize": 14618794
+  },
+  {
+    "legacyId": 116,
+    "name": "IMG_2475 světlé pozadí světlejší.tif",
+    "filename": "img_2475-svetle-pozadi-svetlejsi.tif",
+    "filesize": 19277426
+  },
+  {
+    "legacyId": 117,
+    "name": "IMG_2475 světlé pozadí světlejší.jpg",
+    "filename": "img_2475-svetle-pozadi-svetlejsi.jpg",
+    "filesize": 1857319
+  },
+  {
+    "legacyId": 118,
+    "name": "IMG_2475 světlé pozadí světlejší web.jpg",
+    "filename": "img_2475-svetle-pozadi-svetlejsi-web.jpg",
+    "filesize": 13725813
+  },
+  {
+    "legacyId": 124,
+    "name": "sponzori-2023-2024 -2s.gif",
+    "filename": "sponzori-2023-2024--2s.gif",
+    "filesize": 70201
+  },
+  {
+    "legacyId": 126,
+    "name": "Pravidla 2024-2025.pdf",
+    "filename": "pravidla-2024-2025.pdf",
+    "filesize": 151581
+  },
+  {
+    "legacyId": 127,
+    "name": "Pravidla 2024-2025.docx",
+    "filename": "pravidla-2024-2025.docx",
+    "filesize": 16573
+  },
+  {
+    "legacyId": 128,
+    "name": "Pravidla LH-2024-2025.pdf",
+    "filename": "pravidla-lh-2024-2025.pdf",
+    "filesize": 7237184
+  },
+  {
+    "legacyId": 129,
+    "name": "hc_opocno_baroni.png",
+    "filename": "hc_opocno_baroni.png",
+    "filesize": 232366
+  },
+  {
+    "legacyId": 130,
+    "name": "hc_loko_ceska_trebova.png",
+    "filename": "hc_loko_ceska_trebova.png",
+    "filesize": 44626
+  },
+  {
+    "legacyId": 132,
+    "name": "sponzori-2025-2026--2s.gif",
+    "filename": "sponzori-2025-2026--2s.gif",
+    "filesize": 157003
+  }
+]

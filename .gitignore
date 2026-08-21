@@ -14,9 +14,19 @@ public/robots.txt
 public/sitemap*.xml
 
 
+# TypeScript inkrementální cache
+tsconfig.tsbuildinfo
+
 # Playwright
 node_modules/
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# výstup screenshot harnessu shot.mjs (shots/, shots-<jméno>/)
+/shots*/
+
+# ruční screenshoty z macOS
+/Snímek obrazovky*.png
+/Screenshot*.png

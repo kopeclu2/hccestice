@@ -1,0 +1,222 @@
+# fix-gallery-redirects (APPLY)
+
+OPRAVA      /fotoalbum/2025-2026/play-off-o-3.misto---hc-skutec-x-hc-cestice---8.3.2026
+            /fotogalerie/play-off-o-3.misto---hc-skutec-x-hc-cestice---8.3.2026
+         →  /fotogalerie/play-off-o-3misto---hc-skutec-x-hc-cestice---832026
+OPRAVA      /fotoalbum/2024---2025/hc-cestice-x-zh-pardubice---19.ledna-2025
+            /fotogalerie/hc-cestice-x-zh-pardubice---19.ledna-2025
+         →  /fotogalerie/hc-cestice-x-zh-pardubice---19ledna-2025
+OPRAVA      /fotoalbum/2024---2025/hc-cestice-x-loko-ceska-trebova---22.prosince-2024
+            /fotogalerie/hc-cestice-x-loko-ceska-trebova---22.prosince-2024
+         →  /fotogalerie/hc-cestice-x-loko-ceska-trebova---22prosince-2024
+OPRAVA      /fotoalbum/2023---2024/hc-cestice-x-rebels-policka---4.2.2024
+            /fotogalerie/hc-cestice-x-rebels-policka---4.2.2024
+         →  /fotogalerie/hc-cestice-x-rebels-policka---422024
+OPRAVA      /fotoalbum/2021---2022/pratelsky-zapas-pripravly-dne-1.3.2022-v-rychnove-n-kn
+            /fotogalerie/pratelsky-zapas-pripravly-dne-1.3.2022-v-rychnove-n-kn
+         →  /fotogalerie/pratelsky-zapas-pripravly-dne-132022-v-rychnove-n-kn
+OPRAVA      /fotoalbum/2021---2022/turnaj-deti-v-kralikach-22.1.2022
+            /fotogalerie/turnaj-deti-v-kralikach-22.1.2022
+         →  /fotogalerie/turnaj-deti-v-kralikach-2212022
+OPRAVA      /fotoalbum/2020---2021/ostatni/vladimir-sajdl-st.---70-let
+            /fotogalerie/vladimir-sajdl-st.---70-let
+         →  /fotogalerie/vladimir-sajdl-st---70-let
+OPRAVA      /fotoalbum/2020---2021/muzi/street-hockey-29.8.2020
+            /fotogalerie/street-hockey-29.8.2020
+         →  /fotogalerie/street-hockey-2982020
+OPRAVA      /fotoalbum/2019---2020/mladez/13.6.2020---rozlucka
+            /fotogalerie/13.6.2020---rozlucka
+         →  /fotogalerie/1362020---rozlucka
+OPRAVA      /fotoalbum/2019---2020/muzi/tj-tatran-hrusky-x-hc-cestice---23.11.2019
+            /fotogalerie/tj-tatran-hrusky-x-hc-cestice---23.11.2019
+         →  /fotogalerie/tj-tatran-hrusky-x-hc-cestice---23112019
+OPRAVA      /fotoalbum/2018---2019/muzi/4.kolo-nadstavby-ollh---tj-voderady-x-hc-cestice---3.3.2019
+            /fotogalerie/4.kolo-nadstavby-ollh---tj-voderady-x-hc-cestice---3.3.2019
+         →  /fotogalerie/4kolo-nadstavby-ollh---tj-voderady-x-hc-cestice---332019
+OPRAVA      /fotoalbum/2018---2019/muzi/3.kolo-nadstavby-ollh---hc-cestice-x-sk-zamberk---24.2.2019
+            /fotogalerie/3.kolo-nadstavby-ollh---hc-cestice-x-sk-zamberk---24.2.2019
+         →  /fotogalerie/3kolo-nadstavby-ollh---hc-cestice-x-sk-zamberk---2422019
+OPRAVA      /fotoalbum/2018---2019/zaci/26.1.2019---hc-cestice-x-hc-chocen---pr.-utkani-ml.-zaku
+            /fotogalerie/26.1.2019---hc-cestice-x-hc-chocen---pr.-utkani-ml.-zaku
+         →  /fotogalerie/2612019---hc-cestice-x-hc-chocen---pr-utkani-ml-zaku
+OPRAVA      /fotoalbum/2018---2019/muzi/11.-kolo---sk-zamberk-x-hc-cestice
+            /fotogalerie/11.-kolo---sk-zamberk-x-hc-cestice
+         →  /fotogalerie/11-kolo---sk-zamberk-x-hc-cestice
+OPRAVA      /fotoalbum/2017-2018/muzi/4.3.2018-cestice-x-zamberk
+            /fotogalerie/4.3.2018-cestice-x-zamberk
+         →  /fotogalerie/432018-cestice-x-zamberk
+OPRAVA      /fotoalbum/2017-2018/pripravka/1.3.2018-cestice
+            /fotogalerie/1.3.2018-cestice
+         →  /fotogalerie/132018-cestice
+OPRAVA      /fotoalbum/zimni-stadion/2016---2017/brigada-26.3.2017
+            /fotogalerie/brigada-26.3.2017
+         →  /fotogalerie/brigada-2632017
+OPRAVA      /fotoalbum/2016-2017/stare-gardy---cestice-x-opocno---10.2.2017
+            /fotogalerie/stare-gardy---cestice-x-opocno---10.2.2017
+         →  /fotogalerie/stare-gardy---cestice-x-opocno---1022017
+OPRAVA      /fotoalbum/2016-2017/dorost/turnaje-dorostu---cestice-28.1.2017
+            /fotogalerie/turnaje-dorostu---cestice-28.1.2017
+         →  /fotogalerie/turnaje-dorostu---cestice-2812017
+OPRAVA      /fotoalbum/2016-2017/zaci/turnaje-zaku---20.1.207---winter-classic
+            /fotogalerie/turnaje-zaku---20.1.207---winter-classic
+         →  /fotogalerie/turnaje-zaku---201207---winter-classic
+OPRAVA      /fotoalbum/2016-2017/kristov-cup-21.1.2017
+            /fotogalerie/kristov-cup-21.1.2017
+         →  /fotogalerie/kristov-cup-2112017
+OPRAVA      /fotoalbum/2016-2017/muzi/15.1.2017-cestice-x-semechnice---winter-classic
+            /fotogalerie/15.1.2017-cestice-x-semechnice---winter-classic
+         →  /fotogalerie/1512017-cestice-x-semechnice---winter-classic
+OPRAVA      /fotoalbum/2016-2017/muzi/11.1.2017-cestice-x-skutec---winter-classic
+            /fotogalerie/11.1.2017-cestice-x-skutec---winter-classic
+         →  /fotogalerie/1112017-cestice-x-skutec---winter-classic
+OPRAVA      /fotoalbum/2016-2017/pripravka/10.1.2017---turnaje-starsich-pripravek---cestice
+            /fotogalerie/10.1.2017---turnaje-starsich-pripravek---cestice
+         →  /fotogalerie/1012017---turnaje-starsich-pripravek---cestice
+OPRAVA      /fotoalbum/2016-2017/muzi/8.1.2017-cestice-x-lanskroun---winter-classic
+            /fotogalerie/8.1.2017-cestice-x-lanskroun---winter-classic
+         →  /fotogalerie/812017-cestice-x-lanskroun---winter-classic
+OPRAVA      /fotoalbum/2015-2016/zaci/silvestrovsky-turnaj-rk-31.12.2015
+            /fotogalerie/silvestrovsky-turnaj-rk-31.12.2015
+         →  /fotogalerie/silvestrovsky-turnaj-rk-31122015
+OPRAVA      /fotoalbum/2012-2012/muzi---17.kolo-jiskra-kraliky-x-hc-cestice---9.2.2013
+            /fotogalerie/muzi---17.kolo-jiskra-kraliky-x-hc-cestice---9.2.2013
+         →  /fotogalerie/muzi---17kolo-jiskra-kraliky-x-hc-cestice---922013
+OPRAVA      /fotoalbum/2012-2012/25.2.2013---posledni-turnaje-s-vyhlasenim---pripravka
+            /fotogalerie/25.2.2013---posledni-turnaje-s-vyhlasenim---pripravka
+         →  /fotogalerie/2522013---posledni-turnaje-s-vyhlasenim---pripravka
+OPRAVA      /fotoalbum/2015-2016/zaci/cestice-x-zamberk-22.1.2016---zs-cestice
+            /fotogalerie/cestice-x-zamberk-22.1.2016---zs-cestice
+         →  /fotogalerie/cestice-x-zamberk-2212016---zs-cestice
+OPRAVA      /fotoalbum/2014-2015/dorost/turnaj-v-novem-bydzove---14.3.2015
+            /fotogalerie/turnaj-v-novem-bydzove---14.3.2015
+         →  /fotogalerie/turnaj-v-novem-bydzove---1432015
+OPRAVA      /fotoalbum/2014-2015/muzi/hc-cestice-x-sk-trebechovice-p.o.-b---15.2.2015---rk
+            /fotogalerie/hc-cestice-x-sk-trebechovice-p.o.-b---15.2.2015---rk
+         →  /fotogalerie/hc-cestice-x-sk-trebechovice-po-b---1522015---rk
+OPRAVA      /fotoalbum/2014-2015/pripravka/zaverecny-turnaj-st.-pripravek-s-vyhlasenim-26.2.2015
+            /fotogalerie/zaverecny-turnaj-st.-pripravek-s-vyhlasenim-26.2.2015
+         →  /fotogalerie/zaverecny-turnaj-st-pripravek-s-vyhlasenim-2622015
+OPRAVA      /fotoalbum/2014-2015/zaci/okresni-kolo-zaku---hc-cestice-x-hc-nekor---8.1.2015
+            /fotogalerie/okresni-kolo-zaku---hc-cestice-x-hc-nekor---8.1.2015
+         →  /fotogalerie/okresni-kolo-zaku---hc-cestice-x-hc-nekor---812015
+OPRAVA      /fotoalbum/2014-2015/pripravka/vanocni-turnaj-pripravek-26.12.2014---rk
+            /fotogalerie/vanocni-turnaj-pripravek-26.12.2014---rk
+         →  /fotogalerie/vanocni-turnaj-pripravek-26122014---rk
+OPRAVA      /fotoalbum/2014-2015/muzi/sucha-priprava-28.9.2014
+            /fotogalerie/sucha-priprava-28.9.2014
+         →  /fotogalerie/sucha-priprava-2892014
+OPRAVA      /fotoalbum/2013-2014/zaci/turnaj-zaku---rychnov-n.kn.---9.3.2014
+            /fotogalerie/turnaj-zaku---rychnov-n.kn.---9.3.2014
+         →  /fotogalerie/turnaj-zaku---rychnov-nkn---932014
+OPRAVA      /fotoalbum/2013-2014/zaci/cestice-x-zamberk---30.1.2014---zs-cestice
+            /fotogalerie/cestice-x-zamberk---30.1.2014---zs-cestice
+         →  /fotogalerie/cestice-x-zamberk---3012014---zs-cestice
+OPRAVA      /fotoalbum/2013-2014/zaci/zaverecny-turnaj-v-rk---9.3.2014
+            /fotogalerie/zaverecny-turnaj-v-rk---9.3.2014
+         →  /fotogalerie/zaverecny-turnaj-v-rk---932014
+OPRAVA      /fotoalbum/2013-2014/pripravka/zaverecny-turnaj-v-rk---5.3.2014
+            /fotogalerie/zaverecny-turnaj-v-rk---5.3.2014
+         →  /fotogalerie/zaverecny-turnaj-v-rk---532014
+OPRAVA      /fotoalbum/2013-2014/pripravka/pripravka-na-turnaji-v-zamberku-2.3.2014
+            /fotogalerie/pripravka-na-turnaji-v-zamberku-2.3.2014
+         →  /fotogalerie/pripravka-na-turnaji-v-zamberku-232014
+OPRAVA      /fotoalbum/2013-2014/muzi/hc-cestice-x-hc-jaromer-b---14.2.2014
+            /fotogalerie/hc-cestice-x-hc-jaromer-b---14.2.2014
+         →  /fotogalerie/hc-cestice-x-hc-jaromer-b---1422014
+OPRAVA      /fotoalbum/2013-2014/pripravka/o-cenu-ss---nove-meto-n.m.-16.2.2014
+            /fotogalerie/o-cenu-ss---nove-meto-n.m.-16.2.2014
+         →  /fotogalerie/o-cenu-ss---nove-meto-nm-1622014
+OPRAVA      /fotoalbum/2013-2014/muzi/hc-cestice-x-hc-jaromer-b---26.1.2014---rk
+            /fotogalerie/hc-cestice-x-hc-jaromer-b---26.1.2014---rk
+         →  /fotogalerie/hc-cestice-x-hc-jaromer-b---2612014---rk
+OPRAVA      /fotoalbum/2013-2014/dorost/2.kolo-dorostu-22.1.2014---opocno
+            /fotogalerie/2.kolo-dorostu-22.1.2014---opocno
+         →  /fotogalerie/2kolo-dorostu-2212014---opocno
+OPRAVA      /fotoalbum/2013-2014/zaci/turnaj-zaku---novy-bydzov---28.12.2013
+            /fotogalerie/turnaj-zaku---novy-bydzov---28.12.2013
+         →  /fotogalerie/turnaj-zaku---novy-bydzov---28122013
+OPRAVA      /fotoalbum/2013-2014/pripravka/silvestrovsky-turnaj-pripravek-31.12.2013
+            /fotogalerie/silvestrovsky-turnaj-pripravek-31.12.2013
+         →  /fotogalerie/silvestrovsky-turnaj-pripravek-31122013
+OPRAVA      /fotoalbum/2015-2016/pripravka/turnaj-zamberk-27.12.2015
+            /fotogalerie/turnaj-zamberk-27.12.2015
+         →  /fotogalerie/turnaj-zamberk-27122015
+OPRAVA      /fotoalbum/2015-2016/pripravka/turnaj-opocno-31.12.2015
+            /fotogalerie/turnaj-opocno-31.12.2015
+         →  /fotogalerie/turnaj-opocno-31122015
+OPRAVA      /fotoalbum/2015-2016/pripravka/turnaj-cestice-24.1.2016
+            /fotogalerie/turnaj-cestice-24.1.2016
+         →  /fotogalerie/turnaj-cestice-2412016
+OPRAVA      /fotoalbum/2011---2012/rozlucka---muzi-a---17.3.2012
+            /fotogalerie/rozlucka---muzi-a---17.3.2012
+         →  /fotogalerie/rozlucka---muzi-a---1732012
+OPRAVA      /fotoalbum/2011---2012/muzi-a---tj-sokol-retova-x-hc-cestice---10.3.2012
+            /fotogalerie/muzi-a---tj-sokol-retova-x-hc-cestice---10.3.2012
+         →  /fotogalerie/muzi-a---tj-sokol-retova-x-hc-cestice---1032012
+OPRAVA      /fotoalbum/2011---2012/o-pohar-starosty---zaci---12.2.2012
+            /fotogalerie/o-pohar-starosty---zaci---12.2.2012
+         →  /fotogalerie/o-pohar-starosty---zaci---1222012
+OPRAVA      /fotoalbum/2011---2012/kristov-cup---10.2.2012
+            /fotogalerie/kristov-cup---10.2.2012
+         →  /fotogalerie/kristov-cup---1022012
+OPRAVA      /fotoalbum/2011---2012/o-pohar-starosty---pripravka---11.2.2012
+            /fotogalerie/o-pohar-starosty---pripravka---11.2.2012
+         →  /fotogalerie/o-pohar-starosty---pripravka---1122012
+OPRAVA      /fotoalbum/2011---2012/vykradene-vozidlo---7.2.2012
+            /fotogalerie/vykradene-vozidlo---7.2.2012
+         →  /fotogalerie/vykradene-vozidlo---722012
+OPRAVA      /fotoalbum/2011---2012/zaci---turnaj-zaku-5.2.2012
+            /fotogalerie/zaci---turnaj-zaku-5.2.2012
+         →  /fotogalerie/zaci---turnaj-zaku-522012
+OPRAVA      /fotoalbum/2011---2012/muzi-a---hc-cestice-x-hc-rychnov-n-kn---5.2.2012
+            /fotogalerie/muzi-a---hc-cestice-x-hc-rychnov-n-kn---5.2.2012
+         →  /fotogalerie/muzi-a---hc-cestice-x-hc-rychnov-n-kn---522012
+OPRAVA      /fotoalbum/2011---2012/dorost---4.-kolo-op-dorostu-v-cesticich-5.2.2012
+            /fotogalerie/dorost---4.-kolo-op-dorostu-v-cesticich-5.2.2012
+         →  /fotogalerie/dorost---4-kolo-op-dorostu-v-cesticich-522012
+OPRAVA      /fotoalbum/2011---2012/muzi-a---hc-cestice-x-hc-dlouhonovice---15.1.2012
+            /fotogalerie/muzi-a---hc-cestice-x-hc-dlouhonovice---15.1.2012
+         →  /fotogalerie/muzi-a---hc-cestice-x-hc-dlouhonovice---1512012
+OPRAVA      /fotoalbum/2011---2012/muzi-a---hc-dlouhonovice-x-hc-cestice---27.11.2011
+            /fotogalerie/muzi-a---hc-dlouhonovice-x-hc-cestice---27.11.2011
+         →  /fotogalerie/muzi-a---hc-dlouhonovice-x-hc-cestice---27112011
+OPRAVA      /fotoalbum/2011---2012/turnaj-pripravek-31.12.2011---opocno
+            /fotogalerie/turnaj-pripravek-31.12.2011---opocno
+         →  /fotogalerie/turnaj-pripravek-31122011---opocno
+OPRAVA      /fotoalbum/2011---2012/muzi-a---tj-voderady-x-hc-cestice---27.11.2011
+            /fotogalerie/muzi-a---tj-voderady-x-hc-cestice---27.11.2011
+         →  /fotogalerie/muzi-a---tj-voderady-x-hc-cestice---27112011
+OPRAVA      /fotoalbum/2010---2011/hokejova-rozlucka---muzi-a---19.3.2011
+            /fotogalerie/hokejova-rozlucka---muzi-a---19.3.2011
+         →  /fotogalerie/hokejova-rozlucka---muzi-a---1932011
+OPRAVA      /fotoalbum/2010---2011/oceneni-k-jubileu---vladimir-sajdl---6.2.2011
+            /fotogalerie/oceneni-k-jubileu---vladimir-sajdl---6.2.2011
+         →  /fotogalerie/oceneni-k-jubileu---vladimir-sajdl---622011
+OPRAVA      /fotoalbum/2010---2011/muzi-a---hc-cestice-x-hc-policka---2.2.2011
+            /fotogalerie/muzi-a---hc-cestice-x-hc-policka---2.2.2011
+         →  /fotogalerie/muzi-a---hc-cestice-x-hc-policka---222011
+OPRAVA      /fotoalbum/2010---2011/starsi-zaci---pratelske-utkani-se-sokol-semechnice---4.2.2011
+            /fotogalerie/starsi-zaci---pratelske-utkani-se-sokol-semechnice---4.2.2011
+         →  /fotogalerie/starsi-zaci---pratelske-utkani-se-sokol-semechnice---422011
+OPRAVA      /fotoalbum/2010---2011/starsi-zaci---5.kolo-meziokresni-souteze---kraliky-30.1.2011
+            /fotogalerie/starsi-zaci---5.kolo-meziokresni-souteze---kraliky-30.1.2011
+         →  /fotogalerie/starsi-zaci---5kolo-meziokresni-souteze---kraliky-3012011
+OPRAVA      /fotoalbum/2010---2011/13.1.2011-hc-sokol-cestice-x-sokol-semechnice
+            /fotogalerie/13.1.2011-hc-sokol-cestice-x-sokol-semechnice
+         →  /fotogalerie/1312011-hc-sokol-cestice-x-sokol-semechnice
+OPRAVA      /fotoalbum/2010---2011/mladsi-zaci---o-pohar-starosty-2.1.2011
+            /fotogalerie/mladsi-zaci---o-pohar-starosty-2.1.2011
+         →  /fotogalerie/mladsi-zaci---o-pohar-starosty-212011
+OPRAVA      /fotoalbum/2010---2011/tj-orli-lanskroun-x-hc-sokol-cestice-28.10.2010
+            /fotogalerie/tj-orli-lanskroun-x-hc-sokol-cestice-28.10.2010
+         →  /fotogalerie/tj-orli-lanskroun-x-hc-sokol-cestice-28102010
+
+galerií:                101
+přesměrování celkem:    370
+z toho na fotogalerie:  101
+už v pořádku:           31
+opraveno:               70
+nedohledatelných:       0
+
+Cache přesměrování se revaliduje hookem až při další změně v adminu;
+po tomhle skriptu je potřeba rebuild nebo revalidace tagu `redirects`.

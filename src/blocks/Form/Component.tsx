@@ -10,6 +10,8 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { RECAPTCHA_ACTIONS } from '@/utilities/recaptcha/config'
+import { useRecaptcha } from '@/utilities/recaptcha/useRecaptcha'
 
 export type FormBlockType = {
   blockName?: string
@@ -45,6 +47,7 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
+  const { execute: executeRecaptcha } = useRecaptcha()
 
   const onSubmit = useCallback(
     (data: FormFieldBlock[]) => {
@@ -63,6 +66,11 @@ export const FormBlock: React.FC<
         }, 1000)
 
         try {
+          // Ochrana proti spamu — token ověřuje plugin `payload-recaptcha-v3`
+          // v `beforeOperation` na kolekci `form-submissions`. Bez site key
+          // (lokální dev) je token `null` a hlavička se neposílá.
+          const recaptchaToken = await executeRecaptcha(RECAPTCHA_ACTIONS.formSubmission)
+
           const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
             body: JSON.stringify({
               form: formID,
@@ -70,6 +78,7 @@ export const FormBlock: React.FC<
             }),
             headers: {
               'Content-Type': 'application/json',
+              ...(recaptchaToken ? { 'x-recaptcha-v3': recaptchaToken } : {}),
             },
             method: 'POST',
           })
@@ -110,7 +119,7 @@ export const FormBlock: React.FC<
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType],
+    [router, formID, redirect, confirmationType, executeRecaptcha],
   )
 
   return (
@@ -118,15 +127,23 @@ export const FormBlock: React.FC<
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}
-      <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
+      <div className="p-4 lg:p-6 border border-border rounded-field">
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
           )}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
+          {/* Mobilní tap targety: vendorované shadcn primitivy mají `h-9`
+              (36px) a submit `h-10` (40px). Výška se zvedá na 44px jen pod
+              `md`, od tabletu výš zůstává původní kompaktní vzhled. Řeší se
+              tady jednou přes `data-slot`, ne v osmi souborech polí. */}
           {!hasSubmitted && (
-            <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="[&_[data-slot=input]]:h-11 [&_[data-slot=select-trigger]]:h-11 md:[&_[data-slot=input]]:h-9 md:[&_[data-slot=select-trigger]]:h-9"
+              id={formID}
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="mb-4 last:mb-0">
                 {formFromProps &&
                   formFromProps.fields &&
@@ -151,7 +168,12 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
+              <Button
+                className="h-11 w-full md:h-10 md:w-auto"
+                form={formID}
+                type="submit"
+                variant="default"
+              >
                 {submitButtonLabel}
               </Button>
             </form>
