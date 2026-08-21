@@ -507,3 +507,46 @@ nemá `node_modules` ani `src`. Tunel to řeší bez druhého image.
 `NEXT_PUBLIC_*` jdou do klientského bundlu, takže změna
 `NEXT_PUBLIC_SERVER_URL` (např. přechod z Coolify `sslip.io` domény na
 klubovou) **vyžaduje nový build**, ne jen přepnutí env v Coolify.
+
+## Přenos obsahu z lokálu do produkce
+
+Databáze i média se přenášejí ručně; žádný synchronizační mechanismus tu
+není. Ověřený postup (1:1 přenos z 21. 8. 2026):
+
+```
+# 1) databáze
+pg_dump "$LOCAL" --clean --if-exists --no-owner --no-privileges -Fc -f dump
+PG_CONTAINER=<uuid db> ./scripts/db-tunnel.sh
+pg_restore --no-owner --no-privileges --dbname "$PROD_TUNEL" dump
+
+# 2) média (COPYFILE_DISABLE kvůli pasti níž)
+COPYFILE_DISABLE=1 tar -C public/media -cf - . \
+  | ssh <server> "tar -C /var/lib/docker/volumes/<app-uuid>-media/_data -xf -"
+ssh <server> "chown -R 1001:1001 /var/lib/docker/volumes/<app-uuid>-media/_data"
+
+# 3) přestavba — bez ní zůstanou prerenderované stránky prázdné
+gh workflow run deploy.yml --ref main
+```
+
+Tři věci, na kterých se to láme:
+
+- **`payload_migrations` se musí dorovnat.** Lokální databáze jede na `push`
+  a má v té tabulce jediný řádek `dev`. Po restore proto produkce tvrdí, že
+  neproběhla žádná migrace, a příští `payload migrate` by je spustil na
+  existující schéma. Řádky se dopisují ručně (`batch` 1) — viz sekce Migrace.
+- **macOS `tar` přibalí AppleDouble.** Bez `COPYFILE_DISABLE=1` vznikne ke
+  každému souboru `._název` s rozšířenými atributy, takže se na Linuxu
+  rozbalí **dvojnásobek** souborů (+7 MB). Úklid:
+  `find … -name '._*' -delete`.
+- **Vlastník volume musí být `1001:1001`** (uživatel `nextjs` z Dockerfile),
+  jinak Payload do `public/media` nezapíše nové uploady.
+
+Kontrola, že přenos je 1:1 — počet souborů i součet bajtů musí sedět:
+
+```
+find public/media -type f | wc -l
+find public/media -type f -exec stat -f %z {} + | awk '{s+=$1} END {print s}'
+```
+
+Uživatelé adminu přišli s dumpem, takže **přihlašovací údaje do produkce jsou
+tytéž jako lokálně**.
