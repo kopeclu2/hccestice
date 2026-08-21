@@ -91,6 +91,9 @@ jobs:
           docker push "$IMAGE:${{ github.sha }}"
 
       - name: Spustit deploy v Coolify
+        # Jde to přes SSH, ne přes veřejné API: Coolify na serveru běží na
+        # portu 8000 bez TLS, takže by token cestoval internetem
+        # v plaintextu. Wrapper `coolify-api` si ho bere z /root na serveru.
         run: |
-          curl --fail-with-body -X GET "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" \
+            "coolify-api GET 'deploy?uuid=${{ vars.COOLIFY_APP_UUID }}&force=false'"
