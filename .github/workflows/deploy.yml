@@ -44,10 +44,11 @@ jobs:
 
       - name: Otevřít tunel na Postgres
         run: |
-          # Kontejner nemá publikovaný port a jeho IP se po redeployi
-          # databáze mění, takže se zjišťuje až teď.
-          PG_IP=$(ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" \
-            "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${{ secrets.POSTGRES_CONTAINER }}")
+          # Klíč je na serveru svázaný vynuceným příkazem
+          # (/usr/local/bin/gh-deploy-cmd), takže tady nejde spustit nic
+          # jiného než `pgip` a `deploy`. IP se zjišťuje až teď, protože
+          # se po redeployi databáze mění.
+          PG_IP=$(ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" pgip)
           test -n "$PG_IP" || { echo "Postgres kontejner nenalezen."; exit 1; }
           echo "Postgres na $PG_IP"
 
@@ -95,5 +96,4 @@ jobs:
         # portu 8000 bez TLS, takže by token cestoval internetem
         # v plaintextu. Wrapper `coolify-api` si ho bere z /root na serveru.
         run: |
-          ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" \
-            "coolify-api GET 'deploy?uuid=${{ vars.COOLIFY_APP_UUID }}&force=false'"
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" deploy
