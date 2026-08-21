@@ -1,0 +1,96 @@
+# Build v Actions, deploy v Coolify.
+#
+# Server má 3,7 GB RAM a nulový swap, takže `next build` s prerenderem
+# ~380 stránek by na něm padal na OOM (exit 137). Staví se proto na
+# runneru a na Hetzner jde hotový image z GHCR.
+#
+# Prerender ale potřebuje živý Postgres. Databáze schválně **není**
+# vystavená do internetu, takže se na ni runner dostane SSH tunelem —
+# port 5432 na localhostu runneru vede na kontejner na koncové síti
+# `coolify`.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Tunel obsazuje pevný port 5432, takže dva běhy zároveň by si lezly
+# do cesty.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Nastavit SSH klíč
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.HETZNER_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Otevřít tunel na Postgres
+        run: |
+          # Kontejner nemá publikovaný port a jeho IP se po redeployi
+          # databáze mění, takže se zjišťuje až teď.
+          PG_IP=$(ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" \
+            "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${{ secrets.POSTGRES_CONTAINER }}")
+          test -n "$PG_IP" || { echo "Postgres kontejner nenalezen."; exit 1; }
+          echo "Postgres na $PG_IP"
+
+          ssh -i ~/.ssh/id_ed25519 -f -N -o ExitOnForwardFailure=yes \
+            -L 5432:"$PG_IP":5432 \
+            "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}"
+
+          # Bez čekání na první spojení se build rozjede dřív, než tunel
+          # skutečně poslouchá.
+          for i in $(seq 1 15); do
+            nc -z 127.0.0.1 5432 && break
+            sleep 1
+          done
+          nc -z 127.0.0.1 5432 || { echo "Tunel nenaběhl."; exit 1; }
+
+      - name: Přihlásit se do GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Postavit image
+        # `--network host` je tu kvůli tunelu: build kontejner tak vidí
+        # 127.0.0.1:5432 runneru. Proto ne buildx s docker-container
+        # driverem, ten host network nepodporuje.
+        run: |
+          docker build \
+            --network host \
+            --build-arg DATABASE_URL="${{ secrets.BUILD_DATABASE_URL }}" \
+            --build-arg PAYLOAD_SECRET="${{ secrets.PAYLOAD_SECRET }}" \
+            --build-arg NEXT_PUBLIC_SERVER_URL="${{ vars.NEXT_PUBLIC_SERVER_URL }}" \
+            --build-arg NEXT_PUBLIC_RECAPTCHA_SITE_KEY="${{ vars.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}" \
+            -t "$IMAGE:latest" \
+            -t "$IMAGE:${{ github.sha }}" \
+            .
+
+      - name: Odeslat image
+        run: |
+          docker push "$IMAGE:latest"
+          docker push "$IMAGE:${{ github.sha }}"
+
+      - name: Spustit deploy v Coolify
+        run: |
+          curl --fail-with-body -X GET "${{ secrets.COOLIFY_WEBHOOK_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"

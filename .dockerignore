@@ -1,0 +1,39 @@
+# Build kontext se posílá démonu celý, takže co tu není vyjmenované,
+# zdržuje každý build a invaliduje cache.
+
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+
+# Handoffy z design toolu — do runtime image nepatří (desítky MB).
+design_*/
+
+# Výstup screenshot harnessu shot.mjs
+shots*/
+*.png
+!public/**/*.png
+
+# Testy a jejich artefakty
+tests
+test-results
+playwright-report
+blob-report
+playwright/.cache
+
+# Média spravuje persistent volume, ne image
+public/media
+
+# next-sitemap generuje při buildu
+public/robots.txt
+public/sitemap*.xml
+
+tsconfig.tsbuildinfo
+.DS_Store
+.vscode
+.agents
+README.md
+AGENTS.md
+CLAUDE.md
