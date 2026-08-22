@@ -164,8 +164,16 @@ if (!container) {
       // varianta `internal` by vyžadovala relaci na kolekci pages.
       type: 'external',
       url: '/kontakty',
-      // Prázdná kotva = sekce na homepage neexistuje, odkaz vede na podstránku.
-      anchor: '',
+      /**
+       * `anchor` se **vynechává**, ne neposílá prázdné.
+       *
+       * Je to `select` s pevným seznamem kotev existujících na homepage
+       * (`HOME_ANCHORS` v `src/plugins/navigationOverrides.ts`), takže
+       * prázdný string není platná volba a Payload skončí na
+       * `ValidationError: Následující pole je neplatné: Sekce na homepage`.
+       * „Kontakty" na homepage sekci nemají — odkaz vede přímo na
+       * podstránku, což je právě stav bez kotvy.
+       */
       target: '_self',
       active: true,
       order: 0,
