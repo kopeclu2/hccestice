@@ -4,7 +4,6 @@ import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-b
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
@@ -24,13 +23,27 @@ export type FormBlockType = {
 export const FormBlock: React.FC<
   {
     id?: string
+    /**
+     * Úvodní text a potvrzovací zpráva přicházejí **hotové ze serveru**
+     * (viz `./Server.tsx`), ne jako lexical data k vykreslení.
+     *
+     * Dřív si je tahle komponenta renderovala sama přes `RichText`. Protože
+     * je klientská, stáhla tím `@payloadcms/richtext-lexical/react` (plus
+     * `MediaBlock` a `CodeBlock`) do klientského bundlu **každé CMS
+     * stránky** — ~32 kB gzip za text, který se nikdy nemění.
+     * Serverem vyrenderovaný strom jde do klientské komponenty předat jako
+     * `ReactNode` a Lexical zůstane na serveru.
+     */
+    intro?: React.ReactNode
+    confirmation?: React.ReactNode
   } & FormBlockType
 > = (props) => {
   const {
+    confirmation,
     enableIntro,
     form: formFromProps,
-    form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
-    introContent,
+    form: { id: formID, confirmationType, redirect, submitButtonLabel } = {},
+    intro,
   } = props
 
   const formMethods = useForm({
@@ -124,14 +137,10 @@ export const FormBlock: React.FC<
 
   return (
     <div className="container lg:max-w-[48rem]">
-      {enableIntro && introContent && !hasSubmitted && (
-        <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
-      )}
+      {enableIntro && intro && !hasSubmitted && intro}
       <div className="p-4 lg:p-6 border border-border rounded-field">
         <FormProvider {...formMethods}>
-          {!isLoading && hasSubmitted && confirmationType === 'message' && (
-            <RichText data={confirmationMessage} />
-          )}
+          {!isLoading && hasSubmitted && confirmationType === 'message' && confirmation}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
           {/* Mobilní tap targety: vendorované shadcn primitivy mají `h-9`

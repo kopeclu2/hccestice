@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import type { Page } from '@/payload-types'
 
 import { isLandingBlock, renderLandingBlock } from '@/landing/render'
-import { FormBlock } from '@/blocks/Form/Component'
+import { FormBlockServer } from '@/blocks/Form/Server'
 import { RawHtmlBlock } from '@/blocks/RawHtml/Component'
 
 /**
@@ -15,7 +15,7 @@ import { RawHtmlBlock } from '@/blocks/RawHtml/Component'
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const blockComponents: Record<string, React.FC<any>> = {
-  formBlock: FormBlock,
+  formBlock: FormBlockServer,
   rawHtml: RawHtmlBlock,
 }
 

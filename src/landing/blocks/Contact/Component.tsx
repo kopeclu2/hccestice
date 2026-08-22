@@ -15,7 +15,7 @@ import { arrayOr } from '../../data/format'
 import { fetchSite } from '../../data/site'
 import type { ContactContent, SiteLinks } from '../../types'
 
-import { ContactForm } from './ContactForm'
+import { ContactFormLazy } from './ContactFormLazy'
 
 /** Block data → view-model (fallbacky na content.ts). */
 function mapContact(block: LandingContactBlock): ContactContent {
@@ -100,7 +100,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
             {site.instagram && <SocialPill href={site.instagram} label="Instagram" />}
           </div>
 
-          <ContactForm topics={content.topics} />
+          <ContactFormLazy topics={content.topics} />
         </div>
       </Reveal>
     </SectionShell>
