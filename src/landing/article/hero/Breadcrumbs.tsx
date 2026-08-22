@@ -3,6 +3,8 @@ import React from 'react'
 
 import { cn } from '@/utilities/ui'
 
+import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
+
 /** Barevné ladění drobečků podle podkladu hero varianty. */
 export type BreadcrumbTone = 'photo' | 'panel' | 'light'
 
@@ -39,6 +41,8 @@ export function Breadcrumbs({
         className,
       )}
     >
+      {/* Strukturovaná data k týmž drobečkům — „Domů" doplňuje emitor sám. */}
+      <BreadcrumbsJsonLd trail={[{ href: '/aktuality', label: 'Aktuality' }, { label: badge }]} />
       <Link className={cn('transition-colors', linkClass[tone])} href="/">
         Domů
       </Link>

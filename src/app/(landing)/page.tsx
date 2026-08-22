@@ -13,6 +13,8 @@ import { RenderLandingBlocks } from '@/landing/render'
 import { generateMeta } from '@/utilities/generateMeta'
 import { getServerSideURL } from '@/utilities/getURL'
 
+import type { SiteLinks } from '@/landing/types'
+
 /**
  * ISR pojistka — obsah se reviduje i bez zásahu v adminu. Změny home
  * stránky revalidují okamžitě (hook `revalidatePage` kolekce Pages),
@@ -56,7 +58,7 @@ export default async function LandingPage() {
 
       <LandingFooter content={mapFooter(siteConfig)} site={site} />
 
-      <StructuredData email={site.email} />
+      <StructuredData site={site} />
     </PageCanvas>
   )
 }
@@ -79,10 +81,22 @@ const queryHomePage = cache(async () => {
   return result.docs?.[0] ?? null
 })
 
-/** JSON-LD (schema.org SportsTeam) pro vyhledávače. */
-function StructuredData({ email }: { email: string }) {
+/**
+ * JSON-LD (schema.org SportsTeam + WebSite) pro vyhledávače.
+ *
+ * `sameAs` jde ze `siteConfig` (ne natvrdo), aby změna profilu na sítích
+ * byla otázkou administrace. `address` nese plnou poštovní adresu spolku —
+ * dřív tu byla jen obec a PSČ, což byla navíc nekonzistentní kombinace
+ * (`Čestice` + `517 41`, ale to PSČ patří Kostelci nad Orlicí).
+ *
+ * `WebSite` je bez `potentialAction`/`SearchAction` **záměrně**: web
+ * nemá veřejné vyhledávací pole (kolekce `search` je interní index pro
+ * `/llms.txt`), takže by šlo o nepravdivá strukturovaná data.
+ */
+function StructuredData({ site }: { site: SiteLinks }) {
   const baseUrl = getServerSideURL()
-  const jsonLd = {
+
+  const team = {
     '@context': 'https://schema.org',
     '@type': 'SportsTeam',
     name: 'HC Čestice',
@@ -90,16 +104,26 @@ function StructuredData({ email }: { email: string }) {
     sport: 'Ice Hockey',
     url: baseUrl,
     logo: `${baseUrl}/logo-cestice.png`,
-    email,
+    email: site.email,
+    ...(([site.facebook, site.instagram].filter(Boolean) as string[]).length
+      ? { sameAs: [site.facebook, site.instagram].filter(Boolean) }
+      : {}),
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Čestice',
+      streetAddress: 'Čestice 112',
+      addressLocality: 'Kostelec nad Orlicí',
+      addressRegion: 'Královéhradecký kraj',
       postalCode: '517 41',
       addressCountry: 'CZ',
     },
     location: {
       '@type': 'Place',
       name: 'Zimní stadion Rychnov nad Kněžnou',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Rychnov nad Kněžnou',
+        addressCountry: 'CZ',
+      },
     },
     memberOf: {
       '@type': 'SportsOrganization',
@@ -107,11 +131,26 @@ function StructuredData({ email }: { email: string }) {
     },
   }
 
+  const website = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'HC Čestice',
+    url: baseUrl,
+    inLanguage: 'cs-CZ',
+    publisher: { '@type': 'SportsTeam', name: 'HC Čestice' },
+  }
+
   return (
-    <script
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      type="application/ld+json"
-    />
+    <>
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(team) }}
+        type="application/ld+json"
+      />
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
+        type="application/ld+json"
+      />
+    </>
   )
 }
 

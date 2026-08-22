@@ -23,6 +23,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import type { ArticleDetail } from '@/landing/types'
+import type { Post } from '@/payload-types'
 
 /** ISR pojistka; publikace revaliduje okamžitě (hook `revalidatePost`). */
 export const revalidate = 600
@@ -68,25 +69,45 @@ export default async function ArticlePage({ params }: Args) {
 
       {article.showRelated && <ArticleRelated cards={related} />}
 
-      <StructuredData article={article} slug={slug} />
+      <StructuredData article={article} post={post} slug={slug} />
     </SubpageShell>
   )
 }
 
-/** JSON-LD (schema.org NewsArticle) pro vyhledávače. */
-function StructuredData({ article, slug }: { article: ArticleDetail; slug: string }) {
+/**
+ * JSON-LD (schema.org NewsArticle) pro vyhledávače.
+ *
+ * `datePublished` je pro Article rich results **povinné** a chybělo tu —
+ * proto komponenta bere celý `post`, ne jen zobrazovací `article`.
+ * `publisher.logo` musí být `ImageObject`, holé URL Google reportuje
+ * jako chybu.
+ */
+function StructuredData({
+  article,
+  post,
+  slug,
+}: {
+  article: ArticleDetail
+  post: Post
+  slug: string
+}) {
   const baseUrl = getServerSideURL()
+  const publishedAt = post.publishedAt ?? post.createdAt
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: article.title,
     ...(article.excerpt ? { description: article.excerpt } : {}),
     ...(article.photo ? { image: [`${baseUrl}${getMediaUrl(article.photo.url)}`] } : {}),
+    ...(publishedAt ? { datePublished: publishedAt } : {}),
+    ...(post.updatedAt || publishedAt
+      ? { dateModified: post.updatedAt ?? publishedAt }
+      : {}),
     author: { '@type': 'Person', name: article.author.name },
     publisher: {
       '@type': 'SportsTeam',
       name: 'HC Čestice',
-      logo: `${baseUrl}/logo-cestice.png`,
+      logo: { '@type': 'ImageObject', url: `${baseUrl}/logo-cestice.png` },
     },
     mainEntityOfPage: `${baseUrl}/aktuality/${slug}`,
   }
@@ -105,7 +126,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const post = await fetchPostBySlug(slug, false)
   if (!post) return { title: 'Článek nenalezen | HC Čestice' }
 
-  const meta = await generateMeta({ doc: post })
+  const meta = await generateMeta({ collection: 'posts', doc: post })
   return {
     ...meta,
     description: meta.description ?? post.excerpt ?? undefined,

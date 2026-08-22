@@ -3,6 +3,8 @@ import React from 'react'
 
 import { cn } from '@/utilities/ui'
 
+import { BreadcrumbsJsonLd } from './BreadcrumbsJsonLd'
+
 export type Crumb = {
   label: string
   /** Bez `href` je položka poslední (aktuální stránka) — vykreslí se jako text. */
@@ -24,6 +26,7 @@ export function Breadcrumbs({ className, trail }: { className?: string; trail: C
         className,
       )}
     >
+      <BreadcrumbsJsonLd trail={trail} />
       <Link className="text-club hover:text-club-dark transition-colors" href="/">
         Domů
       </Link>

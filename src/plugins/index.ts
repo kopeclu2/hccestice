@@ -17,11 +17,14 @@ import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
+import { brandTitle } from '@/utilities/brandTitle'
 import { getServerSideURL } from '@/utilities/getURL'
 import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/utilities/recaptcha/config'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | HC Čestice` : 'HC Čestice'
+  // Suffix drží `brandTitle`, ne tenhle řádek — sdílí ho s `generateMeta`,
+  // aby se branding nedosadil dvakrát.
+  return brandTitle(doc?.title)
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
