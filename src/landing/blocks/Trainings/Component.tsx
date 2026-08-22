@@ -93,7 +93,16 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
   return (
     <article
       className={cn(
-        'min-w-60 rounded-thumb px-6 py-5',
+        /* Karta přes celou šířku, dokud se na řádek nevejdou dvě: s pevným
+           `min-w-60` (240px) zůstane na telefonu jedna karta na řádku a
+           `justify-end` ji odtlačí doprava, takže vlevo je 100+px prázdna a
+           rozpis vypadá jako chyba sazby.
+           Zlom je 33rem (528px) = 2 × 240px karta + 16px mezera + odsazení
+           sekce, ne `sm` (640px) — na 600px se dvě karty vedle sebe vejdou
+           v pohodě a stohovat je tam by byl krok zpátky.
+           `min-w-0` je pojistka proti přetečení na 320px, kde je 240px + padding
+           na hraně. */
+        'w-full min-w-0 rounded-thumb px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:px-6',
         slot.accent ? 'bg-contrast text-on-contrast' : 'border-line-soft border bg-surface',
       )}
     >

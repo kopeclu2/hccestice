@@ -1,19 +1,30 @@
-import Link from 'next/link'
 import React from 'react'
 
-import { CardTitle, SectionTitle } from '../components/Heading'
+import { ArticleCard } from '../components/ArticleCard'
+import { SectionTitle } from '../components/Heading'
 import { Highlight, Kicker } from '../components/Kicker'
-import { PhotoTile, TileBadge } from '../components/PhotoTile'
 import { PillLink } from '../components/PillLink'
 import { Reveal } from '../components/Reveal'
 import { SectionShell } from '../components/SectionShell'
 import type { PostCard } from '../types'
 
 /**
- * Sekce „Mohlo by tě zajímat" — tři fotokarty souvisejících článků
+ * Sekce „Mohlo by tě zajímat" — tři karty souvisejících článků
  * (ruční výběr v adminu doplněný nejnovějšími, viz `fetchRelatedPostCards`).
+ *
+ * Karta je `ArticleCard`, tedy tatáž komponenta jako na výpisu `/aktuality`
+ * i ve widgetu Aktuality — dřív to byla vlastní fotodlaždice s titulkem
+ * v přetisku, takže doporučené články vypadaly jako z jiného webu než ten
+ * výpis, na který sekce odkazuje.
  */
-export function ArticleRelated({ cards }: { cards: PostCard[] }) {
+export function ArticleRelated({
+  cards,
+  showPhoto = false,
+}: {
+  cards: PostCard[]
+  /** `siteConfig.postsListShowPhoto` — stejný přepínač jako výpis /aktuality. */
+  showPhoto?: boolean
+}) {
   if (cards.length === 0) return null
 
   return (
@@ -33,45 +44,20 @@ export function ArticleRelated({ cards }: { cards: PostCard[] }) {
         </div>
       </Reveal>
 
-      {/* Tři sloupce od `md` daly dlaždici na tabletu ~215px šířky — titulek
-          pak přerostl celou fotku a přebil štítek. Zlomy teď kopírují
-          `CardGrid`: 1 / 2 / 3 sloupce. Třetí dlaždice se ve dvou sloupcích
-          rozpíná přes celý řádek, aby po ní nezůstala prázdná půlka. */}
-      <div className="grid gap-5 md:grid-cols-2 md:max-lg:[&>*:nth-child(3)]:col-span-2 lg:grid-cols-3">
-        {cards.map((card, index) => {
-          const tile = (
-            <PhotoTile
-              className="min-h-80 rounded-block"
-              photo={card.photo}
+      {/* Mřížka je 1:1 s `CardGrid` na `/aktuality` (1 / 2 od `sm` / 3 od `lg`).
+          Dřív se tu třetí dlaždice ve dvou sloupcích rozpínala přes celý řádek —
+          to platilo pro fotodlaždice, u textové karty by vznikl přes celou
+          šířku roztažený titulek, jaký výpis nikde nemá. */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {cards.map((card, index) => (
+          <Reveal className="h-full" delay={index * 0.08} key={card.id}>
+            <ArticleCard
+              card={card}
               sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-            >
-              <TileBadge className="top-4 left-4" tone="lime">
-                {card.tag}
-              </TileBadge>
-              <div className="absolute inset-x-5 bottom-5 text-white">
-                {/* Titulky importovaných článků mají i 70 znaků — bez clampu
-                    vyplní dlaždici odshora dolů. */}
-                <CardTitle as="h4" className="line-clamp-3" size="sm">
-                  {card.title}
-                </CardTitle>
-                <div className="mt-2 text-caption font-semibold text-white/65">
-                  {card.dateLabel}
-                </div>
-              </div>
-            </PhotoTile>
-          )
-          return (
-            <Reveal delay={index * 0.08} key={card.id}>
-              {card.href ? (
-                <Link className="block h-full" href={card.href}>
-                  {tile}
-                </Link>
-              ) : (
-                tile
-              )}
-            </Reveal>
-          )
-        })}
+              withPhoto={showPhoto}
+            />
+          </Reveal>
+        ))}
       </div>
     </SectionShell>
   )

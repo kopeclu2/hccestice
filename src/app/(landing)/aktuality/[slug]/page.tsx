@@ -18,6 +18,7 @@ import {
   fetchRelatedPostCards,
   toArticleDetail,
 } from '@/landing/data/posts'
+import { fetchSiteConfig } from '@/landing/data/site'
 import { generateMeta } from '@/utilities/generateMeta'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
@@ -53,6 +54,11 @@ export default async function ArticlePage({ params }: Args) {
 
   const article = toArticleDetail(post, await fetchDefaultPostPhoto())
   const related = article.showRelated ? await fetchRelatedPostCards(post) : []
+  // Karty doporučených článků jsou tytéž jako na výpisu, takže i fotky na nich
+  // řídí týž přepínač v Nastavení webu (`postsListShowPhoto`).
+  const relatedShowPhoto = related.length
+    ? ((await fetchSiteConfig()).postsListShowPhoto ?? false)
+    : false
 
   return (
     <SubpageShell surface="article">
@@ -67,7 +73,7 @@ export default async function ArticlePage({ params }: Args) {
         <AuthorCard author={article.author} />
       </div>
 
-      {article.showRelated && <ArticleRelated cards={related} />}
+      {article.showRelated && <ArticleRelated cards={related} showPhoto={relatedShowPhoto} />}
 
       <StructuredData article={article} post={post} slug={slug} />
     </SubpageShell>
