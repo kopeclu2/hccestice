@@ -32,9 +32,28 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
+      /**
+       * Popisek pro čtečky obrazovky a obrázkové vyhledávání.
+       *
+       * Legacy import sem dosadil **název souboru** — 4183 z 5000 médií má
+       * `alt` jako „P3082213" nebo „IMG_20170115_102333". Přepsání je
+       * samostatná obsahová úloha, ručně to není v lidských silách.
+       *
+       * `required: true` tu **záměrně není**, i když by se nabízelo jako
+       * zábrana proti dalším takovým. V Payloadu se povinnost propíše do
+       * schématu jako `NOT NULL`, takže push (dev) i migrace (produkce)
+       * spadnou na `column "alt" of relation "media" contains null values`
+       * — čtyři média NULL mají. Zapnout to jde teprve po backfillu těch
+       * čtyř hodnot a s vlastní migrací; do té doby by to shodilo start
+       * aplikace.
+       */
       name: 'alt',
       type: 'text',
-      //required: true,
+      label: 'Popisek obrázku (alt)',
+      admin: {
+        description:
+          'Co je na obrázku, ne název souboru. Např. „Hráči HC Čestice slaví gól proti Skutči".',
+      },
     },
     {
       name: 'caption',

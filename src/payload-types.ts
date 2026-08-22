@@ -410,6 +410,9 @@ export interface Post {
  */
 export interface Media {
   id: number;
+  /**
+   * Co je na obrázku, ne název souboru. Např. „Hráči HC Čestice slaví gól proti Skutči".
+   */
   alt?: string | null;
   caption?: {
     root: {

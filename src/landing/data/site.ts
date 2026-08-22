@@ -7,6 +7,8 @@ import { cache } from 'react'
 import { CLUB_EMAIL, FOOTER } from '../content'
 import type { FooterContent, PersonCard, SiteLinks } from '../types'
 
+import { stripTracking } from '@/utilities/stripTracking'
+
 import { arrayOr, toPersonCard, uploadToPhoto } from './format'
 
 /** Global `siteConfig` (kontakty, sítě, patička) + kolekce Lidé. */
@@ -16,13 +18,19 @@ export const fetchSiteConfig = cache(async (): Promise<SiteConfig> => {
   return payload.findGlobal({ slug: 'siteConfig', depth: 1 })
 })
 
-/** Kontakty a sociální sítě (odvozeno ze `siteConfig`). */
+/**
+ * Kontakty a sociální sítě (odvozeno ze `siteConfig`).
+ *
+ * Odkazy na sítě jdou přes `stripTracking` — hodnoty v CMS jsou volný text
+ * a zkopírovaná URL běžně nese `?fbclid=…`, které by se pak renderovalo na
+ * každé stránce webu i ve `sameAs` v JSON-LD.
+ */
 export async function fetchSite(): Promise<SiteLinks> {
   const site = await fetchSiteConfig()
   return {
     email: site.contactEmail ?? CLUB_EMAIL,
-    facebook: site.facebook ?? null,
-    instagram: site.instagram ?? null,
+    facebook: stripTracking(site.facebook),
+    instagram: stripTracking(site.instagram),
   }
 }
 
