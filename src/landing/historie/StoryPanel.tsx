@@ -14,7 +14,7 @@ export function StoryPanel() {
 
   return (
     <div>
-      <div className="bg-club relative overflow-hidden rounded-section px-4.5 py-6 text-white md:px-12 md:py-11">
+      <div className="bg-club relative overflow-hidden rounded-section px-4.5 py-6 text-white md:px-7.5 md:py-8 lg:px-12 lg:py-11">
         <Watermark className="-right-7.5 -bottom-12.5 text-watermark-sm tracking-[-0.06em] text-white/14">
           HCČ
         </Watermark>

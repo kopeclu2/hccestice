@@ -33,7 +33,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
   return (
     <SectionShell>
       <Reveal>
-        <div className="mx-auto max-w-180 rounded-card bg-surface p-4.5 text-center md:p-10">
+        <div className="mx-auto max-w-180 rounded-card bg-surface p-4.5 text-center md:p-7.5 lg:p-10">
           {kicker && <Kicker className="mb-5">{kicker}</Kicker>}
           <div className="text-faint text-meta font-semibold">
             {[match.dateLabel, match.competition, match.venue].filter(Boolean).join(' · ')}

@@ -27,6 +27,9 @@ node_modules/
 # výstup screenshot harnessu shot.mjs (shots/, shots-<jméno>/)
 /shots*/
 
+# ad-hoc snímky a jednorázové capture skripty (11 MB PNG, nepatří do historie)
+/screenshots/
+
 # ruční screenshoty z macOS
 /Snímek obrazovky*.png
 /Screenshot*.png

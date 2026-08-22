@@ -36,7 +36,7 @@ export function MatchesWidgetView({
   return (
     <SectionShell>
       <Reveal>
-        <div className="rounded-card bg-surface p-4.5 md:p-9">
+        <div className="rounded-card bg-surface p-4.5 md:p-7 lg:p-9">
           <CardTitle className="mb-3.5" size="md">
             {title ?? (mode === 'results' ? 'Výsledky' : 'Rozpis zápasů')}
           </CardTitle>

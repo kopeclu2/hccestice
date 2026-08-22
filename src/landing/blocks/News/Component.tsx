@@ -74,7 +74,7 @@ function NewsView({ cards, showPhoto = false }: { cards: PostCard[]; showPhoto?:
       <div
         className={cn(
           'grid grid-cols-1 gap-5',
-          cards.length > 3 ? 'md:grid-cols-2 xl:grid-cols-4' : 'md:grid-cols-3',
+          cards.length > 3 ? 'sm:grid-cols-2 xl:grid-cols-4' : 'sm:grid-cols-2 lg:grid-cols-3',
         )}
       >
         {cards.map((card, index) => (
@@ -83,8 +83,8 @@ function NewsView({ cards, showPhoto = false }: { cards: PostCard[]; showPhoto?:
               card={card}
               sizes={
                 cards.length > 3
-                  ? '(max-width: 48rem) 100vw, (max-width: 80rem) 50vw, 25vw'
-                  : '(max-width: 48rem) 100vw, 33vw'
+                  ? '(max-width: 40rem) 100vw, (max-width: 80rem) 50vw, 25vw'
+                  : '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw'
               }
               withPhoto={showPhoto}
             />

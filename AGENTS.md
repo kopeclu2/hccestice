@@ -398,6 +398,35 @@ variant je na `/vzory/prazdne-stavy`.
 - `tests/e2e/frontend.e2e.spec.ts` je nedotčená Payload šablona a padá už
   dnes — regresní síť pro navigaci neexistuje.
 
+# Responzivita — tři stupně, ne dva
+
+Handoffy v `design_*/` jsou kreslené pro **1440px**. `md:` (768px) proto
+**není** místo pro desktopovou hodnotu z handoffu; ta patří na `lg:` (1024px)
+a mezi mobil a desktop se vkládá mezistupeň. Breakpointy projektu
+(`src/app/globals.css`): sm 640, md 768, lg 1024, xl 1280, 2xl 1376.
+
+Pravidlo už dřív platilo pro svislý rytmus (`SectionShell`), navigaci
+(`NavPills` je `hidden xl:flex`), mřížky výpisů (`CardGrid`) a watermarky
+(`Watermark` od `lg`). Od 22. 8. 2026 platí i pro **vnitřní odsazení
+panelů**: každá zelená/bílá karta jede na `p-4.5 md:p-<mezistupeň>
+lg:p-<handoff>`. Dřív skákaly rovnou (`p-4.5 md:p-13`), takže si na 768px
+displeji braly okraje panelu až pětinu jeho šířky.
+
+Doložení, že se desktop nezměnil: `node shot.mjs --bp=desktop` před a po,
+`scrollHeight` v `report.json` musí sedět na pixel na všech routách.
+
+Dvě opakující se pasti:
+
+- **`minmax(<X>rem,1fr)` v `auto-fit` mřížce.** Když je `X` širší než
+  vnitřek kontejneru (patička má na 320px displeji 256px), dráha kontejner
+  přeteče a `overflow-hidden` obsah ustřihne. Píše se
+  `minmax(min(<X>rem,100%),1fr)` — spadne na šířku kontejneru bez
+  breakpointu. Platí v `Club`, `Stats`, `ContactForm` a `LandingFooter`.
+- **`sizes` u fotek musí kopírovat tytéž zlomy jako mřížka.** Když se
+  mřížka posune z `md:grid-cols-3` na `lg:grid-cols-3`, ale `sizes` zůstane
+  `(max-width: 48rem) 100vw, 33vw`, tablet si tahá třetinové fotky do
+  polovičních dlaždic.
+
 # Sekce Tréninky (blok `landingTrainings`)
 
 Rozpis ledových hodin jsou karty zarovnané na pravou hranu pod nadpisem:

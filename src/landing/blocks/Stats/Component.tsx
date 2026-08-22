@@ -56,7 +56,7 @@ function StatsView({ stats }: { stats: StatsContent }) {
         {/* Auto-fit až od `lg`: na tabletu se vešly tři sloupce ze čtyř a
             poslední číslo osiřelo na druhém řádku. Do 1024px proto zůstává
             čtvercová mřížka 2×2. */}
-        <dl className="grid grid-cols-2 gap-6 lg:grid-cols-[repeat(auto-fit,minmax(11.875rem,1fr))]">
+        <dl className="grid grid-cols-2 gap-6 lg:grid-cols-[repeat(auto-fit,minmax(min(11.875rem,100%),1fr))]">
           {stats.items.map((stat) => (
             <div className="text-center" key={stat.label}>
               <dd>

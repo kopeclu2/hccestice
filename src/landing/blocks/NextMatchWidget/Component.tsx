@@ -29,7 +29,7 @@ function NextMatchWidgetView({
       <Reveal>
         {/* p-6 na mobilu: 32px odsazení sebralo z 320px šířky pětinu a
             countdown se do zbytku nevešel. */}
-        <div className="bg-contrast relative overflow-hidden rounded-card p-6 text-on-contrast md:p-12">
+        <div className="bg-contrast relative overflow-hidden rounded-card p-6 text-on-contrast md:p-8 lg:p-12">
           <div className="hatch absolute inset-0 opacity-40" />
           {upcoming ? (
             <div className="relative">

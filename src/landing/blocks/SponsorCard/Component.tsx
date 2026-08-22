@@ -49,7 +49,7 @@ function SponsorCardView({
   return (
     <SectionShell>
       <Reveal>
-        <div className="mx-auto flex max-w-140 flex-col items-center gap-4 rounded-card bg-surface p-4.5 text-center md:p-10">
+        <div className="mx-auto flex max-w-140 flex-col items-center gap-4 rounded-card bg-surface p-4.5 text-center md:p-7.5 lg:p-10">
           {kicker && <Kicker>{kicker}</Kicker>}
           <div className="bg-chip grid h-28 w-56 place-items-center rounded-badge px-6">
             {logo ? (

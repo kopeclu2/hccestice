@@ -49,7 +49,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
       </Watermark>
 
       <Reveal>
-        <div className="relative overflow-hidden rounded-card bg-surface px-4.5 py-10 text-center md:px-13 md:pt-16 md:pb-13">
+        <div className="relative overflow-hidden rounded-card bg-surface px-4.5 py-10 text-center md:px-8 md:pt-12 md:pb-11 lg:px-13 lg:pt-16 lg:pb-13">
           {/* dekorace pozadí */}
           <div className="hatch absolute inset-x-0 top-0 h-45 [mask-image:linear-gradient(#000,transparent)]" />
           <div className="pointer-events-none absolute top-50 -left-22 hidden size-85 rounded-full bg-[radial-gradient(circle,--alpha(var(--color-lime)/45%),transparent_65%)] blur-xl md:block" />

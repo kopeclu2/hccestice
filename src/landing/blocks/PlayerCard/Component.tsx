@@ -25,7 +25,7 @@ function PlayerCardView({ player, note }: { player: RosterPlayer; note: string |
   return (
     <SectionShell>
       <Reveal>
-        <div className="mx-auto flex max-w-160 flex-col items-stretch gap-6 rounded-card bg-surface p-4.5 sm:flex-row md:p-8">
+        <div className="mx-auto flex max-w-160 flex-col items-stretch gap-6 rounded-card bg-surface p-4.5 sm:flex-row md:p-6.5 lg:p-8">
           <PhotoTile
             className="aspect-[3/4] w-full flex-none rounded-panel sm:w-60"
             photo={player.photo}

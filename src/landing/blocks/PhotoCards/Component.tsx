@@ -18,7 +18,7 @@ const CARD_HEIGHTS: Record<string, string> = {
 const CARD_COLUMNS: Record<string, string> = {
   '1': 'md:grid-cols-1',
   '2': 'md:grid-cols-2',
-  '3': 'md:grid-cols-3',
+  '3': 'sm:grid-cols-2 lg:grid-cols-3',
 }
 
 /** Fotokarty — mřížka fotek se štítky a popiskem (jako karty O klubu). */
@@ -39,7 +39,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
             <PhotoTile
               className={cn('rounded-block', CARD_HEIGHTS[block.height ?? 'md'])}
               photo={uploadToPhoto(card.photo)}
-              sizes="(max-width: 48rem) 100vw, 33vw"
+              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
             >
               {card.tag && <TileBadge className="top-3.5 left-3.5">{card.tag}</TileBadge>}
               {card.badge && (

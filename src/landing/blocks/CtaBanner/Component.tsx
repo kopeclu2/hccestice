@@ -21,7 +21,7 @@ export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }
       <Reveal>
         <div
           className={cn(
-            'relative overflow-hidden rounded-card p-8 text-white md:p-12',
+            'relative overflow-hidden rounded-card p-8 text-white md:p-10 lg:p-12',
             block.tone === 'dark' ? 'bg-contrast' : 'bg-club',
           )}
         >

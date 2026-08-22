@@ -27,7 +27,7 @@ const SQUARE_CLASS: Record<Outcome, string> = {
 export function FormStrip({ form }: { form: TeamForm }) {
   return (
     <SectionShell spacing="content">
-      <div className="border-line-soft flex flex-wrap items-center gap-x-[clamp(1.125rem,3vw,2.5rem)] gap-y-3 rounded-tile border bg-surface px-5 py-4.5 md:px-7 md:py-5">
+      <div className="border-line-soft flex flex-wrap items-center gap-x-[clamp(1.125rem,3vw,2.5rem)] gap-y-3 rounded-tile border bg-surface px-5 py-4.5 md:px-6 md:py-5 lg:px-7">
         <div className="min-w-42.5">
           <Eyebrow>Forma HC Čestice</Eyebrow>
           <CardTitle className="mt-0.75" size="xs">

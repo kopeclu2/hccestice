@@ -77,7 +77,7 @@ export function ContactForm({ topics }: { topics: string[] }) {
 
   return (
     <form
-      className="rounded-panel bg-contrast relative mx-auto mt-10 max-w-170 p-4.5 text-left text-on-contrast md:p-8.5"
+      className="rounded-panel bg-contrast relative mx-auto mt-10 max-w-170 p-4.5 text-left text-on-contrast md:p-6.5 lg:p-8.5"
       noValidate
       onSubmit={onSubmit}
     >
@@ -85,7 +85,7 @@ export function ContactForm({ topics }: { topics: string[] }) {
         Poslat zprávu
       </CardTitle>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(11.25rem,1fr))] gap-3.5">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(11.25rem,100%),1fr))] gap-3.5">
         <Field error={errors.name?.message} id="contact-name" label="Jméno">
           <Input
             autoComplete="name"

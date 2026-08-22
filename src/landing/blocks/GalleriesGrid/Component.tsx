@@ -37,13 +37,13 @@ function GalleriesGridView({
             <Highlight>{title}</Highlight>
           </CardTitle>
         )}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {galleries.map((gallery) => (
             <PhotoTile
               className="h-55 rounded-block"
               key={gallery.id}
               photo={gallery.cover}
-              sizes="(max-width: 48rem) 100vw, 33vw"
+              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
             >
               <TileBadge className="top-3 right-3" tone="lime">
                 {gallery.photoCount} fotek

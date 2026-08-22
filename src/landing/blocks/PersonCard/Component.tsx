@@ -29,7 +29,7 @@ function PersonCardView({ person }: { person: PersonCard }) {
   return (
     <SectionShell>
       <Reveal>
-        <div className="mx-auto flex max-w-140 items-center gap-5 rounded-card bg-surface p-4.5 md:p-7">
+        <div className="mx-auto flex max-w-140 items-center gap-5 rounded-card bg-surface p-4.5 md:p-6 lg:p-7">
           <PhotoTile
             className="aspect-square w-28 flex-none rounded-panel md:w-36"
             photo={person.photo}

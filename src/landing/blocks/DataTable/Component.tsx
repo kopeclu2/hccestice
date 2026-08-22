@@ -78,7 +78,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
             <Highlight>{block.title}</Highlight>
           </CardTitle>
         )}
-        <div className="rounded-card bg-surface p-4.5 md:p-8">
+        <div className="rounded-card bg-surface p-4.5 md:p-6.5 lg:p-8">
           <Table className="text-body">
             {header && (
               <TableHeader>

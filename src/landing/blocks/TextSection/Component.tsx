@@ -16,7 +16,7 @@ export function TextSectionBlockComponent({ block }: { block: TextSectionBlockTy
   return (
     <SectionShell>
       <Reveal>
-        <div className={cn(block.appearance === 'card' && 'rounded-card bg-surface p-4.5 md:p-13')}>
+        <div className={cn(block.appearance === 'card' && 'rounded-card bg-surface p-4.5 md:p-8 lg:p-13')}>
           <RichText
             className="prose-headings:tracking-[-0.025em] prose-a:text-club mx-0 max-w-none md:prose-lg"
             data={block.content}

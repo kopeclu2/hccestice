@@ -10,7 +10,7 @@ import { SectionShell, type SectionShellProps } from './SectionShell'
 import { Watermark } from './Watermark'
 
 const panelVariants = cva(
-  'relative flex flex-wrap items-center gap-6 overflow-hidden rounded-section px-4.5 py-6 text-white md:px-11 md:py-9',
+  'relative flex flex-wrap items-center gap-6 overflow-hidden rounded-section px-4.5 py-6 text-white md:px-7 md:py-7 lg:px-11 lg:py-9',
   {
     variants: {
       /** Tmavý pás (sítě, fotky, archiv) vs. klubová zelená (soupiska, zápasy). */

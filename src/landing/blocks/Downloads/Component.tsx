@@ -29,7 +29,7 @@ export function DownloadsBlockComponent({ block }: { block: DownloadsBlock }) {
   return (
     <SectionShell>
       <Reveal>
-        <div className="rounded-card bg-surface p-4.5 md:p-9">
+        <div className="rounded-card bg-surface p-4.5 md:p-7 lg:p-9">
           {block.title && (
             <CardTitle className="mb-3.5" size="md">
               {block.title}

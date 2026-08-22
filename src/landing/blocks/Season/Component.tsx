@@ -107,7 +107,7 @@ function SeasonView({
 /** Tabulka VČHL — řádek HC Čestice zvýrazněný zeleně (sdílí ji widget Tabulka). */
 export function StandingsCard({ standings }: { standings: StandingsContent }) {
   return (
-    <div className="h-full rounded-card bg-surface p-4.5 md:p-9">
+    <div className="h-full rounded-card bg-surface p-4.5 md:p-7 lg:p-9">
       <div className="mb-3.5 flex items-baseline gap-3">
         <CardTitle as="h3" size="md">
           Tabulka <Highlight>VČHL</Highlight>

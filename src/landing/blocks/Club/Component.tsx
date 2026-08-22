@@ -51,7 +51,7 @@ function ClubView({ content }: { content: ClubContent }) {
          takže na 320px šířce sloupec přerostl kontejner a text i fotokarty
          se odřízly. Na `md` (768px) se auto-fit stejně vejde jen jeden
          sloupec, takže desktopová kompozice zůstává nedotčená. */
-      className="grid grid-cols-1 items-start gap-9 md:grid-cols-[repeat(auto-fit,minmax(21.25rem,1fr))] md:gap-14"
+      className="grid grid-cols-1 items-start gap-9 md:grid-cols-[repeat(auto-fit,minmax(min(21.25rem,100%),1fr))] md:gap-14"
       id="klub"
     >
       <Watermark
@@ -75,7 +75,7 @@ function ClubView({ content }: { content: ClubContent }) {
       </Reveal>
 
       <Reveal delay={0.1}>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-5.5">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(15rem,100%),1fr))] gap-5.5">
           <PhotoTile
             className="h-82.5 rounded-block"
             photo={content.stadium.photo}
