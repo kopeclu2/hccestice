@@ -52,13 +52,21 @@ const getPagesSitemap = unstable_cache(
      *
      * `/vzory` a `/widgety` sem nepatří — to jsou interní katalogy (noindex).
      */
+    /**
+     * `lastmod` tu záměrně **není**. Podle sitemap protokolu je volitelný,
+     * a dosazovat sem `new Date()` znamenalo, že těchto šest URL hlásilo
+     * změnu při **každém** requestu na sitemapu — bez ohledu na to, že se
+     * obsah neměnil. Google tak dostával falešný signál a mezi sebou
+     * nerozlišitelné časy (všech šest mělo identický timestamp).
+     * Vynechat ho je korektnější než lhát.
+     */
     const defaultSitemap = [
-      { loc: `${SITE_URL}/soupiska`, lastmod: dateFallback },
-      { loc: `${SITE_URL}/zapasy`, lastmod: dateFallback },
-      { loc: `${SITE_URL}/aktuality`, lastmod: dateFallback },
-      { loc: `${SITE_URL}/fotogalerie`, lastmod: dateFallback },
-      { loc: `${SITE_URL}/sponzori`, lastmod: dateFallback },
-      { loc: `${SITE_URL}/historie-klubu`, lastmod: dateFallback },
+      { loc: `${SITE_URL}/soupiska` },
+      { loc: `${SITE_URL}/zapasy` },
+      { loc: `${SITE_URL}/aktuality` },
+      { loc: `${SITE_URL}/fotogalerie` },
+      { loc: `${SITE_URL}/sponzori` },
+      { loc: `${SITE_URL}/historie-klubu` },
     ]
 
     const sitemap = results.docs

@@ -42,7 +42,7 @@ const getLlmsTxt = unstable_cache(
       where: published,
     } as const
 
-    const [pages, posts] = await Promise.all([
+    const [pages, posts, galleries] = await Promise.all([
       payload.find({
         ...query,
         collection: 'pages',
@@ -53,6 +53,17 @@ const getLlmsTxt = unstable_cache(
         collection: 'posts',
         sort: '-publishedAt',
         select: { slug: true, title: true, excerpt: true, meta: true },
+      }),
+      // `galleries` nemá verzování, takže `where: { _status … }` ze `query`
+      // by dotaz shodil (`QueryError`) — proto vlastní, bez filtru.
+      payload.find({
+        collection: 'galleries',
+        overrideAccess: false,
+        depth: 0,
+        limit: 1000,
+        pagination: false,
+        sort: '-date',
+        select: { slug: true, title: true },
       }),
     ])
 
@@ -77,8 +88,20 @@ const getLlmsTxt = unstable_cache(
       lines.push('## Stránky', '', ...pageLinks, '')
     }
 
+    /**
+     * Jen posledních `RECENT_POSTS` článků.
+     *
+     * Nefiltrovaný výpis znamenal 301 položek a soubor o 67 kB — kompletní
+     * archiv od sezóny 2017/18, kde se klíčová fakta o klubu utopila mezi
+     * stovkami zápasových zpráviček. `llms.txt` je rozcestník, ne export
+     * databáze; zbytek archivu je objevitelný přes `/aktuality` a
+     * `posts-sitemap.xml`.
+     */
+    const RECENT_POSTS = 30
+
     const postLinks = posts.docs
       .filter((post) => Boolean(post.slug))
+      .slice(0, RECENT_POSTS)
       .map(
         (post) =>
           `- [${post.title ?? post.slug}](${SITE_URL}/aktuality/${post.slug})${describe(
@@ -87,7 +110,27 @@ const getLlmsTxt = unstable_cache(
       )
 
     if (postLinks.length) {
-      lines.push('## Aktuality', '', ...postLinks, '')
+      lines.push(
+        '## Aktuality',
+        '',
+        `Posledních ${postLinks.length} článků; celý archiv je na ${SITE_URL}/aktuality.`,
+        '',
+        ...postLinks,
+        '',
+      )
+    }
+
+    // Detaily fotoalb jsou veřejné stránky, ale dotazy výš je nevrátí —
+    // stejná mezera, jakou měla sitemapa (viz `gallery-sitemap.xml`).
+    const galleryLinks = galleries.docs
+      .filter((gallery) => Boolean(gallery.slug))
+      .map(
+        (gallery) =>
+          `- [${gallery.title ?? gallery.slug}](${SITE_URL}/fotogalerie/${gallery.slug})`,
+      )
+
+    if (galleryLinks.length) {
+      lines.push('## Fotoalba', '', ...galleryLinks, '')
     }
 
     // Ručně psané Next stránky nejsou dokumenty v CMS, takže je žádný

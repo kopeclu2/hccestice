@@ -3,6 +3,10 @@ import { slugField } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import {
+  revalidateGalleryFeeds,
+  revalidateGalleryFeedsDelete,
+} from '../hooks/revalidateGalleryFeeds'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
 
 export const Galleries: CollectionConfig = {
@@ -103,7 +107,9 @@ export const Galleries: CollectionConfig = {
   ],
   hooks: {
     // /fotogalerie ani home blok Fotoalbum nemají ISR — viz Matches.
-    afterChange: [revalidateLanding],
-    afterDelete: [revalidateLandingDelete],
+    // `revalidateGalleryFeeds` k tomu invaliduje `gallery-sitemap.xml`
+    // a `/llms.txt`, kde detaily albumů taky figurují.
+    afterChange: [revalidateLanding, revalidateGalleryFeeds],
+    afterDelete: [revalidateLandingDelete, revalidateGalleryFeedsDelete],
   },
 }
