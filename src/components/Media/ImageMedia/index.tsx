@@ -8,10 +8,7 @@ import React from 'react'
 
 import type { Props as MediaProps } from '../types'
 
-import { cssVariables } from '@/cssVariables'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
-
-const { breakpoints } = cssVariables
 
 // A base64 encoded image to use as a placeholder while the image is loading
 const placeholderBlur =
@@ -75,14 +72,26 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     src = getMediaUrl(url, cacheTag)
   }
 
-  const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
+  /**
+   * `priority` je v Next 16 deprecated (viz `image.md`, sekce `priority`)
+   * a hlavně negeneruje `fetchpriority="high"` na `<img>` — jen vkládá
+   * `<link rel="preload">`. Lighthouse proto u LCP obrázku hlásil
+   * `priorityHinted: false`. Dokumentace pro tenhle případ doporučuje
+   * `loading="eager"` + `fetchPriority="high"`, takže prop necháváme
+   * v API komponenty (volající říká „tohle je LCP"), ale překládáme ji
+   * na to, co Next 16 skutečně respektuje.
+   */
+  const isPriority = Boolean(priority)
+  const loading = loadingFromProps ?? (isPriority ? 'eager' : 'lazy')
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
-  const sizes = sizeFromProps
-    ? sizeFromProps
-    : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value * 2}w`)
-        .join(', ')
+  /**
+   * `sizes` musí být **délka** (`px`, `vw`, `em`), ne deskriptor `w`.
+   * Dřív se tu z breakpointů skládalo `(max-width: 640px) 1280w, …`,
+   * což je neplatná hodnota — prohlížeč celý atribut zahodil a spadl na
+   * `100vw`. Default je proto `100vw` napsané explicitně; konkrétní
+   * šířku si volající předá `size` (`PhotoTile` to tak dělá).
+   */
+  const sizes = sizeFromProps ?? '100vw'
 
   return (
     <picture className={cn(pictureClassName)}>
@@ -93,8 +102,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         height={!fill ? height : undefined}
         placeholder="blur"
         blurDataURL={placeholderBlur}
-        priority={priority}
-        quality={100}
+        fetchPriority={isPriority ? 'high' : undefined}
         loading={loading}
         sizes={sizes}
         src={src}

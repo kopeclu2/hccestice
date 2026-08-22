@@ -1,6 +1,7 @@
 import type { Match, Post } from '@/payload-types'
 
 import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
@@ -139,8 +140,24 @@ export type PostsPage = {
   page: number
 }
 
-/** Stránkovaný výpis publikovaných článků s volitelným filtrem typu (/aktuality). */
-export const fetchPostsPage = cache(
+/**
+ * Stránkovaný výpis publikovaných článků s volitelným filtrem typu (/aktuality).
+ *
+ * Dvě vrstvy cache záměrně:
+ *  - `unstable_cache` **mezi requesty** (tag `posts-list`). `/aktuality` čte
+ *    `searchParams`, takže je plně dynamická (`Cache-Control: no-store`) a
+ *    bez tohohle šel dotaz do Postgresu při každém načtení — naměřeno
+ *    `server-response-time` 539 ms proti 48 ms na prerenderované homepage.
+ *    Klíč si `unstable_cache` skládá z argumentů, takže se každá kombinace
+ *    stránky a filtru cachuje zvlášť.
+ *  - React `cache()` **v rámci jednoho renderu**, aby stránka a její
+ *    metadata nesahaly pro totéž dvakrát.
+ *
+ * TTL `unstable_cache` bez `options.revalidate` je rok, takže
+ * `revalidateTag('posts-list')` v `revalidatePost` není optimalizace, ale
+ * podmínka funkčnosti — jinak by nový článek ve výpisu nikdy nebyl.
+ */
+const queryPostsPage = unstable_cache(
   async (options: {
     page: number
     perPage?: number
@@ -180,7 +197,11 @@ export const fetchPostsPage = cache(
       page: result.page ?? 1,
     }
   },
+  ['posts-page'],
+  { tags: ['posts-list'] },
 )
+
+export const fetchPostsPage = cache(queryPostsPage)
 
 /** Článek pro vypíchnutou kartu (s heroImage). */
 export const fetchPost = cache(async (postId: number): Promise<Post | null> => {

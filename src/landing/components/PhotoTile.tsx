@@ -44,7 +44,11 @@ export function PhotoTile({
           alt={photo.alt}
           className="object-cover"
           fill
-          priority={priority}
+          /* `priority` je v Next 16 deprecated a nenastavuje
+             `fetchpriority` — u hero fotky (LCP element homepage) proto
+             podle dokumentace `loading="eager"` + `fetchPriority="high"`. */
+          fetchPriority={priority ? 'high' : undefined}
+          loading={priority ? 'eager' : 'lazy'}
           sizes={sizes}
           src={getMediaUrl(photo.url)}
         />
