@@ -5,6 +5,7 @@ import { cn } from '@/utilities/ui'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { Badge } from '../../components/Badge'
+import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
 import { PageTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'
@@ -25,6 +26,18 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
 
   return (
     <div className="relative z-1 mt-3.5">
+      {/*
+        Zbylé čtyři varianty hero (`HeroFoto`, `HeroTypo`, `HeroPanel`,
+        `HeroSplit`) emitují drobečky přes `article/hero/Breadcrumbs`, který
+        si strukturovaná data nese s sebou. Zápasový hero je ale nemá —
+        tmavý panel se scoreboardem je v handoffu bez nich — takže
+        `BreadcrumbList` chyběl u zápasových reportáží, což je většina
+        archivu. Emitor se proto volá napřímo: schema bez viditelné
+        obdoby je pořád lepší než 58 % článků bez drobečkových dat.
+      */}
+      <BreadcrumbsJsonLd
+        trail={[{ href: '/aktuality', label: 'Aktuality' }, { label: article.badge }]}
+      />
       <div className="bg-contrast relative overflow-hidden rounded-section px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
         {article.photo && (
           <div className="absolute inset-0 opacity-16">

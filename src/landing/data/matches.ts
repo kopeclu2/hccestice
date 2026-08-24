@@ -12,6 +12,7 @@ import type {
   MatchCardData,
   MatchReport,
   MatchRow,
+  MatchSchemaFields,
   Outcome,
   ResultRow,
   TeamForm,
@@ -37,9 +38,22 @@ import {
 const opponentName = (match: Match): string =>
   typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
 
+const CLUB_NAME = 'HC Čestice'
+
 /** „HC Čestice × Soupeř" v pořadí domácí × hosté. */
 export const matchTitle = (match: Match): string =>
-  match.home ? `HC Čestice × ${opponentName(match)}` : `${opponentName(match)} × HC Čestice`
+  match.home ? `${CLUB_NAME} × ${opponentName(match)}` : `${opponentName(match)} × ${CLUB_NAME}`
+
+/**
+ * Pole pro `SportsEvent`. Zápas ukládá jen `home` a soupeře, takže se
+ * strany musí prohodit stejně jako v `matchTitle` — proto společný
+ * helper a ne dvě místa, kde se dá pořadí splést.
+ */
+const schemaFields = (match: Match): MatchSchemaFields => ({
+  startDate: match.date,
+  homeName: match.home ? CLUB_NAME : opponentName(match),
+  awayName: match.home ? opponentName(match) : CLUB_NAME,
+})
 
 /** Skóre v pořadí domácí : hosté (zápas ukládá góly z našeho pohledu). */
 export const matchScore = (match: Match): string => {
@@ -238,6 +252,7 @@ export const fetchSeasonFixtures = cache(async (seasonId: number): Promise<Fixtu
   })
 
   return docs.map((match, index) => ({
+    ...schemaFields(match),
     id: match.id,
     kind: match.home ? 'Doma' : 'Venku',
     stage: phaseLabel(match),
@@ -250,6 +265,7 @@ export const fetchSeasonFixtures = cache(async (seasonId: number): Promise<Fixtu
 })
 
 const toResultRow = (match: Match): ResultRow => ({
+  ...schemaFields(match),
   id: match.id,
   dateLabel: formatDay(match.date),
   stage: phaseLabel(match),

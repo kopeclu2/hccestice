@@ -13,6 +13,24 @@ import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
 
 type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
 
+/** Normalizace URL parametrů — sdílí ji stránka i `generateMetadata`. */
+const readParams = (raw: { page?: string; typ?: string }) => ({
+  page: Math.max(1, Number.parseInt(raw.page ?? '1', 10) || 1),
+  type: raw.typ && raw.typ in POST_TYPE_LABEL ? raw.typ : null,
+})
+
+/**
+ * Cesta výpisu bez `#seznam` — kotva patří do odkazů stránkování v UI,
+ * ne do `canonical`.
+ */
+const listPath = (page: number, type: string | null): string => {
+  const params = new URLSearchParams()
+  if (type) params.set('typ', type)
+  if (page > 1) params.set('page', String(page))
+  const query = params.toString()
+  return `/aktuality${query ? `?${query}` : ''}`
+}
+
 /**
  * Výpis aktualit v novém (landing) designu — handoff „HC Cestice Aktuality".
  *
@@ -21,9 +39,7 @@ type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
  * Neznámý `?typ=` se ignoruje (chová se jako „Vše").
  */
 export default async function AktualityPage({ searchParams }: Args) {
-  const { page: rawPage, typ } = await searchParams
-  const requestedPage = Math.max(1, Number.parseInt(rawPage ?? '1', 10) || 1)
-  const type = typ && typ in POST_TYPE_LABEL ? typ : null
+  const { page: requestedPage, type } = readParams(await searchParams)
 
   // Fotky na kartách přepíná správce v Nastavení webu (`postsListShowPhoto`);
   // widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku.
@@ -34,13 +50,7 @@ export default async function AktualityPage({ searchParams }: Args) {
     fetchSite(),
   ])
 
-  const hrefFor = (n: number): string => {
-    const params = new URLSearchParams()
-    if (type) params.set('typ', type)
-    if (n > 1) params.set('page', String(n))
-    const query = params.toString()
-    return `/aktuality${query ? `?${query}` : ''}#seznam`
-  }
+  const hrefFor = (n: number): string => `${listPath(n, type)}#seznam`
 
   return (
     <SubpageShell>
@@ -56,9 +66,28 @@ export default async function AktualityPage({ searchParams }: Args) {
   )
 }
 
-export const metadata: Metadata = {
-  title: 'Aktuality | HC Čestice',
-  description:
-    'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.',
-  alternates: { canonical: '/aktuality' },
+/**
+ * Metadata musí být `generateMetadata`, ne statický export — statický
+ * objekt nevidí `searchParams`, takže všech 33 stran výpisu inzerovalo
+ * `canonical: '/aktuality'`. Google to čte jako „stránka 2 je duplikát
+ * stránky 1" a články, na které vede jen ona, nemusí do indexu vůbec.
+ *
+ * Dvě různá pravidla:
+ * - **strana 1** (i s filtrem `?typ=`) je indexovatelná a canonical míří
+ *   na holý `/aktuality` — tím se facety konsolidují do jedné URL.
+ * - **strana 2+** dostane `noindex, follow`: výpis sám o sobě nemá
+ *   vlastní hodnotu, ale crawler po něm musí projít na detaily článků.
+ *   Canonical míří sám na sebe; `noindex` v kombinaci s canonicalem na
+ *   *jinou* URL jsou protichůdné signály, které Google nedoporučuje.
+ */
+export async function generateMetadata({ searchParams }: Args): Promise<Metadata> {
+  const { page, type } = readParams(await searchParams)
+
+  return {
+    title: 'Aktuality | HC Čestice',
+    description:
+      'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.',
+    alternates: { canonical: page > 1 ? listPath(page, type) : '/aktuality' },
+    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
+  }
 }

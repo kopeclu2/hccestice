@@ -44,7 +44,6 @@ export default async function LandingPage() {
     /* Homepage nepoužívá `SubpageShell`: navigace jí přichází z bloku Hero,
        ne z `ArticleNav` (viz „Známé mezery" v AGENTS.md). */
     <PageCanvas surface="home">
-
       {draft && <LivePreviewListener />}
 
       {page ? (
@@ -102,6 +101,10 @@ function StructuredData({ site }: { site: SiteLinks }) {
     name: 'HC Čestice',
     alternateName: 'TJ Sokol Čestice',
     sport: 'Ice Hockey',
+    // Rok založení oddílu ledního hokeje při TJ Sokol — první milník
+    // timeline na `/historie-klubu`. Sedmdesát let existence je pro klub
+    // téhle velikosti nejsilnější signál důvěryhodnosti, jaký má.
+    foundingDate: '1954',
     url: baseUrl,
     logo: `${baseUrl}/logo-cestice.png`,
     email: site.email,
@@ -124,6 +127,13 @@ function StructuredData({ site }: { site: SiteLinks }) {
         addressLocality: 'Rychnov nad Kněžnou',
         addressCountry: 'CZ',
       },
+    },
+    // Spádová oblast pro nábor. Sídlo spolku je v Česticích, ale hraje se
+    // v Rychnově — bez `areaServed` nemá vyhledávač jak poznat, že klub
+    // obsluhuje celý okres a ne jen obec z poštovní adresy.
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: 'okres Rychnov nad Kněžnou',
     },
     memberOf: {
       '@type': 'SportsOrganization',

@@ -59,6 +59,14 @@ export const generateMeta = async (args: {
   const images = ogImage ? [{ url: ogImage }] : undefined
 
   return {
+    /**
+     * Canonical si dřív dosazovaly jen ručně psané landing routy
+     * (`alternates` v jejich `metadata`), takže dokumenty z CMS — `/kontakty`,
+     * `/nabor`, `/reklamni-predmety` — neměly `<link rel="canonical">` vůbec.
+     * `path` se přitom počítá o pár řádků výš pro `og:url`; stačilo ho vrátit
+     * i sem. Relativní hodnotu Next doplní o `metadataBase` z layoutu.
+     */
+    alternates: { canonical: path },
     description,
     // `type` se nedá dosadit výrazem — `openGraph` je diskriminovaná unie,
     // takže se větví celý objekt.
