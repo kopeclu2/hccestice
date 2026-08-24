@@ -113,4 +113,52 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+const payloadConfig = withPayload(nextConfig, { devBundleServerPackages: false })
+
+/**
+ * `withPayload` věší client hint pro barevné schéma na `source: '/:path*'`,
+ * tedy i na celý veřejný web — viz
+ * `node_modules/@payloadcms/next/dist/withPayload/withPayload.js`.
+ *
+ * Problém je `Critical-CH`: prohlížeč, který hint v prvním requestu
+ * neposlal, musí navigaci **restartovat**, aby ho doposlal. V Lighthouse
+ * trace je to `307 Internal Redirect` ještě před samotným HTML, takže to
+ * platí každý první návštěvník a zdrží se tím úplně všechno za tím.
+ *
+ * Měřeno na produkci (Lighthouse 12, mobil, 3 běhy, medián):
+ *
+ * |            | FCP    | LCP    |
+ * |------------|--------|--------|
+ * | s restartem| 2,1 s  | 5,3 s  |
+ * | bez        | 1,6 s  | 3,5 s  |
+ *
+ * Hint potřebuje jen administrace, která si podle něj serverově vybírá
+ * téma. Veřejný web se řídí atributem `[data-theme]` (`globals.css`),
+ * `prefers-color-scheme` nečte vůbec — hint mu je tedy k ničemu.
+ *
+ * Filtruje se podle **hodnoty**, ne podle názvu hlavičky: `Accept-CH`,
+ * `Vary` i `Critical-CH` nesou tentýž `Sec-CH-Prefers-Color-Scheme`,
+ * a filtr na klíč `vary` by mohl sebrat i cizí `Vary`, které tam přibude.
+ */
+const isColorSchemeHint = (header: { key: string; value: string }): boolean =>
+  /sec-ch-prefers-color-scheme/i.test(header.value)
+
+const payloadHeaders = payloadConfig.headers
+
+payloadConfig.headers = async () => {
+  const rules = (await payloadHeaders?.()) ?? []
+
+  return rules.flatMap((rule) => {
+    const hints = rule.headers.filter(isColorSchemeHint)
+    if (hints.length === 0) return [rule]
+
+    const rest = rule.headers.filter((header) => !isColorSchemeHint(header))
+
+    return [
+      ...(rest.length > 0 ? [{ ...rule, headers: rest }] : []),
+      { ...rule, headers: hints, source: '/admin/:path*' },
+    ]
+  })
+}
+
+export default payloadConfig
