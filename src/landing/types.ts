@@ -126,8 +126,23 @@ export type MatchRow = {
 /** Výsledek zápasu z pohledu HC Čestice. */
 export type Outcome = 'win' | 'draw' | 'loss'
 
+/**
+ * Strojově čitelná podoba zápasu pro `SportsEvent`.
+ *
+ * `dateLabel`/`title` jsou pro člověka: „7. 2." nemá rok a titulek slepuje
+ * oba týmy do jednoho řetězce. Strukturovaná data potřebují ISO datum
+ * a týmy zvlášť, takže si je karty nesou vedle popisků — díky tomu se
+ * schema staví z týchž dat, která se vykreslí, a nemůže se s nimi rozejít.
+ */
+export type MatchSchemaFields = {
+  /** ISO 8601 včetně času — `Match.date` beze změny. */
+  startDate: string
+  homeName: string
+  awayName: string
+}
+
 /** Karta rozlosování na /zapasy. */
-export type FixtureCard = {
+export type FixtureCard = MatchSchemaFields & {
   id: number
   /** „Doma" / „Venku" — pilulka v rohu karty. */
   kind: string
@@ -143,7 +158,7 @@ export type FixtureCard = {
 }
 
 /** Řádek výpisu odehraných zápasů na /zapasy. */
-export type ResultRow = {
+export type ResultRow = MatchSchemaFields & {
   id: number
   /** „15. 3." */
   dateLabel: string

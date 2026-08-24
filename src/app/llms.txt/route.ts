@@ -2,6 +2,7 @@ import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
+import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
 import { getServerSideURL } from '@/utilities/getURL'
 import { htmlPlainText, snippet } from '@/utilities/plainText'
 
@@ -79,6 +80,10 @@ const getLlmsTxt = unstable_cache(
       // `home` je na `/` a je to zároveň landing page — v rozcestníku
       // by jen duplikovala kořen webu.
       .filter((page) => page.slug !== 'home')
+      // Legacy dokumenty přebité ručně psanou routou. Bez tohohle filtru
+      // byly `/sponzori` a `/historie-klubu` v souboru dvakrát — jednou
+      // tady a jednou v ručním výčtu „Sekce webu" dole.
+      .filter((page) => !LANDING_SLUGS.has(page.slug as string))
       .map(
         (page) =>
           `- [${page.title ?? page.slug}](${SITE_URL}/${page.slug})${describe(page.meta?.description)}`,

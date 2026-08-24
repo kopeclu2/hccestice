@@ -15,6 +15,7 @@ import type { StandingsContent } from '@/landing/types'
 import { FixturesRail } from '@/landing/zapasy/FixturesRail'
 import { FormStrip } from '@/landing/zapasy/FormStrip'
 import { MatchesCta } from '@/landing/zapasy/MatchesCta'
+import { MatchesJsonLd } from '@/landing/zapasy/MatchesJsonLd'
 import { ResultsList } from '@/landing/zapasy/ResultsList'
 import { StandingsPanel } from '@/landing/zapasy/StandingsPanel'
 import { ZapasyHeader } from '@/landing/zapasy/ZapasyHeader'
@@ -78,6 +79,8 @@ export default async function ZapasyPage({ searchParams }: Args) {
 
   return (
     <SubpageShell>
+      <MatchesJsonLd fixtures={fixtures} results={results.rows} />
+
       <ZapasyHeader
         activeSlug={activeSeason?.slug ?? null}
         fullTableUrl={standings?.fullTableUrl ?? STANDINGS.fullTableUrl}

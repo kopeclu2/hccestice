@@ -9,6 +9,7 @@ import React, { cache } from 'react'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
+import { PageHeader } from '@/landing/components/PageHeader'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -67,6 +68,17 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const { hero, layout } = page
 
+  /**
+   * Všech sedm dokumentů v `pages` má `hero.type = 'none'`, takže
+   * `RenderHero` vrátí `null` a `page.title` se nevykreslil nikdy —
+   * `/kontakty`, `/nabor` i `/reklamni-predmety` byly bez `<h1>` a bez
+   * drobečků. Titulek v CMS přitom vyplněný je; chyběla jen hlavička,
+   * která ho zobrazí. `PageHeader` je tatáž komponenta, jakou používá
+   * sedm ručně psaných podstránek, takže se vzhled ani drobečková
+   * strukturovaná data nemohou rozejít.
+   */
+  const hasHero = Boolean(hero?.type && hero.type !== 'none')
+
   return (
     <SubpageShell>
       {/* Redirecty se uplatní i na existující stránky (změna slugu v CMS). */}
@@ -74,7 +86,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
+      {hasHero ? (
+        <RenderHero {...hero} />
+      ) : (
+        <PageHeader title={page.title} trail={[{ label: page.title }]} />
+      )}
       <RenderBlocks blocks={layout} />
     </SubpageShell>
   )

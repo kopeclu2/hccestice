@@ -3,15 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 
-/** Slugy obsluhované landing routami v `app/(landing)` — viz filtr níže. */
-const LANDING_SLUGS = new Set([
-  'soupiska',
-  'aktuality',
-  'fotogalerie',
-  'sponzori',
-  'historie-klubu',
-  'zapasy',
-])
+import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
 
 const getPagesSitemap = unstable_cache(
   async () => {
