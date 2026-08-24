@@ -83,12 +83,15 @@ export function ProductTile({
         className="bg-chip relative block aspect-square overflow-hidden rounded-badge"
         href={detailHref}
       >
+        {/* `sizes` kopíruje zlomy mřížky výš (`sm:grid-cols-2 lg:grid-cols-3`).
+            Dřív tu byl jediný zlom na 48rem, takže mezi 768 a 1024 px se do
+            poloviční dlaždice tahala třetinová fotka — rozmazaně. */}
         {photo && (
           <Image
             alt={photo.alt}
             className="object-contain p-5"
             fill
-            sizes="(max-width: 48rem) 100vw, 33vw"
+            sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
             src={getMediaUrl(photo.url)}
           />
         )}

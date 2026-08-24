@@ -41,7 +41,7 @@ function GalleryEmbedView({ title, photos }: { title: string | null; photos: Pho
               gradient="none"
               key={`${photo.url}-${index}`}
               photo={photo}
-              sizes="(max-width: 48rem) 50vw, 25vw"
+              sizes="(max-width: 40rem) 50vw, (max-width: 48rem) 33vw, 25vw"
             />
           ))}
         </div>

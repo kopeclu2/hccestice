@@ -39,7 +39,7 @@ export function RosterWidgetView({
               <PhotoTile
                 className="aspect-[3/4] rounded-thumb"
                 photo={player.photo}
-                sizes="(max-width: 48rem) 50vw, 20vw"
+                sizes="(max-width: 40rem) 50vw, (max-width: 48rem) 33vw, (max-width: 64rem) 25vw, 20vw"
               >
                 {player.number != null && (
                   <TileBadge className="top-2.5 left-2.5" tone="lime">
