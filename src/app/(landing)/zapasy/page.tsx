@@ -69,6 +69,12 @@ export default async function ZapasyPage({ searchParams }: Args) {
         }
       : null
 
+  // Sezóny jsou řazené od nejnovější (`fetchMatchSeasons`), takže `seasons[0]`
+  // je ta aktuální/nadcházející. U starších (dohraných) sezón nemá smysl
+  // hlásit "Žádný zápas na programu" — ten text patří jen k té, kde ještě
+  // rozlosování může přibýt.
+  const isLatestSeason = !activeSeason || seasons[0]?.id === activeSeason.id
+
   const hrefFor = (n: number): string => {
     const params = new URLSearchParams()
     if (activeSeason?.slug) params.set('sezona', activeSeason.slug)
@@ -89,29 +95,34 @@ export default async function ZapasyPage({ searchParams }: Args) {
           .map((season) => ({ slug: season.slug!, label: seasonShortLabel(season) }))}
       />
 
-      {/* Prázdný stav dostane jen /zapasy — výřez na home page se u dohrané
-          sezóny dál skrývá (viz `FixturesRail`). */}
+      {/* Prázdný stav dostane jen aktuální sezóna na /zapasy — u starší
+          (dohrané) sezóny se sekce rovnou skryje, stejně jako výřez na home
+          page (viz `FixturesRail`). Bez `isLatestSeason` by "Žádný zápas na
+          programu" viselo i pod loňskou sezónou, kde už žádné rozlosování
+          nepřibude. */}
       <FixturesRail
         emptyState={
-          <EmptyState
-            actions={
-              <>
-                <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                  Sledovat aktuality
-                </PillLink>
-                <PillLink href="/zapasy#odehrane" size="md" variant="outline">
-                  Odehrané zápasy
-                </PillLink>
-              </>
-            }
-            icon="schedule"
-            title="Žádný zápas na programu"
-            titleAs="h3"
-            watermark="VČHL"
-          >
-            Rozlosování nové sezóny zveřejní VČHL během léta. Sledujte aktuality — dáme vědět,
-            jakmile bude termínovka venku.
-          </EmptyState>
+          isLatestSeason ? (
+            <EmptyState
+              actions={
+                <>
+                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
+                    Sledovat aktuality
+                  </PillLink>
+                  <PillLink href="/zapasy#odehrane" size="md" variant="outline">
+                    Odehrané zápasy
+                  </PillLink>
+                </>
+              }
+              icon="schedule"
+              title="Žádný zápas na programu"
+              titleAs="h3"
+              watermark="VČHL"
+            >
+              Rozlosování nové sezóny zveřejní VČHL během léta. Sledujte aktuality — dáme vědět,
+              jakmile bude termínovka venku.
+            </EmptyState>
+          ) : undefined
         }
         fixtures={fixtures}
         id="rozlosovani"
