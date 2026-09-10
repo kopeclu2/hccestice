@@ -59,6 +59,7 @@ const getPagesSitemap = unstable_cache(
       { loc: `${SITE_URL}/fotogalerie` },
       { loc: `${SITE_URL}/sponzori` },
       { loc: `${SITE_URL}/historie-klubu` },
+      { loc: `${SITE_URL}/treninky` },
     ]
 
     const sitemap = results.docs

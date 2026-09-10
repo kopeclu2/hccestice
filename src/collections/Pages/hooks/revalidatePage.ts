@@ -16,6 +16,10 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       payload.logger.info(`Revalidating page at path: ${path}`)
 
       revalidatePath(path)
+      // Blok „Tréninky" na homu nese stejná data jako samostatná stránka
+      // /treninky (viz `landing/data/trainings.ts`) — bez druhé revalidace
+      // by tam změna z adminu čekala na ISR (10 min), ne na uložení.
+      if (doc.slug === 'home') revalidatePath('/treninky')
       revalidateTag('pages-sitemap', 'max')
       revalidateTag('llms-txt', 'max')
     }
@@ -27,6 +31,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       payload.logger.info(`Revalidating old page at path: ${oldPath}`)
 
       revalidatePath(oldPath)
+      if (previousDoc.slug === 'home') revalidatePath('/treninky')
       revalidateTag('pages-sitemap', 'max')
       revalidateTag('llms-txt', 'max')
     }
@@ -38,6 +43,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Page> = ({ doc, req: { 
   if (!context.disableRevalidate) {
     const path = doc?.slug === 'home' ? '/' : `/${doc?.slug}`
     revalidatePath(path)
+    if (doc?.slug === 'home') revalidatePath('/treninky')
     revalidateTag('pages-sitemap', 'max')
     revalidateTag('llms-txt', 'max')
   }

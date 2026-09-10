@@ -18,4 +18,5 @@ export const LANDING_SLUGS = new Set([
   'sponzori',
   'historie-klubu',
   'zapasy',
+  'treninky',
 ])

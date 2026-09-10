@@ -10,7 +10,7 @@ import { CardTitle, SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'
 import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
+import { SectionShell, type SectionShellProps } from '../../components/SectionShell'
 import { TRAININGS } from '../../content'
 import type { TrainingSlot, TrainingsContent } from '../../types'
 
@@ -48,8 +48,15 @@ function mapTrainings(block: LandingTrainingsBlock): TrainingsContent {
   }
 }
 
-export function TrainingsBlockComponent({ block }: { block: LandingTrainingsBlock }) {
-  return <TrainingsView content={mapTrainings(block)} />
+export function TrainingsBlockComponent({
+  block,
+  spacing,
+}: {
+  block: LandingTrainingsBlock
+  /** Homepage sekce jede na výchozí `landing` rytmus, `/treninky` na `content` hned pod hlavičkou. */
+  spacing?: SectionShellProps['spacing']
+}) {
+  return <TrainingsView content={mapTrainings(block)} spacing={spacing} />
 }
 
 /**
@@ -64,9 +71,15 @@ export function TrainingsBlockComponent({ block }: { block: LandingTrainingsBloc
  * stojí **pod** nadpisem, ne vedle něj — vedle nadpisu se lámal do úzkého
  * sloupce a rozvaloval hlavičku sekce.
  */
-function TrainingsView({ content }: { content: TrainingsContent }) {
+function TrainingsView({
+  content,
+  spacing,
+}: {
+  content: TrainingsContent
+  spacing?: SectionShellProps['spacing']
+}) {
   return (
-    <SectionShell id="treninky">
+    <SectionShell id="treninky" spacing={spacing}>
       <TrainingsJsonLd rows={content.rows} />
       {/* Zakotvení odspodu, ne `top-107`: pevná vzdálenost od horní hrany
           závisela na výšce sekce, takže s jiným počtem karet puk vytékal. */}

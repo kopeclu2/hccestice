@@ -30,7 +30,7 @@ export const FALLBACK_NAV: NavItem[] = [
   { label: 'Zápasy', anchor: null, path: '/zapasy' },
   { label: 'Aktuality', anchor: 'aktuality', path: '/aktuality' },
   { label: 'Sezóna', anchor: 'sezona', path: null },
-  { label: 'Tréninky', anchor: 'treninky', path: null },
+  { label: 'Tréninky', anchor: 'treninky', path: '/treninky' },
   { label: 'Fotoalbum', anchor: 'fotoalbum', path: '/fotogalerie' },
   { label: 'Partneři', anchor: 'sponzori', path: '/sponzori' },
 ]
@@ -92,6 +92,12 @@ export const TRAININGS = {
     { day: 'Út', time: '16:15 – 17:15', group: 'Muži + mládež', accent: true },
     { day: 'Pá', time: '17:45 – 19:00', group: 'Muži', accent: false },
   ],
+} as const
+
+/** Hlavička samostatné stránky `/treninky` — obsah rozpisu nese `landingTrainings` blok sám. */
+export const TRAININGS_PAGE = {
+  watermark: 'LED',
+  breadcrumb: 'Tréninky',
 } as const
 
 export const CLUB = {
