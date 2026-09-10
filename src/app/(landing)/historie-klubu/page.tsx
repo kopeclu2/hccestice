@@ -24,14 +24,20 @@ export default async function HistorieKlubuPage() {
 
   return (
     <SubpageShell>
-<HistorieHeader />
+      <HistorieHeader />
 
-      <SectionShell className="max-w-[77.5rem] space-y-18" spacing="content">
-        {eras.map((era) => (
-          <EraSection era={era} key={era.value} />
-        ))}
+      {/* Šířku timeline drží vnitřní obal, ne `SectionShell`. Override
+          `max-w` na shellu se totiž potkal s jeho `mx-auto`, takže se obsah
+          od 1240px vycentroval uvnitř širší hlavičky (`max-w-[97.5rem]`)
+          a odsadil se ~80px vpravo od `<h1>`. */}
+      <SectionShell spacing="content">
+        <div className="max-w-[77.5rem] space-y-12 md:space-y-15 lg:space-y-18">
+          {eras.map((era) => (
+            <EraSection era={era} key={era.value} />
+          ))}
 
-        <StoryPanel />
+          <StoryPanel />
+        </div>
       </SectionShell>
 
       <ArchiveCta />

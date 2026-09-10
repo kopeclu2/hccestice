@@ -3,7 +3,7 @@ import type { Page, Post } from '@/payload-types'
 
 import { getCachedDocument } from '@/utilities/getDocument'
 import { getCachedRedirects } from '@/utilities/getRedirects'
-import { notFound, redirect } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 
 interface Props {
   disableNotFound?: boolean
@@ -15,7 +15,17 @@ interface Props {
 const collectionPrefix = (relationTo: string): string =>
   relationTo === 'pages' ? '' : relationTo === 'posts' ? '/aktuality' : `/${relationTo}`
 
-/* This component helps us with SSR based dynamic redirects */
+/**
+ * SSR redirecty z kolekce `redirects` (plní je legacy import z eStránek).
+ *
+ * Používá se `permanentRedirect` (308), ne `redirect` — ten posílá
+ * **307 Temporary**
+ * (`node_modules/next/dist/docs/01-app/03-api-reference/04-functions/redirect.md`,
+ * „Why does `redirect` use 307 and 308?"). Statická pravidla v
+ * `redirects.ts` mají `permanent: true`, takže dvě cesty ke stejnému cíli
+ * se dřív rozcházely: crawler starou URL z indexu nevyřadil a prohlížeč
+ * si redirect necachoval.
+ */
 export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }) => {
   const redirects = await getCachedRedirects()()
 
@@ -23,7 +33,7 @@ export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }
 
   if (redirectItem) {
     if (redirectItem.to?.url) {
-      redirect(redirectItem.to.url)
+      permanentRedirect(redirectItem.to.url)
     }
 
     let redirectUrl: string
@@ -44,7 +54,7 @@ export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }
       }`
     }
 
-    if (redirectUrl) redirect(redirectUrl)
+    if (redirectUrl) permanentRedirect(redirectUrl)
   }
 
   if (disableNotFound) return null

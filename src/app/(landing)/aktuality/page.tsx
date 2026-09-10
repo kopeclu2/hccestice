@@ -58,7 +58,12 @@ export default async function AktualityPage({ searchParams }: Args) {
 
       <SectionShell spacing="content">
         <AktualityGrid activeType={type} cards={postsPage.cards} showPhoto={showPhoto} />
-        <Pagination hrefFor={hrefFor} page={postsPage.page} totalPages={postsPage.totalPages} />
+        {/* Jedna strana = žádné stránkování. Bez podmínky zůstalo pod výpisem
+            (a přímo pod prázdným stavem) mrtvé „Strana 1 z 1" se dvěma
+            neaktivními šipkami — `ResultsList` to podmiňuje stejně. */}
+        {postsPage.totalPages > 1 && (
+          <Pagination hrefFor={hrefFor} page={postsPage.page} totalPages={postsPage.totalPages} />
+        )}
       </SectionShell>
 
       <SocialCta site={site} />

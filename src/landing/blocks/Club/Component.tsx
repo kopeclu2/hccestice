@@ -75,11 +75,15 @@ function ClubView({ content }: { content: ClubContent }) {
       </Reveal>
 
       <Reveal delay={0.1}>
+        {/* `sizes` kopíruje zlomy mřížky: do 768px je dlaždice na celou šířku,
+            mezi 768 a 1024px si auto-fit rozdělí sloupec na polovinu a až na
+            desktopu je z ní čtvrtina viewportu. Jediný zlom na 48rem tahal na
+            tablet 192px fotku do ~350px dlaždice. */}
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(15rem,100%),1fr))] gap-5.5">
           <PhotoTile
             className="h-82.5 rounded-block"
             photo={content.stadium.photo}
-            sizes="(max-width: 48rem) 100vw, 25vw"
+            sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
           >
             <TileBadge className="top-3.5 left-3.5">{content.stadium.tag}</TileBadge>
             <div className="absolute bottom-4 left-4 right-15 text-body leading-normal font-semibold text-white">
@@ -91,7 +95,7 @@ function ClubView({ content }: { content: ClubContent }) {
             <PhotoTile
               className="h-52.5 rounded-block"
               photo={content.youth.photo}
-              sizes="(max-width: 48rem) 100vw, 25vw"
+              sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
             >
               <TileBadge className="top-3 left-3">{content.youth.tag}</TileBadge>
               <div className="absolute bottom-3.5 left-3.5 text-body font-semibold text-white">

@@ -53,7 +53,7 @@ export function ArticleRelated({
           <Reveal className="h-full" delay={index * 0.08} key={card.id}>
             <ArticleCard
               card={card}
-              sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
               withPhoto={showPhoto}
             />
           </Reveal>

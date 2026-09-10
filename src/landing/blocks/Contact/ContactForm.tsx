@@ -62,7 +62,10 @@ export function ContactForm({ topics }: { topics: string[] }) {
 
   if (status === 'sent') {
     return (
-      <div className="rounded-panel bg-contrast relative mx-auto mt-10 max-w-170 p-8.5 text-left text-on-contrast">
+      /* Tři stupně odsazení zrcadlí formulář níž — panel po odeslání stojí na
+         stejném místě, takže s pevným `p-8.5` si na tabletu bral okraje o dva
+         stupně větší než karta, kterou nahradil. */
+      <div className="rounded-panel bg-contrast relative mx-auto mt-10 max-w-170 p-4.5 text-left text-on-contrast md:p-6.5 lg:p-8.5">
         <div className="bg-lime text-ink mb-4 grid size-11 place-items-center rounded-full [&_svg]:size-5">
           <Check strokeWidth={3} />
         </div>
@@ -144,6 +147,9 @@ export function ContactForm({ topics }: { topics: string[] }) {
 
       <PillButton
         arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
+        /* Bez odsazení se tlačítko lepilo na textarea (~4px) — o stupeň víc
+           než rytmus polí (16px), aby se odsadilo od bloku formuláře. */
+        className="mt-5"
         disabled={isSubmitting}
         size="lg"
         type="submit"

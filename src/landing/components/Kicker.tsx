@@ -19,6 +19,12 @@ const eyebrowVariants = cva('text-eyebrow font-extrabold tracking-[0.16em] upper
       /** Ztišený label na tmavém podkladu (hlavičky tabulek v panelech). */
       dark: 'text-faint-dark',
       white: 'text-white/60',
+      /**
+       * Nadpis sloupce na klubové zelené (patička). `white` tam nestačí:
+       * `text-white/60` na `bg-club` (#17703a) dává ~3,4:1, což je pod AA
+       * i pro 11px uppercase — a jde o nadpis, ne o ztišený doplněk.
+       */
+      'white-strong': 'text-white/80',
     },
     /** Volnější prostrkání pro samostatně stojící label přes fotku. */
     wide: {

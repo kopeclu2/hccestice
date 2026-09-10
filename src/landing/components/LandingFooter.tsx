@@ -32,14 +32,28 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           HCČ
         </Watermark>
         {content.photo && (
-          <Image
-            alt=""
-            aria-hidden
-            className="absolute inset-0 size-full object-cover opacity-22"
-            fill
-            sizes="100vw"
-            src={getMediaUrl(content.photo.url)}
-          />
+          <>
+            <Image
+              alt=""
+              aria-hidden
+              className="absolute inset-0 size-full object-cover opacity-12"
+              fill
+              sizes="100vw"
+              src={getMediaUrl(content.photo.url, content.photo.updatedAt)}
+            />
+            {/*
+             * Scrim pod obsahem. Fotka stadionu byla `opacity-22` bez něj,
+             * takže bílé odkazy sloupců padaly na přeexponované plochy
+             * (na mobilu končily „Historie" a „Partneři" na téměř bílém
+             * podkladu). Krytí fotky je proto poloviční a zbytek dorovnává
+             * přechod ke klubové zelené — nejsilnější dole, kde leží
+             * nejvíc textu (sloupce odkazů a © řádek).
+             */}
+            <div
+              aria-hidden
+              className="from-club/95 via-club/80 to-club/55 absolute inset-0 bg-linear-to-t"
+            />
+          </>
         )}
 
         {/*
@@ -85,13 +99,25 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
             </div>
           </div>
 
+          {/*
+           * Sloupce odkazů: `gap-1` + `py-1.5` na odkazu, ne `gap-2` bez
+           * paddingu. Řádek `text-meta` je vysoký ~16px, takže tap target
+           * byl proti zbytku webu (44px, viz `pill.ts`) poloviční. Padding
+           * plochu zvětší na ~28px, aniž by se řádkování rozjelo — mezera
+           * mezi odkazy zůstává 8px jako dřív. Na desktopu, kde se klika
+           * myší, se padding ruší a rozestupy jsou přesně jako v handoffu.
+           */}
           <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(9.375rem,100%),1fr))] gap-7 text-meta">
             {content.columns.map((column) => (
-              <div className="flex flex-col gap-2" key={column.title}>
-                <Eyebrow tone="white">{column.title}</Eyebrow>
+              <div className="flex flex-col gap-1" key={column.title}>
+                {/*
+                 * `white-strong` (`text-white/80`), ne `white` (`/60`):
+                 * nadpis sloupce na `bg-club` měl ~3,4:1, tedy pod AA.
+                 */}
+                <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
-                    className="hover:text-lime text-white transition-colors"
+                    className="hover:text-lime py-1.5 text-white transition-colors md:py-0"
                     href={link.href}
                     key={link.href}
                   >
@@ -109,10 +135,24 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * na tři: logo, copyright a liga každé samo na sobě. `justify-between`
          * udělá totéž zarovnání bez fantomové položky a logo s copyrightem
          * drží pohromadě ve vlastním flexu, takže se od sebe neodtrhnou.
+         *
+         * `text-white/85`, ne `/70`: 12px text na `bg-club` měl ~4,1:1, což
+         * je pod AA pro malé písmo.
          */}
-        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-2.5 border-t border-white/25 pt-5 text-caption text-white/70 md:mt-10 lg:mt-11">
+        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-2.5 border-t border-white/25 pt-5 text-caption text-white/85 md:mt-10 lg:mt-11">
           <span className="flex items-center gap-3.5">
-            <Image alt="" aria-hidden height={28} src="/logo-cestice.png" width={28} />
+            {/* `rounded-full`: logo má neprůhledné bílé pozadí, takže by se
+                na zelené ploše kreslilo jako bílý čtverec kolem kruhového
+                znaku. Kruh čtverec vyplňuje celý, takže se odřezáním rohů
+                z loga nic neztratí. */}
+            <Image
+              alt=""
+              aria-hidden
+              className="rounded-full"
+              height={28}
+              src="/logo-cestice.png"
+              width={28}
+            />
             {`© ${new Date().getFullYear()} HC Čestice — TJ Sokol Čestice`}
           </span>
           <span>{content.league}</span>

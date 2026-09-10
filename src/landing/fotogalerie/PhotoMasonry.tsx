@@ -34,7 +34,7 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
   const [openIndex, setOpenIndex] = useState(-1)
 
   const slides = photos.map(({ photo, caption }) => ({
-    src: getMediaUrl(photo.url),
+    src: getMediaUrl(photo.url, photo.updatedAt),
     width: photo.width,
     height: photo.height,
     ...(caption ? { description: caption } : {}),
@@ -49,18 +49,21 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
         {photos.slice(0, visibleCount).map(({ photo }, index) => (
           <button
             aria-label={`Otevřít fotku ${index + 1}`}
-            className="bg-pine relative mb-2.5 block w-full cursor-zoom-in overflow-hidden rounded-badge break-inside-avoid md:mb-4"
+            className="bg-pine relative mb-2.5 block w-full cursor-zoom-in overflow-hidden rounded-thumb break-inside-avoid md:mb-4"
             key={`${photo.url}-${index}`}
             onClick={() => setOpenIndex(index)}
             style={{ aspectRatio: String(photo.width / photo.height) }}
             type="button"
           >
+            {/* `sizes` je psané přes `min-width`: na přesně 768px už platí
+                `md:columns-3`, ale `max-width: 48rem` tam ještě tvrdilo
+                50vw (384px) do dlaždice o ~230px. */}
             <Image
               alt={photo.alt}
               className="object-cover transition-transform duration-300 hover:scale-[1.03]"
               fill
-              sizes="(max-width: 48rem) 50vw, 33vw"
-              src={getMediaUrl(photo.url)}
+              sizes="(min-width: 48rem) 33vw, 50vw"
+              src={getMediaUrl(photo.url, photo.updatedAt)}
             />
           </button>
         ))}

@@ -29,18 +29,17 @@ const ContactForm = dynamic(() => import('./ContactForm').then((mod) => mod.Cont
 
 export function ContactFormLazy({ topics }: { topics: string[] }) {
   const anchor = React.useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = React.useState(false)
+  // Bez IntersectionObserveru (starší prohlížeč) radši formulář rovnou
+  // zobrazit — nefunkční kontakt je horší než chunk navíc. Lazy initial
+  // state místo setState v efektu, ať se to spočítá jen jednou při mountu.
+  const [visible, setVisible] = React.useState(
+    () => typeof IntersectionObserver === 'undefined',
+  )
 
   React.useEffect(() => {
+    if (visible) return
     const el = anchor.current
     if (!el) return
-
-    // Bez IntersectionObserveru (starší prohlížeč) radši formulář rovnou
-    // zobrazit — nefunkční kontakt je horší než chunk navíc.
-    if (typeof IntersectionObserver === 'undefined') {
-      setVisible(true)
-      return
-    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -55,7 +54,7 @@ export function ContactFormLazy({ topics }: { topics: string[] }) {
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [visible])
 
   return (
     <div className="flow-root min-h-154 md:min-h-127" ref={anchor}>

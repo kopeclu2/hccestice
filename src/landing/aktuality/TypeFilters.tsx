@@ -19,6 +19,7 @@ export function TypeFilters({ activeType }: { activeType: string | null }) {
         const active = key === activeType
         return (
           <PillLink
+            aria-current={active ? 'true' : undefined}
             href={key ? `/aktuality?typ=${key}#seznam` : '/aktuality#seznam'}
             key={label}
             selected={active}

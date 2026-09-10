@@ -26,7 +26,19 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
+  # Čistě statická kontrola (lint, typy, design tokeny) bez databáze — musí
+  # proběhnout dřív, než se otevře SSH tunel a spustí drahý Docker build.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run check
+
   build:
+    needs: check
     runs-on: ubuntu-latest
     permissions:
       contents: read

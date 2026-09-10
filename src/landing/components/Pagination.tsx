@@ -101,7 +101,16 @@ export function Pagination({
               {item}
             </span>
           ) : (
-            <PillLink href={hrefFor(item)} key={item} size="circle" variant="outline">
+            <PillLink
+              /* Bílá plocha jako u šipek — bez ní byla v jedné skupině část
+                 prvků bílá a část průhledná. Výpustka „…" plochu nemá
+                 záměrně, není to cíl odkazu. */
+              className="bg-surface"
+              href={hrefFor(item)}
+              key={item}
+              size="circle"
+              variant="outline"
+            >
               {item}
             </PillLink>
           ),
@@ -118,9 +127,15 @@ export function Pagination({
             →
           </PillLink>
         ) : (
+          /* Neaktivní „další strana" má stejný ztišený outline jako neaktivní
+             „předchozí" — v tmavé variantě vypadala jako hlavní akce stránky,
+             přitom nikam nevede. */
           <span
             aria-hidden
-            className={cn(pillVariants({ size: 'circle', variant: 'dark' }), 'text-white/35')}
+            className={cn(
+              pillVariants({ size: 'circle', variant: 'outline' }),
+              'bg-surface text-inactive',
+            )}
           >
             →
           </span>

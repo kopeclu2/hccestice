@@ -7,6 +7,7 @@ import type { SiteLinks } from '../types'
 import { Badge } from './Badge'
 import { ErrorMeta } from './ErrorCode'
 import { PageTitle } from './Heading'
+import { Highlight } from './Kicker'
 import { PillLink } from './PillLink'
 import { PuckTrailLine } from './PuckTrail'
 
@@ -33,16 +34,29 @@ export function MaintenanceScreen({
         className="hatch pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_70%_at_50%_45%,transparent_30%,#000)]"
       />
       {/* Monogram klubu přes celou obrazovku. Nejde o `Watermark` — ten je
-          `absolute` v rámci sekce, tady se centruje k viewportu. */}
+          `absolute` v rámci sekce, tady se centruje k viewportu.
+
+          Zapíná se až od `lg`, ne od `md` — ze stejného důvodu, kvůli kterému
+          hranici posunul `Watermark`: na 768px displeji má `34vw` 261px, takže
+          monogram prořezával perex i trajektorii puku. */}
       <div
         aria-hidden
-        className="text-stroke pointer-events-none absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-club/9 text-[clamp(15rem,34vw,32.5rem)] leading-none font-extrabold tracking-[-0.06em] whitespace-nowrap select-none md:block"
+        className="text-stroke pointer-events-none absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-club/9 text-[clamp(15rem,34vw,32.5rem)] leading-none font-extrabold tracking-[-0.06em] whitespace-nowrap select-none lg:block"
       >
         HCČ
       </div>
 
       <div className="relative z-1 flex max-w-155 flex-col items-center text-center">
-        <Image alt="HC Čestice" height={76} src="/logo-cestice.png" width={76} />
+        {/* `rounded-full`: `/logo-cestice.png` má neprůhledné bílé pozadí, takže
+            by na paper podkladu vykreslilo bílý blok 76×76 kolem kruhového
+            loga. Kruh čtverec vyplňuje celý, odřezání rohů tedy nic neubere. */}
+        <Image
+          alt="HC Čestice"
+          className="rounded-full"
+          height={76}
+          src="/logo-cestice.png"
+          width={76}
+        />
 
         <Badge caps className="mt-6.5" size="md" variant="lime">
           Plánovaná údržba
@@ -81,9 +95,13 @@ export function MaintenanceScreen({
 }
 
 /**
- * Poslední dvě slova nadpisu v klubové zelené (handoff: „Rolba právě
+ * Poslední dvě slova nadpisu zvýrazněná lime pruhem (handoff: „Rolba právě
  * **upravuje led**"). Nadpis je editovatelný v adminu, takže se zvýraznění
  * nedá zapsat jako JSX — stejný trik používá `SectionHead` a blok Sponzoři.
+ *
+ * `Highlight`, ne `text-club`: světlé systémové stránky (404 a údržba) mají
+ * mít jeden způsob zvýraznění. `text-lime` na 500 je jiný jen proto, že tam
+ * je nadpis na tmavém podkladu, kde lime pruh nefunguje.
  */
 function HeadlineWithAccent({ children }: { children: string }) {
   const words = children.trim().split(/\s+/)
@@ -94,7 +112,7 @@ function HeadlineWithAccent({ children }: { children: string }) {
 
   return (
     <>
-      {head} <span className="text-club">{accent}</span>
+      {head} <Highlight>{accent}</Highlight>
     </>
   )
 }

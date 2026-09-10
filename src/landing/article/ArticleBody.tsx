@@ -14,7 +14,7 @@ export function ArticleBody({ post }: { post: Post }) {
   const isLegacy = post.contentType === 'html' && post.legacyHtml
 
   return (
-    <div className="article-prose relative z-1 mx-auto mt-11 max-w-[51.25rem] md:mt-18 px-[clamp(0.875rem,3vw,2.5rem)]">
+    <div className="article-prose relative z-1 mx-auto mt-11 max-w-[51.25rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-14 lg:mt-18">
       {isLegacy ? (
         <div
           className="legacy-html"

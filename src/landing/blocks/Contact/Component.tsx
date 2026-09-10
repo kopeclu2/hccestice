@@ -107,10 +107,16 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
   )
 }
 
+/**
+ * Odkaz na sociální síť ve stejném řádku jako pill údaje (`Badge` s obrysem).
+ * Varianta `club` do něj přinesla jinou barvu obrysu, jinou váhu i jinou výšku
+ * (h-11/md:h-10 proti 36px štítku), takže je sjednocená na `outline` a od
+ * neklikatelných štítků ji odlišuje jen šipka v kruhu (`withArrow`), ne barva.
+ */
 function SocialPill({ href, label }: { href: string; label: string }) {
   return (
-    <PillLink href={href} rel="noreferrer" size="sm" target="_blank" variant="club">
-      {label} ↗
+    <PillLink href={href} rel="noreferrer" size="sm" target="_blank" variant="outline" withArrow>
+      {label}
     </PillLink>
   )
 }

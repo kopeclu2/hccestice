@@ -110,7 +110,7 @@ function PersonTile({ person }: { person: PersonCard }) {
             alt={`${person.name} — ${person.role}`}
             className="absolute inset-0 size-full object-cover object-top"
             height={person.photo.height}
-            src={getMediaUrl(person.photo.url)}
+            src={getMediaUrl(person.photo.url, person.photo.updatedAt)}
             width={person.photo.width}
           />
         )}

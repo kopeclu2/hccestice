@@ -44,7 +44,7 @@ export function ResultsList({
   headVariant?: SectionHeadVariant
 }) {
   return (
-    <div className="scroll-mt-5" id="odehrane">
+    <div className="scroll-mt-8" id="odehrane">
       <SectionHead note="Výsledky" title="Odehrané zápasy" variant={headVariant}>
         {moreHref && <MoreLink href={moreHref}>{moreLabel}</MoreLink>}
       </SectionHead>

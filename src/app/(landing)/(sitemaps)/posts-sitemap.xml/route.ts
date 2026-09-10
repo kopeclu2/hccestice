@@ -45,11 +45,18 @@ const getPostsSitemap = unstable_cache(
   ['posts-sitemap'],
   {
     tags: ['posts-sitemap'],
+    // Pojistka pod tagem — bez ní má `unstable_cache` TTL jeden rok.
+    revalidate: 86400,
   },
 )
 
 export async function GET() {
   const sitemap = await getPostsSitemap()
 
-  return getServerSideSitemap(sitemap)
+  // Route handlery jsou od Next 15 dynamické by default, takže se handler
+  // spustí na každý request — cachovaná je jen jeho datová část. Bez téhle
+  // hlavičky by odpověď neměla `Cache-Control` vůbec.
+  return getServerSideSitemap(sitemap, {
+    'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+  })
 }

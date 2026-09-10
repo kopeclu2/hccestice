@@ -156,6 +156,8 @@ export type PostsPage = {
  * TTL `unstable_cache` bez `options.revalidate` je rok, takže
  * `revalidateTag('posts-list')` v `revalidatePost` není optimalizace, ale
  * podmínka funkčnosti — jinak by nový článek ve výpisu nikdy nebyl.
+ * `revalidate: 3600` je pod tagem jako záchranná síť pro případ, že hook
+ * neproběhne (seed s `disableRevalidate`, výjimka při zápisu).
  */
 const queryPostsPage = unstable_cache(
   async (options: {
@@ -198,7 +200,7 @@ const queryPostsPage = unstable_cache(
     }
   },
   ['posts-page'],
-  { tags: ['posts-list'] },
+  { tags: ['posts-list'], revalidate: 3600 },
 )
 
 export const fetchPostsPage = cache(queryPostsPage)

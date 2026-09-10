@@ -50,7 +50,7 @@ export function PhotoTile({
           fetchPriority={priority ? 'high' : undefined}
           loading={priority ? 'eager' : 'lazy'}
           sizes={sizes}
-          src={getMediaUrl(photo.url)}
+          src={getMediaUrl(photo.url, photo.updatedAt)}
         />
       )}
       {gradient === 'bottom' && (

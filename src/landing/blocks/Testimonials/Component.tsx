@@ -41,7 +41,7 @@ export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock
                       alt={item.name}
                       className="size-11 rounded-full object-cover"
                       height={44}
-                      src={getMediaUrl(photo.url)}
+                      src={getMediaUrl(photo.url, photo.updatedAt)}
                       width={44}
                     />
                   ) : (

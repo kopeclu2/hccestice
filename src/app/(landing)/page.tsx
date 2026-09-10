@@ -50,7 +50,7 @@ export default async function LandingPage() {
         <RenderLandingBlocks blocks={page.layout ?? []} />
       ) : (
         <p className="py-40 text-center">
-          Stránka „home" v CMS chybí — spusťte{' '}
+          Stránka „home“ v CMS chybí — spusťte{' '}
           <code>bun --env-file=.env migration/seed-home-landing.ts</code>.
         </p>
       )}
@@ -124,7 +124,9 @@ function StructuredData({ site }: { site: SiteLinks }) {
       name: 'Zimní stadion Rychnov nad Kněžnou',
       address: {
         '@type': 'PostalAddress',
+        streetAddress: 'Javornická 1648',
         addressLocality: 'Rychnov nad Kněžnou',
+        postalCode: '516 01',
         addressCountry: 'CZ',
       },
     },

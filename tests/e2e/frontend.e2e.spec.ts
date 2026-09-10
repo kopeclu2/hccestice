@@ -1,17 +1,21 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 test.describe('Frontend', () => {
-  let page: Page
-
-  test.beforeAll(async ({ browser }, testInfo) => {
-    const context = await browser.newContext()
-    page = await context.newPage()
+  test('homepage má klubový titulek, navigaci a patičku', async ({ page }) => {
+    await page.goto('http://localhost:3000')
+    await expect(page).toHaveTitle(/HC Čestice/)
+    await expect(page.locator('nav').first()).toBeVisible()
+    await expect(page.locator('footer')).toBeVisible()
   })
 
-  test('can load homepage', async ({ page }) => {
-    await page.goto('http://localhost:3000')
-    await expect(page).toHaveTitle(/Payload Website Template/)
-    const heading = page.locator('h1').first()
-    await expect(heading).toHaveText('Payload Website Template')
+  test('podstránka /zapasy se načte s vlastním titulkem', async ({ page }) => {
+    const response = await page.goto('http://localhost:3000/zapasy')
+    expect(response?.ok()).toBeTruthy()
+    await expect(page).toHaveTitle(/HC Čestice/)
+  })
+
+  test('neexistující stránka vrátí 404', async ({ page }) => {
+    const response = await page.goto('http://localhost:3000/tato-stranka-neexistuje')
+    expect(response?.status()).toBe(404)
   })
 })

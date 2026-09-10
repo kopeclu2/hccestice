@@ -1,6 +1,7 @@
 import type { Person, SiteConfig } from '@/payload-types'
 
 import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
@@ -13,10 +14,31 @@ import { arrayOr, toPersonCard, uploadToPhoto } from './format'
 
 /** Global `siteConfig` (kontakty, sítě, patička) + kolekce Lidé. */
 
-export const fetchSiteConfig = cache(async (): Promise<SiteConfig> => {
-  const payload = await getPayload({ config: configPromise })
-  return payload.findGlobal({ slug: 'siteConfig', depth: 1 })
-})
+/**
+ * `siteConfig` čte **každá** stránka webu: patička přes `SubpageShell`,
+ * navigace přes `fetchNavCta`, výpis článků kvůli `postsListShowPhoto`.
+ * Na prerenderovaných routách to platí build, na `/aktuality`,
+ * `/fotogalerie` a `/zapasy` (plně dynamické kvůli `searchParams`) ale
+ * padal `findGlobal` s `depth: 1` na **každý request** — React `cache()`
+ * platí jen v rámci jednoho renderu, ne mezi requesty.
+ *
+ * `revalidate: 3600` je záměrně **navíc** k tagu, ne místo něj. Tag
+ * (`revalidateLanding`) invaliduje okamžitě; TTL je záchranná síť pro
+ * případ, že hook neproběhne (import přes `disableRevalidate`, výjimka
+ * při zápisu). Bez něj je TTL `unstable_cache` **jeden rok**, takže by
+ * `export const revalidate = 600` na stránkách nebyl žádná pojistka —
+ * regenerace by si vzala tutéž roční cache entry.
+ */
+const loadSiteConfig = unstable_cache(
+  async (): Promise<SiteConfig> => {
+    const payload = await getPayload({ config: configPromise })
+    return payload.findGlobal({ slug: 'siteConfig', depth: 1 })
+  },
+  ['site-config'],
+  { tags: ['site-config'], revalidate: 3600 },
+)
+
+export const fetchSiteConfig = cache(async (): Promise<SiteConfig> => loadSiteConfig())
 
 /**
  * Kontakty a sociální sítě (odvozeno ze `siteConfig`).

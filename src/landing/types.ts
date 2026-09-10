@@ -34,6 +34,12 @@ export type Photo = {
   alt: string
   width: number
   height: number
+  /**
+   * Verze souboru pro cache-buster v URL (`getMediaUrl(url, updatedAt)`).
+   * Bez ní nejde na média nasadit `Cache-Control: immutable` — výměna
+   * souboru pod stejným názvem by se návštěvníkům neprojevila.
+   */
+  updatedAt?: string | null
 }
 
 /** Nejbližší naplánovaný zápas — pohání hero countdown. */

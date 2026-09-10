@@ -104,7 +104,7 @@ function StructuredData({
     '@type': 'NewsArticle',
     headline: article.title,
     ...(article.excerpt ? { description: article.excerpt } : {}),
-    ...(article.photo ? { image: [`${baseUrl}${getMediaUrl(article.photo.url)}`] } : {}),
+    ...(article.photo ? { image: [`${baseUrl}${getMediaUrl(article.photo.url, article.photo.updatedAt)}`] } : {}),
     ...(publishedAt ? { datePublished: publishedAt } : {}),
     ...(post.updatedAt || publishedAt
       ? { dateModified: post.updatedAt ?? publishedAt }

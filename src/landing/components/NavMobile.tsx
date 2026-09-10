@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom'
 
 import { cn } from '@/utilities/ui'
 
-import { navHref } from '../data/navHref'
+import { isNavItemActive, navHref } from '../data/navHref'
 import type { NavItem } from '../types'
 
 import { PillLink } from './PillLink'
@@ -53,11 +53,20 @@ export function NavMobile({
   const [mounted, setMounted] = React.useState(false)
   const pathname = usePathname()
 
+  // Portál (`createPortal`) smí vzniknout jen na klientovi — `mounted` je
+  // úmyslný jednorázový příznak po hydrataci, ne odvozený stav.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   React.useEffect(() => setMounted(true), [])
 
   // Zavřít při přechodu na jinou stránku. U kotev na téže stránce se
-  // pathname nemění, proto navíc onClick na položkách.
-  React.useEffect(() => setOpen(false), [pathname])
+  // pathname nemění, proto navíc onClick na položkách. Nastavuje se přímo
+  // v renderu (ne v efektu) — doporučený způsob, jak odvodit stav ze změny
+  // propu/route bez zbytečného extra renderu.
+  const [prevPathname, setPrevPathname] = React.useState(pathname)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname)
+    setOpen(false)
+  }
 
   React.useEffect(() => {
     if (!open) return
@@ -77,15 +86,26 @@ export function NavMobile({
 
   return (
     <>
+      {/*
+       * `size-11 md:size-10`: burger je do `xl` jediná cesta k navigaci,
+       * takže 40px tap target byl pod hranicí 44px, kterou kvůli témuž
+       * pravidlu drží všechny pilulky (`pill.ts`). Desktop zůstává na 40px.
+       *
+       * Skleněná varianta má `bg-pine-deep/32` a `border-white/40`, ne
+       * `bg-white/16` s `border-white/28`. Bílá průsvitka na bílé bílou
+       * ikonu ani hranu tlačítka od světlé části hero fotky (konstrukce
+       * střechy) prakticky neodlišila; tmavá průsvitka charakter skla
+       * zachová a ikonu podloží.
+       */}
       <button
         aria-controls="nav-mobile"
         aria-expanded={open}
         aria-label="Otevřít menu"
         className={cn(
-          'grid size-10 flex-none place-items-center rounded-full transition-colors [&_svg]:size-5',
+          'grid size-11 flex-none place-items-center rounded-full transition-colors md:size-10 [&_svg]:size-5',
           !always && 'xl:hidden',
           tone === 'glass'
-            ? 'border border-white/28 bg-white/16 text-white backdrop-blur-lg hover:bg-white/30'
+            ? 'bg-pine-deep/32 border border-white/40 text-white backdrop-blur-lg hover:bg-white/30'
             : 'border-line text-ink hover:bg-contrast border bg-surface hover:text-on-contrast',
         )}
         onClick={() => setOpen(true)}
@@ -110,7 +130,7 @@ export function NavMobile({
             <div className="mx-auto flex w-full max-w-160 items-center justify-end">
               <button
                 aria-label="Zavřít menu"
-                className="grid size-10 place-items-center rounded-full border border-white/28 bg-white/16 text-white transition-colors hover:bg-white/30 [&_svg]:size-5"
+                className="grid size-11 place-items-center rounded-full border border-white/28 bg-white/16 text-white transition-colors hover:bg-white/30 md:size-10 [&_svg]:size-5"
                 onClick={() => setOpen(false)}
                 type="button"
               >
@@ -118,17 +138,28 @@ export function NavMobile({
               </button>
             </div>
 
+            {/* Aktivní odkaz se značí lime barvou a `aria-current` — stejným
+                predikátem jako pilulky (`isNavItemActive`). Bez toho nebylo
+                do 1280px v navigaci vůbec vidět, na které stránce uživatel
+                stojí: pilulky, které aktivní stav řeší, jsou `hidden xl:flex`. */}
             <nav className="mx-auto mt-6 flex w-full max-w-160 flex-col gap-1">
-              {items.map((item) => (
-                <Link
-                  className="hover:text-lime border-b border-white/10 py-3.5 text-2xl font-extrabold tracking-[-0.02em] text-white transition-colors"
-                  href={navHref(item, context)}
-                  key={item.label}
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {items.map((item) => {
+                const active = isNavItemActive(item, pathname)
+                return (
+                  <Link
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'hover:text-lime border-b border-white/10 py-3.5 text-2xl font-extrabold tracking-[-0.02em] transition-colors',
+                      active ? 'text-lime' : 'text-white',
+                    )}
+                    href={navHref(item, context)}
+                    key={item.label}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             {ctaHref && ctaLabel && (

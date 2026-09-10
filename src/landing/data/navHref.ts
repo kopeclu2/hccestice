@@ -20,6 +20,19 @@ export const navHref = (item: NavItem, context: 'home' | 'subpage'): string => {
   return item.path ?? `/#${item.anchor ?? ''}`
 }
 
+/**
+ * Stojí návštěvník na stránce této položky? Prefix matching, aby detail
+ * (`/aktuality/[slug]`) zvýraznil „Aktuality"; položky bez podstránky
+ * (`path === null`) aktivní nejsou nikdy — kotvu na homepage z cesty
+ * poznat nelze.
+ *
+ * Sdílí ji `NavPills` i `NavMobile`. Než byl predikát tady, žil jen
+ * v pilulkách — a ty jsou `hidden xl:flex`, takže na celém intervalu do
+ * 1280px nebylo v navigaci vidět, na které stránce uživatel je.
+ */
+export const isNavItemActive = (item: NavItem, pathname: string): boolean =>
+  item.path !== null && (pathname === item.path || pathname.startsWith(`${item.path}/`))
+
 /** Kotva CTA musí být na podstránkách absolutní (`#kontakt` → `/#kontakt`). */
 export const ctaHref = (href: string, context: 'home' | 'subpage'): string =>
   context === 'subpage' && href.startsWith('#') ? `/${href}` : href

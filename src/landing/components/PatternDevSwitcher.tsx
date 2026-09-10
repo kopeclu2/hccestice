@@ -58,19 +58,28 @@ type SwitcherState = {
 
 const DEFAULT_STATE: SwitcherState = { variant: null, fade: 'center', tone: 'club' }
 
+const readStoredState = (): SwitcherState => {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY)
+    if (saved) return { ...DEFAULT_STATE, ...JSON.parse(saved) }
+  } catch {
+    /* poškozený záznam — zůstane výchozí stav */
+  }
+  return DEFAULT_STATE
+}
+
 export function PatternDevSwitcher() {
-  const [state, setState] = useState<SwitcherState>(DEFAULT_STATE)
+  // Lazy initial state místo setState v efektu — localStorage se čte jen
+  // jednou, při prvním renderu na klientovi (SSR dostane výchozí stav).
+  const [state, setState] = useState<SwitcherState>(() =>
+    typeof window === 'undefined' ? DEFAULT_STATE : readStoredState(),
+  )
   const [loaded, setLoaded] = useState(false)
 
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY)
-      if (saved) setState({ ...DEFAULT_STATE, ...JSON.parse(saved) })
-    } catch {
-      /* poškozený záznam — zůstane výchozí stav */
-    }
-    setLoaded(true)
-  }, [])
+  // `loaded` je úmyslný jednorázový příznak po hydrataci (localStorage není
+  // na serveru k dispozici), ne odvozený stav.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setLoaded(true), [])
 
   const update = (patch: Partial<SwitcherState>) => {
     setState((prev) => {

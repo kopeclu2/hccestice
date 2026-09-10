@@ -164,6 +164,109 @@ Ručně psané Next stránky (`/zapasy`, `/soupiska`, …) nejsou dokumenty v CM
 takže je žádný dotaz na kolekce nevrátí — jsou v routě vyjmenované ručně
 v sekci „Sekce webu".
 
+# Cache a renderovací režimy
+
+Projekt **nemá** zapnuté `cacheComponents`, takže platí předchozí model
+(`node_modules/next/dist/docs/01-app/02-guides/caching-without-cache-components.md`)
+a datová cache se dělá `unstable_cache`, ne `use cache`.
+
+| režim | routy |
+|---|---|
+| statické + ISR 600 s | `/`, `/[slug]`, `/historie-klubu`, `/soupiska`, `/sponzori` |
+| SSG + ISR 600 s | `/aktuality/[slug]`, `/fotogalerie/[slug]`, `/produkty/[slug]` |
+| **plně dynamické** | `/aktuality`, `/fotogalerie`, `/zapasy` |
+| dynamické on-demand | `/clanky/*`, `/fotoalbum/*`, route handlery |
+
+Ty tři dynamické jsou dynamické kvůli `searchParams` (filtry a stránkování
+v URL), ne omylem. Důsledek, na kterém se to láme: **`revalidatePath` na ně
+nefunguje** — nemají cache entry routy. Jediná funkční invalidace je tag,
+proto `src/landing/data/tags.ts`.
+
+## Tři pravidla, bez kterých se to rozejde
+
+1. **Tag i `revalidate`, ne jen tag.** `unstable_cache` bez
+   `options.revalidate` má TTL **jeden rok**. `export const revalidate = 600`
+   na stránce ho **neobnoví** — regenerace si vezme tutéž entry. „ISR
+   pojistka" v komentářích u rout tedy platí jen pro fetchery obalené React
+   `cache()`. Všechny tagované cache proto mají `revalidate` jako záchrannou
+   síť pro případ, že hook neproběhne (seed s `disableRevalidate`, výjimka
+   při zápisu).
+2. **`revalidateTag(tag, 'max')` je stale-while-revalidate.** První
+   návštěvník po uložení dostane ještě starou verzi. U redakčního obsahu
+   (`posts-list`, `navigation`, `site-config`, `galleries-list`,
+   `matches-list`) se proto používá `{ expire: 0 }`; `'max'` zůstává jen
+   u crawlerských feedů (sitemapy, `llms-txt`). `updateTag()` expiruje taky
+   okamžitě, ale jde volat jen ze Server Action — admin ukládá přes REST,
+   kde vyhodí `E872`.
+3. **`new Date()` nesmí být uvnitř cachované funkce.** Zamrzne v ní na celou
+   dobu její životnosti. `matches.ts` proto počítá hranici „od teď"
+   v `scheduleFrom()` **mimo** cache a předává ji argumentem, takže vstupuje
+   do klíče a každou hodinu vzniká nová entry.
+
+## `loading.tsx` nesmí být nad routou, která redirectuje
+
+Byl na `(landing)/`, tedy nad celým webem. Suspense boundary z něj nastartuje
+streaming, a jakmile streaming začne, `permanentRedirect` nemá kam poslat
+hlavičku — Next ho degraduje na klientský `<meta http-equiv="refresh">`
+s HTTP **200**.
+
+Tím přestaly být HTTP redirecty **všechny** legacy přesměrování
+z eStránkového importu: `/clanky/*`, `/fotoalbum/*` i přejmenované slugy
+(`PayloadRedirects` na `/[slug]`, `/aktuality/[slug]`, `/fotogalerie/[slug]`).
+Ověřeno na produkčním buildu: `/clanky/historie-klubu.html` vracelo 200
+s meta tagem, po odebrání `loading.tsx` 308 na `/historie-klubu`. Přesun
+redirectu do `generateMetadata` to **neřeší** — boundary je i nad ní
+(taky ověřeno).
+
+Fallback proto žije jen v `zapasy/loading.tsx`: `/zapasy` je jediná dynamická
+routa bez potomků. `/aktuality` a `/fotogalerie` ho nedostaly, protože jejich
+`[slug]` děti redirecty servírují.
+
+Redirecty se dělají `permanentRedirect()` (308), ne `redirect()` — ten posílá
+**307 Temporary** (`docs/…/functions/redirect.md`, „Why does `redirect` use
+307 and 308?"), takže crawler starou URL z indexu nevyřadí. Statická pravidla
+v `redirects.ts` mají `permanent: true` odjakživa; runtime cesta se s nimi
+rozcházela.
+
+## Média
+
+Payload servíruje soubory přes `/api/media/file/:filename` a **žádnou cache
+hlavičku nenastavuje** — ověřeno v
+`node_modules/payload/dist/uploads/endpoints/getFile.js`. Doplňuje ji
+`upload.modifyResponseHeaders` na kolekci `media`
+(`max-age=31536000, immutable`).
+
+`immutable` je bezpečné jen díky verzi v URL: `getMediaUrl(url, updatedAt)`.
+Proto `Photo` nese `updatedAt` a **každé** volání `getMediaUrl` v repu druhý
+argument předává. Nový odkaz bez něj znamená, že se výměna souboru pod
+stejným názvem návštěvníkům rok neprojeví.
+
+`images.minimumCacheTTL` je 31 dní. Default Next 16 je 4 hodiny (v 15 minuta),
+takže sharp na 3,7GB boxu bez swapu překódovával všechny varianty čtyřikrát
+denně. Invalidovat optimalizovanou variantu jinak než změnou URL nejde —
+mechanismus na to Next nemá.
+
+## Co zbývá (není v repu)
+
+- **Volume na `/app/.next/cache`.** Není podmínka funkčnosti — adresář si
+  kontejner vyrobí sám (Dockerfile ho zakládá a chownuje na `nextjs`).
+  Přežití mezi deployi má cenu jen kvůli `.next/cache/images`: klíč je hash
+  z `[CACHE_VERSION, href, width, quality, mimeType]` **bez build ID**
+  (`server/image-optimizer.js:675`), takže se entries dají zdědit a sharp
+  nemusí po každém deployi překódovat všechno znovu na boxu bez swapu.
+  `fetch-cache` (`unstable_cache`) za volume nestojí — studený start je
+  jeden dotaz na klíč (33 ms proti 8 ms). Prerenderované HTML tu **není**,
+  to píše `FileSystemCache` do `.next/server/app`
+  (`file-system-cache.js:320-324`) a nese ho standalone.
+- **`max-age` pro HTML.** Next posílá u ISR jen `s-maxage`
+  (`server/lib/cache-control.js`), takže prerenderované stránky necachuje
+  prohlížeč ani Traefik a každé načtení jde na origin. Nejlevnější velký skok,
+  ale chce cache na reverzní proxy nebo CDN.
+- **`cacheComponents` + `use cache`.** Jediná cesta, jak tu dynamickou trojici
+  dostat na statický shell s dynamickou dírkou. Znamená přepis celé datové
+  vrstvy (`revalidateTag` → `cacheTag`/`cacheLife`), takže vlastní větev
+  a vlastní měření.
+
 # Ochrana formulářů (reCAPTCHA v3)
 
 Klíče: `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` a `RECAPTCHA_SECRET`. Bez nich se

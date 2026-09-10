@@ -29,15 +29,11 @@ export function AktualityGrid({
   return (
     <CardGrid empty={<AktualityEmpty activeType={activeType ?? null} />} items={cards}>
       {(card) => (
-        <ArticleCard
-          card={card}
-          key={card.id}
-          /* Mřížka `CardGrid` je 1 / 2 / 3 sloupce (mobil / tablet / od 1024px) —
-             `sizes` musí kopírovat tytéž zlomy, jinak si tablet tahá fotku
-             na dvojnásobek šířky karty. */
-          sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-          withPhoto={showPhoto}
-        />
+        /* `sizes` se nepřepisuje: default `ArticleCard` už kopíruje skutečné
+           zlomy `CardGrid` (1 sloupec / 2 od `sm` = 40rem / 3 od `lg`).
+           Override tady začínal na 48rem, takže si telefon na šířku tahal
+           fotku na dvojnásobek šířky karty. */
+        <ArticleCard card={card} key={card.id} withPhoto={showPhoto} />
       )}
     </CardGrid>
   )

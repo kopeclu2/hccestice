@@ -9,7 +9,7 @@ import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
 import { PageTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'
-import type { ArticleDetail, ArticleScoreboard } from '../../types'
+import type { ArticleDetail } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'
 import { TitleParts } from './HeroTitle'
@@ -47,7 +47,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
               fill
               priority
               sizes="100vw"
-              src={getMediaUrl(article.photo.url)}
+              src={getMediaUrl(article.photo.url, article.photo.updatedAt)}
             />
           </div>
         )}

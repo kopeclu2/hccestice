@@ -12,13 +12,13 @@ import type { ArticleAuthor } from '../types'
  */
 export function AuthorCard({ author }: { author: ArticleAuthor }) {
   return (
-    <div className="mt-7 flex flex-wrap items-center gap-4.5 rounded-block border border-line-mid bg-surface px-6.5 py-5.5">
+    <div className="mt-7 flex flex-wrap items-center gap-4.5 rounded-block border border-line-mid bg-surface px-4.5 py-4.5 md:px-5.5 md:py-5 lg:px-6.5 lg:py-5.5">
       {author.photo ? (
         <Image
           alt={author.name}
           className="size-13 flex-none rounded-full object-cover"
           height={52}
-          src={getMediaUrl(author.photo.url)}
+          src={getMediaUrl(author.photo.url, author.photo.updatedAt)}
           width={52}
         />
       ) : (

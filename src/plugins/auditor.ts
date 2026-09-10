@@ -80,16 +80,22 @@ const describeUser = (req: PayloadRequest): string => {
 }
 
 /**
- * Návratový typ je `any` schválně: `documentId` ani `user` nejsou v typu
- * `AuditorLog` pluginu, přestože je do databáze uloží. `hook` a `operation`
- * plugin doplňuje až za nás, proto je tu neřešíme.
+ * Návratový typ je `any` schválně, ne z lenosti: `documentId` a `user`
+ * nejsou v typu `AuditorLog` pluginu, přestože je do databáze uloží.
+ * `customLogger` má v balíčku deklarovaný návratový typ, který navíc
+ * vyžaduje `operation` — ověřeno v `logBuilderManager.js`, že ho plugin
+ * do finálního záznamu doplní **po** zavolání `customLogger` a cokoli by
+ * tady vrátil, přepíše. Přesný typ navíc balíček neexportuje (`exports`
+ * má jen `.`, `./client`, `./rsc`), takže ho nejde ani správně nahradit.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const describeCollection = (args: HookArgs, fields: LogFields): any => ({
   ...fields,
   documentId: String(args.doc?.id ?? args.id ?? ''),
   user: describeUser(args.req),
 })
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const describeGlobal = (args: HookArgs, fields: LogFields): any => ({
   ...fields,
   // Plugin posílá u globalů `scope: 'collection'`

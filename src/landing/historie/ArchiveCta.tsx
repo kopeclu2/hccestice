@@ -14,7 +14,7 @@ export function ArchiveCta() {
   const { cta } = HISTORY_PAGE
 
   return (
-    <CtaStrip className="mt-27.5" headline={cta.headline} perex={cta.perex}>
+    <CtaStrip className="mt-18 md:mt-24 lg:mt-27.5" headline={cta.headline} perex={cta.perex}>
       <PillLink href={cta.href} variant="lime" withArrow>
         {cta.label}
       </PillLink>

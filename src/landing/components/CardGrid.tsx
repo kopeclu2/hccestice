@@ -11,8 +11,15 @@ const cardShellVariants = cva(
   'hover:border-club flex h-full flex-col overflow-hidden rounded-block border border-line-mid bg-surface transition-colors',
   {
     variants: {
-      /** Textová karta má padding na obalu, mediální ho má jen kolem fotky. */
-      pad: { text: 'px-5 py-4.5', media: 'p-2.5 pb-5' },
+      /**
+       * Textová karta má padding na obalu, mediální ho má jen kolem fotky.
+       * Tři stupně, ne fixní hodnota: desktopové odsazení z handoffu si na
+       * 320px kartě bralo šestinu její šířky.
+       */
+      pad: {
+        text: 'px-4.5 py-4 md:px-5 md:py-4.5 lg:px-6 lg:py-5',
+        media: 'p-2.5 pb-5 lg:p-3 lg:pb-5.5',
+      },
     },
     defaultVariants: { pad: 'text' },
   },

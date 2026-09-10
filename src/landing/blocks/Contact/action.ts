@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 
 import { RECAPTCHA_ACTIONS } from '@/utilities/recaptcha/config'
 import { verifyRecaptchaToken } from '@/utilities/recaptcha/verify'
+import { getClientIp, isRateLimited } from '@/utilities/rateLimit'
 
 import { contactSchema, type ContactResult, type ContactValues } from './schema'
 
@@ -30,12 +31,18 @@ export async function sendContactMessage(
     return { ok: false, error: 'Zkontrolujte prosím vyplněné údaje.' }
   }
 
+  const requestHeaders = await headers()
+  const clientIp = getClientIp(requestHeaders)
+  if (isRateLimited(`contact:${clientIp}`)) {
+    return { ok: false, error: 'Příliš mnoho pokusů. Zkuste to prosím za chvíli znovu.' }
+  }
+
   const payload = await getPayload({ config: configPromise })
 
   const verified = await verifyRecaptchaToken({
     token: recaptchaToken,
     action: RECAPTCHA_ACTIONS.contact,
-    remoteIp: (await headers()).get('x-forwarded-for'),
+    remoteIp: requestHeaders.get('x-forwarded-for'),
   })
   if (!verified.ok) {
     payload.logger.warn(

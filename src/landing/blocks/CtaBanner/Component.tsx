@@ -32,7 +32,7 @@ export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }
               className="absolute inset-0 size-full object-cover opacity-20"
               fill
               sizes="100vw"
-              src={getMediaUrl(photo.url)}
+              src={getMediaUrl(photo.url, photo.updatedAt)}
             />
           )}
           <div className="relative max-w-150">

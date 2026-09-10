@@ -21,17 +21,32 @@ const CARD_COLUMNS: Record<string, string> = {
   '3': 'sm:grid-cols-2 lg:grid-cols-3',
 }
 
+/**
+ * `sizes` musí kopírovat tytéž zlomy jako `CARD_COLUMNS` výš — jinak si
+ * prohlížeč natáhne obrázek pro jiný počet sloupců, než mřížka skutečně má
+ * (viz `sizes u fotek` past v AGENTS.md). Dřív tu byla jedna hodnota pro
+ * všechny tři varianty, zkopírovaná z třísloupcové mřížky.
+ */
+const CARD_SIZES: Record<string, string> = {
+  '1': '100vw',
+  '2': '(max-width: 48rem) 100vw, 50vw',
+  '3': '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw',
+}
+
 /** Fotokarty — mřížka fotek se štítky a popiskem (jako karty O klubu). */
 export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType }) {
   const cards = block.cards ?? []
   if (cards.length === 0) return null
+
+  const columns = block.columns ?? '2'
+  const sizes = CARD_SIZES[columns] ?? CARD_SIZES['2']
 
   return (
     <SectionShell>
       <div
         className={cn(
           'grid grid-cols-1 gap-5',
-          CARD_COLUMNS[block.columns ?? '2'] ?? 'md:grid-cols-2',
+          CARD_COLUMNS[columns] ?? 'md:grid-cols-2',
         )}
       >
         {cards.map((card, index) => {
@@ -39,7 +54,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
             <PhotoTile
               className={cn('rounded-block', CARD_HEIGHTS[block.height ?? 'md'])}
               photo={uploadToPhoto(card.photo)}
-              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+              sizes={sizes}
             >
               {card.tag && <TileBadge className="top-3.5 left-3.5">{card.tag}</TileBadge>}
               {card.badge && (

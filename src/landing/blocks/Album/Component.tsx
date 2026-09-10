@@ -29,14 +29,19 @@ import type { AlbumSpan, AlbumTile, GalleryCard } from '../../types'
  * Pozice třetí až šesté dlaždice jsou zadané explicitně (`col-start` /
  * `row-start`): auto-placement mezeru po první velké dlaždici nezaplní
  * a `grid-flow-dense` by pořadí dlaždic přeskládal proti řazení podle data.
+ *
+ * Čtyřsloupcová mozaika platí až od `lg` — na 768px měla malá dlaždice ~170px
+ * a titulky se v ní ořezávaly. Mezistupeň na `md` jsou dva sloupce: velká
+ * dlaždice přes celou šířku (2×2), malé po dvou na řádek, takže v mřížce
+ * nezůstane díra a pořadí podle data zůstává.
  */
 const MOSAIC_LAYOUT: Array<{ place: string; span: AlbumSpan }> = [
   { span: 'big', place: 'md:col-span-2 md:row-span-2' },
-  { span: 'tile', place: 'md:col-start-3 md:row-start-1' },
-  { span: 'tile', place: 'md:col-start-4 md:row-start-1' },
-  { span: 'big', place: 'md:col-span-2 md:row-span-2 md:col-start-3 md:row-start-2' },
-  { span: 'tile', place: 'md:col-start-1 md:row-start-3' },
-  { span: 'tile', place: 'md:col-start-2 md:row-start-3' },
+  { span: 'tile', place: 'lg:col-start-3 lg:row-start-1' },
+  { span: 'tile', place: 'lg:col-start-4 lg:row-start-1' },
+  { span: 'big', place: 'md:col-span-2 md:row-span-2 lg:col-start-3 lg:row-start-2' },
+  { span: 'tile', place: 'lg:col-start-1 lg:row-start-3' },
+  { span: 'tile', place: 'lg:col-start-2 lg:row-start-3' },
 ]
 
 /**
@@ -113,9 +118,12 @@ const SPAN_RADIUS: Record<AlbumSpan, string> = {
  * (polovina 97,5rem kontejneru) poddimenzovala a byla rozmazaná.
  */
 const SPAN_SIZES: Record<AlbumSpan, string> = {
-  big: '(max-width: 48rem) 66vw, (max-width: 97.5rem) 50vw, 48rem',
-  wide: '(max-width: 48rem) 66vw, (max-width: 97.5rem) 50vw, 48rem',
-  tile: '(max-width: 48rem) 66vw, 25vw',
+  /* Zlomy kopírují mřížku: do 48rem pás, mezi 48 a 64rem dvousloupcový
+     mezistupeň (velká dlaždice na celou šířku, malá na polovinu) a až od
+     64rem čtyři sloupce. */
+  big: '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem',
+  wide: '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem',
+  tile: '(max-width: 48rem) 66vw, (max-width: 64rem) 50vw, 25vw',
 }
 
 /**
@@ -169,10 +177,10 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
                 /* Odsazení pásu se musí rovnat odsazení sekce
                    (`clamp(0.875rem,3vw,2.5rem)`), jinak dlaždice na mobilu
                    nekončí na stejné svislici jako nadpis nad nimi. */
-                'no-scrollbar -mx-[clamp(0.875rem,3vw,2.5rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pb-2.5 md:m-0 md:grid md:gap-4 md:overflow-visible md:p-0',
+                'no-scrollbar -mx-[clamp(0.875rem,3vw,2.5rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
                 sparse
-                  ? 'md:auto-rows-[13.75rem] md:grid-cols-3'
-                  : 'md:auto-rows-[11.25rem] md:grid-cols-4',
+                  ? 'md:auto-rows-[13.75rem] lg:grid-cols-3'
+                  : 'md:auto-rows-[11.25rem] lg:grid-cols-4',
               )}
             >
               {layout.map((tile) => (

@@ -1,6 +1,7 @@
 import type { Gallery, Season } from '@/payload-types'
 
 import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
@@ -8,6 +9,7 @@ import type { GalleryCard } from '../types'
 
 import { formatFullDate, toPhoto, uploadToPhoto } from './format'
 import { seasonShortLabel } from './seasons'
+import { CACHE_TAGS } from './tags'
 
 /** Galerie — fetchery pro mozaiku Fotoalba a widgety Galerie. */
 
@@ -191,8 +193,18 @@ export type GalleriesPage = {
  * Galerie bez data (legacy/tematická alba) tvoří ocas výpisu — Postgres
  * by je při sortu `-date` řadil první (NULLS FIRST), proto dva segmenty:
  * datované stránkované nativně, bez data dotažené celé a doplněné za ně.
+ *
+ * Dvě vrstvy cache, stejně jako u `queryPostsPage` v `posts.ts`:
+ * `unstable_cache` **mezi requesty** (tag `galleries-list`) a React
+ * `cache()` v rámci jednoho renderu. `/fotogalerie` čte `searchParams`,
+ * takže je plně dynamická — bez první vrstvy šel na každé načtení výpisu
+ * dotaz na stranu **a k tomu celý ocas nedatovaných alb s `depth: 1`**
+ * (populace `cover` z `media`), a to i při prostém překlikání stránkování.
+ *
+ * Klíč si `unstable_cache` skládá z argumentů, takže se každá kombinace
+ * strany a filtru sezóny cachuje zvlášť.
  */
-export const fetchGalleriesPage = cache(
+const queryGalleriesPage = unstable_cache(
   async (options: {
     page: number
     perPage?: number
@@ -245,7 +257,11 @@ export const fetchGalleriesPage = cache(
       page,
     }
   },
+  ['galleries-page'],
+  { tags: [CACHE_TAGS.galleries], revalidate: 3600 },
 )
+
+export const fetchGalleriesPage = cache(queryGalleriesPage)
 
 /* ── Detail galerie (/fotogalerie/[slug]) ────────────────────────────────── */
 

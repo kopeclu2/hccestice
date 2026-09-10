@@ -129,7 +129,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)]',
           standings && 'lg:grid-cols-[1.15fr_0.85fr]',
         )}
-        spacing="content"
+        spacing="section"
       >
         <ResultsList
           hrefFor={hrefFor}

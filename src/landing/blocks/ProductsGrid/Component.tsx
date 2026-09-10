@@ -38,7 +38,7 @@ export async function ProductsGridBlockComponent({ block }: { block: ProductsGri
         )}
 
         {block.orderInfo && (
-          <div className="bg-club mb-8 flex items-start gap-3.5 rounded-tile px-5.5 py-4 text-white">
+          <div className="bg-club mb-8 flex items-start gap-3.5 rounded-tile px-4.5 py-4 text-white md:px-5 lg:px-5.5 lg:py-4.5">
             <Megaphone className="mt-0.5 size-5 flex-none" strokeWidth={2.25} />
             <p className="text-meta leading-relaxed font-bold whitespace-pre-line">
               {block.orderInfo}
@@ -77,7 +77,7 @@ export function ProductTile({
   const detailHref = product.slug ? `/produkty/${product.slug}` : null
 
   return (
-    <article className="flex h-full flex-col rounded-tile bg-surface p-4.5">
+    <article className="flex h-full flex-col rounded-tile bg-surface p-4.5 md:p-5 lg:p-5.5">
       {/* produktovky mají bílé pozadí a různé poměry → contain, ne cover */}
       <MaybeLink
         className="bg-chip relative block aspect-square overflow-hidden rounded-badge"
@@ -92,7 +92,7 @@ export function ProductTile({
             className="object-contain p-5"
             fill
             sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-            src={getMediaUrl(photo.url)}
+            src={getMediaUrl(photo.url, photo.updatedAt)}
           />
         )}
       </MaybeLink>

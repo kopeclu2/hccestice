@@ -137,7 +137,7 @@ for (const bpName of bpNames) {
         }
         return {
           docWidth,
-          offenders: offenders.slice(0, 12).map(({ el, ...rest }) => rest),
+          offenders: offenders.slice(0, 12).map(({ el: _el, ...rest }) => rest),
         }
       }, bp.width)
 

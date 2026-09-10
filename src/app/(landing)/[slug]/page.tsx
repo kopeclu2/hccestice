@@ -4,7 +4,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 import { draftMode } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { permanentRedirect } from 'next/navigation'
 import React, { cache } from 'react'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
@@ -13,6 +13,16 @@ import { PageHeader } from '@/landing/components/PageHeader'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+
+/**
+ * ISR pojistka. Tahle routa byla jediná prerenderovaná bez ní — čistě
+ * statická, invalidovaná jen hookem `revalidatePage`. Když hook
+ * neproběhne (import s `context.disableRevalidate`, výjimka při zápisu,
+ * změna v přidruženém médiu), stránka zůstala stará **až do dalšího
+ * deploye**. Ostatní landing routy mají 600 s, takže tu asymetrii nešlo
+ * odlišit od záměru.
+ */
+export const revalidate = 600
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -50,15 +60,16 @@ export default async function Page({ params: paramsPromise }: Args) {
   // Decode to support slugs with special characters
   const decodedSlug = decodeURIComponent(slug)
 
-  // Domovská stránka se renderuje landing routou `(landing)/page.tsx`
+  // Domovská stránka se renderuje landing routou `(landing)/page.tsx`.
+  // `permanentRedirect` (308), ne `redirect` (307 Temporary) — `/home`
+  // nikdy nebude vlastní stránka.
   if (decodedSlug === 'home') {
-    redirect('/')
+    permanentRedirect('/')
   }
 
   const url = '/' + decodedSlug
-  let page: RequiredDataFromCollectionSlug<'pages'> | null
 
-  page = await queryPageBySlug({
+  const page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
     slug: decodedSlug,
   })
 
@@ -76,8 +87,16 @@ export default async function Page({ params: paramsPromise }: Args) {
    * která ho zobrazí. `PageHeader` je tatáž komponenta, jakou používá
    * sedm ručně psaných podstránek, takže se vzhled ani drobečková
    * strukturovaná data nemohou rozejít.
+   *
+   * Nestačí ale typ: hero bez obsahu se taky nevykreslí (`LowImpactHero`
+   * vrací `null` pro prázdný `richText`, viz `heros/LowImpact/index.tsx`),
+   * takže `/produkty-merch` s herem `lowImpact` a prázdným textem zůstalo
+   * bez hlavičky úplně stejně. Podmínka proto hlídá i obsah — jinak
+   * mřížka produktů začínala hned pod navigací a bez `<h1>`.
    */
-  const hasHero = Boolean(hero?.type && hero.type !== 'none')
+  const hasHero = Boolean(
+    hero?.type && hero.type !== 'none' && (hero.richText || hero.media || hero.links?.length),
+  )
 
   return (
     <SubpageShell>

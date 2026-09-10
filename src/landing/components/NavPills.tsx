@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { navHref } from '../data/navHref'
+import { isNavItemActive, navHref } from '../data/navHref'
 import type { NavItem } from '../types'
 
 import { PillLink } from './PillLink'
@@ -13,8 +13,9 @@ import { PillLink } from './PillLink'
  *
  * Aktivní položku určuje `usePathname()`, ne prop od volajícího — jinak by
  * každá stránka musela svou cestu duplikovat a `/aktuality/[slug]` by se
- * bez ručního dosazení neoznačila vůbec. Prefix matching zajistí, že detail
- * článku zvýrazní „Aktuality".
+ * bez ručního dosazení neoznačila vůbec. Prefix matching (`isNavItemActive`
+ * v `navHref.ts`, sdílený s `NavMobile`) zajistí, že detail článku zvýrazní
+ * „Aktuality".
  *
  * Pilulky se zapínají až na `xl` (1280px), ne na `md`. Devět položek
  * navigace potřebuje vedle loga a CTA ~1240px; na 768px i na 1024px se
@@ -26,15 +27,13 @@ import { PillLink } from './PillLink'
 export function NavPills({ items }: { items: NavItem[] }) {
   const pathname = usePathname()
 
-  const isActive = (item: NavItem): boolean =>
-    item.path !== null && (pathname === item.path || pathname.startsWith(`${item.path}/`))
-
   return (
     <div className="no-scrollbar hidden min-w-0 gap-2 overflow-x-auto xl:flex">
       {items.map((item) => {
-        const active = isActive(item)
+        const active = isNavItemActive(item, pathname)
         return (
           <PillLink
+            aria-current={active ? 'page' : undefined}
             className={active ? undefined : 'bg-white/60'}
             href={navHref(item, 'subpage')}
             key={item.label}

@@ -87,7 +87,7 @@ function parsePost(title: string, html: string, seasonStart: number): Parsed | n
     .join(' ')
 
   // --- týmy: část titulku „A x B" (odstranit prefix kola a datum na konci) ---
-  let teams = title
+  const teams = title
     .replace(/^[^-]*?kolo[^-]*-/i, '')
     .replace(/play[\s-]*off\s*-?\s*(OLLH|VČHL|VCHL)?\s*-?/i, '')
     .replace(/^\s*(OLLH|VČHL|VCHL|KSM|KLM|OSHL)\s*-\s*/i, '')

@@ -26,7 +26,11 @@ const RAIL_ID = 'rozlosovani-pas'
  * jako odstřižená a ne jako karta s divnou šířkou.
  *
  * U jediného zápasu není co scrollovat: karta se roztáhne na celou šířku
- * a maska se nekreslí, jinak by z 22 % pásu bylo jen mrtvé místo.
+ * (do stropu 400px, aby z ní na desktopu nebyl pás přes celou sekci)
+ * a maska se nekreslí, jinak by z 22 % pásu bylo jen mrtvé místo. Šířka se
+ * proto píše v obou větvích — `md:w-77.5` v základní třídě je v media query
+ * a `w-full` z větve přebíjelo, takže se jediný zápas od `md` neroztáhl
+ * a vedle 310px karty zbylo ~1090px prázdna.
  *
  * `moreHref` přidá do hlavičky proklik a `headVariant` přepne styl nadpisu
  * (výřez sekce na home page), `id` + `className` slouží ke zakotvení sekce
@@ -89,8 +93,8 @@ export function FixturesRail({
         {fixtures.map((fixture) => (
           <article
             className={cn(
-              'border-line-soft hover:border-club flex-none snap-start overflow-hidden rounded-tile border bg-surface px-6 py-5.5 transition-colors md:w-77.5',
-              single ? 'w-full' : 'w-[78%]',
+              'border-line-soft hover:border-club flex-none snap-start overflow-hidden rounded-tile border bg-surface px-5 py-5 transition-colors md:px-6 md:py-5.5',
+              single ? 'w-full md:max-w-100' : 'w-[78%] md:w-77.5',
             )}
             key={fixture.id}
           >

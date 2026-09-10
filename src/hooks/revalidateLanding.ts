@@ -4,26 +4,24 @@ import type {
   GlobalAfterChangeHook,
 } from 'payload'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
+
+import { LANDING_CACHE_TAGS } from '@/landing/data/tags'
 
 /**
- * Landing stránky, které se plní z kolekcí mimo layout builder.
- * Většina z nich nemá `export const revalidate`, takže bez tohoto seznamu
- * se po buildu neobnoví vůbec — ne až za 10 minut, ale nikdy.
+ * Prerenderované landing stránky, které se plní z kolekcí mimo layout
+ * builder.
  *
  * Dynamické routy (`/aktuality/[slug]`, `/fotogalerie/[slug]`) tu být
  * nemohou: `revalidatePath` u nich vyžaduje druhý argument a chování je
  * křehké. Pokrývá je tagová revalidace v datové vrstvě.
+ *
+ * `/aktuality`, `/fotogalerie` a `/zapasy` tu **záměrně nejsou**, i když
+ * tu dřív byly. Čtou `searchParams`, takže jsou plně dynamické a žádnou
+ * cache entry routy nemají — `revalidatePath` na nich byl no-op, který
+ * budil dojem, že jsou pokryté. Pokrývají je tagy níž.
  */
-const LANDING_PATHS = [
-  '/',
-  '/aktuality',
-  '/fotogalerie',
-  '/historie-klubu',
-  '/soupiska',
-  '/sponzori',
-  '/zapasy',
-] as const
+const LANDING_PATHS = ['/', '/historie-klubu', '/soupiska', '/sponzori'] as const
 
 /**
  * Přegeneruje landing stránky po změně obsahu, který je napájí
@@ -50,6 +48,14 @@ const revalidate = (
 
   logger.info(`Revaliduji landing stránky (${LANDING_PATHS.join(', ')})`)
   for (const path of LANDING_PATHS) revalidatePath(path)
+
+  /* Datová vrstva dynamických výpisů. Profil `{ expire: 0 }`, ne
+     doporučované `'max'`: `'max'` je stale-while-revalidate, takže první
+     návštěvník po uložení dostane ještě starý výpis a změna se objeví až
+     tomu dalšímu (ověřeno u režimu údržby — viz `revalidateMaintenance`).
+     U redakčního obsahu to redakce čte jako „ukládání nefunguje". */
+  logger.info(`Invaliduji cache tagy (${LANDING_CACHE_TAGS.join(', ')})`)
+  for (const tag of LANDING_CACHE_TAGS) revalidateTag(tag, { expire: 0 })
 }
 
 export const revalidateLanding: CollectionAfterChangeHook & GlobalAfterChangeHook = ({

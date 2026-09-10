@@ -6,9 +6,9 @@ import React from 'react'
 import { EmptyState } from '@/landing/components/EmptyState'
 import { PageTitle, SectionTitle } from '@/landing/components/Heading'
 import { Kicker } from '@/landing/components/Kicker'
-import { PageCanvas } from '@/landing/components/PageCanvas'
 import { PillLink } from '@/landing/components/PillLink'
 import { SectionShell } from '@/landing/components/SectionShell'
+import { SubpageShell } from '@/landing/components/SubpageShell'
 
 /**
  * Interní náhled prázdných stavů — tři varianty z handoffu „HC Cestice
@@ -18,19 +18,22 @@ import { SectionShell } from '@/landing/components/SectionShell'
  *
  * Uppercase popisky pod kartami jsou **jen tady**. V handoffu označují
  * variantu pro čtenáře designu — do produkčních stránek nepatří.
+ *
+ * Stojí na `SubpageShell` (ne na nahém `PageCanvas`, který si shell skládá
+ * sám), takže má navigaci i patičku jako ostatních osm podstránek. Bez nich
+ * byla hlavička přilepená pod hranu viewportu a z náhledu nevedla cesta zpět.
  */
 export default function EmptyStatesPage() {
   return (
-    <PageCanvas hatch={false} surface="paper">
+    <SubpageShell hatch={false} surface="paper">
       <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Prázdné stavy
         </PageTitle>
         <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
-          Komponenta{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-meta">EmptyState</code> — vkládá se
-          místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
+          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-meta">EmptyState</code>{' '}
+          — vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
         </p>
       </header>
 
@@ -38,8 +41,8 @@ export default function EmptyStatesPage() {
         <div className="border-line border-b pb-5">
           <SectionTitle>Varianty</SectionTitle>
           <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">
-            Živé komponenty, ne obrázky. Znění textů a cesty dál si skládá každý výpis sám —
-            závisí na tom, jestli je zapnutý filtr.
+            Živé komponenty, ne obrázky. Znění textů a cesty dál si skládá každý výpis sám — závisí
+            na tom, jestli je zapnutý filtr.
           </p>
         </div>
 
@@ -65,8 +68,8 @@ export default function EmptyStatesPage() {
               icon="search"
               title="Tomuhle filtru nic neodpovídá"
             >
-              V kategorii <strong className="font-bold">Soupiska</strong> zatím nejsou žádné
-              články. Zkuste jinou kategorii nebo zrušte filtr.
+              V kategorii <strong className="font-bold">Soupiska</strong> zatím nejsou žádné články.
+              Zkuste jinou kategorii nebo zrušte filtr.
             </EmptyState>
           </Demo>
 
@@ -111,8 +114,10 @@ export default function EmptyStatesPage() {
             </EmptyState>
           </Demo>
 
-          <Demo caption="frame=&quot;bare&quot; · pro vložení do existující karty">
-            <div className="rounded-card bg-surface p-4.5 md:p-9">
+          <Demo caption='frame="bare" · pro vložení do existující karty'>
+            {/* Odsazení má tři stupně, ne dva — `md:p-9` je hodnota z handoffu
+                kreslená pro 1440px a patří na `lg`. */}
+            <div className="rounded-card bg-surface p-4.5 md:p-6 lg:p-9">
               <EmptyState
                 actions={
                   <PillLink href="/zapasy" size="sm" variant="dark" withArrow>
@@ -130,7 +135,7 @@ export default function EmptyStatesPage() {
           </Demo>
         </div>
       </SectionShell>
-    </PageCanvas>
+    </SubpageShell>
   )
 }
 

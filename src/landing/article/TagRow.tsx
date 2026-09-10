@@ -13,7 +13,7 @@ export function TagRow({ tags }: { tags: string[] }) {
         </Badge>
       ))}
       <div className="hidden flex-1 md:block" />
-      <PillLink href="/#aktuality" size="sm" variant="outline">
+      <PillLink href="/aktuality" size="sm" variant="outline">
         ← Zpět na aktuality
       </PillLink>
     </div>

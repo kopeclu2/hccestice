@@ -20,6 +20,7 @@ import { Page, Post } from '@/payload-types'
 import { brandTitle } from '@/utilities/brandTitle'
 import { getServerSideURL } from '@/utilities/getURL'
 import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/utilities/recaptcha/config'
+import { getClientIp, isRateLimited } from '@/utilities/rateLimit'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   // Suffix drží `brandTitle`, ne tenhle řádek — sdílí ho s `generateMeta`,
@@ -103,7 +104,16 @@ export const plugins: Plugin[] = [
       admin: { group: 'Systém' },
       labels: { singular: 'Odeslaný formulář', plural: 'Odeslané formuláře' },
       // Kolekce má z pluginu `access.create: () => true`, tedy veřejně
-      // zapisovatelný REST endpoint. Ochranu čte `reCAPTCHAv3` níž z `custom`.
+      // zapisovatelný REST endpoint. reCAPTCHA (`custom.recaptcha` níž) hlídá
+      // skóre, ne objem — rate limit brzdí hrubou silou opakované pokusy,
+      // které by skóre třeba i prošly.
+      access: {
+        create: ({ req }) => {
+          if (req.user) return true
+          const ip = getClientIp(req.headers)
+          return !isRateLimited(`form-submission:${ip}`)
+        },
+      },
       custom: {
         recaptcha: [{ name: 'create', action: RECAPTCHA_ACTIONS.formSubmission }],
       },

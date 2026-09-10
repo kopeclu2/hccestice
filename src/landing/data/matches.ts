@@ -1,6 +1,7 @@
 import type { Match } from '@/payload-types'
 
 import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
@@ -28,11 +29,29 @@ import {
   toPhoto,
   uploadToPhoto,
 } from './format'
+import { CACHE_TAGS } from './tags'
 
 /**
  * Zápasy — fetchery a odvozeniny pro hero countdown, karty reportů,
- * rozpisy i widgety. Vše přes React `cache()` (dedup v rámci requestu).
+ * rozpisy i widgety. Vše přes React `cache()` (dedup v rámci requestu);
+ * fetchery pro plně dynamickou `/zapasy` navíc přes `unstable_cache`.
  */
+
+/**
+ * Hranice „od teď" pro filtr naplánovaných zápasů, zaokrouhlená na
+ * celou hodinu.
+ *
+ * Musí se počítat **mimo** cachovanou funkci a předávat jako argument:
+ * `unstable_cache` skládá klíč z argumentů, takže se každou hodinu založí
+ * nová entry. Kdyby `new Date()` zůstalo uvnitř, zamrzlo by v cache na
+ * celou dobu její životnosti (dnes hodina, bez `revalidate` rok) a
+ * odehraný zápas by zůstal v rozlosování.
+ */
+const scheduleFrom = (): string => {
+  const boundary = new Date()
+  boundary.setMinutes(0, 0, 0)
+  return boundary.toISOString()
+}
 
 /** Jméno soupeře z relace (zápasy mají depth ≥ 1). */
 const opponentName = (match: Match): string =>
@@ -235,34 +254,42 @@ export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<Ma
 /* ── /zapasy ─────────────────────────────────────────────────────────────── */
 
 /** Rozlosování sezóny — celé, od nejbližšího zápasu (pás karet na /zapasy). */
-export const fetchSeasonFixtures = cache(async (seasonId: number): Promise<FixtureCard[]> => {
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'matches',
-    where: {
-      and: [
-        { season: { equals: seasonId } },
-        { status: { equals: 'scheduled' } },
-        { date: { greater_than_equal: new Date().toISOString() } },
-      ],
-    },
-    sort: 'date',
-    limit: 0,
-    depth: 1,
-  })
+const loadSeasonFixtures = unstable_cache(
+  async (seasonId: number, from: string): Promise<FixtureCard[]> => {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'matches',
+      where: {
+        and: [
+          { season: { equals: seasonId } },
+          { status: { equals: 'scheduled' } },
+          { date: { greater_than_equal: from } },
+        ],
+      },
+      sort: 'date',
+      limit: 0,
+      depth: 1,
+    })
 
-  return docs.map((match, index) => ({
-    ...schemaFields(match),
-    id: match.id,
-    kind: match.home ? 'Doma' : 'Venku',
-    stage: phaseLabel(match),
-    dateLabel: formatDay(match.date),
-    timeLabel: formatTime(match.date),
-    title: matchTitle(match),
-    venue: match.venue ?? null,
-    isNext: index === 0,
-  }))
-})
+    return docs.map((match, index) => ({
+      ...schemaFields(match),
+      id: match.id,
+      kind: match.home ? 'Doma' : 'Venku',
+      stage: phaseLabel(match),
+      dateLabel: formatDay(match.date),
+      timeLabel: formatTime(match.date),
+      title: matchTitle(match),
+      venue: match.venue ?? null,
+      isNext: index === 0,
+    }))
+  },
+  ['season-fixtures'],
+  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+)
+
+export const fetchSeasonFixtures = cache(
+  async (seasonId: number): Promise<FixtureCard[]> => loadSeasonFixtures(seasonId, scheduleFrom()),
+)
 
 const toResultRow = (match: Match): ResultRow => ({
   ...schemaFields(match),
@@ -277,7 +304,7 @@ const toResultRow = (match: Match): ResultRow => ({
 })
 
 /** Odehrané zápasy sezóny po stranách (výpis na /zapasy, 6 na stranu). */
-export const fetchSeasonResults = cache(
+const loadSeasonResults = unstable_cache(
   async (options: {
     seasonId: number
     page: number
@@ -302,7 +329,11 @@ export const fetchSeasonResults = cache(
       totalDocs: result.totalDocs,
     }
   },
+  ['season-results'],
+  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
+
+export const fetchSeasonResults = cache(loadSeasonResults)
 
 /**
  * Poslední odehrané zápasy bez ohledu na sezónu — výřez „Odehrané
@@ -323,40 +354,46 @@ export const fetchLatestResults = cache(async (limit: number): Promise<ResultRow
 const OUTCOME_LETTER: Record<Outcome, string> = { win: 'V', draw: 'R', loss: 'P' }
 
 /** Forma za posledních 5 odehraných zápasů sezóny (zleva nejstarší). */
-export const fetchSeasonForm = cache(async (seasonId: number): Promise<TeamForm | null> => {
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'matches',
-    where: {
-      and: [{ season: { equals: seasonId } }, { status: { equals: 'played' } }],
-    },
-    sort: '-date',
-    limit: 5,
-    depth: 1,
-  })
-  if (docs.length === 0) return null
+const loadSeasonForm = unstable_cache(
+  async (seasonId: number): Promise<TeamForm | null> => {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'matches',
+      where: {
+        and: [{ season: { equals: seasonId } }, { status: { equals: 'played' } }],
+      },
+      sort: '-date',
+      limit: 5,
+      depth: 1,
+    })
+    if (docs.length === 0) return null
 
-  const squares: FormSquare[] = docs
-    .map((match) => ({
-      id: match.id,
-      letter: OUTCOME_LETTER[matchOutcome(match)],
-      outcome: matchOutcome(match),
-      score: matchScore(match),
-      suffix: scoreSuffix(match),
-      stage: phaseLabel(match),
-      title: matchTitle(match),
-      dateLabel: formatDay(match.date),
-    }))
-    .reverse()
+    const squares: FormSquare[] = docs
+      .map((match) => ({
+        id: match.id,
+        letter: OUTCOME_LETTER[matchOutcome(match)],
+        outcome: matchOutcome(match),
+        score: matchScore(match),
+        suffix: scoreSuffix(match),
+        stage: phaseLabel(match),
+        title: matchTitle(match),
+        dateLabel: formatDay(match.date),
+      }))
+      .reverse()
 
-  const counts = { win: 0, draw: 0, loss: 0 }
-  for (const square of squares) counts[square.outcome] += 1
+    const counts = { win: 0, draw: 0, loss: 0 }
+    for (const square of squares) counts[square.outcome] += 1
 
-  return {
-    squares,
-    summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss}× prohra`,
-  }
-})
+    return {
+      squares,
+      summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss}× prohra`,
+    }
+  },
+  ['season-form'],
+  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+)
+
+export const fetchSeasonForm = cache(loadSeasonForm)
 
 /** Jeden zápas pro velkou kartu — depth 2 kvůli logu soupeře a reportáži. */
 export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardData | null> => {

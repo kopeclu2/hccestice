@@ -376,7 +376,7 @@
   /* lead — první odstavec větší, tmavší a medium */
   & > div > p:first-of-type {
     margin-top: 0;
-    font-size: 1.3125rem;
+    font-size: 1.1875rem;
     line-height: 1.55;
     font-weight: 500;
     color: var(--color-ink);
@@ -384,7 +384,7 @@
   }
 
   & h2 {
-    margin-top: 3.25rem;
+    margin-top: 2rem;
     font-size: 1.875rem;
     font-weight: 800;
     letter-spacing: -0.025em;
@@ -412,7 +412,7 @@
   }
 
   & blockquote {
-    margin: 2.75rem 0;
+    margin: 2rem 0;
     border-left: 0.25rem solid var(--color-lime);
     padding-left: 1.75rem;
     font-size: 1.5rem;
@@ -440,10 +440,10 @@
 
   & img {
     border-radius: var(--radius-tile);
-    margin-top: 2.75rem;
+    margin-top: 2rem;
   }
   & figure {
-    margin: 2.75rem 0 0.625rem;
+    margin: 2rem 0 0.625rem;
   }
   & figure img {
     margin-top: 0;
@@ -453,6 +453,45 @@
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-faint);
+  }
+
+  /*
+   * Svislý rytmus těla článku má tři stupně jako `SectionShell` —
+   * hodnoty z handoffu (52px nad `h2`, 44px kolem citací a fotek) jsou
+   * kreslené pro 1440px a na 390px displeji z nich byla třetina viewportu.
+   * Mobilní hodnoty jsou proto výchozí a desktopové naskakují až na `lg`.
+   */
+  @media (width >= 48rem) {
+    & h2 {
+      margin-top: 2.5rem;
+    }
+    & blockquote {
+      margin: 2.25rem 0;
+    }
+    & img {
+      margin-top: 2.25rem;
+    }
+    & figure {
+      margin: 2.25rem 0 0.625rem;
+    }
+  }
+
+  @media (width >= 64rem) {
+    & > div > p:first-of-type {
+      font-size: 1.3125rem;
+    }
+    & h2 {
+      margin-top: 3.25rem;
+    }
+    & blockquote {
+      margin: 2.75rem 0;
+    }
+    & img {
+      margin-top: 2.75rem;
+    }
+    & figure {
+      margin: 2.75rem 0 0.625rem;
+    }
   }
 }
 

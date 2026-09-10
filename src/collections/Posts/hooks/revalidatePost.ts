@@ -18,7 +18,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       revalidatePath(path)
       revalidateTag('posts-sitemap', 'max')
       revalidateTag('llms-txt', 'max')
-      revalidateTag('posts-list', 'max')
+      revalidateTag('posts-list', { expire: 0 })
     }
 
     // If the post was previously published, we need to revalidate the old path
@@ -30,7 +30,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       revalidatePath(oldPath)
       revalidateTag('posts-sitemap', 'max')
       revalidateTag('llms-txt', 'max')
-      revalidateTag('posts-list', 'max')
+      revalidateTag('posts-list', { expire: 0 })
     }
 
     // Změna slugu publikovaného článku — stará cesta by jinak zůstala v cache
@@ -57,7 +57,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { 
     revalidatePath(path)
     revalidateTag('posts-sitemap', 'max')
     revalidateTag('llms-txt', 'max')
-    revalidateTag('posts-list', 'max')
+    revalidateTag('posts-list', { expire: 0 })
   }
 
   return doc

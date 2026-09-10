@@ -1,6 +1,7 @@
 import type { Season } from '@/payload-types'
 
 import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
@@ -8,6 +9,7 @@ import { STANDINGS } from '../content'
 import type { StandingsContent, StatsContent } from '../types'
 
 import { arrayOr, pluralForm } from './format'
+import { CACHE_TAGS } from './tags'
 
 /** Sezóny — aktuální sezóna, tabulka ligy a auto-výpočet čísel. */
 
@@ -15,61 +17,60 @@ import { arrayOr, pluralForm } from './format'
 export const seasonShortLabel = (season: Pick<Season, 'startYear'>): string =>
   `${season.startYear}/${String(season.startYear + 1).slice(2)}`
 
-/** Sezóny s alespoň jednou galerií, od nejnovější — filtr /fotogalerie. */
-export const fetchGallerySeasons = cache(async (): Promise<Season[]> => {
+/**
+ * Sezóny, ve kterých existuje aspoň jeden dokument dané kolekce —
+ * pilulky filtru na `/fotogalerie` a `/zapasy`.
+ *
+ * `DISTINCT season` se skládá v aplikaci, ne v SQL: Payload `find` nic
+ * takového neumí a `select` zúží dotaz na jediný sloupec, takže je to
+ * jeden index scan. Obě volající stránky jsou ale **plně dynamické**
+ * (`searchParams`), takže bez `unstable_cache` níž tenhle scan padal na
+ * každé načtení výpisu, včetně stránkování.
+ */
+const loadSeasonsWithDocs = async (collection: 'galleries' | 'matches'): Promise<Season[]> => {
   const payload = await getPayload({ config: configPromise })
-  const { docs: galleries } = await payload.find({
-    collection: 'galleries',
+  const { docs } = await payload.find({
+    collection,
     limit: 0,
     depth: 0,
     select: { season: true },
   })
   const ids = [
     ...new Set(
-      galleries
-        .map((gallery) => (typeof gallery.season === 'number' ? gallery.season : null))
+      docs
+        .map((doc) => (typeof doc.season === 'number' ? doc.season : null))
         .filter((id): id is number => Boolean(id)),
     ),
   ]
   if (ids.length === 0) return []
 
-  const { docs } = await payload.find({
+  const { docs: seasons } = await payload.find({
     collection: 'seasons',
     where: { id: { in: ids } },
     sort: '-startYear',
     limit: 0,
     depth: 0,
   })
-  return docs
-})
+  return seasons
+}
+
+const loadGallerySeasons = unstable_cache(
+  async (): Promise<Season[]> => loadSeasonsWithDocs('galleries'),
+  ['gallery-seasons'],
+  { tags: [CACHE_TAGS.galleries], revalidate: 3600 },
+)
+
+const loadMatchSeasons = unstable_cache(
+  async (): Promise<Season[]> => loadSeasonsWithDocs('matches'),
+  ['match-seasons'],
+  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+)
+
+/** Sezóny s alespoň jednou galerií, od nejnovější — filtr /fotogalerie. */
+export const fetchGallerySeasons = cache(async (): Promise<Season[]> => loadGallerySeasons())
 
 /** Sezóny s alespoň jedním zápasem, od nejnovější — filtr /zapasy. */
-export const fetchMatchSeasons = cache(async (): Promise<Season[]> => {
-  const payload = await getPayload({ config: configPromise })
-  const { docs: matches } = await payload.find({
-    collection: 'matches',
-    limit: 0,
-    depth: 0,
-    select: { season: true },
-  })
-  const ids = [
-    ...new Set(
-      matches
-        .map((match) => (typeof match.season === 'number' ? match.season : null))
-        .filter((id): id is number => Boolean(id)),
-    ),
-  ]
-  if (ids.length === 0) return []
-
-  const { docs } = await payload.find({
-    collection: 'seasons',
-    where: { id: { in: ids } },
-    sort: '-startYear',
-    limit: 0,
-    depth: 0,
-  })
-  return docs
-})
+export const fetchMatchSeasons = cache(async (): Promise<Season[]> => loadMatchSeasons())
 
 /** Sezóna podle id, jinak aktuální (`isCurrent`). */
 export const fetchSeason = cache(async (seasonId?: number | null): Promise<Season | null> => {

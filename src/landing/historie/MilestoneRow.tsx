@@ -61,7 +61,7 @@ export function MilestoneRow({ milestone, index }: { milestone: Milestone; index
             )}
             gradient="none"
             photo={milestone.photo}
-            sizes="(max-width: 64rem) 100vw, 17.5rem"
+            sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 26rem, 17.5rem"
           />
         )}
       </div>

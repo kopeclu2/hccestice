@@ -35,6 +35,10 @@ type ContactRow = { external: boolean; href: string; key: string; label: string 
  * Kontaktní odkazy mají na mobilu `min-h-11` (44px tap target) a místo
  * `truncate` se lámou (`break-words`): dlouhý e-mail se pod 1440px vešel
  * jen s výpustkou, takže návštěvník na mobilu i tabletu neviděl doménu.
+ *
+ * Na jeden řádek se karta skládá až od `lg`, ne od `md`: na 768px má
+ * vnitřek ~694px, ale logo `w-50` a oba flex sloupce si žádají ~778px,
+ * takže `flex-nowrap` vytlačil dlouhý e-mail za hranu `overflow-hidden`.
  */
 export function PartnerRow({ sponsor }: { sponsor: Sponsor }) {
   const rows: ContactRow[] = [
@@ -57,7 +61,7 @@ export function PartnerRow({ sponsor }: { sponsor: Sponsor }) {
   ]
 
   return (
-    <div className="border-line-soft hover:border-club rounded-tile relative flex flex-wrap items-center gap-y-3 overflow-hidden border bg-surface p-3.5 transition-colors md:flex-nowrap md:gap-[clamp(1rem,2.5vw,2rem)]">
+    <div className="border-line-soft hover:border-club rounded-tile relative flex flex-wrap items-center gap-y-3 overflow-hidden border bg-surface p-3.5 transition-colors lg:flex-nowrap lg:gap-[clamp(1rem,2.5vw,2rem)]">
       <div className="relative grid h-31 w-50 flex-none place-items-center overflow-hidden rounded-2xl">
         {sponsor.logo ? (
           <Image
@@ -65,7 +69,7 @@ export function PartnerRow({ sponsor }: { sponsor: Sponsor }) {
             className="relative max-h-[74%] max-w-[78%] object-contain"
             height={sponsor.logo.height}
             sizes="12.5rem"
-            src={getMediaUrl(sponsor.logo.url)}
+            src={getMediaUrl(sponsor.logo.url, sponsor.logo.updatedAt)}
             width={sponsor.logo.width}
           />
         ) : (
@@ -102,7 +106,7 @@ export function PartnerRow({ sponsor }: { sponsor: Sponsor }) {
                 {row.key}
               </Eyebrow>
               <a
-                className="text-club hover:text-club-dark flex min-h-11 min-w-0 items-center font-bold break-words transition-colors md:min-h-0"
+                className="text-club hover:text-club-dark flex min-h-11 min-w-0 items-center font-bold break-all transition-colors md:min-h-0"
                 href={row.href}
                 rel={row.external ? 'noreferrer' : undefined}
                 target={row.external ? '_blank' : undefined}

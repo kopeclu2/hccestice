@@ -2,6 +2,7 @@ import type { LandingStatsBlock } from '@/payload-types'
 
 import React from 'react'
 
+import { Highlight } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
@@ -12,6 +13,13 @@ import { fetchAutoStats } from '../../data/seasons'
 import type { StatsContent } from '../../types'
 import { cn } from '@/utilities/ui'
 
+/**
+ * Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah —
+ * s `??` přebil neprázdné označení sezóny z `fetchAutoStats` a v nadpisu
+ * zůstal prázdný lime čtverec.
+ */
+const text = (value: string | null | undefined): string | null => value?.trim() || null
+
 /** Ruční čísla z bloku mají přednost; `auto` dodá fetchAutoStats. */
 function mapStats(block: LandingStatsBlock, auto: StatsContent | null): StatsContent {
   const manual = (block.items ?? []).map((stat) => ({
@@ -21,15 +29,15 @@ function mapStats(block: LandingStatsBlock, auto: StatsContent | null): StatsCon
   }))
   if (manual.length > 0) {
     return {
-      seasonLabel: block.seasonLabel ?? auto?.seasonLabel ?? SEASON_STATS.seasonLabel,
+      seasonLabel: text(block.seasonLabel) ?? auto?.seasonLabel ?? SEASON_STATS.seasonLabel,
       items: manual,
     }
   }
   if (auto) {
-    return { seasonLabel: block.seasonLabel ?? auto.seasonLabel, items: auto.items }
+    return { seasonLabel: text(block.seasonLabel) ?? auto.seasonLabel, items: auto.items }
   }
   return {
-    seasonLabel: block.seasonLabel ?? SEASON_STATS.seasonLabel,
+    seasonLabel: text(block.seasonLabel) ?? SEASON_STATS.seasonLabel,
     items: [...SEASON_STATS.items],
   }
 }
@@ -42,15 +50,26 @@ export async function StatsBlockComponent({ block }: { block: LandingStatsBlock 
 
 /** „Sezóna 2025/2026 v číslech" — čtyři velká čísla, watermark PONÍCI. */
 function StatsView({ stats }: { stats: StatsContent }) {
+  const seasonLabel = stats.seasonLabel.trim()
   return (
     <SectionShell>
-      <Watermark className="text-club/12 -right-5 -bottom-25 text-watermark-xs">PONÍCI</Watermark>
+      {/* Negativní offset až od `2xl`: dřív watermark přetékal pravou hranu
+          a `overflow-x-clip` z `PageCanvas` ho ustřihl uprostřed písmene. */}
+      <Watermark className="text-club/12 right-0 -bottom-25 text-watermark-xs 2xl:-right-5">
+        PONÍCI
+      </Watermark>
 
       <Reveal>
         <p className="text-faint mb-8.5 text-center text-body">
-          Sezóna{' '}
-          <span className="bg-lime text-ink px-2 py-0.25 font-bold">{stats.seasonLabel}</span> v
-          číslech
+          {/* Bez označení sezóny nesmí zůstat dvojitá mezera ani prázdná
+              lime plocha — celé zvýraznění se proto vynechá. */}
+          {seasonLabel ? (
+            <>
+              Sezóna <Highlight>{seasonLabel}</Highlight> v číslech
+            </>
+          ) : (
+            'Sezóna v číslech'
+          )}
         </p>
 
         {/* Auto-fit až od `lg`: na tabletu se vešly tři sloupce ze čtyř a

@@ -15,7 +15,7 @@ import { revalidateTag } from 'next/cache'
 const revalidate = (context: Record<string, unknown>, logger: { info: (m: string) => void }) => {
   if (context.disableRevalidate) return
   logger.info('Revaliduji navigaci (tag navigation)')
-  revalidateTag('navigation', 'max')
+  revalidateTag('navigation', { expire: 0 })
 }
 
 export const revalidateNavigation: CollectionAfterChangeHook = ({

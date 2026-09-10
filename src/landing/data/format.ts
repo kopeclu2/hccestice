@@ -74,6 +74,7 @@ export const toPhoto = (media: Media): Photo => ({
   alt: media.alt || 'HC Čestice',
   width: media.width ?? 1600,
   height: media.height ?? 1200,
+  updatedAt: media.updatedAt ?? null,
 })
 
 /** Upload pole (populated přes depth) → Photo, jinak null. */

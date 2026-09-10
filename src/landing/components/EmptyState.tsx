@@ -60,7 +60,10 @@ export function EmptyState({
       )}
     >
       {watermark && (
-        <Watermark className="top-1/2 -right-7.5 -translate-y-1/2 text-club/8 text-watermark-sm">
+        // `-right-16`, ne `-right-7.5`: karta má `overflow-hidden`, takže
+        // menší posun řezal „VČHL" uprostřed posledního písmene a zbylo z něj
+        // „VČHI". Za hranou teď mizí celé „L".
+        <Watermark className="top-1/2 -right-16 -translate-y-1/2 text-club/8 text-watermark-sm">
           {watermark}
         </Watermark>
       )}
@@ -96,12 +99,7 @@ function EmptyStateIcon({ name }: { name: EmptyStateIconName }) {
     return (
       <svg {...shared}>
         <circle className="stroke-club" cx="28" cy="28" r="16" strokeWidth="3" />
-        <path
-          className="stroke-contrast"
-          d="M40 40 L54 54"
-          strokeLinecap="round"
-          strokeWidth="4"
-        />
+        <path className="stroke-contrast" d="M40 40 L54 54" strokeLinecap="round" strokeWidth="4" />
         <path className="stroke-lime" d="M21 28 H35" strokeLinecap="round" strokeWidth="4" />
       </svg>
     )
@@ -110,7 +108,15 @@ function EmptyStateIcon({ name }: { name: EmptyStateIconName }) {
   if (name === 'schedule') {
     return (
       <svg {...shared}>
-        <rect className="stroke-contrast" height="44" rx="6" strokeWidth="3" width="48" x="8" y="12" />
+        <rect
+          className="stroke-contrast"
+          height="44"
+          rx="6"
+          strokeWidth="3"
+          width="48"
+          x="8"
+          y="12"
+        />
         <path className="stroke-contrast" d="M8 26 H56" strokeWidth="3" />
         <path
           className="stroke-club"
@@ -125,7 +131,15 @@ function EmptyStateIcon({ name }: { name: EmptyStateIconName }) {
 
   return (
     <svg {...shared}>
-      <rect className="stroke-contrast" height="40" rx="6" strokeWidth="3" width="52" x="6" y="16" />
+      <rect
+        className="stroke-contrast"
+        height="40"
+        rx="6"
+        strokeWidth="3"
+        width="52"
+        x="6"
+        y="16"
+      />
       <path
         className="stroke-contrast"
         d="M22 16 L26 8 H38 L42 16"

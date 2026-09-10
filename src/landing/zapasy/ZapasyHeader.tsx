@@ -39,7 +39,11 @@ export function ZapasyHeader({
           </PillLink>
         )
       }
-      metaClassName="hidden md:flex"
+      /* Pod `md` se pilulka zalomí na vlastní řádek pod filtry sezón. Dřív ji
+         `hidden md:flex` na mobilu schovávalo celou — jenže je to jediný odkaz
+         na oficiální tabulky na celé stránce, takže se na telefonu nedal
+         otevřít vůbec. */
+      metaClassName="flex max-md:order-2"
       perex="Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou."
       title={
         <>

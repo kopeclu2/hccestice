@@ -30,8 +30,16 @@ export function GalleryDetailHeader({
             </Badge>
           )}
           {dateLabel && <span className="text-faint text-caption font-bold">{dateLabel}</span>}
+          {/* Oddělovač je samostatný element, ne součást posledního popisku:
+              natvrdo v textu se sčítal s `gap-2.5` do dvojité mezery a bez
+              data zůstávala úvodní tečka viset před počtem fotek. */}
+          {dateLabel && (
+            <span aria-hidden className="text-faint text-caption font-bold">
+              ·
+            </span>
+          )}
           <span className="text-faint text-caption font-bold">
-            · {countLabel(photoCount, ['fotka', 'fotky', 'fotek'])}
+            {countLabel(photoCount, ['fotka', 'fotky', 'fotek'])}
           </span>
         </>
       }

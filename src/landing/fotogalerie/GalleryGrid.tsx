@@ -28,10 +28,7 @@ export function GalleryGrid({
   activeSeasonLabel?: string | null
 }) {
   return (
-    <CardGrid
-      empty={<GalleryEmpty activeSeasonLabel={activeSeasonLabel ?? null} />}
-      items={cards}
-    >
+    <CardGrid empty={<GalleryEmpty activeSeasonLabel={activeSeasonLabel ?? null} />} items={cards}>
       {(card) => <GalleryCardTile card={card} key={card.id} />}
     </CardGrid>
   )
@@ -91,8 +88,10 @@ function GalleryCardTile({ card }: { card: GalleryCard }) {
             alt={card.cover.alt}
             className="object-cover"
             fill
-            sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-            src={getMediaUrl(card.cover.url)}
+            /* Zlomy kopírují `CardGrid`: 1 sloupec / 2 od `sm` (40rem) /
+               3 od `lg` (64rem). */
+            sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+            src={getMediaUrl(card.cover.url, card.cover.updatedAt)}
           />
         )}
         {card.seasonLabel && (

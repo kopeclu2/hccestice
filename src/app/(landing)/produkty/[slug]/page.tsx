@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { PageCanvas } from '@/landing/components/PageCanvas'
+import { BreadcrumbsJsonLd } from '@/landing/components/BreadcrumbsJsonLd'
 import { CardTitle, PageTitle } from '@/landing/components/Heading'
 import { Kicker } from '@/landing/components/Kicker'
 import { Numeral } from '@/landing/components/Numeral'
@@ -15,6 +16,7 @@ import { PillLink } from '@/landing/components/PillLink'
 import { fetchProductBySlug, fetchProductSlugs } from '@/landing/data/products'
 import { fetchSite } from '@/landing/data/site'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getServerSideURL } from '@/utilities/getURL'
 import { cn } from '@/utilities/ui'
 
 export const revalidate = 600
@@ -44,6 +46,8 @@ export default async function ProductDetailPage({ params }: Args) {
 
   return (
     <PageCanvas className="min-h-screen" gutter="wide" hatch={false} surface="paper">
+      <ProductJsonLd photos={photos} product={product} />
+      <BreadcrumbsJsonLd trail={[{ href: '/#kontakt', label: 'Klubový merch' }, { label: product.name }]} />
       <div className="mx-auto max-w-[80rem] pt-10">
         <Link
           className="text-faint hover:text-club inline-flex items-center gap-2 text-meta font-bold transition-colors [&_svg]:size-4"
@@ -72,7 +76,7 @@ export default async function ProductDetailPage({ params }: Args) {
                   fill
                   priority={index === 0}
                   sizes={index === 0 ? '(max-width: 64rem) 100vw, 40rem' : '13rem'}
-                  src={getMediaUrl(photo.url)}
+                  src={getMediaUrl(photo.url, photo.updatedAt)}
                 />
               </div>
             ))}
@@ -170,16 +174,61 @@ export default async function ProductDetailPage({ params }: Args) {
   )
 }
 
-/** Hlavní fotka + galerie → jednotný seznam pro mřížku. */
-function collectPhotos(product: Product): Array<{ url: string; alt: string }> {
-  const photos: Array<{ url: string; alt: string }> = []
+/** `Product` + `Offer` JSON-LD — objednávky běží e-mailem, ne košíkem, proto
+ *  `Offer` bez `url` na checkout; `availability` je pak hlavní signál. */
+function ProductJsonLd({
+  product,
+  photos,
+}: {
+  product: Product
+  photos: ProductPhoto[]
+}) {
+  const baseUrl = getServerSideURL()
+  const path = `/produkty/${product.slug}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    ...(product.description ? { description: product.description } : {}),
+    ...(photos.length ? { image: photos.map((photo) => `${baseUrl}${getMediaUrl(photo.url, photo.updatedAt)}`) } : {}),
+    url: `${baseUrl}${path}`,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'CZK',
+      price: product.price,
+      availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: `${baseUrl}${path}`,
+      seller: { '@type': 'Organization', name: 'HC Čestice' },
+    },
+  }
+
+  return (
+    <script dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} type="application/ld+json" />
+  )
+}
+
+/**
+ * Hlavní fotka + galerie → jednotný seznam pro mřížku.
+ *
+ * `updatedAt` je součást seznamu, protože se z něj skládá URL a média
+ * jdou s `Cache-Control: immutable` (viz `collections/Media.ts`) —
+ * bez verze v URL by se výměna souboru návštěvníkům neprojevila.
+ */
+type ProductPhoto = { url: string; alt: string; updatedAt?: string | null }
+
+function collectPhotos(product: Product): ProductPhoto[] {
+  const photos: ProductPhoto[] = []
   if (typeof product.photo === 'object' && product.photo?.url) {
-    photos.push({ url: product.photo.url, alt: product.photo.alt ?? '' })
+    photos.push({
+      url: product.photo.url,
+      alt: product.photo.alt ?? '',
+      updatedAt: product.photo.updatedAt,
+    })
   }
   for (const row of product.gallery ?? []) {
     const image = row.image as Media | number
     if (typeof image === 'object' && image?.url) {
-      photos.push({ url: image.url, alt: image.alt ?? '' })
+      photos.push({ url: image.url, alt: image.alt ?? '', updatedAt: image.updatedAt })
     }
   }
   return photos
@@ -190,6 +239,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const product = await fetchProductBySlug(decodeURIComponent(slug))
   if (!product) return { title: 'Produkt nenalezen | HC Čestice' }
   return {
+    alternates: { canonical: `/produkty/${product.slug}` },
     title: `${product.name} — ${product.price} Kč | HC Čestice merch`,
     description:
       product.description ?? `${product.name} z klubové nabídky HC Čestice. Objednávky e-mailem.`,

@@ -1,0 +1,7 @@
+# Bez tohoto souboru si SWC/Turbopack volí vlastní konzervativní výchozí
+# target a zbytečně přibaluje polyfilly (např. core-js pro Array.prototype.at
+# /flat), které moderní evergreen prohlížeče mají nativně — zjištěno SEO
+# performance auditem (2026-09-09), ~13 KB JS navíc na každé stránce.
+last 2 versions
+not dead
+not ie 11

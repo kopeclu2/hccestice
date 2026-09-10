@@ -4,6 +4,7 @@ import { PageTitle } from '../../components/Heading'
 import { Watermark } from '../../components/Watermark'
 import type { ArticleDetail } from '../../types'
 
+import { AuthorMeta } from './AuthorMeta'
 import { Breadcrumbs } from './Breadcrumbs'
 import { CategoryBadge } from './CategoryBadge'
 import { TitleParts } from './HeroTitle'
@@ -12,23 +13,28 @@ import { TitleParts } from './HeroTitle'
  * Hero C · Typografické — bez fotky; obří titulek (základ regular,
  * zvýrazněná část tučně s lime podbarvením), watermark „HCČ"
  * a dvoubarevná dělicí linka. Univerzální fallback ostatních variant.
+ *
+ * Meta řádek je `AuthorMeta` (`tone="light"` pro světlý podklad) jako
+ * u ostatních čtyř variant — vlastní skládaný string s ` · ` byl o stupeň
+ * menší a bez monogramu autora, takže fallback vypadal jako jiný web.
  */
 export function HeroTypo({ article }: { article: ArticleDetail }) {
-  const metaLine = [article.dateLabel, article.author.name, article.readingLabel]
-    .filter(Boolean)
-    .join(' · ')
-
   return (
-    <div className="relative z-1 mx-auto mt-10 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-16">
+    <div className="relative z-1 mx-auto mt-10 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-13 lg:mt-16">
       <Watermark className="text-club/13 -top-14 left-[60%] z-0 text-watermark-3xl tracking-[-0.06em]">
         HC ČESTICE
       </Watermark>
 
       <Breadcrumbs badge={article.badge} className="mb-5.5" tone="light" />
 
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-x-4.5 gap-y-3">
         <CategoryBadge>{article.badge}</CategoryBadge>
-        <span className="text-faint text-caption font-semibold">{metaLine}</span>
+        <AuthorMeta
+          author={article.author}
+          dateLabel={article.dateLabel}
+          readingLabel={article.readingLabel}
+          tone="light"
+        />
       </div>
 
       {/* HeroTypo je designově odlišný — základní váha regular, jen zvýrazněná

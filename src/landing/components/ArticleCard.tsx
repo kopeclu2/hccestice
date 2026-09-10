@@ -47,7 +47,7 @@ export function ArticleCard({
             className="object-cover"
             fill
             sizes={sizes}
-            src={getMediaUrl(photo.url)}
+            src={getMediaUrl(photo.url, photo.updatedAt)}
           />
         </div>
       )}

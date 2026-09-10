@@ -34,11 +34,14 @@ export const RenderBlocks: React.FC<{
 
           // Landing/obecné sekce: typografie Archivo, ořez watermarků a
           // TĚSNĚJŠÍ rytmus než na homepage (200px mezery jsou marketingové,
-          // obsahové podstránky potřebují ~1/3)
+          // obsahové podstránky potřebují ~1/3).
+          // Stupně jsou tři jako v `SectionShell` — s dvěma (`mt-10! md:mt-16!`)
+          // dostal tablet rovnou desktopovou hodnotu, tedy přesně to, co škála
+          // sekcí odjinud odstranila.
           if (blockType && isLandingBlock(blockType)) {
             return (
               <div
-                className="font-display text-ink overflow-x-clip [&_section]:mt-10! md:[&_section]:mt-16!"
+                className="font-display text-ink overflow-x-clip [&_section]:mt-10! md:[&_section]:mt-13! lg:[&_section]:mt-16!"
                 key={index}
               >
                 {renderLandingBlock(block, index)}
@@ -51,7 +54,10 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-16" key={index}>
+                // Nesekční bloky (formulář, legacy HTML) měly ploché 64px
+                // i na 320px displeji — odtud ta mezera mezi hlavičkou
+                // a prvním odstavcem na `/kontakty`.
+                <div className="my-10 md:my-13 lg:my-16" key={index}>
                   <Block {...block} disableInnerContainer />
                 </div>
               )

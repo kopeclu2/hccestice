@@ -162,7 +162,7 @@ function SponsorTile({ sponsor }: { sponsor: Sponsor }) {
       alt={sponsor.name}
       className="max-h-13 w-auto max-w-37.5 object-contain grayscale transition duration-300 group-hover:grayscale-0"
       height={56}
-      src={getMediaUrl(sponsor.logo.url)}
+      src={getMediaUrl(sponsor.logo.url, sponsor.logo.updatedAt)}
       width={150}
     />
   ) : (

@@ -7,12 +7,14 @@ import { PillLink } from '../components/PillLink'
 import { ctaHref, fetchNavCta, fetchNavigation } from '../data/navigation'
 
 /**
- * Světlá globální navigace podstránek: logo známka vlevo, pill odkazy
- * (jen desktop), CTA vpravo a pod `md` burger menu. Odkazy vedou na
+ * Světlá globální navigace podstránek: logo známka vlevo, pilulky odkazů
+ * od `xl`, CTA vpravo a burger menu do `xl`. Hranice je `xl` (1280px), ne
+ * `md` — proč, vysvětluje komentář v `NavPills.tsx`. Odkazy vedou na
  * podstránky, položky bez podstránky na kotvy homepage.
  *
- * Aktivní stav si řeší `NavPills` z `usePathname()`, takže volající
- * nemusí předávat nic a nelze ho nikde zapomenout.
+ * Aktivní stav si řeší `NavPills` i `NavMobile` samy z `usePathname()`
+ * (sdíleným predikátem `isNavItemActive`), takže volající nemusí předávat
+ * nic a nelze ho nikde zapomenout.
  */
 export async function ArticleNav() {
   const [items, cta] = await Promise.all([fetchNavigation(), fetchNavCta()])

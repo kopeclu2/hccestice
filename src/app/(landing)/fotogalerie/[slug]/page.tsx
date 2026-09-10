@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     description: `Fotogalerie ${gallery.title} — ${gallery.photos?.length ?? 0} fotek.`,
     alternates: { canonical: `/fotogalerie/${slug}` },
     openGraph: cover
-      ? { images: [{ url: `${getServerSideURL()}${getMediaUrl(cover.url)}` }] }
+      ? { images: [{ url: `${getServerSideURL()}${getMediaUrl(cover.url, cover.updatedAt)}` }] }
       : undefined,
   }
 }

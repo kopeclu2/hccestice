@@ -14,6 +14,8 @@ import { SectionShell } from '../../components/SectionShell'
 import { TRAININGS } from '../../content'
 import type { TrainingSlot, TrainingsContent } from '../../types'
 
+import { parseTrainingSchedule } from './openingHours'
+
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
 
@@ -65,7 +67,10 @@ export function TrainingsBlockComponent({ block }: { block: LandingTrainingsBloc
 function TrainingsView({ content }: { content: TrainingsContent }) {
   return (
     <SectionShell id="treninky">
-      <Puck className="-left-11 top-107 -rotate-8" />
+      <TrainingsJsonLd rows={content.rows} />
+      {/* Zakotvení odspodu, ne `top-107`: pevná vzdálenost od horní hrany
+          závisela na výšce sekce, takže s jiným počtem karet puk vytékal. */}
+      <Puck className="-left-11 bottom-10 -rotate-8" />
 
       <Reveal className="mb-10">
         {content.kicker && <Kicker>{content.kicker}</Kicker>}
@@ -85,6 +90,48 @@ function TrainingsView({ content }: { content: TrainingsContent }) {
         ))}
       </Reveal>
     </SectionShell>
+  )
+}
+
+/**
+ * `OpeningHoursSpecification` seskupené podle místa — jeden `SportsActivityLocation`
+ * na venue s rozpoznanými hodinami. Řádky, které se nepodařilo naparsovat
+ * (viz `parseTrainingSchedule`), do JSON-LD nejdou; když nezbyde nic
+ * rozpoznaného, nic se nevykreslí.
+ */
+function TrainingsJsonLd({ rows }: { rows: TrainingSlot[] }) {
+  const parsed = parseTrainingSchedule(rows)
+  if (parsed.length === 0) return null
+
+  const byVenue = new Map<string, typeof parsed>()
+  for (const slot of parsed) {
+    const key = slot.venue ?? 'HC Čestice'
+    byVenue.set(key, [...(byVenue.get(key) ?? []), slot])
+  }
+
+  const jsonLd = Array.from(byVenue.entries()).map(([venue, slots]) => ({
+    '@context': 'https://schema.org',
+    '@type': 'SportsActivityLocation',
+    name: venue,
+    openingHoursSpecification: slots.map((slot) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: slot.dayOfWeek,
+      opens: slot.opens,
+      closes: slot.closes,
+      ...(slot.group ? { description: slot.group } : {}),
+    })),
+  }))
+
+  return (
+    <>
+      {jsonLd.map((entry, index) => (
+        <script
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+          key={index}
+          type="application/ld+json"
+        />
+      ))}
+    </>
   )
 }
 

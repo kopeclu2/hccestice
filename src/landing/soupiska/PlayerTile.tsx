@@ -45,6 +45,10 @@ const initials = (name: string): string =>
  *   realizačního týmu („Asistent trenéra mužů") se na dvě řádky nevejde
  *   do bílého pruhu a zelený text ležel na obličeji.
  * - Popisek nesmí narůst do třetí řádky — dlouhé role by přerostly kartu.
+ * - Blok popisku má **pevnou minimální výšku**. Je kotvený ke spodní hraně,
+ *   takže dvouřádkové jméno ho dřív vytlačilo nahoru: kicker se dostal do
+ *   linky s limetkovou plaketou čísla a karta měla jiný vnitřní rytmus než
+ *   sousedi v řádku mřížky. Teď dvouřádkové jméno roste dolů.
  */
 export function PlayerTile({ card }: { card: SoupiskaCard }) {
   return (
@@ -55,8 +59,10 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
             alt={card.photo.alt}
             className="object-cover"
             fill
-            sizes="(max-width: 48rem) 50vw, 18rem"
-            src={getMediaUrl(card.photo.url)}
+            /* Zlomy kopírují třístupňovou mřížku v `RosterSection`: dva
+               sloupce pod `md`, minmax 208px na tabletu, 258px od `lg`. */
+            sizes="(max-width: 48rem) 50vw, (max-width: 64rem) 15rem, 18rem"
+            src={getMediaUrl(card.photo.url, card.photo.updatedAt)}
           />
         </div>
       ) : (
@@ -77,7 +83,7 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
         </Numeral>
       )}
 
-      <div className="absolute inset-x-3.5 bottom-4 md:inset-x-5 md:bottom-4.5">
+      <div className="absolute inset-x-3.5 bottom-4 min-h-[3.25rem] md:inset-x-5 md:bottom-4.5 md:min-h-[3.5rem]">
         <Eyebrow
           className="text-club max-md:line-clamp-2 max-md:tracking-[0.08em]"
           tone="club"

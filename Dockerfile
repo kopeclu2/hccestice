@@ -69,6 +69,17 @@ RUN mkdir -p public/media && chown -R nextjs:nodejs public/media
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Runtime cache: `.next/cache/images` (optimalizované varianty) a
+# `.next/cache/fetch-cache` (`unstable_cache`). Prerenderované HTML tu
+# **není** — to jde do `.next/server/app` a nese ho standalone výše.
+#
+# Adresář musí v image existovat a patřit uživateli `nextjs`, i když se
+# volume nenamountuje. Docker přebírá vlastníka z image, takže jinak by
+# volume vznikl jako root a optimizer by do cache nezapsal — stejná past
+# jako u `public/media`, jen tišší: web by fungoval dál a jen by každý
+# obrázek překódovával znovu.
+RUN mkdir -p .next/cache && chown -R nextjs:nodejs .next
+
 USER nextjs
 
 EXPOSE 3000

@@ -10,9 +10,13 @@ import { cn } from '@/utilities/ui'
  * Všechny jsou čistě vizuální (aria-hidden, pointer-events-none),
  * na mobilu skryté (handoff: dekorace nemají soutěžit s obsahem)
  * a pod obsahem sekce (-z-1; sekce má `relative z-1`).
+ *
+ * Naskakují až od `lg`, stejně jako `Watermark` a ze stejného důvodu: pozice
+ * jsou kreslené pro 1440px, takže na 768px puk vytékal ze sekce Tréninky přes
+ * kicker sekce pod ní a `CornerBrackets` procházely nadpisem.
  */
 
-const base = 'pointer-events-none absolute -z-1 hidden select-none md:block'
+const base = 'pointer-events-none absolute -z-1 hidden select-none lg:block'
 
 /** Silueta hokejky (obrys, klubová zelená). */
 export function HockeyStick({ className }: { className?: string }) {

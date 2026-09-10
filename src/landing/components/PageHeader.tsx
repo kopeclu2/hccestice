@@ -48,7 +48,11 @@ export type PageHeaderProps = {
    * proto se override nepřičítá k defaultu, ale nahrazuje ho.
    */
   metaClassName?: string
-  /** `flex-1` spacer mezi filtry a meta. Bez něj obojí sedí vedle sebe vlevo. */
+  /**
+   * `flex-1` spacer mezi filtry a meta. Bez něj obojí sedí vedle sebe vlevo
+   * (a `meta` si pak nebere ani vlastní řádek na mobilu — u hlaviček, které
+   * ho mají hned za filtry, je to záměr).
+   */
   spacer?: boolean
   /** Override odsazení a rozestupů řádku. */
   rowClassName?: string
@@ -100,9 +104,25 @@ export function PageHeader({
 
       {(filters || meta) && (
         <div className={cn('mt-8.5 flex flex-wrap items-center gap-2', rowClassName)}>
-          {filters}
+          {/* Filtry jsou **jedna** skupina flexu, ne jednotlivé pilulky: dokud
+              byly položkami řádku, poslala `flex-1` rozpěrka `meta` na
+              poslední řádek pilulek (na /fotogalerie viselo „101 galerií"
+              vedle třetí řady sezón místo u titulku). Zalomení tak zůstává
+              uvnitř skupiny. `gap-[inherit]` drží rozestupy z `rowClassName`
+              (sponzoři a detail galerie si je přepisují) a pod `md` se
+              skupina rozpouští (`contents`), aby vodorovný scrollovaný pás
+              filtrů v `GalerieHeader` zůstal pásem. */}
+          {filters && (
+            <div className="flex flex-wrap items-center gap-[inherit] max-md:contents">
+              {filters}
+            </div>
+          )}
           {spacer && <div className="flex-1" />}
-          {meta && <span className={metaClassName}>{meta}</span>}
+          {meta && (
+            <span className={cn(spacer && 'basis-full md:basis-auto md:text-right', metaClassName)}>
+              {meta}
+            </span>
+          )}
         </div>
       )}
 

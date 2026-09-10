@@ -86,7 +86,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
 }
 
 function TeamSide({ logo, name }: { logo: Photo | string | null; name: string }) {
-  const src = typeof logo === 'string' ? logo : logo ? getMediaUrl(logo.url) : null
+  const src = typeof logo === 'string' ? logo : logo ? getMediaUrl(logo.url, logo.updatedAt) : null
   return (
     <div className="flex flex-col items-center gap-2.5">
       {src ? (

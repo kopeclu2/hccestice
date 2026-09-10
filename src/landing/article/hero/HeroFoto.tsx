@@ -26,7 +26,7 @@ export function HeroFoto({ article }: { article: ArticleDetail }) {
             fill
             priority
             sizes="100vw"
-            src={getMediaUrl(article.photo.url)}
+            src={getMediaUrl(article.photo.url, article.photo.updatedAt)}
           />
         )}
         {/* zelený klubový filtr + svislé ztmavení (čitelnost textu) */}

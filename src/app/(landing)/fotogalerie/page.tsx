@@ -43,7 +43,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
 
   return (
     <SubpageShell>
-<GalerieHeader
+      <GalerieHeader
         activeSlug={activeSlug}
         seasons={seasons
           .filter((season) => season.slug)
@@ -56,11 +56,14 @@ export default async function FotogaleriePage({ searchParams }: Args) {
           activeSeasonLabel={activeSeason ? seasonShortLabel(activeSeason) : null}
           cards={galleriesPage.cards}
         />
-        <Pagination
-          hrefFor={hrefFor}
-          page={galleriesPage.page}
-          totalPages={galleriesPage.totalPages}
-        />
+        {/* Jedna strana = žádné stránkování (viz /aktuality a `ResultsList`). */}
+        {galleriesPage.totalPages > 1 && (
+          <Pagination
+            hrefFor={hrefFor}
+            page={galleriesPage.page}
+            totalPages={galleriesPage.totalPages}
+          />
+        )}
       </SectionShell>
 
       <PhotosCta />

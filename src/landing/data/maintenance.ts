@@ -44,5 +44,5 @@ export const fetchMaintenance = unstable_cache(
     }
   },
   ['maintenance'],
-  { tags: ['maintenance'] },
+  { tags: ['maintenance'], revalidate: 3600 },
 )

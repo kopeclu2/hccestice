@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 
 import { Database, MousePointerClick, Puzzle } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
-import { PageCanvas } from '@/landing/components/PageCanvas'
 import { Badge } from '@/landing/components/Badge'
 import { CardTitle, PageTitle, SectionTitle } from '@/landing/components/Heading'
 import { Eyebrow, Kicker } from '@/landing/components/Kicker'
 import { SectionShell } from '@/landing/components/SectionShell'
+import { SubpageShell } from '@/landing/components/SubpageShell'
 import { renderLandingBlock } from '@/landing/render'
 import { buildWidgetCatalog, resolveExampleIds, type WidgetDoc } from '@/landing/widget-catalog'
 
@@ -19,6 +20,10 @@ export const revalidate = 600
  * Pro každý blok: co dělá, odkud bere data, jak ho nastavit v adminu,
  * a pod tím ŽIVÁ ukázka (příklady se plní skutečnými dokumenty z CMS,
  * takže katalog vždy odpovídá realitě). Neindexuje se (robots noindex).
+ *
+ * Stojí na `SubpageShell` (ne na nahém `PageCanvas`, který si shell skládá
+ * sám), takže má navigaci i patičku jako ostatních osm podstránek. Bez nich
+ * byla hlavička přilepená pod hranu viewportu a z katalogu nevedla cesta zpět.
  */
 export default async function WidgetCatalogPage() {
   const ids = await resolveExampleIds()
@@ -26,7 +31,7 @@ export default async function WidgetCatalogPage() {
   const total = catalog.reduce((sum, category) => sum + category.widgets.length, 0)
 
   return (
-    <PageCanvas hatch={false} surface="paper">
+    <SubpageShell hatch={false} surface="paper">
       {/* hlavička katalogu */}
       <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
         <Kicker>Příručka pro správce</Kicker>
@@ -39,9 +44,9 @@ export default async function WidgetCatalogPage() {
         </p>
         <p className="text-faint mx-auto mt-3 max-w-150 text-meta">
           Sekce homepage (Hero, Aktuality, Sezóna…) tu nejsou — ty vidíš na{' '}
-          <a className="text-club font-bold" href="/">
+          <Link className="text-club font-bold" href="/">
             úvodní stránce
-          </a>
+          </Link>
           .
         </p>
       </header>
@@ -63,7 +68,7 @@ export default async function WidgetCatalogPage() {
           ))}
         </SectionShell>
       ))}
-    </PageCanvas>
+    </SubpageShell>
   )
 }
 
@@ -71,8 +76,9 @@ export default async function WidgetCatalogPage() {
 function WidgetEntry({ widget }: { widget: WidgetDoc }) {
   return (
     <article className="mt-16" id={widget.blockType}>
-      {/* dokumentace */}
-      <div className="bg-contrast rounded-card p-6 text-on-contrast md:p-8">
+      {/* Dokumentace. Odsazení má tři stupně: `p-6` bralo na 390px displeji
+          48 ze 370px šířky panelu, desktopová hodnota z handoffu patří na `lg`. */}
+      <div className="bg-contrast rounded-card p-4.5 text-on-contrast md:p-6 lg:p-8">
         <div className="flex flex-wrap items-center gap-3">
           <CardTitle size="md">{widget.name}</CardTitle>
           <Badge className="font-mono" size="sm" variant="lime">
@@ -102,8 +108,10 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
         </dl>
       </div>
 
-      {/* živá ukázka — widget renderuje stejnou komponentou jako na webu */}
-      <div className="border-line relative mt-4 rounded-card border-2 border-dashed pb-4 [&_section]:mt-8 md:[&_section]:mt-8">
+      {/* Živá ukázka — widget renderuje stejnou komponentou jako na webu.
+          `md:[&_section]:mt-8` bylo bajtově totožné s bezpodmínečnou třídou,
+          tedy mrtvé; skutečný mezistupeň je rytmus 32 → 40px od `lg`. */}
+      <div className="border-line relative mt-4 rounded-card border-2 border-dashed pb-4 [&_section]:mt-8 lg:[&_section]:mt-10">
         <Eyebrow
           className="absolute -top-2.5 left-8 z-2 inline-flex items-center gap-1.5 bg-paper px-2"
           tone="faint"

@@ -57,7 +57,7 @@ function SponsorCardView({
                 alt={name}
                 className="max-h-20 w-auto max-w-44 object-contain"
                 height={80}
-                src={getMediaUrl(logo.url)}
+                src={getMediaUrl(logo.url, logo.updatedAt)}
                 width={176}
               />
             ) : (

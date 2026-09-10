@@ -157,15 +157,27 @@ const getLlmsTxt = unstable_cache(
   ['llms-txt'],
   {
     tags: ['llms-txt'],
+    // Pojistka pod tagem — bez ní má `unstable_cache` TTL jeden rok.
+    revalidate: 86400,
   },
 )
 
+/**
+ * Route handlery jsou od Next 15 **dynamické by default**
+ * (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/route.md`,
+ * historie verzí), takže se tenhle handler spustí na každý request —
+ * cachovaná je jen jeho datová část. Bez explicitní hlavičky by odpověď
+ * neměla `Cache-Control` vůbec a crawler by ji nemohl cachovat ani na
+ * minutu. `stale-while-revalidate` proto, aby první request po invalidaci
+ * tagu nikoho nezdržel.
+ */
 export async function GET() {
   const body = await getLlmsTxt()
 
   return new Response(body, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
     },
   })
 }

@@ -57,7 +57,10 @@ export default async function SoupiskaPage() {
         summary={summary}
       />
 
-      <SectionShell className="space-y-18" spacing="content">
+      {/* Rytmus mezi sekcemi kopíruje škálu `SectionShell spacing="section"`
+          (72 / 96 / 140px) — plochých 72px napříč breakpointy bylo na 1440px
+          ploše proti rytmu ostatních podstránek. */}
+      <SectionShell className="space-y-18 md:space-y-24 lg:space-y-35" spacing="content">
         {sections.map((section) => (
           <RosterSection
             anchor={section.anchor}

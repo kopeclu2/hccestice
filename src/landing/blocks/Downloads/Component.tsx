@@ -39,7 +39,7 @@ export function DownloadsBlockComponent({ block }: { block: DownloadsBlock }) {
             <a
               className="border-line-soft hover:bg-tint-hover -mx-2 flex items-center gap-4 rounded-xl border-b px-2 py-3.5 transition-colors last:border-b-0"
               download
-              href={getMediaUrl(item.file.url)}
+              href={getMediaUrl(item.file.url, item.file.updatedAt)}
               key={item.id ?? index}
             >
               <span className="bg-chip text-club rounded-lg px-2.5 py-1.5 text-eyebrow font-extrabold tracking-wide">

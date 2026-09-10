@@ -14,6 +14,10 @@ import { CategoryBadge } from './CategoryBadge'
 /**
  * Hero D · Zelený panel — klubově zelená karta s bílým šrafováním
  * a obrysovým watermarkem; text vlevo, menší fotka vpravo dole.
+ *
+ * Dvousloupcová kompozice je z handoffu pro 1440px, takže platí od `lg`:
+ * na 768px měl textový sloupec ~350px a fotka ~320px. `sizes` kopíruje
+ * tentýž zlom.
  */
 export function HeroPanel({ article }: { article: ArticleDetail }) {
   return (
@@ -24,7 +28,7 @@ export function HeroPanel({ article }: { article: ArticleDetail }) {
         </Watermark>
         <div className="hatch-white pointer-events-none absolute inset-0" />
 
-        <div className="relative grid items-end gap-[clamp(1.75rem,4vw,4rem)] md:grid-cols-[1.15fr_.85fr]">
+        <div className="relative grid items-end gap-[clamp(1.75rem,4vw,4rem)] lg:grid-cols-[1.15fr_.85fr]">
           <div>
             <Breadcrumbs badge={article.badge} className="mb-5.5" tone="panel" />
             <CategoryBadge>{article.badge}</CategoryBadge>
@@ -47,8 +51,8 @@ export function HeroPanel({ article }: { article: ArticleDetail }) {
                 className="object-cover"
                 fill
                 priority
-                sizes="(max-width: 48rem) 100vw, 40vw"
-                src={getMediaUrl(article.photo.url)}
+                sizes="(max-width: 64rem) 100vw, 40vw"
+                src={getMediaUrl(article.photo.url, article.photo.updatedAt)}
               />
             )}
           </div>

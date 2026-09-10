@@ -20,13 +20,7 @@ export function SoupiskaHeader({
   return (
     <PageHeader
       filters={pills.map((pill) => (
-        <PillLink
-          className="bg-surface"
-          href={pill.href}
-          key={pill.href}
-          size="sm"
-          variant="outline"
-        >
+        <PillLink href={pill.href} key={pill.href} size="sm" variant="outline">
           {pill.label} <span className="text-faint font-semibold">{pill.count}</span>
         </PillLink>
       ))}

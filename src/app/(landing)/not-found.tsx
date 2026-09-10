@@ -25,7 +25,7 @@ import { SubpageShell } from '@/landing/components/SubpageShell'
 export default function NotFound() {
   return (
     <SubpageShell>
-      <SectionShell className="pb-16" spacing="header">
+      <SectionShell className="pb-8 md:pb-12 lg:pb-16" spacing="header">
         {/* Obal kvůli absolutně umístěné trajektorii — ta musí lícovat
             s dolní hranou kódu, ne s hranou sekce. */}
         <div className="relative">

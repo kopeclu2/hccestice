@@ -23,4 +23,6 @@ export async function getRedirects(depth = 1) {
 export const getCachedRedirects = () =>
   unstable_cache(async () => getRedirects(), ['redirects'], {
     tags: ['redirects'],
+    // Pojistka pod tagem — bez ní má `unstable_cache` TTL jeden rok.
+    revalidate: 3600,
   })

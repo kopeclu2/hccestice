@@ -74,7 +74,10 @@ const loadNavigation = unstable_cache(
     return mapped.length > 0 ? mapped : FALLBACK_NAV
   },
   ['landing-navigation'],
-  { tags: ['navigation'] },
+  // `revalidate` je pojistka pod tagem, ne jeho náhrada — bez něj má
+  // `unstable_cache` TTL jeden rok a selhaný hook by znamenal starou
+  // navigaci až do dalšího deploye.
+  { tags: ['navigation'], revalidate: 3600 },
 )
 
 export const fetchNavigation = cache(async (): Promise<NavItem[]> => loadNavigation())

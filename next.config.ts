@@ -57,6 +57,31 @@ const nextConfig: NextConfig = {
      * kóduje o ~50 % dél a první request na každý obrázek by na 3,7GB
      * boxu bez swapu platil tu režii navíc.
      */
+    /**
+     * Default Next 16 je 4 hodiny (v 15 to byla minuta) — viz
+     * `node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md`,
+     * „`minimumCacheTTL` Default". Optimalizovaná varianta se tedy každé
+     * 4 hodiny zahodila a sharp ji překódoval znovu, i když se obrázek
+     * nezměnil.
+     *
+     * 31 dní je bezpečné jen díky verzi v URL: `getMediaUrl` přilepuje
+     * `?<updatedAt>`, takže nový soubor má jiný cache klíč. Bez toho by
+     * neexistoval způsob, jak optimalizovanou variantu invalidovat —
+     * mechanismus na to Next nemá (`docs/…/image-legacy.md:594`).
+     */
+    minimumCacheTTL: 2678400,
+    /**
+     * Bez explicitní hodnoty si Next při startu vezme **50 % volného
+     * místa na disku** (`docs/…/02-components/image.md`, sekce
+     * `maximumDiskCacheSize`). Na produkčním boxu je 21 GB volných, takže
+     * by cache obrázků směla vyrůst na ~10 GB a soutěžila by o místo
+     * s Docker images, Postgresem a 4,8GB volume médií.
+     *
+     * 1 GB je s odstupem dost (optimalizují se jen skutečně zobrazené
+     * varianty, ne všech 7 279 médií) a při překročení Next maže
+     * nejdéle nepoužité položky.
+     */
+    maximumDiskCacheSize: 1_000_000_000,
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)
@@ -104,6 +129,29 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          /**
+           * Report-only záměrně: `script-src`/`style-src` musí povolit
+           * `unsafe-inline` (Next.js inlinuje hydratační data a Payload
+           * admin vlastní styly), takže reálné vynucení by dnes nechránilo
+           * skoro proti ničemu a riskovalo rozbití admin UI, které audit
+           * neprošel. Report-only jen loguje porušení do konzole/`report-to`
+           * bez blokování — bezpečný první krok, ostré vynucení je
+           * navazující úkol (nonce-based CSP).
+           */
+          {
+            key: 'Content-Security-Policy-Report-Only',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https:",
+              "font-src 'self' data:",
+              "frame-src 'self' https://www.google.com",
+              "connect-src 'self' https://www.google.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+            ].join('; '),
+          },
         ],
       },
     ]

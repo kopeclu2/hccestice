@@ -33,7 +33,11 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = brandTitle(doc?.meta?.title ? htmlPlainText(doc.meta.title) : null)
+  // Fallback na hlavní nadpis dokumentu, když redaktor nevyplnil SEO záložku
+  // (běžné u naimportovaných článků) — jinak title padne rovnou na "HC
+  // Čestice" a Google to napříč dokumenty vidí jako duplicitní title tag.
+  const rawTitle = doc?.meta?.title || doc?.title || null
+  const title = brandTitle(rawTitle ? htmlPlainText(rawTitle) : null)
 
   // Popisy naimportované z eStránky bývají celý HTML odstavec — do meta tagu
   // patří prostý text, jinak se do stránky propíšou `&lt;p&gt;…`

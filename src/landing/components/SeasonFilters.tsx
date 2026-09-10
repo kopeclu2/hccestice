@@ -34,6 +34,7 @@ export function SeasonFilters({
     <>
       {items.map(({ slug, label }) => (
         <PillLink
+          aria-current={slug === activeSlug ? 'true' : undefined}
           href={`${basePath}${slug ? `?sezona=${slug}` : ''}${anchor}`}
           key={label}
           selected={slug === activeSlug}

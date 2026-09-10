@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -101,6 +102,25 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    /**
+     * Payload servíruje soubory přes `/api/media/file/:filename` a
+     * **žádnou cache hlavičku nenastavuje** (ověřeno v
+     * `node_modules/payload/dist/uploads/endpoints/getFile.js` — jen
+     * `Content-Type`, `Content-Length` a `Accept-Ranges`). Důsledky byly
+     * dva: prohlížeč si originál necachoval vůbec a `next/image` bral
+     * `max(minimumCacheTTL, upstream max-age)`, tedy jen default Next 16
+     * = 4 hodiny. Každé 4 hodiny tak sharp na 3,7GB boxu bez swapu
+     * překódovával všechny varianty znovu.
+     *
+     * `immutable` je bezpečné jen proto, že URL nese verzi: `ImageMedia`
+     * i `PhotoMasonry` přilepují `?<updatedAt>` (`getMediaUrl`). Kdyby
+     * někde vznikl odkaz bez ní, výměna souboru pod stejným názvem by se
+     * návštěvníkům rok neprojevila.
+     */
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+      return headers
+    },
     imageSizes: [
       {
         name: 'thumbnail',
@@ -134,5 +154,18 @@ export const Media: CollectionConfig = {
         crop: 'center',
       },
     ],
+  },
+  /**
+   * Výměna souboru nebo přepis `alt` se dřív neprojevila nikde: kolekce
+   * neměla revalidační hook, takže prerenderované stránky nesly starý
+   * obrázek až do vypršení ISR (u `/[slug]` do dalšího deploye).
+   *
+   * Hromadný upload z adminu tímhle pošle tolik invalidací, kolik je
+   * souborů — je to ale jen označení tagů za neplatné, ne přerender.
+   * Importní skripty to vypínají přes `context.disableRevalidate`.
+   */
+  hooks: {
+    afterChange: [revalidateLanding],
+    afterDelete: [revalidateLandingDelete],
   },
 }

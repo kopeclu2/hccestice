@@ -2,7 +2,7 @@ import React from 'react'
 
 import { cn } from '@/utilities/ui'
 
-import { CardTitle, SectionTitle } from '../components/Heading'
+import { SectionTitle } from '../components/Heading'
 import { Highlight, Kicker, Eyebrow } from '../components/Kicker'
 
 /** Varianta hlavičky: linka (stránka /zapasy) nebo landing nadpis (home). */
@@ -13,6 +13,10 @@ export type SectionHeadVariant = 'rule' | 'landing'
  *
  * - `rule` (výchozí, /zapasy) — nadpis na silné tmavé lince, vpravo
  *   volitelný uppercase popisek (na mobilu skrytý) a případné ovládání.
+ *   Nadpis je `SectionTitle size="md"` (h2), stejně jako u identického vzoru
+ *   na /soupiska (`soupiska/RosterSection`). Dřív to byl `CardTitle size="lg"`
+ *   (h3), takže dva stejně vypadající vzory měly jiný stupeň typografie
+ *   a /zapasy nemělo na stránce žádné h2.
  * - `landing` (home page) — stejný vzor jako ostatní sekce landingu:
  *   kicker s popiskem, pod ním velký nadpis s lime zvýrazněním poslední
  *   části a vpravo ovládání (proklik na /zapasy).
@@ -52,10 +56,10 @@ export function SectionHead({
   }
 
   return (
-    <div className="border-contrast flex items-center gap-3.5 border-b-2 pb-3.5">
-      <CardTitle className="m-0" size="lg">
+    <div className="border-contrast flex items-center gap-3.5 border-b-2 pb-4">
+      <SectionTitle className="m-0" size="md">
         {title}
-      </CardTitle>
+      </SectionTitle>
       <div className="flex-1" />
       {note &&
         (noteMuted ? (

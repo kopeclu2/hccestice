@@ -36,7 +36,7 @@ export default function GlobalError({
           padding: '1.5rem',
           background: LANDING_COLORS.ink,
           color: '#fff',
-          fontFamily: 'Archivo, system-ui, sans-serif',
+          fontFamily: 'system-ui, sans-serif',
           textAlign: 'center',
         }}
       >
