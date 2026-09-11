@@ -9,7 +9,7 @@ import { PillLink } from '../../components/PillLink'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { relId } from '../../data/format'
-import { fetchLatestResults, fetchSeasonFixtures, fetchSeasonResults } from '../../data/matches'
+import { fetchSeasonFixtures, fetchSeasonResults } from '../../data/matches'
 import { fetchSeason, mapStandingsFromSeason } from '../../data/seasons'
 import type { FixtureCard, ResultRow, StandingsContent } from '../../types'
 import { FixturesRail } from '../../zapasy/FixturesRail'
@@ -30,7 +30,7 @@ const HOME_STANDINGS = 6
  */
 export async function SeasonBlockComponent({ block }: { block: LandingSeasonBlock }) {
   const season = await fetchSeason(relId(block.season))
-  const [fixtures, seasonResults] = await Promise.all([
+  const [fixtures, results] = await Promise.all([
     season ? fetchSeasonFixtures(season.id) : Promise.resolve<FixtureCard[]>([]),
     season
       ? fetchSeasonResults({ seasonId: season.id, page: 1, perPage: HOME_RESULTS }).then(
@@ -38,8 +38,6 @@ export async function SeasonBlockComponent({ block }: { block: LandingSeasonBloc
         )
       : Promise.resolve<ResultRow[]>([]),
   ])
-  // na začátku sezóny ještě není co ukázat — vezmeme poslední zápasy vůbec
-  const results = seasonResults.length > 0 ? seasonResults : await fetchLatestResults(HOME_RESULTS)
   return (
     <SeasonView
       fixtures={fixtures.slice(0, HOME_FIXTURES)}
@@ -63,13 +61,31 @@ function SeasonView({
   results: ResultRow[]
   standings: StandingsContent
 }) {
-  // dohraná sezóna nemá rozpis — kotva a odstup sekce pak drží na výsledcích
-  const hasFixtures = fixtures.length > 0
-
   return (
     <>
       <Reveal>
         <FixturesRail
+          emptyState={
+            <EmptyState
+              actions={
+                <>
+                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
+                    Sledovat aktuality
+                  </PillLink>
+                  <PillLink href={`${ZAPASY_HREF}#odehrane`} size="md" variant="outline">
+                    Odehrané zápasy
+                  </PillLink>
+                </>
+              }
+              icon="schedule"
+              title="Žádný zápas na programu"
+              titleAs="h3"
+              watermark="VČHL"
+            >
+              Rozlosování nové sezóny zveřejní VČHL během léta. Sledujte aktuality — dáme vědět,
+              jakmile bude termínovka venku.
+            </EmptyState>
+          }
           fixtures={fixtures}
           headVariant="landing"
           id="sezona"
@@ -81,11 +97,12 @@ function SeasonView({
       {/* Dva sloupce až od `lg`: na tabletu (768px) vyšla tabulka na 296px,
           takže se názvy týmů odřízly do „HC Baroni Op…", a řádek výsledku
           se lisoval do sloupečku (datum na tři řádky, skóre na vlastní).
-          Pod `lg` jdou oba výřezy na celou šířku pod sebe. */}
+          Pod `lg` jdou oba výřezy na celou šířku pod sebe. `FixturesRail` má
+          vždy `emptyState`, takže se nad touhle sekcí vykreslí i bez zápasů
+          — kotva `#sezona` proto zůstává jen na ní, ne tady. */}
       <SectionShell
         className="grid grid-cols-1 items-start gap-x-[clamp(1.25rem,3vw,2.5rem)] gap-y-13 lg:grid-cols-[1.15fr_0.85fr]"
-        id={hasFixtures ? undefined : 'sezona'}
-        spacing={hasFixtures ? 'split' : 'landing'}
+        spacing="split"
       >
         {/* Prázdný výpis si řeší `ResultsList` sám (`EmptyState`) — dřív tu
             stála vlastní `EmptySeasonNote`, tedy druhé znění téhož stavu. */}

@@ -335,22 +335,6 @@ const loadSeasonResults = unstable_cache(
 
 export const fetchSeasonResults = cache(loadSeasonResults)
 
-/**
- * Poslední odehrané zápasy bez ohledu na sezónu — výřez „Odehrané
- * zápasy" na home page, aby po startu nové sezóny nezůstal prázdný.
- */
-export const fetchLatestResults = cache(async (limit: number): Promise<ResultRow[]> => {
-  const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'matches',
-    where: { status: { equals: 'played' } },
-    sort: '-date',
-    limit,
-    depth: 1,
-  })
-  return docs.map(toResultRow)
-})
-
 const OUTCOME_LETTER: Record<Outcome, string> = { win: 'V', draw: 'R', loss: 'P' }
 
 /** Forma za posledních 5 odehraných zápasů sezóny (zleva nejstarší). */
