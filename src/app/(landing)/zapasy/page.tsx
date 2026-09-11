@@ -10,7 +10,7 @@ import { SectionShell } from '@/landing/components/SectionShell'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { STANDINGS } from '@/landing/content'
 import { fetchSeasonFixtures, fetchSeasonForm, fetchSeasonResults } from '@/landing/data/matches'
-import { fetchMatchSeasons, seasonShortLabel } from '@/landing/data/seasons'
+import { fetchMatchSeasons, fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
 import type { StandingsContent } from '@/landing/types'
 import { FixturesRail } from '@/landing/zapasy/FixturesRail'
 import { FormStrip } from '@/landing/zapasy/FormStrip'
@@ -36,7 +36,15 @@ export default async function ZapasyPage({ searchParams }: Args) {
   const { sezona, strana } = await searchParams
   const requestedPage = Math.max(1, Number.parseInt(strana ?? '1', 10) || 1)
 
-  const seasons = await fetchMatchSeasons()
+  const [matchSeasons, currentSeason] = await Promise.all([fetchMatchSeasons(), fetchSeason()])
+
+  // `fetchMatchSeasons` vrací jen sezóny s aspoň jedním zápasem (pilulky
+  // filtru), takže čerstvě založená aktuální sezóna bez zápasů by v ní
+  // chyběla a stránka by potichu spadla na starší sezónu se zápasy.
+  const seasons =
+    currentSeason && !matchSeasons.some((season) => season.id === currentSeason.id)
+      ? [currentSeason, ...matchSeasons]
+      : matchSeasons
 
   const activeSeason =
     (sezona ? seasons.find((season) => season.slug === sezona) : null) ??
@@ -52,22 +60,20 @@ export default async function ZapasyPage({ searchParams }: Args) {
       ])
     : [[], { rows: [], page: 1, totalPages: 1, totalDocs: 0 }, null]
 
-  const standingsRows = activeSeason?.standings?.rows ?? []
-  const standings: StandingsContent | null =
-    standingsRows.length > 0
-      ? {
-          seasonLabel:
-            activeSeason?.standings?.label ??
-            (activeSeason ? seasonShortLabel(activeSeason) : STANDINGS.seasonLabel),
-          fullTableUrl: activeSeason?.standings?.fullTableUrl ?? STANDINGS.fullTableUrl,
-          rows: standingsRows.map((row) => ({
-            pos: row.pos,
-            team: row.team,
-            games: row.games ?? 0,
-            points: row.points ?? 0,
-          })),
-        }
-      : null
+  // Prázdné řádky si řeší `StandingsPanel` sám (vlastní `EmptyState`) —
+  // tabulka se proto skládá vždy, i pro sezónu bez vyplněné tabulky.
+  const standings: StandingsContent = {
+    seasonLabel:
+      activeSeason?.standings?.label ??
+      (activeSeason ? seasonShortLabel(activeSeason) : STANDINGS.seasonLabel),
+    fullTableUrl: activeSeason?.standings?.fullTableUrl ?? STANDINGS.fullTableUrl,
+    rows: (activeSeason?.standings?.rows ?? []).map((row) => ({
+      pos: row.pos,
+      team: row.team,
+      games: row.games ?? 0,
+      points: row.points ?? 0,
+    })),
+  }
 
   // Sezóny jsou řazené od nejnovější (`fetchMatchSeasons`), takže `seasons[0]`
   // je ta aktuální/nadcházející. U starších (dohraných) sezón nemá smysl
@@ -89,7 +95,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
 
       <ZapasyHeader
         activeSlug={activeSeason?.slug ?? null}
-        fullTableUrl={standings?.fullTableUrl ?? STANDINGS.fullTableUrl}
+        fullTableUrl={standings.fullTableUrl}
         seasons={seasons
           .filter((season) => season.slug)
           .map((season) => ({ slug: season.slug!, label: seasonShortLabel(season) }))}
@@ -130,15 +136,13 @@ export default async function ZapasyPage({ searchParams }: Args) {
 
       {form && <FormStrip form={form} />}
 
-      {/* Bez vyplněné tabulky sezóny zabere výpis výsledků celou šířku.
-          Dva sloupce naskakují až od `lg`: na tabletu (768px) zbylo na
+      {/* Dva sloupce naskakují až od `lg`: na tabletu (768px) zbylo na
           výsledky ~430 px a na tabulku ~330 px, takže se řádky zápasů
           lámaly do tří řádků a názvy týmů se krátily na „HC Baroni Op…".
           Handoff to zalamuje na 760px, ale kreslí jen 1440px plochu. */}
       <SectionShell
         className={cn(
-          'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)]',
-          standings && 'lg:grid-cols-[1.15fr_0.85fr]',
+          'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)] lg:grid-cols-[1.15fr_0.85fr]',
         )}
         spacing="section"
       >
@@ -148,7 +152,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           rows={results.rows}
           totalPages={results.totalPages}
         />
-        {standings && <StandingsPanel standings={standings} />}
+        <StandingsPanel standings={standings} />
       </SectionShell>
 
       <MatchesCta />

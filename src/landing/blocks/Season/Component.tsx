@@ -2,8 +2,10 @@ import type { LandingSeasonBlock } from '@/payload-types'
 
 import React from 'react'
 
+import { EmptyState } from '../../components/EmptyState'
 import { CardTitle } from '../../components/Heading'
 import { Highlight } from '../../components/Kicker'
+import { PillLink } from '../../components/PillLink'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { relId } from '../../data/format'
@@ -115,39 +117,61 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
         <span className="text-faint text-caption">{standings.seasonLabel}</span>
       </div>
 
-      {standings.rows.map((row) => {
-        const isOurs = row.team === 'HC Čestice'
-        return (
-          <div
-            className={cn(
-              /* Na mobilu užší pevné sloupce a menší mezera: s desktopovými
-                 hodnotami (32+40+40 px a gap-3) zbylo na název týmu tak málo,
-                 že se „HC Spartak Choceň B" lámalo na čtyři řádky. */
-              'border-line-soft grid grid-cols-[1.5rem_1fr_1.75rem_2rem] items-center gap-2 border-b py-2.75 md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3',
-              isOurs && 'bg-tint',
-            )}
-            key={row.pos}
-          >
-            <div className={cn('text-meta font-extrabold', isOurs ? 'text-club' : 'text-faint')}>
-              {row.pos}.
-            </div>
-            <div className={cn('text-meta md:text-body', isOurs ? 'font-extrabold' : 'font-semibold')}>
-              {row.team}
-            </div>
-            <div className="text-faint text-right text-meta">{row.games}</div>
-            <div className="text-right text-body font-extrabold">{row.points}</div>
-          </div>
-        )
-      })}
+      {standings.rows.length === 0 ? (
+        <EmptyState
+          actions={
+            <PillLink href={ZAPASY_HREF} size="sm" variant="dark" withArrow>
+              Rozlosování
+            </PillLink>
+          }
+          frame="bare"
+          title="Tabulka zatím neběží"
+          titleAs="h3"
+        >
+          Naplní se, jakmile odehrajeme první zápasy sezóny.
+        </EmptyState>
+      ) : (
+        <>
+          {standings.rows.map((row) => {
+            const isOurs = row.team === 'HC Čestice'
+            return (
+              <div
+                className={cn(
+                  /* Na mobilu užší pevné sloupce a menší mezera: s desktopovými
+                     hodnotami (32+40+40 px a gap-3) zbylo na název týmu tak málo,
+                     že se „HC Spartak Choceň B" lámalo na čtyři řádky. */
+                  'border-line-soft grid grid-cols-[1.5rem_1fr_1.75rem_2rem] items-center gap-2 border-b py-2.75 md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3',
+                  isOurs && 'bg-tint',
+                )}
+                key={row.pos}
+              >
+                <div className={cn('text-meta font-extrabold', isOurs ? 'text-club' : 'text-faint')}>
+                  {row.pos}.
+                </div>
+                <div
+                  className={cn(
+                    'text-meta md:text-body',
+                    isOurs ? 'font-extrabold' : 'font-semibold',
+                  )}
+                >
+                  {row.team}
+                </div>
+                <div className="text-faint text-right text-meta">{row.games}</div>
+                <div className="text-right text-body font-extrabold">{row.points}</div>
+              </div>
+            )
+          })}
 
-      <a
-        className="text-club hover:text-club-dark mt-3.5 inline-block text-meta font-bold"
-        href={standings.fullTableUrl}
-        rel="noreferrer"
-        target="_blank"
-      >
-        Celá tabulka na ahl.cz ↗
-      </a>
+          <a
+            className="text-club hover:text-club-dark mt-3.5 inline-block text-meta font-bold"
+            href={standings.fullTableUrl}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Celá tabulka na ahl.cz ↗
+          </a>
+        </>
+      )}
     </div>
   )
 }

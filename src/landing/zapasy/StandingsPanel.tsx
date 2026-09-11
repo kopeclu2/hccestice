@@ -2,8 +2,10 @@ import React from 'react'
 
 import { cn } from '@/utilities/ui'
 
+import { EmptyState } from '../components/EmptyState'
 import { Eyebrow } from '../components/Kicker'
 import { MoreLink } from '../components/MoreLink'
+import { PillLink } from '../components/PillLink'
 import type { StandingsContent, StandingsRow } from '../types'
 
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
@@ -70,50 +72,72 @@ export function StandingsPanel({
         {moreHref && <MoreLink href={moreHref}>{moreLabel}</MoreLink>}
       </SectionHead>
 
-      <div className="border-line-soft mt-5 rounded-card border bg-surface px-1.5 py-2.5">
-        <Eyebrow as="div" tone="dark">
-          <div className="grid grid-cols-[1.75rem_1fr_2rem_2.25rem] px-2.5 py-2.5 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5">
-            <span>P</span>
-            <span>Tým</span>
-            <span className="text-center">Z</span>
-            <span className="text-right">B</span>
-          </div>
-        </Eyebrow>
-
-        {rows.map((row) => {
-          const ours = isUs(row.team)
-          return (
-            <div
-              className={cn(
-                'grid grid-cols-[1.75rem_1fr_2rem_2.25rem] items-center rounded-field px-2.5 py-2.75 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5',
-                ours && 'bg-tint',
-              )}
-              key={`${row.pos}-${row.team}`}
-            >
-              <span
-                className={cn(
-                  'text-meta font-extrabold tabular-nums',
-                  ours ? 'text-club' : 'text-faint-dark',
-                )}
-              >
-                {row.pos}.
-              </span>
-              <span
-                className={cn(
-                  'truncate text-meta tracking-[-0.01em]',
-                  ours ? 'font-extrabold' : 'font-semibold',
-                )}
-              >
-                {row.team}
-              </span>
-              <span className="text-faint text-center text-meta font-semibold tabular-nums">
-                {row.games}
-              </span>
-              <span className="text-right text-meta font-extrabold tabular-nums">{row.points}</span>
+      {rows.length === 0 ? (
+        <EmptyState
+          actions={
+            <>
+              <PillLink href="/aktuality" size="md" variant="dark" withArrow>
+                Sledovat aktuality
+              </PillLink>
+              <PillLink href="/zapasy#rozlosovani" size="md" variant="outline">
+                Rozlosování
+              </PillLink>
+            </>
+          }
+          className="mt-5"
+          title="Tabulka zatím neběží"
+          titleAs="h3"
+        >
+          Tabulka VČHL se naplní, jakmile odehrajeme první zápasy sezóny.
+        </EmptyState>
+      ) : (
+        <div className="border-line-soft mt-5 rounded-card border bg-surface px-1.5 py-2.5">
+          <Eyebrow as="div" tone="dark">
+            <div className="grid grid-cols-[1.75rem_1fr_2rem_2.25rem] px-2.5 py-2.5 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5">
+              <span>P</span>
+              <span>Tým</span>
+              <span className="text-center">Z</span>
+              <span className="text-right">B</span>
             </div>
-          )
-        })}
-      </div>
+          </Eyebrow>
+
+          {rows.map((row) => {
+            const ours = isUs(row.team)
+            return (
+              <div
+                className={cn(
+                  'grid grid-cols-[1.75rem_1fr_2rem_2.25rem] items-center rounded-field px-2.5 py-2.75 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5',
+                  ours && 'bg-tint',
+                )}
+                key={`${row.pos}-${row.team}`}
+              >
+                <span
+                  className={cn(
+                    'text-meta font-extrabold tabular-nums',
+                    ours ? 'text-club' : 'text-faint-dark',
+                  )}
+                >
+                  {row.pos}.
+                </span>
+                <span
+                  className={cn(
+                    'truncate text-meta tracking-[-0.01em]',
+                    ours ? 'font-extrabold' : 'font-semibold',
+                  )}
+                >
+                  {row.team}
+                </span>
+                <span className="text-faint text-center text-meta font-semibold tabular-nums">
+                  {row.games}
+                </span>
+                <span className="text-right text-meta font-extrabold tabular-nums">
+                  {row.points}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

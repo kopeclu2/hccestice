@@ -8,7 +8,7 @@ import { cache } from 'react'
 import { STANDINGS } from '../content'
 import type { StandingsContent, StatsContent } from '../types'
 
-import { arrayOr, pluralForm } from './format'
+import { pluralForm } from './format'
 import { CACHE_TAGS } from './tags'
 
 /** Sezóny — aktuální sezóna, tabulka ligy a auto-výpočet čísel. */
@@ -84,12 +84,22 @@ export const fetchSeason = cache(async (seasonId?: number | null): Promise<Seaso
   return docs[0] ?? null
 })
 
-/** Tabulka ligy z dokumentu sezóny (Sezóny → Tabulka ligy). */
+/**
+ * Tabulka ligy z dokumentu sezóny (Sezóny → Tabulka ligy).
+ *
+ * Bez vyplněných řádků vrací `rows: []` — nedosazuje demo tabulku ze
+ * `STANDINGS`, ta je jen fallback pro popisek/odkaz, kdyby žádná sezóna
+ * nešla dohledat vůbec. Prázdné řádky si dál řeší vlastní prázdný stav
+ * v `StandingsPanel`/`StandingsCard`, jinak by se pod čerstvou sezónou bez
+ * tabulky zobrazila cizí čísla z předchozí sezóny jako by byla aktuální.
+ */
 export function mapStandingsFromSeason(season: Season | null): StandingsContent {
   return {
-    seasonLabel: season?.standings?.label ?? STANDINGS.seasonLabel,
+    seasonLabel:
+      season?.standings?.label ??
+      (season ? `základní část ${seasonShortLabel(season)}` : STANDINGS.seasonLabel),
     fullTableUrl: season?.standings?.fullTableUrl ?? STANDINGS.fullTableUrl,
-    rows: arrayOr(season?.standings?.rows, [...STANDINGS.rows], (row) => ({
+    rows: (season?.standings?.rows ?? []).map((row) => ({
       pos: row.pos,
       team: row.team,
       games: row.games ?? 0,
