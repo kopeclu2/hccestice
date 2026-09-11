@@ -438,6 +438,24 @@
     margin-top: 0.5em;
   }
 
+  & table {
+    margin-top: 1.5rem;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  & th,
+  & td {
+    border-bottom: 1px solid var(--color-line-mid);
+    padding: 0.625rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  & th {
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
   & img {
     border-radius: var(--radius-tile);
     margin-top: 2rem;
@@ -633,4 +651,34 @@ html {
 html[data-theme='dark'],
 html[data-theme='light'] {
   opacity: initial;
+}
+
+/**
+ * Theming `vanilla-cookieconsent` (`CookieConsentInit.tsx`) přes jeho vlastní
+ * CSS proměnné — knihovna žádnou utility třídu nevystavuje, takže se
+ * neobejde bez holého `:root`. Radius kopíruje `--radius-panel` (formuláře),
+ * ne `--radius-card` — modál je menší panel, ne velká sekční karta.
+ */
+:root {
+  --cc-font-family: var(--font-archivo), sans-serif;
+  --cc-modal-border-radius: var(--radius-panel);
+  --cc-btn-border-radius: var(--radius-field);
+  --cc-bg: var(--color-paper);
+  --cc-primary-color: var(--color-ink);
+  --cc-secondary-color: var(--color-dim);
+  --cc-link-color: var(--color-club);
+  --cc-btn-primary-bg: var(--color-lime);
+  --cc-btn-primary-color: var(--color-ink);
+  --cc-btn-primary-border-color: var(--color-lime);
+  --cc-btn-primary-hover-bg: var(--color-ink);
+  --cc-btn-primary-hover-color: var(--color-lime);
+  --cc-btn-primary-hover-border-color: var(--color-ink);
+  --cc-btn-secondary-bg: transparent;
+  --cc-btn-secondary-color: var(--color-ink);
+  --cc-btn-secondary-border-color: var(--color-line-mid);
+  --cc-btn-secondary-hover-bg: var(--color-tint);
+  --cc-btn-secondary-hover-color: var(--color-ink);
+  --cc-toggle-on-bg: var(--color-club);
+  --cc-toggle-off-bg: var(--color-line-mid);
+  --cc-toggle-readonly-bg: var(--color-line-soft);
 }

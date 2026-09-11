@@ -155,7 +155,26 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
             />
             {`© ${new Date().getFullYear()} HC Čestice — TJ Sokol Čestice`}
           </span>
-          <span>{content.league}</span>
+
+          {/*
+           * `data-cc="show-preferencesModal"` je vlastní atribut knihovny
+           * `vanilla-cookieconsent` (`CookieConsentInit.tsx`) — na kliknutí
+           * reaguje sama, bez `onClick` handleru. Proto `<button>`, ne `Link`:
+           * nikam nenaviguje, jen znovu otevře modál s předvolbami.
+           */}
+          <span className="flex items-center gap-x-6 gap-y-2.5">
+            <Link className="hover:text-lime transition-colors" href="/cookies">
+              Zásady cookies
+            </Link>
+            <button
+              className="hover:text-lime cursor-pointer transition-colors"
+              data-cc="show-preferencesModal"
+              type="button"
+            >
+              Nastavení cookies
+            </button>
+            <span>{content.league}</span>
+          </span>
         </div>
       </div>
     </footer>

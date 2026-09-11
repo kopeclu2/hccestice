@@ -1,6 +1,7 @@
 'use client'
 
-import React from 'react'
+import * as Sentry from '@sentry/nextjs'
+import React, { useEffect } from 'react'
 
 import { LANDING_COLORS } from '@/landing/tokens'
 
@@ -25,6 +26,10 @@ export default function GlobalError({
   error: Error & { digest?: string }
   retry: () => void
 }) {
+  useEffect(() => {
+    Sentry.captureException(error)
+  }, [error])
+
   return (
     <html data-theme="light" lang="cs">
       <body

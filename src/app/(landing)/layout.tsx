@@ -5,6 +5,7 @@ import { Archivo } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { CookieConsentInit } from '@/components/CookieConsent/CookieConsentInit'
 import { MaintenanceNotice } from '@/landing/components/MaintenanceNotice'
 import { MaintenanceScreen } from '@/landing/components/MaintenanceScreen'
 import { PatternDevSwitcher } from '@/landing/components/PatternDevSwitcher'
@@ -81,6 +82,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
         {/* DEV nástroj: plovoucí přepínač vzorů pozadí (jen ve vývoji) */}
         {process.env.NODE_ENV === 'development' && <PatternDevSwitcher />}
+
+        {/* Bez `NEXT_PUBLIC_GA_MEASUREMENT_ID` nabídne modál jen nezbytné
+            cookies — kategorie „Analytické" se v konfiguraci vůbec nevytvoří
+            (viz `cookieConsentConfig.ts`). */}
+        <CookieConsentInit gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? null} />
       </body>
     </html>
   )

@@ -1,4 +1,5 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import { withSentryConfig } from '@sentry/nextjs/config'
 import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -142,12 +143,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy-Report-Only',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com",
+              "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
               "frame-src 'self' https://www.google.com",
-              "connect-src 'self' https://www.google.com",
+              "connect-src 'self' https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com",
               "object-src 'none'",
               "base-uri 'self'",
             ].join('; '),
@@ -209,4 +210,16 @@ payloadConfig.headers = async () => {
   })
 }
 
-export default payloadConfig
+/**
+ * `withSentryConfig` musí obalovat výsledek `withPayload`, ne holý `nextConfig` —
+ * jinak by přišel o úpravu hlaviček výše. Upload source map (`org`/`project`/
+ * `authToken`) se čte z env proměnných automaticky; bez `SENTRY_AUTH_TOKEN`
+ * (lokální vývoj) plugin jen zaloguje varování a build pokračuje bez uploadu.
+ */
+export default withSentryConfig(payloadConfig, {
+  silent: !process.env.CI,
+
+  // Automaticky vytvoří rewrite na `/monitoring`, aby ad-blockery neblokovaly
+  // odchozí požadavky na Sentry.
+  tunnelRoute: '/monitoring',
+})

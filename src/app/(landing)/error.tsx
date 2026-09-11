@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { RotateCcw } from 'lucide-react'
 import React, { useEffect } from 'react'
 
@@ -35,6 +36,7 @@ export default function Error({
     /* `digest` je jediná nitka k serverovému logu — v produkci se `message`
        ze Server Component na klienta nedostane. */
     console.error(error)
+    Sentry.captureException(error)
   }, [error])
 
   return (
