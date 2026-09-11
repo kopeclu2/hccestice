@@ -139,7 +139,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * `text-white/85`, ne `/70`: 12px text na `bg-club` měl ~4,1:1, což
          * je pod AA pro malé písmo.
          */}
-        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-2.5 border-t border-white/25 pt-5 text-caption text-white/85 md:mt-10 lg:mt-11">
+        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-white/25 pt-5 text-caption text-white/85 md:mt-10 lg:mt-11">
           <span className="flex items-center gap-3.5">
             {/* `rounded-full`: logo má neprůhledné bílé pozadí, takže by se
                 na zelené ploše kreslilo jako bílý čtverec kolem kruhového
@@ -161,19 +161,26 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * `vanilla-cookieconsent` (`CookieConsentInit.tsx`) — na kliknutí
            * reaguje sama, bez `onClick` handleru. Proto `<button>`, ne `Link`:
            * nikam nenaviguje, jen znovu otevře modál s předvolbami.
+           *
+           * `flex-wrap` tady je nutné, ne kosmetické: bez něj na 320–390px
+           * neměly odkazy kam uhnout a zalamoval se text uvnitř nich
+           * („Zásady" a „cookies" na dva řádky), místo aby se „Nastavení
+           * cookies" a „Východočeská hokejová liga" přesunuly jako celek na
+           * další řádek. `py-1` na položkách drží tap target blízko 44px
+           * jako u sloupců odkazů výš.
            */}
-          <span className="flex items-center gap-x-6 gap-y-2.5">
-            <Link className="hover:text-lime transition-colors" href="/cookies">
+          <span className="flex flex-wrap items-center gap-x-5 gap-y-1 sm:gap-x-6">
+            <Link className="hover:text-lime py-1 transition-colors" href="/cookies">
               Zásady cookies
             </Link>
             <button
-              className="hover:text-lime cursor-pointer transition-colors"
+              className="hover:text-lime cursor-pointer py-1 transition-colors"
               data-cc="show-preferencesModal"
               type="button"
             >
               Nastavení cookies
             </button>
-            <span>{content.league}</span>
+            <span className="py-1">{content.league}</span>
           </span>
         </div>
       </div>

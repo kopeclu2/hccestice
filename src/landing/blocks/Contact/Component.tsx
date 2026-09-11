@@ -90,14 +90,30 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
             </span>
           </a>
 
-          <div className="relative mt-9 flex flex-wrap justify-center gap-2.5">
-            {content.pills.map((pill) => (
-              <Badge className="font-semibold" key={pill} size="lg" variant="outline">
-                {pill}
-              </Badge>
-            ))}
-            {site.facebook && <SocialPill href={site.facebook} label="Facebook" />}
-            {site.instagram && <SocialPill href={site.instagram} label="Instagram" />}
+          {/*
+           * Adresa a sítě jsou dvě oddělené skupiny (`flex-col` pod `md`),
+           * ne jeden společný `flex-wrap` řádek o čtyřech položkách. Ten totiž
+           * mezi ~400–540px zalamoval nerovnoměrně (3 pilulky na řádku, 1
+           * osamělá vystředěná pod nimi) — `justify-center` centruje každý
+           * zalomený řádek zvlášť, takže poslední samotná položka vypadala
+           * jako plovoucí chyba, ne jako pokračování seznamu. Rozdělení na
+           * dvojice zajistí, že se zalomí nejvýš po párech. Od `md` se obě
+           * skupiny slijí do jednoho řádku jako dřív (`md:flex-row`).
+           */}
+          <div className="relative mt-9 flex flex-col items-center gap-2.5 md:flex-row md:flex-wrap md:justify-center">
+            <div className="flex flex-wrap justify-center gap-2.5">
+              {content.pills.map((pill) => (
+                <Badge className="font-semibold" key={pill} size="lg" variant="outline">
+                  {pill}
+                </Badge>
+              ))}
+            </div>
+            {(site.facebook || site.instagram) && (
+              <div className="flex flex-wrap justify-center gap-2.5">
+                {site.facebook && <SocialPill href={site.facebook} label="Facebook" />}
+                {site.instagram && <SocialPill href={site.instagram} label="Instagram" />}
+              </div>
+            )}
           </div>
 
           <ContactFormLazy topics={content.topics} />
