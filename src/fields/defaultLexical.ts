@@ -37,6 +37,7 @@ import { CtaBannerBlock } from '../landing/blocks/CtaBanner/config'
 import { DataTableBlock } from '../landing/blocks/DataTable/config'
 import { DownloadsWidget } from '../landing/blocks/Downloads/config'
 import { GalleryEmbedWidget } from '../landing/blocks/GalleryEmbed/config'
+import { GalleryLinkWidget } from '../landing/blocks/GalleryLink/config'
 import { StatCardsBlock } from '../landing/blocks/StatCards/config'
 
 /**
@@ -46,9 +47,9 @@ import { StatCardsBlock } from '../landing/blocks/StatCards/config'
  *   inline kód, barvy textu a zvýraznění (klubová paleta)
  * - struktura: nadpisy H2–H4, seznamy (číslované, odrážkové, checklisty),
  *   citace, oddělovač, zarovnání, odsazení, tabulky
- * - vkládání: odkazy (interní i externí), obrázky z médií, relace
- *   na dokumenty a bloky (obrázek, video, banner, kód, CTA banner,
- *   vložená galerie, dokumenty ke stažení)
+ * - vkládání: odkazy (interní i externí, včetně galerií), obrázky z médií,
+ *   relace na dokumenty a bloky (obrázek, video, banner, kód, CTA banner,
+ *   vložená galerie, odkaz na galerii, dokumenty ke stažení)
  * - UI: pevná lišta nahoře + plovoucí lišta nad výběrem textu
  */
 export const defaultLexical = lexicalEditor({
@@ -120,6 +121,7 @@ export const defaultLexical = lexicalEditor({
         CtaBannerBlock,
         DataTableBlock,
         GalleryEmbedWidget,
+        GalleryLinkWidget,
         DownloadsWidget,
         StatCardsBlock,
       ],

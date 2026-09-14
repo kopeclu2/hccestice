@@ -4419,6 +4419,17 @@ export interface CodeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryLinkBlock".
+ */
+export interface GalleryLinkBlock {
+  gallery: number | Gallery;
+  label?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'galleryLink';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "StatCardsBlockType".
  */
 export interface StatCardsBlockType {

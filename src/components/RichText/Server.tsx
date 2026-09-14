@@ -8,10 +8,12 @@ import type {
   CtaBannerBlockType,
   DownloadsBlock as DownloadsBlockProps,
   GalleryEmbedBlock as GalleryEmbedBlockProps,
+  GalleryLinkBlock as GalleryLinkBlockProps,
 } from '@/payload-types'
 import { CtaBannerBlockComponent } from '@/landing/blocks/CtaBanner/Component'
 import { DownloadsBlockComponent } from '@/landing/blocks/Downloads/Component'
 import { GalleryEmbedBlockComponent } from '@/landing/blocks/GalleryEmbed/Component'
+import { GalleryLinkBlockComponent } from '@/landing/blocks/GalleryLink/Component'
 
 import {
   baseJSXConverters,
@@ -29,7 +31,9 @@ import {
 
 type ServerNodeTypes =
   | BaseNodeTypes
-  | SerializedBlockNode<CtaBannerBlockType | GalleryEmbedBlockProps | DownloadsBlockProps>
+  | SerializedBlockNode<
+      CtaBannerBlockType | GalleryEmbedBlockProps | GalleryLinkBlockProps | DownloadsBlockProps
+    >
 
 const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
   const base = baseJSXConverters(args as never)
@@ -45,6 +49,11 @@ const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
       galleryEmbed: ({ node }) => (
         <EmbeddedSection>
           <GalleryEmbedBlockComponent block={node.fields} />
+        </EmbeddedSection>
+      ),
+      galleryLink: ({ node }) => (
+        <EmbeddedSection>
+          <GalleryLinkBlockComponent block={node.fields} />
         </EmbeddedSection>
       ),
       downloads: ({ node }) => (
