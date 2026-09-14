@@ -22,7 +22,7 @@ const DEFAULT_SIZE = 'md' as const
  * `withArrow` přidá kruhovou šipku ↗ (lime na tmavém, ink na lime).
  */
 export const pillVariants = cva(
-  'inline-flex items-center gap-3 whitespace-nowrap rounded-full font-bold transition-colors',
+  'inline-flex cursor-pointer items-center gap-3 whitespace-nowrap rounded-full font-bold transition-colors',
   {
     variants: {
       variant: {

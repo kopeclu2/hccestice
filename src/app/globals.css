@@ -308,7 +308,7 @@
 @utility hatch {
   background-image: repeating-linear-gradient(
     115deg,
-    --alpha(var(--color-club) / 8%) 0 0.0625rem,
+    --alpha(var(--color-club) / 5%) 0 0.0625rem,
     transparent 0.0625rem 1.625rem
   );
 }

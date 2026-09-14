@@ -34,7 +34,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
             <div className="mb-4 break-inside-avoid rounded-row bg-surface" key={item.question}>
               <button
                 aria-expanded={isOpen}
-                className="flex w-full cursor-pointer items-center gap-4 px-5.5 py-4.5 text-left"
+                className="flex w-full cursor-pointer items-center gap-4 px-4.5 py-4 text-left md:px-5 md:py-4.25 lg:px-5.5 lg:py-4.5"
                 onClick={() => setOpenIndex(isOpen ? -1 : index)}
                 type="button"
               >
@@ -44,7 +44,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 </span>
               </button>
               {isOpen && (
-                <p className="text-dim max-w-160 px-5.5 pb-4.5 text-body leading-relaxed text-pretty">
+                <p className="text-dim max-w-160 px-4.5 pb-4 text-body leading-relaxed text-pretty md:px-5 md:pb-4.25 lg:px-5.5 lg:pb-4.5">
                   {item.answer}
                 </p>
               )}

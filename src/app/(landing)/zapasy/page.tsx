@@ -81,6 +81,12 @@ export default async function ZapasyPage({ searchParams }: Args) {
   // rozlosování může přibýt.
   const isLatestSeason = !activeSeason || seasons[0]?.id === activeSeason.id
 
+  // Obě prázdné karty (bez odehraných zápasů i bez tabulky) mají mít stejnou
+  // výšku — `items-stretch` je proto podmíněné, ne default. S reálnými daty
+  // by roztažení na stejnou výšku vynutilo zbytečnou prázdnou plochu pod
+  // kratším sloupcem (výsledky a tabulka mají typicky jinou přirozenou délku).
+  const bothEmpty = results.rows.length === 0 && standings.rows.length === 0
+
   const hrefFor = (n: number): string => {
     const params = new URLSearchParams()
     if (activeSeason?.slug) params.set('sezona', activeSeason.slug)
@@ -142,7 +148,8 @@ export default async function ZapasyPage({ searchParams }: Args) {
           Handoff to zalamuje na 760px, ale kreslí jen 1440px plochu. */}
       <SectionShell
         className={cn(
-          'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)] lg:grid-cols-[1.15fr_0.85fr]',
+          'grid grid-cols-1 gap-[clamp(1.25rem,3vw,2.5rem)] lg:grid-cols-[1.15fr_0.85fr]',
+          bothEmpty ? 'items-stretch' : 'items-start',
         )}
         spacing="section"
       >

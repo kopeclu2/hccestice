@@ -34,7 +34,7 @@ export function HistorieHeader() {
         {HISTORY_PAGE.stats.map((stat) => (
           <div
             className={cn(
-              'rounded-thumb px-5.5 py-5',
+              'rounded-thumb px-4.5 py-4 md:px-5 md:py-4.5 lg:px-5.5 lg:py-5',
               // Tmavá varianta nemá viditelný rámeček, ale border potřebuje:
               // bez něj je při `box-sizing: border-box` její obsah o 1px jinde
               // než u světlých karet ve stejném řádku.

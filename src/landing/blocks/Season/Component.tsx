@@ -61,6 +61,10 @@ function SeasonView({
   results: ResultRow[]
   standings: StandingsContent
 }) {
+  // Obě prázdné karty mají mít stejnou výšku — viz stejná úvaha v
+  // `app/(landing)/zapasy/page.tsx`.
+  const bothEmpty = results.length === 0 && standings.rows.length === 0
+
   return (
     <>
       <Reveal>
@@ -101,7 +105,10 @@ function SeasonView({
           vždy `emptyState`, takže se nad touhle sekcí vykreslí i bez zápasů
           — kotva `#sezona` proto zůstává jen na ní, ne tady. */}
       <SectionShell
-        className="grid grid-cols-1 items-start gap-x-[clamp(1.25rem,3vw,2.5rem)] gap-y-13 lg:grid-cols-[1.15fr_0.85fr]"
+        className={cn(
+          'grid grid-cols-1 gap-x-[clamp(1.25rem,3vw,2.5rem)] gap-y-13 lg:grid-cols-[1.15fr_0.85fr]',
+          bothEmpty ? 'items-stretch' : 'items-start',
+        )}
         spacing="split"
       >
         {/* Prázdný výpis si řeší `ResultsList` sám (`EmptyState`) — dřív tu

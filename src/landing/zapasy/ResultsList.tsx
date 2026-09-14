@@ -44,12 +44,16 @@ export function ResultsList({
   headVariant?: SectionHeadVariant
 }) {
   return (
-    <div className="scroll-mt-8" id="odehrane">
+    <div className="scroll-mt-8 flex h-full flex-col" id="odehrane">
       <SectionHead note="Výsledky" title="Odehrané zápasy" variant={headVariant}>
         {moreHref && <MoreLink href={moreHref}>{moreLabel}</MoreLink>}
       </SectionHead>
 
       {rows.length === 0 ? (
+        /* `flex-1 justify-center`: když je i sousední `StandingsPanel`
+           prázdný, mřížka na /zapasy obě karty roztáhne na stejnou výšku
+           (`items-stretch` jen pro tenhle případ, viz `page.tsx`) — obsah
+           se pak vycentruje uprostřed vyšší karty místo přilepení nahoře. */
         <EmptyState
           actions={
             <>
@@ -61,7 +65,7 @@ export function ResultsList({
               </PillLink>
             </>
           }
-          className="mt-5"
+          className="mt-5 flex-1 justify-center"
           icon="schedule"
           title="Zatím žádný odehraný zápas"
           titleAs="h3"
@@ -75,7 +79,7 @@ export function ResultsList({
             const badge = BADGE[row.outcome]
             return (
               <div
-                className="border-line-soft hover:border-club flex flex-wrap items-center gap-y-3 gap-x-4 rounded-row border bg-surface px-4.5 py-3.5 transition-colors"
+                className="border-line-soft hover:border-club flex flex-wrap items-center gap-y-3 gap-x-4 rounded-row border bg-surface px-4.5 py-3.5 transition-colors md:px-6 md:py-4 lg:px-7 lg:py-4.5"
                 key={row.id}
               >
                 {/* Na mobilu datum a fáze vedle sebe v samostatném řádku:

@@ -93,7 +93,7 @@ export function FixturesRail({
         {fixtures.map((fixture) => (
           <article
             className={cn(
-              'border-line-soft hover:border-club flex-none snap-start overflow-hidden rounded-tile border bg-surface px-5 py-5 transition-colors md:px-6 md:py-5.5',
+              'border-line-soft hover:border-club flex-none snap-start overflow-hidden rounded-tile border bg-surface px-5 py-5 transition-colors md:px-6 md:py-5.5 lg:px-6.5 lg:py-6',
               single ? 'w-full md:max-w-100' : 'w-[78%] md:w-77.5',
             )}
             key={fixture.id}

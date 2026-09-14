@@ -34,7 +34,7 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
             <Reveal delay={index * 0.08} key={card.id ?? index}>
               <div
                 className={cn(
-                  'flex h-full flex-col rounded-panel p-7',
+                  'flex h-full flex-col rounded-panel p-4.5 md:p-6 lg:p-7',
                   highlighted ? 'bg-club text-white' : 'bg-surface',
                 )}
               >

@@ -56,7 +56,7 @@ export function FeatureGridBlockComponent({ block }: { block: FeatureGridBlock }
           const Icon = FEATURE_ICONS[item.icon ?? 'snowflake'] ?? Snowflake
           return (
             <Reveal delay={index * 0.06} key={item.id ?? index}>
-              <div className="h-full rounded-tile bg-surface p-6.5">
+              <div className="h-full rounded-tile bg-surface p-4.5 md:p-6 lg:p-6.5">
                 <span className="bg-lime text-ink grid size-11 place-items-center rounded-2xl [&_svg]:size-5.5">
                   <Icon strokeWidth={2.25} />
                 </span>

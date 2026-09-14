@@ -18,7 +18,7 @@ const cardShellVariants = cva(
        */
       pad: {
         text: 'px-4.5 py-4 md:px-5 md:py-4.5 lg:px-6 lg:py-5',
-        media: 'p-2.5 pb-5 lg:p-3 lg:pb-5.5',
+        media: 'p-2.5 pb-5 md:p-2.75 md:pb-5.25 lg:p-3 lg:pb-5.5',
       },
     },
     defaultVariants: { pad: 'text' },

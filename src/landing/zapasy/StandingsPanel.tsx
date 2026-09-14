@@ -62,7 +62,7 @@ export function StandingsPanel({
   const rows = limit ? trimRows(standings.rows, limit) : standings.rows
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <SectionHead
         note={standings.seasonLabel}
         noteMuted={false}
@@ -73,6 +73,9 @@ export function StandingsPanel({
       </SectionHead>
 
       {rows.length === 0 ? (
+        /* `flex-1 justify-center`: viz stejný komentář v `ResultsList` —
+           obě prázdné karty vedle sebe drží stejnou výšku a obsah se
+           vycentruje, ne přilepí nahoru. */
         <EmptyState
           actions={
             <>
@@ -84,16 +87,17 @@ export function StandingsPanel({
               </PillLink>
             </>
           }
-          className="mt-5"
+          className="mt-5 flex-1 justify-center"
+          icon="schedule"
           title="Tabulka zatím neběží"
           titleAs="h3"
         >
           Tabulka VČHL se naplní, jakmile odehrajeme první zápasy sezóny.
         </EmptyState>
       ) : (
-        <div className="border-line-soft mt-5 rounded-card border bg-surface px-1.5 py-2.5">
+        <div className="border-line-soft mt-5 rounded-card border bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
           <Eyebrow as="div" tone="dark">
-            <div className="grid grid-cols-[1.75rem_1fr_2rem_2.25rem] px-2.5 py-2.5 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5">
+            <div className="grid grid-cols-[1.75rem_1fr_2rem_2.25rem] px-2.5 py-2.5 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 md:py-2.75 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5 lg:py-3">
               <span>P</span>
               <span>Tým</span>
               <span className="text-center">Z</span>
@@ -106,7 +110,7 @@ export function StandingsPanel({
             return (
               <div
                 className={cn(
-                  'grid grid-cols-[1.75rem_1fr_2rem_2.25rem] items-center rounded-field px-2.5 py-2.75 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5',
+                  'grid grid-cols-[1.75rem_1fr_2rem_2.25rem] items-center rounded-field px-2.5 py-2.75 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 md:py-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5 lg:py-3.25',
                   ours && 'bg-tint',
                 )}
                 key={`${row.pos}-${row.team}`}

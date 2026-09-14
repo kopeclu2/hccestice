@@ -61,7 +61,7 @@ export function PartnerRow({ sponsor }: { sponsor: Sponsor }) {
   ]
 
   return (
-    <div className="border-line-soft hover:border-club rounded-tile relative flex flex-wrap items-center gap-y-3 overflow-hidden border bg-surface p-3.5 transition-colors lg:flex-nowrap lg:gap-[clamp(1rem,2.5vw,2rem)]">
+    <div className="border-line-soft hover:border-club rounded-tile relative flex flex-wrap items-center gap-y-3 overflow-hidden border bg-surface p-3.5 transition-colors md:p-4 lg:flex-nowrap lg:gap-[clamp(1rem,2.5vw,2rem)] lg:p-4.5">
       <div className="relative grid h-31 w-50 flex-none place-items-center overflow-hidden rounded-2xl">
         {sponsor.logo ? (
           <Image

@@ -19,7 +19,7 @@ export function StatCardsBlockComponent({ block }: { block: StatCardsBlockType }
       {items.map((item, index) => (
         <div
           className={cn(
-            'rounded-thumb px-6 py-5.5',
+            'rounded-thumb px-4.5 py-4 md:px-5.5 md:py-5 lg:px-6 lg:py-5.5',
             item.dark ? 'bg-contrast text-on-contrast' : 'border border-line-mid bg-surface',
           )}
           key={item.id ?? index}

@@ -30,7 +30,7 @@ export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock
           const photo = typeof item.photo === 'object' ? (item.photo as Media | null) : null
           return (
             <Reveal delay={index * 0.06} key={item.id ?? index}>
-              <figure className="flex h-full flex-col rounded-tile bg-surface p-6.5">
+              <figure className="flex h-full flex-col rounded-tile bg-surface p-4.5 md:p-6 lg:p-6.5">
                 <Quote aria-hidden className="text-lime size-7 fill-current" strokeWidth={0} />
                 <blockquote className="text-ink mt-3 flex-1 leading-relaxed text-pretty">
                   {item.quote}
