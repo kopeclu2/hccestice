@@ -17,7 +17,17 @@ import { Watermark } from './Watermark'
  */
 export function LandingFooter({ content, site }: { content: FooterContent; site: SiteLinks }) {
   return (
-    <footer className="relative z-1 mx-auto mt-21 w-full max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pb-12 md:mt-32 lg:mt-50">
+    /**
+     * `mt-18 md:mt-24 lg:mt-30` (rytmus `SectionShell spacing="cta"`), ne
+     * `mt-21 md:mt-32 lg:mt-50` (rytmus mezi sekcemi homepage). Patička dřív
+     * nesla stejnou hodnotu jako sekce homepage bez ohledu na to, co je nad
+     * ní — na podstránkách, které končí zeleným CTA pásem (`CtaStrip`),
+     * tak mezi pásem a patičkou (obojí zelené) vznikala 200px prázdná
+     * plocha na desktopu. CTA pás už svůj vlastní odstup od PŘEDCHOZÍHO
+     * obsahu nese (`spacing="cta"`); patička teď svírá stejný rytmus
+     * z druhé strany, takže je pás vizuálně symetricky odsazený z obou stran.
+     */
+    <footer className="relative z-1 mx-auto mt-18 w-full max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pb-12 md:mt-24 lg:mt-30">
       {/*
        * Odsazení má tři stupně, ne dva — stejná logika jako u rytmu sekcí
        * v `SectionShell`. Hodnota z handoffu (44/56px) je kreslená pro

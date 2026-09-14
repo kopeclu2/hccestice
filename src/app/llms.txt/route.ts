@@ -150,6 +150,7 @@ const getLlmsTxt = unstable_cache(
       `- [Historie klubu](${SITE_URL}/historie-klubu): milníky a lidé klubu.`,
       `- [Sponzoři](${SITE_URL}/sponzori): partneři klubu.`,
       `- [Tréninky](${SITE_URL}/treninky): rozpis ledových hodin.`,
+      `- [Kontakt](${SITE_URL}/kontakt): e-mail, adresa a kontaktní formulář.`,
       '',
     )
 

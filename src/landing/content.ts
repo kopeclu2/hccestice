@@ -42,7 +42,7 @@ export const HERO = {
   headlineLight: 'Malý klub,',
   headlineBold: 'velká sezóna.',
   cta: { href: '#sezona', label: 'Přidej se k nám' },
-  navCta: { href: '#kontakt', label: 'Chci hrát' },
+  navCta: { href: '/kontakt', label: 'Kontakt' },
 } as const
 
 /** Fotky ke kartám reportů (pořadí = pořadí zápasů od nejnovějšího). */
@@ -324,6 +324,12 @@ export const CONTACT = {
   perex: 'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám.',
   pills: ['TJ Sokol Čestice, 517 41', 'ZS Rychnov nad Kněžnou'] as const,
   topics: ['Chci hrát', 'Mládež', 'Sponzoring', 'Jiné'] as const,
+} as const
+
+/** Hlavička samostatné stránky `/kontakt` — perex i CTA nese karta pod ní. */
+export const CONTACT_PAGE = {
+  watermark: 'PIŠTE',
+  breadcrumb: 'Kontakt',
 } as const
 
 export const FOOTER = {

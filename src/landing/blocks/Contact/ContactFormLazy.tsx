@@ -27,16 +27,28 @@ import React from 'react'
  */
 const ContactForm = dynamic(() => import('./ContactForm').then((mod) => mod.ContactForm))
 
-export function ContactFormLazy({ topics }: { topics: string[] }) {
+export function ContactFormLazy({ topics, tone }: { topics: string[]; tone?: 'dark' | 'light' }) {
   const anchor = React.useRef<HTMLDivElement>(null)
-  // Bez IntersectionObserveru (starší prohlížeč) radši formulář rovnou
-  // zobrazit — nefunkční kontakt je horší než chunk navíc. Lazy initial
-  // state místo setState v efektu, ať se to spočítá jen jednou při mountu.
-  const [visible, setVisible] = React.useState(
-    () => typeof IntersectionObserver === 'undefined',
-  )
+  /**
+   * `false` na obou stranách záměrně — `typeof IntersectionObserver` je na
+   * serveru vždy `'undefined'` (Node nemá DOM globály), takže lazy initial
+   * state s tímhle testem SSR vždycky vyhodnotil na `true`, i když prohlížeč
+   * IntersectionObserver měl. Server pak do HTML poslal formulář, klient ho
+   * při hydrataci čekal skrytý — `Hydration failed`. Test se přesouvá do
+   * efektu (běží jen na klientu, po hydrataci), kde už chybu nezpůsobí.
+   */
+  const [visible, setVisible] = React.useState(false)
 
   React.useEffect(() => {
+    // Bez IntersectionObserveru (starší prohlížeč) radši formulář rovnou
+    // zobrazit — nefunkční kontakt je horší než chunk navíc. `queueMicrotask`
+    // místo přímého volání: react-hooks lint zakazuje synchronní `setState`
+    // hned na začátku efektu (cascading render), stejně jako observer níž
+    // volá `setVisible` až ze svého callbacku, ne přímo z těla efektu.
+    if (typeof IntersectionObserver === 'undefined') {
+      queueMicrotask(() => setVisible(true))
+      return
+    }
     if (visible) return
     const el = anchor.current
     if (!el) return
@@ -58,7 +70,7 @@ export function ContactFormLazy({ topics }: { topics: string[] }) {
 
   return (
     <div className="flow-root min-h-154 md:min-h-127" ref={anchor}>
-      {visible && <ContactForm topics={topics} />}
+      {visible && <ContactForm tone={tone} topics={topics} />}
     </div>
   )
 }
