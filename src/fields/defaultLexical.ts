@@ -78,7 +78,7 @@ export const defaultLexical = lexicalEditor({
 
     // vkládání
     LinkFeature({
-      enabledCollections: ['pages', 'posts'],
+      enabledCollections: ['pages', 'posts', 'galleries'],
       fields: ({ defaultFields }) => {
         const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
           if ('name' in field && field.name === 'url') return false

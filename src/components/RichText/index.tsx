@@ -56,13 +56,20 @@ const toReactStyle = (css: Record<string, string>): React.CSSProperties => {
   return style
 }
 
+/** Ručně psané prefixy — `pages` jsou jediná kolekce beze svého, žije na `/[slug]`. */
+const INTERNAL_LINK_PREFIX: Partial<Record<string, string>> = {
+  posts: '/aktuality',
+  galleries: '/fotogalerie',
+}
+
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== 'object') {
     throw new Error('Expected value to be an object')
   }
   const slug = value.slug
-  return relationTo === 'posts' ? `/aktuality/${slug}` : `/${slug}`
+  const prefix = INTERNAL_LINK_PREFIX[relationTo]
+  return prefix ? `${prefix}/${slug}` : `/${slug}`
 }
 
 /** Klient-safe konvertory — sdílí je i serverová varianta. */
