@@ -111,7 +111,10 @@ export const defaultLexical = lexicalEditor({
         media: { fields: [] },
       },
     }),
-    RelationshipFeature({ enabledCollections: ['pages', 'posts', 'matches', 'galleries'] }),
+    /* `matches` záměrně chybí — zápas nemá vlastní detailní stránku,
+       na kterou by relace mohla odkázat (viz `RelationshipConverter`
+       v `components/RichText/Server.tsx`). */
+    RelationshipFeature({ enabledCollections: ['pages', 'posts', 'galleries'] }),
     BlocksFeature({
       blocks: [
         MediaBlock,

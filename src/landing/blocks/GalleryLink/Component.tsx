@@ -7,6 +7,7 @@ import React from 'react'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
+import { Badge } from '../../components/Badge'
 import { CardTitle } from '../../components/Heading'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
@@ -15,10 +16,17 @@ import { fetchGallery, toGalleryCard } from '../../data/galleries'
 import type { GalleryCard } from '../../types'
 
 /**
- * Odkaz na galerii v rich textu — jeden řádek s náhledovou fotkou, ne
- * mřížka náhledů jako `GalleryEmbedWidget`. Pro editora, který chce jen
- * proklik („podívejte se na fotky ze zápasu"), ne celou galerii vloženou
- * do článku.
+ * Odkaz na galerii v rich textu — jedna kompaktní karta (foto nahoře přes
+ * celou šířku, text pod ním), ne mřížka náhledů jako `GalleryEmbedWidget`.
+ * Pro editora, který chce jen proklik („podívejte se na fotky ze zápasu"),
+ * ne celou galerii vloženou do článku.
+ *
+ * Svislý layout, ne vodorovný řádek s malou čtvercovou fotkou: delší
+ * název galerie (běžně obsahuje datum i soupeře, „11.1.2017 Čestice x
+ * Skuteč - WINTER CLASSIC") se v úzkém sloupci vedle miniatury na mobilu
+ * ořízl uprostřed slova. Svislá karta dá titulku celou šířku karty.
+ * Datum se navíc nezobrazuje zvlášť — bývá součástí titulku, druhý řádek
+ * s ním byl duplicitní.
  */
 export async function GalleryLinkBlockComponent({ block }: { block: GalleryLinkBlock }) {
   const galleryId = relId(block.gallery)
@@ -35,37 +43,33 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
     <SectionShell>
       <Reveal>
         <Link
-          className="border-line-soft hover:border-club group flex items-center gap-4 rounded-card border bg-surface p-3.5 transition-colors md:p-4"
+          className="border-line-soft hover:border-club group block max-w-100 overflow-hidden rounded-card border bg-surface transition-colors"
           href={card.href!}
         >
-          <div className="bg-pine relative aspect-square w-16 flex-none overflow-hidden rounded-panel md:w-20">
+          <div className="bg-pine relative aspect-video overflow-hidden">
             {card.cover && (
               <Image
                 alt={card.cover.alt}
                 className="object-cover"
                 fill
-                sizes="5rem"
+                sizes="25rem"
                 src={getMediaUrl(card.cover.url, card.cover.updatedAt)}
               />
             )}
+            <Badge className="absolute right-3 bottom-3 gap-1.75" size="xs" variant="glass">
+              <ImageIcon size={13} strokeWidth={2.4} />
+              {countLabel(card.photoCount, ['fotka', 'fotky', 'fotek'])}
+            </Badge>
           </div>
 
-          <div className="min-w-0 flex-1">
-            <CardTitle className="line-clamp-2" size="xs">
+          <div className="flex items-center gap-3 p-3.5 md:p-4">
+            <CardTitle className="line-clamp-2 min-w-0 flex-1" size="xs">
               {label || card.title}
             </CardTitle>
-            <div className="text-faint mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-caption font-semibold">
-              {card.dateLabel && <span>{card.dateLabel}</span>}
-              <span className="inline-flex items-center gap-1.25">
-                <ImageIcon size={13} strokeWidth={2.4} />
-                {countLabel(card.photoCount, ['fotka', 'fotky', 'fotek'])}
-              </span>
-            </div>
+            <span className="bg-lime text-ink group-hover:bg-club grid size-9 flex-none place-items-center rounded-full transition-colors group-hover:text-white [&_svg]:size-4">
+              <ArrowUpRight strokeWidth={2.5} />
+            </span>
           </div>
-
-          <span className="bg-lime text-ink group-hover:bg-club grid size-9 flex-none place-items-center rounded-full transition-colors group-hover:text-white [&_svg]:size-4">
-            <ArrowUpRight strokeWidth={2.5} />
-          </span>
         </Link>
       </Reveal>
     </SectionShell>
