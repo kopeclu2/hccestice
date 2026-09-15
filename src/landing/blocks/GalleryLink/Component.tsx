@@ -48,7 +48,14 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
           className="border-line-soft hover:border-club group relative flex flex-col overflow-hidden rounded-card border bg-surface transition-colors sm:flex-row sm:items-center sm:gap-4 sm:p-3 md:p-4"
           href={card.href!}
         >
-          <div className="bg-pine relative aspect-video flex-none overflow-hidden sm:aspect-[4/3] sm:w-32 sm:rounded-panel md:w-40">
+          {/* Pevná výška na `sm`+, ne `aspect-[4/3]`: karta je tam flex řádek
+              s `items-center` a v Chromu se v téhle kombinaci (flex item
+              rozměrovaný přes `aspect-ratio` + `items-center` na rodiči +
+              potomek `height:100%`) výška fotky spočítala špatně — obrázek
+              se posunul dolů o desítky pixelů a nahoře probleskovalo pozadí
+              `bg-pine`. Na mobilu (`flex-col`, bez `items-center`) je to
+              v pořádku, `aspect-video` tam zůstává. */}
+          <div className="bg-pine relative aspect-video flex-none overflow-hidden sm:aspect-auto sm:h-24 sm:w-32 sm:rounded-panel md:h-30 md:w-40">
             {card.cover && (
               <Image
                 alt={card.cover.alt}

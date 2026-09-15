@@ -108,10 +108,19 @@ const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
   }
 }
 
-/** Obal pro landing bloky uvnitř textu — ruší velké sekční odsazení. */
+/**
+ * Obal pro landing bloky uvnitř textu — ruší velké sekční odsazení.
+ *
+ * `[&_img]:mt-0!` navíc ruší `.payload-richtext img { margin-top: … }`
+ * (`globals.css`) — to pravidlo počítá s běžnou fotkou vloženou do proudu
+ * textu (`MediaBlock`), ne s `next/image fill` uvnitř widgetu. Marže se
+ * ale počítá do i pro `position:absolute; top:0` potomky (posouvá box
+ * pod `top`, ne nad něj), takže bez resetu se fotka v kartě posunula
+ * o vlastní margin dolů a nahoře probleskávalo pozadí kontejneru.
+ */
 function EmbeddedSection({ children }: { children: React.ReactNode }) {
   return (
-    <div className="not-prose font-display text-ink my-6 [&_section]:mt-0! [&_section]:px-0!">
+    <div className="not-prose font-display text-ink my-6 [&_img]:mt-0! [&_section]:mt-0! [&_section]:px-0!">
       {children}
     </div>
   )
