@@ -25,6 +25,18 @@ type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }
 const PER_PAGE = 6
 
 /**
+ * Cesta výpisu bez `#odehrane` — kotva patří jen do odkazů stránkování v UI,
+ * ne do `canonical`. Sdílí ji komponenta (`hrefFor`) i `generateMetadata`.
+ */
+const listPath = (page: number, seasonSlug: string | null): string => {
+  const params = new URLSearchParams()
+  if (seasonSlug) params.set('sezona', seasonSlug)
+  if (page > 1) params.set('strana', String(page))
+  const query = params.toString()
+  return `/zapasy${query ? `?${query}` : ''}`
+}
+
+/**
  * Zápasy a tabulka — handoff „HC Cestice Zapasy".
  *
  * Filtr sezóny i stránkování výsledků žijí v URL
@@ -87,13 +99,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   // kratším sloupcem (výsledky a tabulka mají typicky jinou přirozenou délku).
   const bothEmpty = results.rows.length === 0 && standings.rows.length === 0
 
-  const hrefFor = (n: number): string => {
-    const params = new URLSearchParams()
-    if (activeSeason?.slug) params.set('sezona', activeSeason.slug)
-    if (n > 1) params.set('strana', String(n))
-    const query = params.toString()
-    return `/zapasy${query ? `?${query}` : ''}#odehrane`
-  }
+  const hrefFor = (n: number): string => `${listPath(n, activeSeason?.slug ?? null)}#odehrane`
 
   return (
     <SubpageShell pattern={{ variant: 'grid', tone: 'club', fade: 'top-right' }}>
@@ -167,9 +173,30 @@ export default async function ZapasyPage({ searchParams }: Args) {
   )
 }
 
-export const metadata: Metadata = {
-  title: 'Zápasy a tabulka | HC Čestice',
-  description:
-    'Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou.',
-  alternates: { canonical: '/zapasy' },
+const TITLE = 'Zápasy a tabulka | HC Čestice'
+const DESCRIPTION =
+  'Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou.'
+
+/**
+ * Metadata musí být `generateMetadata`, ne statický export — stejný důvod
+ * jako u `/aktuality`: statický objekt nevidí `searchParams`, takže každá
+ * stránka výsledků (`?strana=2`, `?strana=3`, …) inzerovala stejný
+ * `canonical: '/zapasy'` a Google to čte jako duplicity.
+ *
+ * Filtr sezóny (`?sezona=`) se do rozhodnutí o indexaci nepočítá — stejně
+ * jako `?typ=` u `/aktuality` se na první straně vždy konsoliduje do holého
+ * `/zapasy`. Jen `strana > 1` dostane `noindex, follow`: výpis výsledků sám
+ * o sobě nemá vlastní hodnotu, ale crawler po něm musí projít na detaily
+ * zápasů a tabulku.
+ */
+export async function generateMetadata({ searchParams }: Args): Promise<Metadata> {
+  const { sezona, strana } = await searchParams
+  const page = Math.max(1, Number.parseInt(strana ?? '1', 10) || 1)
+
+  return {
+    title: TITLE,
+    description: DESCRIPTION,
+    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : '/zapasy' },
+    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
+  }
 }

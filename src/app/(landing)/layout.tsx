@@ -12,8 +12,9 @@ import { PatternDevSwitcher } from '@/landing/components/PatternDevSwitcher'
 import { fetchMaintenance } from '@/landing/data/maintenance'
 import { hasSession } from '@/landing/data/session'
 import { fetchSite } from '@/landing/data/site'
+import { LANDING_COLORS } from '@/landing/tokens'
 import { getServerSideURL } from '@/utilities/getURL'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { defaultTwitter, mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
 import '../globals.css'
 
@@ -60,8 +61,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html className={archivo.variable} data-theme="light" lang="cs" suppressHydrationWarning>
       <head>
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        {/* `favicon.ico` nese víc rozlišení (16/32/48) — vygenerováno ze
+            znaku klubu (`public/media/znak_hc_cestice_2850px…`). Žádná
+            vektorová verze znaku neexistuje, proto tu není `.svg` varianta. */}
+        <link href="/favicon.ico" rel="icon" sizes="any" />
+        <link href="/icon-192.png" rel="icon" sizes="192x192" type="image/png" />
+        <link href="/icon-512.png" rel="icon" sizes="512x512" type="image/png" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" />
+        {/* Soubor žije v `public/`, ne jako `app/manifest.ts` — projekt má dva
+            root layouty ((landing) a Payloadem generovaný (payload)) a
+            file-based konvence Next generuje jen pro jeden z nich. */}
+        <link href="/manifest.webmanifest" rel="manifest" />
+        <meta content={LANDING_COLORS.ink} name="theme-color" />
         {/* Layout nemůže vrátit HTTP 503, takže indexaci brzdí aspoň meta. */}
         {showMaintenance && <meta content="noindex" name="robots" />}
       </head>
@@ -95,4 +106,5 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   openGraph: mergeOpenGraph(),
+  twitter: defaultTwitter,
 }

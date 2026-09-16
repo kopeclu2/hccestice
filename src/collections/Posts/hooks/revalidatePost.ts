@@ -3,6 +3,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Post } from '../../../payload-types'
+import { pingIndexNow } from '../../../utilities/indexNow'
 
 export const revalidatePost: CollectionAfterChangeHook<Post> = ({
   doc,
@@ -19,6 +20,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       revalidateTag('posts-sitemap', 'max')
       revalidateTag('llms-txt', 'max')
       revalidateTag('posts-list', { expire: 0 })
+      // Nový/upravený článek se má dostat do Bingu a Seznamu dřív, než ho
+      // znovu najde crawler — ne až při dalším průchodu `posts-sitemap.xml`.
+      pingIndexNow([path], payload.logger)
     }
 
     // If the post was previously published, we need to revalidate the old path

@@ -79,6 +79,11 @@ export const generateMeta = async (args: {
         ? { description: description || '', images, title, type: 'article', url }
         : { description: description || '', images, title, url },
     ),
+    // Vlastní `twitter`, ne dědění z layoutu: Next slučuje metadata mělce
+    // podle segmentu, takže kdyby tenhle dokument twitter nedosadil, spadl
+    // by na obecný `defaultTwitter` a sdílená karta na X by nesla titulek
+    // webu i pro konkrétní článek.
     title,
+    twitter: { card: 'summary_large_image', description, images, title },
   }
 }

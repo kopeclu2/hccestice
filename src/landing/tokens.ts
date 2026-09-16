@@ -14,6 +14,9 @@
  *   `style`. Nový hex mirror pro ně záměrně nevznikl: `theme-hex-parity`
  *   v `scripts/check-tokens.mjs` hlídá jedinou cestu (`TOKENS_FILE`), takže
  *   druhý soubor by z dohledu vypadl.
+ * - **`theme-color` meta a `manifest.webmanifest`** (`(landing)/layout.tsx`).
+ *   Browser i OS čtou tyhle hodnoty přímo z atributu/JSON souboru, ne z
+ *   vyrenderovaného CSS — `var(--color-*)` by tu byl doslovný string.
  *
  * Nikde jinde tenhle soubor nepoužívej — v komponentách vždy utility třída
  * nebo `var(--color-*)`. Hodnoty hlídá pravidlo `theme-hex-parity`

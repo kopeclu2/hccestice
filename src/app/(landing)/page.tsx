@@ -179,6 +179,14 @@ const FALLBACK_META: Metadata = {
     type: 'website',
     url: '/',
   },
+  // Vlastní, ne dědění z `defaultTwitter` — homepage má jiný (konkrétnější)
+  // titulek a popis než generický fallback webu, viz `openGraph` výš.
+  twitter: {
+    card: 'summary_large_image',
+    description:
+      'Historické 3. místo v play-off VČHL 2025/26. Přijď na led — trénujeme dvakrát týdně v Rychnově nad Kněžnou.',
+    title: 'HC Čestice — malý klub, velká sezóna',
+  },
 }
 
 export async function generateMetadata(): Promise<Metadata> {

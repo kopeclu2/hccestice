@@ -3,6 +3,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Page } from '../../../payload-types'
+import { pingIndexNow } from '../../../utilities/indexNow'
 
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
@@ -22,6 +23,9 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       if (doc.slug === 'home') revalidatePath('/treninky')
       revalidateTag('pages-sitemap', 'max')
       revalidateTag('llms-txt', 'max')
+      // Nová/upravená stránka se má dostat do Bingu a Seznamu dřív, než ji
+      // znovu najde crawler — ne až při dalším průchodu `pages-sitemap.xml`.
+      pingIndexNow(doc.slug === 'home' ? [path, '/treninky'] : [path], payload.logger)
     }
 
     // If the page was previously published, we need to revalidate the old path

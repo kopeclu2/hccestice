@@ -37,3 +37,17 @@ export const mergeOpenGraph = (og?: Metadata['openGraph']): Metadata['openGraph'
     images: og?.images ? og.images : defaultOpenGraph.images,
   }
 }
+
+/**
+ * Výchozí Twitter/X karta pro celý web. Metadata Next slučuje **mělce** podle
+ * segmentu (`docs/…/generate-metadata.md#merging`) — `twitter` je proto
+ * samostatné pole, ne odvozené z `openGraph` za běhu. Bez něj sdílená karta
+ * na X spadala na obecný náhled z URL místo na `summary_large_image` s OG
+ * obrázkem klubu.
+ */
+export const defaultTwitter: Metadata['twitter'] = {
+  card: 'summary_large_image',
+  title: defaultOpenGraph?.title,
+  description: defaultOpenGraph?.description,
+  images: defaultOpenGraph?.images,
+}
