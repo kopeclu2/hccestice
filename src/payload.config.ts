@@ -43,6 +43,7 @@ export default buildConfig({
         Icon: '@/components/admin/graphics/Icon#Icon',
         Logo: '@/components/admin/graphics/Logo#Logo',
       },
+      beforeDashboard: ['@/components/admin/AdminManual#AdminManual'],
     },
     user: Users.slug,
     livePreview: {
