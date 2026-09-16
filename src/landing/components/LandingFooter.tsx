@@ -191,6 +191,14 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
               Nastavení cookies
             </button>
             <span className="py-1">{content.league}</span>
+            <Link
+              className="hover:text-lime py-1 transition-colors"
+              href="https://lukaskopecky.cz"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Web: Lukáš Kopecký
+            </Link>
           </span>
         </div>
       </div>
