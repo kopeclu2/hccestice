@@ -332,6 +332,26 @@ export const CONTACT_PAGE = {
   breadcrumb: 'Kontakt',
 } as const
 
+/**
+ * Mapa na `/kontakt`. Sídlo spolku je v Česticích, ale domácí zápasy se hrají
+ * na zimním stadionu v Rychnově nad Kněžnou — stránka to dřív neříkala vůbec,
+ * takže návštěvník mířil na adresu, kde led není.
+ *
+ * Query je schválně **bez ulice**: JSON-LD homepage (`app/(landing)/page.tsx`)
+ * uvádí u `location` „Javornická 1648", ale mapový podnik na téhle pozici má
+ * „U Stadionu 1648". Dokud se nepotvrdí, která je správně, míří mapa na název
+ * stadionu a město — ten se trefuje spolehlivě a nešíří možná chybnou ulici.
+ * Pilulka o vstupu zdarma odpovídá CTA na `/zapasy` (`zapasy/MatchesCta.tsx`).
+ */
+export const CONTACT_MAP = {
+  title: 'Kde nás najdete',
+  venue: 'Zimní stadion Rychnov nad Kněžnou',
+  address: '516 01 Rychnov nad Kněžnou',
+  /** Query pro embed i pro proklik do navigace — jeden zdroj, ať míří stejně. */
+  query: 'Zimní stadion Rychnov nad Kněžnou, 516 01 Rychnov nad Kněžnou',
+  pills: ['Zimní stadion Rychnov nad Kněžnou', 'Vstup na domácí zápasy zdarma'] as const,
+} as const
+
 export const FOOTER = {
   photo: 'p3080422.jpg',
   headline: 'Uvidíme se na zimáku.',

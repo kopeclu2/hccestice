@@ -12,7 +12,7 @@ export function MatchesCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href="/aktuality" variant="lime" withArrow>
+      <PillLink href="/aktuality" variant="light" withArrow>
         Zápasové reporty
       </PillLink>
     </CtaStrip>

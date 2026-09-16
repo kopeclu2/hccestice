@@ -91,6 +91,7 @@ export function StandingsPanel({
           icon="schedule"
           title="Tabulka zatím neběží"
           titleAs="h3"
+          watermark="VČHL"
         >
           Tabulka VČHL se naplní, jakmile odehrajeme první zápasy sezóny.
         </EmptyState>

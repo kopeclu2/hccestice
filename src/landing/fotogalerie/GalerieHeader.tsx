@@ -27,6 +27,7 @@ export function GalerieHeader({
           allLabel="Vše"
           anchor="#seznam"
           basePath="/fotogalerie"
+          maxVisible={6}
           seasons={seasons}
         />
       }

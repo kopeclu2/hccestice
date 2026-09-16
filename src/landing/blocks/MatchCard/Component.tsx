@@ -73,7 +73,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
 
           {match.reportHref && (
             <Link
-              className="text-club hover:text-club-dark mt-6 inline-flex items-center gap-2 text-meta font-bold"
+              className="text-club-dark hover:text-club mt-6 inline-flex items-center gap-2 text-meta font-bold"
               href={match.reportHref}
             >
               Reportáž ze zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />

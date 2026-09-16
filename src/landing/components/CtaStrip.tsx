@@ -21,7 +21,7 @@ const panelVariants = cva(
 )
 
 /** Ztišení perexu se mezi tóny liší — na zelené musí být o stupeň světlejší. */
-const perexTone = { ink: 'text-white/65', club: 'text-white/75' } as const
+const perexTone = { ink: 'text-white/65', club: 'text-white/85' } as const
 
 export type CtaStripProps = {
   headline: React.ReactNode
@@ -68,7 +68,7 @@ export function CtaStrip({
 
         <div className="relative min-w-60">
           <CardTitle size="lg">{headline}</CardTitle>
-          {perex && <div className={cn('mt-1.5 text-meta', perexTone[tone])}>{perex}</div>}
+          {perex && <div className={cn('mt-1.5 text-body', perexTone[tone])}>{perex}</div>}
         </div>
 
         <div className="flex-1" />

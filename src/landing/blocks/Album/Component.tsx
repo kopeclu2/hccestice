@@ -6,7 +6,7 @@ import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
 import { MaybeLink } from '../../components/CardGrid'
-import { CornerBrackets, GlowCircle } from '../../components/Decorations'
+import { GlowCircle } from '../../components/Decorations'
 import { EmptyState } from '../../components/EmptyState'
 import { CardTitle, SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
@@ -141,7 +141,6 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
   return (
     <SectionShell id="fotoalbum">
       <GlowCircle className="-right-60 -top-20 size-190" tone="lime" />
-      <CornerBrackets />
       <Watermark
         className="text-club/8 top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-[-0.06em] [writing-mode:vertical-rl]"
         outlined={false}
@@ -154,10 +153,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
           <div>
             <Kicker>Fotoalbum</Kicker>
             <SectionTitle className="mt-3.5">
-              {/* tečka je součást kompozice (klubová zelená), ne textu — a lepí
-                  se na slovo, mezera z handoffu vypadala jako sazečská chyba */}
-              Sezóna očima <Highlight>fanoušků</Highlight>
-              <span className="text-club">.</span>
+              Sezóna očima <Highlight dot>fanoušků</Highlight>
             </SectionTitle>
           </div>
           <div className="flex-1" />

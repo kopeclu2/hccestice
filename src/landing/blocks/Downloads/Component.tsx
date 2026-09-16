@@ -42,7 +42,7 @@ export function DownloadsBlockComponent({ block }: { block: DownloadsBlock }) {
               href={getMediaUrl(item.file.url, item.file.updatedAt)}
               key={item.id ?? index}
             >
-              <span className="bg-chip text-club rounded-lg px-2.5 py-1.5 text-eyebrow font-extrabold tracking-wide">
+              <span className="bg-chip text-club-dark rounded-lg px-2.5 py-1.5 text-eyebrow font-extrabold tracking-wide">
                 {fileExtension(item.file.filename)}
               </span>
               <span className="flex-1 text-body font-bold">{item.label || item.file.filename}</span>

@@ -133,7 +133,7 @@ function SeasonView({
 /** Tabulka VČHL — řádek HC Čestice zvýrazněný zeleně (sdílí ji widget Tabulka). */
 export function StandingsCard({ standings }: { standings: StandingsContent }) {
   return (
-    <div className="h-full rounded-card bg-surface p-4.5 md:p-7 lg:p-9">
+    <div className="relative h-full overflow-hidden rounded-card bg-surface p-4.5 md:p-7 lg:p-9">
       <div className="mb-3.5 flex items-baseline gap-3">
         <CardTitle as="h3" size="md">
           Tabulka <Highlight>VČHL</Highlight>
@@ -151,6 +151,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
           frame="bare"
           title="Tabulka zatím neběží"
           titleAs="h3"
+          watermark="VČHL"
         >
           Naplní se, jakmile odehrajeme první zápasy sezóny.
         </EmptyState>
@@ -169,7 +170,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                 )}
                 key={row.pos}
               >
-                <div className={cn('text-meta font-extrabold', isOurs ? 'text-club' : 'text-faint')}>
+                <div className={cn('text-meta font-extrabold', isOurs ? 'text-club-dark' : 'text-faint')}>
                   {row.pos}.
                 </div>
                 <div
@@ -187,7 +188,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
           })}
 
           <a
-            className="text-club hover:text-club-dark mt-3.5 inline-block text-meta font-bold"
+            className="text-club-dark hover:text-club mt-3.5 inline-block text-meta font-bold"
             href={standings.fullTableUrl}
             rel="noreferrer"
             target="_blank"

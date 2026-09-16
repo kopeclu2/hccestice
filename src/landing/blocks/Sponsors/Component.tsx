@@ -101,7 +101,7 @@ function SponsorsView({
           <Kicker>Partneři</Kicker>
           <SectionTitle className="mt-5" size="lg">
             {titleStart ? `${titleStart} ` : ''}
-            <Highlight>{titleHighlight}</Highlight>.
+            <Highlight dot>{titleHighlight}</Highlight>
           </SectionTitle>
           <div className="mt-6.5 flex flex-wrap items-center gap-x-2.5 gap-y-3">
             <PillLink href="#kontakt" variant="dark" withArrow>

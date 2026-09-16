@@ -22,9 +22,9 @@ export const LandingNews: Block = {
           name: 'count',
           type: 'number',
           label: 'Počet karet',
-          defaultValue: 3,
+          defaultValue: 5,
           min: 3,
-          max: 4,
+          max: 5,
           admin: {
             description: 'Sekce je výřez — plný výpis je na /aktuality.',
           },
@@ -34,11 +34,11 @@ export const LandingNews: Block = {
     {
       name: 'showPhoto',
       type: 'checkbox',
-      label: 'Zobrazit fotku u článku',
+      label: 'Doplnit výchozí obrázek článkům bez fotky',
       defaultValue: false,
       admin: {
         description:
-          'Náhledová fotka nad textem karty. Články bez vlastní fotky použijí výchozí obrázek z Nastavení webu.',
+          'Náhled má karta vždy — článek bez vlastní fotky dostane vzorovou plochu. S touhle volbou se místo ní použije Výchozí obrázek článků z Nastavení webu.',
       },
     },
   ],

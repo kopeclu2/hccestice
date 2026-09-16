@@ -6,6 +6,7 @@ import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchAllPeople, fetchSite } from '@/landing/data/site'
 import { KontaktCta } from '@/landing/kontakt/KontaktCta'
 import { KontaktHeader } from '@/landing/kontakt/KontaktHeader'
+import { KontaktMap } from '@/landing/kontakt/KontaktMap'
 import { KontaktPanel } from '@/landing/kontakt/KontaktPanel'
 
 export const revalidate = 600
@@ -15,8 +16,8 @@ export const revalidate = 600
  * sekce homepage (`#kontakt`), na kterou míří CTA napříč webem. Ta zůstává
  * beze změny; tahle stránka dává kontaktu vlastní URL, drobečky a SEO popisek
  * a vlastní kompozici (vizitka a přímé kontakty na lidi v klubu vlevo,
- * formulář vpravo, uzavírací CTA pás na konci), ne zvětšenou kopii homepage
- * karty.
+ * formulář vpravo, mapa zimního stadionu a uzavírací CTA pás na konci),
+ * ne zvětšenou kopii homepage karty.
  */
 export default async function KontaktPage() {
   const [site, people] = await Promise.all([fetchSite(), fetchAllPeople()])
@@ -25,6 +26,7 @@ export default async function KontaktPage() {
     <SubpageShell>
       <KontaktHeader />
       <KontaktPanel people={people} site={site} />
+      <KontaktMap />
       <KontaktCta />
     </SubpageShell>
   )

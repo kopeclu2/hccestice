@@ -138,7 +138,19 @@ export type PostsPage = {
   totalDocs: number
   totalPages: number
   page: number
+  /** `true` jen na první straně — ta má featured kartu, další ne. */
+  featured: boolean
 }
+
+/**
+ * První strana má featured kartu (2/3 mřížky), takže drží míň karet než
+ * další strany, kde je mřížka rovnoměrná 3×N. Součet musí vyjít beze zbytku
+ * (`FIRST_PAGE_COUNT` + `REST_PAGE_COUNT` je násobek tří sloupců): featured
+ * karta zabere 2 sloupce + 1 normální karta = celý první řádek, každá další
+ * strana pak jede v řádcích po třech.
+ */
+const FIRST_PAGE_COUNT = 5
+const REST_PAGE_COUNT = 6
 
 /**
  * Stránkovaný výpis publikovaných článků s volitelným filtrem typu (/aktuality).
@@ -162,41 +174,52 @@ export type PostsPage = {
 const queryPostsPage = unstable_cache(
   async (options: {
     page: number
-    perPage?: number
     type?: string | null
     /** Zapnuté fotky na kartách (`siteConfig.postsListShowPhoto`). */
     withPhotos?: boolean
   }): Promise<PostsPage> => {
     const payload = await getPayload({ config: configPromise })
-    const perPage = options.perPage ?? 9
     const and: Array<Record<string, unknown>> = [{ _status: { equals: 'published' } }]
     if (options.type) and.push({ type: { equals: options.type } })
+    const where = { and } as never
 
-    const query = (page: number) =>
-      payload.find({
-        collection: 'posts',
-        where: { and } as never,
-        sort: '-publishedAt',
-        limit: perPage,
-        page,
-        depth: 1,
-      })
-
-    let result = await query(Math.max(1, options.page))
+    const { totalDocs } = await payload.count({ collection: 'posts', where })
+    const totalPages =
+      totalDocs <= FIRST_PAGE_COUNT
+        ? 1
+        : 1 + Math.ceil((totalDocs - FIRST_PAGE_COUNT) / REST_PAGE_COUNT)
     // Přetečená strana (?page=99) → poslední existující
-    if (result.docs.length === 0 && options.page > result.totalPages) {
-      result = await query(Math.max(1, result.totalPages))
-    }
+    const page = Math.min(Math.max(1, options.page), totalPages)
+
+    /* Payload umí stránkovat jen s jednotným `limit` (skip = (page-1)*limit) —
+     * s asymetrickými stranami (5, pak 6, 6, 6…) se skip na hranici 5 takhle
+     * netrefí. Řeší se dotažením VŠECH záznamů od začátku po konec téhle
+     * strany a ořezem posledních `REST_PAGE_COUNT` v JS. Dotaz roste s číslem
+     * strany, ale výsledek je cachovaný (`unstable_cache` výš) a jde o řádově
+     * stovky lehkých řádků, ne miliony. */
+    const fetchCount =
+      page === 1 ? FIRST_PAGE_COUNT : FIRST_PAGE_COUNT + (page - 1) * REST_PAGE_COUNT
+
+    const result = await payload.find({
+      collection: 'posts',
+      where,
+      sort: '-publishedAt',
+      limit: fetchCount,
+      page: 1,
+      depth: 1,
+    })
+    const docs = page === 1 ? result.docs : result.docs.slice(-REST_PAGE_COUNT)
 
     // Výchozí obrázek se dosazuje jen se zapnutými fotkami — u textových karet
     // se stejně nevykreslí a dotaz na siteConfig by byl zbytečný.
     const defaultPhoto = options.withPhotos ? await fetchDefaultPostPhoto() : null
 
     return {
-      cards: result.docs.map((doc) => toPostCard(doc, defaultPhoto)),
-      totalDocs: result.totalDocs,
-      totalPages: Math.max(1, result.totalPages),
-      page: result.page ?? 1,
+      cards: docs.map((doc) => toPostCard(doc, defaultPhoto)),
+      totalDocs,
+      totalPages,
+      page,
+      featured: page === 1,
     }
   },
   ['posts-page'],

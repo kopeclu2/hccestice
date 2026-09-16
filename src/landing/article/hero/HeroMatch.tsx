@@ -81,7 +81,13 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
               <span className={cn(scoreboard.weWon && scoreboard.weAreHome && 'text-lime')}>
                 {scoreboard.homeScore}
               </span>
-              <span className="text-[.6em] text-white/35">:</span>
+              {/* Dvě tečky, ne text „:" — Archivo kreslí dvojtečku jako dva
+                  hranaté body, které v drobném řezu na tmavém pozadí čtou
+                  jako náhodné čtverečky, ne jako oddělovač skóre. */}
+              <span className="flex flex-col items-center gap-2.5 self-center">
+                <span className="bg-white/30 size-2 rounded-full" />
+                <span className="bg-white/30 size-2 rounded-full" />
+              </span>
               <span className={cn(scoreboard.weWon && !scoreboard.weAreHome && 'text-lime')}>
                 {scoreboard.awayScore}
               </span>

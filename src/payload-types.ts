@@ -843,7 +843,7 @@ export interface LandingNewsBlock {
    */
   count?: number | null;
   /**
-   * Náhledová fotka nad textem karty. Články bez vlastní fotky použijí výchozí obrázek z Nastavení webu.
+   * Náhled má karta vždy — článek bez vlastní fotky dostane vzorovou plochu. S touhle volbou se místo ní použije Výchozí obrázek článků z Nastavení webu.
    */
   showPhoto?: boolean | null;
   id?: string | null;
@@ -3920,7 +3920,7 @@ export interface SiteConfig {
    */
   defaultPostImage?: (number | null) | Media;
   /**
-   * Karty na /aktuality budou mít náhledovou fotku. Widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku v layoutu stránky.
+   * Náhled má karta ve výpisu Aktuality vždy — článek bez vlastní fotky dostane vzorovou plochu. S touhle volbou se místo ní použije Výchozí obrázek článků. Widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku v layoutu stránky.
    */
   postsListShowPhoto?: boolean | null;
   contactEmail?: string | null;

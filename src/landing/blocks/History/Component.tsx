@@ -61,7 +61,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
         <Kicker>{content.kicker}</Kicker>
         {/* stejná škála jako nadpisy ostatních sekcí (O klubu, Partneři) */}
         <SectionTitle className="mt-5 max-w-208" size="lg">
-          {content.headlineStart} <Highlight>{content.headlineHighlight}</Highlight>.
+          {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
         </SectionTitle>
 
         <div className="mt-7.5 flex flex-wrap items-center gap-x-3.5 gap-y-3">

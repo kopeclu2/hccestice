@@ -21,7 +21,7 @@ import { TitleParts } from './HeroTitle'
 export function HeroTypo({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mx-auto mt-10 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-13 lg:mt-16">
-      <Watermark className="text-club/13 -top-14 left-[60%] z-0 text-watermark-3xl tracking-[-0.06em]">
+      <Watermark className="text-club/13 -top-14 right-0 z-0 text-watermark-3xl tracking-[-0.06em]">
         HC ČESTICE
       </Watermark>
 
@@ -39,7 +39,7 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
 
       {/* HeroTypo je designově odlišný — základní váha regular, jen zvýrazněná
           část tučně. */}
-      <PageTitle className="mt-6 max-w-310" size="xl" weight="normal">
+      <PageTitle className="mt-6 max-w-310" size="lg" weight="normal">
         <TitleParts
           accent="lime-box"
           highlight={article.titleHighlight}

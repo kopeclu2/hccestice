@@ -5,12 +5,12 @@ import React from 'react'
 import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
-import { Puck } from '../../components/Decorations'
 import { CardTitle, SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell, type SectionShellProps } from '../../components/SectionShell'
+import { Watermark } from '../../components/Watermark'
 import { TRAININGS } from '../../content'
 import type { TrainingSlot, TrainingsContent } from '../../types'
 
@@ -78,19 +78,27 @@ function TrainingsView({
   content: TrainingsContent
   spacing?: SectionShellProps['spacing']
 }) {
+  // `/treninky` posílá `spacing="content"` (viz `TreninkyPage`) — na tý
+  // stránce má hlavičku (`TreninkyHeader`) i vlastní watermark „LED" a
+  // Kicker „Tréninky" nad blokem, takže je blok sám nevykresluje znova.
+  const standalonePage = spacing === 'content'
+
   return (
     <SectionShell id="treninky" spacing={spacing}>
       <TrainingsJsonLd rows={content.rows} />
-      {/* Zakotvení odspodu, ne `top-107`: pevná vzdálenost od horní hrany
-          závisela na výšce sekce, takže s jiným počtem karet puk vytékal. */}
-      <Puck className="-left-11 bottom-10 -rotate-8" />
+      {!standalonePage && (
+        <Watermark className="text-club/8 bottom-0 left-40 text-watermark-lg tracking-[-0.06em]">
+          LED
+        </Watermark>
+      )}
 
       <Reveal className="mb-10">
-        {content.kicker && <Kicker>{content.kicker}</Kicker>}
+        {!standalonePage && content.kicker && <Kicker>{content.kicker}</Kicker>}
         <SectionTitle className="mt-3.5 text-pretty" size="md">
-          {content.headline} <Highlight>{content.headlineHighlight}</Highlight>{' '}
+          {content.headline}{' '}
+          <Highlight dot={!content.headlineRest}>{content.headlineHighlight}</Highlight>{' '}
           {content.headlineRest}
-          <span className="text-club">.</span>
+          {content.headlineRest && <span className="text-club">.</span>}
         </SectionTitle>
         {content.perex && (
           <p className="text-dim mt-4 max-w-130 leading-relaxed text-pretty">{content.perex}</p>
@@ -98,11 +106,38 @@ function TrainingsView({
       </Reveal>
 
       <Reveal className="flex flex-wrap justify-end gap-4" delay={0.1}>
+        {standalonePage && (
+          <>
+            <InfoCard title="Co si vzít">
+              Na první trénink nepotřebuješ vlastní výstroj — na zkoušku ji půjčíme. Zbytek
+              doučíme přímo na ledě.
+            </InfoCard>
+            <InfoCard title="Kde to je">
+              Trénujeme na zimním stadionu v Rychnově nad Kněžnou — domácí zápasy hrajeme tam
+              stejně jako tréninky.
+            </InfoCard>
+          </>
+        )}
         {content.rows.map((row, index) => (
           <TrainingCard key={`${row.day}-${row.time}-${index}`} slot={row} />
         ))}
       </Reveal>
     </SectionShell>
+  )
+}
+
+/**
+ * Praktická karta vedle rozpisu na `/treninky` — vyplňuje plochu, kterou
+ * dřív zabíral dekorativní `Puck`, tentokrát rovnou užitečným obsahem.
+ */
+function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <article className="border-line-soft w-full min-w-0 rounded-thumb border bg-surface px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:max-w-75 min-[33rem]:px-6">
+      <CardTitle as="h3" size="sm">
+        {title}
+      </CardTitle>
+      <p className="text-dim mt-2 text-caption leading-relaxed">{children}</p>
+    </article>
   )
 }
 

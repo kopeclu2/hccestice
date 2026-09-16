@@ -45,7 +45,7 @@ export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock
                       width={44}
                     />
                   ) : (
-                    <span className="bg-chip text-club grid size-11 place-items-center rounded-full text-meta font-extrabold">
+                    <span className="bg-chip text-club-dark grid size-11 place-items-center rounded-full text-meta font-extrabold">
                       {item.name.charAt(0)}
                     </span>
                   )}

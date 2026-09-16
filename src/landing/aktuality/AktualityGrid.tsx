@@ -12,29 +12,50 @@ import type { PostCard } from '../types'
  * Výpis článků — pravidelná mřížka, na mobilu jeden sloupec.
  *
  * Handoff „HC Cestice Aktuality" měl masonry (CSS columns, řazení po sloupcích).
- * Přešlo se na grid, protože karty jsou teď textové a bez fotek nemají tak
- * rozdílnou výšku — a čtení po řádcích odpovídá řazení podle data.
+ * Přešlo se na grid: karty mají jednotný náhled, takže se jejich výška neliší —
+ * a čtení po řádcích odpovídá řazení podle data. První karta je featured
+ * (od `lg` přes dva sloupce), aby výpis začínal hlavní zprávou, ne mřížkou
+ * stejně důležitých dlaždic.
  */
 export function AktualityGrid({
   activeType,
   cards,
-  showPhoto = false,
+  featured: featuredPage = true,
 }: {
   /** Zapnutý filtr typu — rozhoduje o znění prázdného stavu. */
   activeType?: string | null
   cards: PostCard[]
-  /** `siteConfig.postsListShowPhoto` — náhledové fotky na kartách. */
-  showPhoto?: boolean
+  /**
+   * `false` na druhé a další straně — ta jede v rovné mřížce 3×N beze
+   * zvýrazněné první karty. `PostsPage.featured` z `fetchPostsPage` je
+   * `true` jen pro `page === 1`, kde je karet 5 (2+1 první řádek, pak
+   * trojice); od druhé strany je jich vždy 6 (dva plné řádky).
+   */
+  featured?: boolean
 }) {
   return (
     <CardGrid empty={<AktualityEmpty activeType={activeType ?? null} />} items={cards}>
-      {(card) => (
-        /* `sizes` se nepřepisuje: default `ArticleCard` už kopíruje skutečné
-           zlomy `CardGrid` (1 sloupec / 2 od `sm` = 40rem / 3 od `lg`).
-           Override tady začínal na 48rem, takže si telefon na šířku tahal
-           fotku na dvojnásobek šířky karty. */
-        <ArticleCard card={card} key={card.id} withPhoto={showPhoto} />
-      )}
+      {(card, index) => {
+        /* Nejnovější článek je „featured": od `sm` přes celý řádek, od `lg`
+           přes dva ze tří sloupců a s fotkou vedle textu. */
+        const featured = featuredPage && index === 0 && cards.length > 1
+        return (
+          <ArticleCard
+            card={card}
+            className={featured ? 'sm:col-span-2 lg:col-span-2' : undefined}
+            featured={featured}
+            key={card.id}
+            /* `sizes` kopíruje zlomy `CardGrid` (1 sloupec / 2 od `sm` = 40rem /
+               3 od `lg` = 64rem). Featured karta je od `sm` přes celý řádek
+               a její fotka bere od `lg` 55 % ze dvou třetin mřížky ≈ 37vw. */
+            sizes={
+              featured
+                ? '(max-width: 64rem) 100vw, 37vw'
+                : '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw'
+            }
+          />
+        )
+      }}
     </CardGrid>
   )
 }

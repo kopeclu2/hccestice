@@ -3,7 +3,6 @@
 import { Minus, Plus } from 'lucide-react'
 import React from 'react'
 
-import { HockeyStick } from '../../components/Decorations'
 import { SectionTitle } from '../../components/Heading'
 import { SectionShell } from '../../components/SectionShell'
 import { Watermark } from '../../components/Watermark'
@@ -20,7 +19,6 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
 
   return (
     <SectionShell>
-      <HockeyStick className="-right-18 top-30 -rotate-22" />
       <Watermark className="text-ink/9 -left-10 top-10 text-watermark-sm tracking-[-0.04em]">
         OTÁZKY?
       </Watermark>

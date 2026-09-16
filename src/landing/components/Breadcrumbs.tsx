@@ -27,18 +27,18 @@ export function Breadcrumbs({ className, trail }: { className?: string; trail: C
       )}
     >
       <BreadcrumbsJsonLd trail={trail} />
-      <Link className="text-club hover:text-club-dark transition-colors" href="/">
+      <Link className="text-club-dark hover:text-club transition-colors" href="/">
         Domů
       </Link>
       {trail.map((crumb, index) => (
         <React.Fragment key={`${crumb.label}-${index}`}>
           <span className="opacity-50">/</span>
           {crumb.href ? (
-            <Link className="text-club hover:text-club-dark transition-colors" href={crumb.href}>
+            <Link className="text-club-dark hover:text-club transition-colors" href={crumb.href}>
               {crumb.label}
             </Link>
           ) : (
-            <span className="text-club line-clamp-1 font-bold">{crumb.label}</span>
+            <span className="text-club-dark line-clamp-1 font-bold">{crumb.label}</span>
           )}
         </React.Fragment>
       ))}

@@ -4,59 +4,17 @@ import { cn } from '@/utilities/ui'
 
 /**
  * Dekorace na pozadí sekcí — „podpis designu" z handoffu:
- * SVG siluety hokejky a puku, rozmazané barevné kruhy, tečkované
- * mřížky, oblouky, řada trojúhelníků a rohové závorky.
+ * rozmazané barevné kruhy, tečkované mřížky a oblouky.
  *
  * Všechny jsou čistě vizuální (aria-hidden, pointer-events-none),
  * na mobilu skryté (handoff: dekorace nemají soutěžit s obsahem)
  * a pod obsahem sekce (-z-1; sekce má `relative z-1`).
  *
  * Naskakují až od `lg`, stejně jako `Watermark` a ze stejného důvodu: pozice
- * jsou kreslené pro 1440px, takže na 768px puk vytékal ze sekce Tréninky přes
- * kicker sekce pod ní a `CornerBrackets` procházely nadpisem.
+ * jsou kreslené pro 1440px.
  */
 
 const base = 'pointer-events-none absolute -z-1 hidden select-none lg:block'
-
-/** Silueta hokejky (obrys, klubová zelená). */
-export function HockeyStick({ className }: { className?: string }) {
-  return (
-    <div aria-hidden className={cn(base, className)}>
-      <svg
-        className="stroke-club/18"
-        fill="none"
-        height="340"
-        strokeLinejoin="round"
-        strokeWidth="0.7"
-        viewBox="0 0 100 100"
-        width="340"
-      >
-        <path d="M85 1 L42 61 Q40 63 36 63 L13 63 Q8 63 8 69.5 Q8 76 13 76 L42 76 Q49 76 53 70 L91 6 Q93 3 90 1.5 Q87 0.2 85 1 Z" />
-        <path d="M13 69.5 L36 69.5" strokeWidth="0.45" />
-      </svg>
-    </div>
-  )
-}
-
-/** Silueta puku (obrys, klubová zelená). */
-export function Puck({ className }: { className?: string }) {
-  return (
-    <div aria-hidden className={cn(base, className)}>
-      <svg
-        className="stroke-club/15"
-        fill="none"
-        height="127"
-        strokeLinecap="round"
-        strokeWidth="0.9"
-        viewBox="0 0 100 55"
-        width="230"
-      >
-        <ellipse cx="50" cy="18" rx="40" ry="14" />
-        <path d="M10 18 L10 36 Q10 50 50 50 Q90 50 90 36 L90 18" />
-      </svg>
-    </div>
-  )
-}
 
 /** Rozmazaný barevný kruh (radial gradient). */
 export function GlowCircle({
@@ -117,18 +75,6 @@ export function ArcLines({ className }: { className?: string }) {
           }}
         />
       ))}
-    </div>
-  )
-}
-
-/** Čtyři rohové závorky kolem sekce (Fotoalbum). */
-export function CornerBrackets({ className }: { className?: string }) {
-  return (
-    <div aria-hidden className={cn(base, 'inset-0', className)}>
-      <span className="border-club/22 absolute -left-1.5 top-1.5 size-16 border-l-3 border-t-3" />
-      <span className="border-club/22 absolute -right-1.5 top-1.5 size-16 border-r-3 border-t-3" />
-      <span className="border-club/14 absolute -left-1.5 bottom-1.5 size-16 border-b-3 border-l-3" />
-      <span className="border-club/14 absolute -right-1.5 bottom-1.5 size-16 border-b-3 border-r-3" />
     </div>
   )
 }

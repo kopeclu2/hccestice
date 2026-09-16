@@ -70,7 +70,7 @@ function SponsorCardView({
           {note && <p className="text-dim max-w-100 leading-relaxed text-pretty">{note}</p>}
           {url && (
             <a
-              className="text-club hover:text-club-dark inline-flex items-center gap-2 text-meta font-bold"
+              className="text-club-dark hover:text-club inline-flex items-center gap-2 text-meta font-bold"
               href={url}
               rel="noreferrer"
               target="_blank"

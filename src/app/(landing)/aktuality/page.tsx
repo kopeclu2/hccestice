@@ -41,8 +41,9 @@ const listPath = (page: number, type: string | null): string => {
 export default async function AktualityPage({ searchParams }: Args) {
   const { page: requestedPage, type } = readParams(await searchParams)
 
-  // Fotky na kartách přepíná správce v Nastavení webu (`postsListShowPhoto`);
-  // widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku.
+  // Náhled má karta vždy (bez fotky vzorovou plochu). Přepínač v Nastavení
+  // webu (`postsListShowPhoto`) rozhoduje už jen o tom, jestli se článkům bez
+  // vlastní fotky dosadí výchozí obrázek klubu.
   const showPhoto = (await fetchSiteConfig()).postsListShowPhoto ?? false
 
   const [postsPage, site] = await Promise.all([
@@ -57,7 +58,7 @@ export default async function AktualityPage({ searchParams }: Args) {
       <AktualityHeader activeType={type} totalDocs={postsPage.totalDocs} />
 
       <SectionShell spacing="content">
-        <AktualityGrid activeType={type} cards={postsPage.cards} showPhoto={showPhoto} />
+        <AktualityGrid activeType={type} cards={postsPage.cards} featured={postsPage.featured} />
         {/* Jedna strana = žádné stránkování. Bez podmínky zůstalo pod výpisem
             (a přímo pod prázdným stavem) mrtvé „Strana 1 z 1" se dvěma
             neaktivními šipkami — `ResultsList` to podmiňuje stejně. */}

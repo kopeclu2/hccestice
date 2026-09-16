@@ -66,7 +66,7 @@ function ClubView({ content }: { content: ClubContent }) {
       <Reveal>
         <Kicker>{content.kicker}</Kicker>
         <SectionTitle className="mt-5" size="lg">
-          {content.headlineStart} <Highlight>{content.headlineHighlight}</Highlight>.
+          {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
         </SectionTitle>
         <p className="text-dim mt-4 mb-6.5 leading-relaxed text-pretty">{content.perex}</p>
         <PillLink href="#kontakt" variant="dark" withArrow>

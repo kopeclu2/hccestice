@@ -67,7 +67,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
 
           <Kicker className="relative">{content.kicker}</Kicker>
           <SectionTitle className="relative mx-auto mt-5 mb-2.5" size="xl">
-            Pojďme na <Highlight>led</Highlight>.
+            Pojďme na <Highlight dot>led</Highlight>
           </SectionTitle>
           <p className="text-dim relative mx-auto mb-9 max-w-120 leading-relaxed text-pretty">
             {content.perex}

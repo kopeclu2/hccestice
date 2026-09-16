@@ -78,20 +78,22 @@ function HeroView({
         <LandingNav cta={navCta} items={navItems} />
 
         <div className="relative z-3 flex flex-wrap items-end justify-between gap-7 px-4.5 pt-75 pb-5.5 md:absolute md:inset-x-[clamp(1.125rem,3vw,3rem)] md:bottom-10 md:p-0">
-          {/* Headline + CTA */}
+          {/* Headline + CTA — claim první, ať ho návštěvník přečte dřív, než
+              scrollne (dřív viselo CTA přes tváře hráčů a claim byl až dole
+              u hrany fotky). */}
           <div className="min-w-70 flex-[1_1_26.25rem]">
-            <p className="mb-5.5 max-w-110 text-lead leading-snug text-pretty text-white/92">
-              {content.intro}
-            </p>
-            <PillLink className="mb-6.5" href="#sezona" size="lg" variant="dark" withArrow>
-              {content.ctaLabel}
-            </PillLink>
             {/* dvouřádkový headline s odlišnou vahou řádků — základ regular
                 (PageTitle weight="normal"), tučný řádek zvýrazněný uvnitř */}
             <PageTitle className="text-white" size="hero" weight="normal">
               <span className="block">{content.headlineLight}</span>
               <span className="block font-extrabold">{content.headlineBold}</span>
             </PageTitle>
+            <p className="mt-4 mb-6.5 max-w-110 text-lead leading-snug text-pretty text-white/92">
+              {content.intro}
+            </p>
+            <PillLink href="#sezona" size="lg" variant="dark" withArrow>
+              {content.ctaLabel}
+            </PillLink>
           </div>
 
           {/* Karta zápasu */}

@@ -26,7 +26,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
       <div>
         <Breadcrumbs badge={article.badge} className="mb-5" tone="light" />
         <Kicker>{article.badge}</Kicker>
-        <PageTitle balance="pretty" className="mt-4.5" size="md">
+        <PageTitle balance="pretty" className="mt-4.5" size="sm">
           <TitleParts accent="lime-box" highlight={article.titleHighlight} title={article.title} />
         </PageTitle>
         {article.excerpt && (

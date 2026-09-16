@@ -21,11 +21,11 @@
  */
 export const LANDING_COLORS = {
   ink: '#0f1512',
-  club: '#17703a',
-  'club-dark': '#0f5c2e',
-  lime: '#c9f24d',
+  club: '#5e9e46',
+  'club-dark': '#497d36',
+  lime: '#7bcc5d',
   dim: '#535f58',
-  faint: '#7b837e',
+  faint: '#6b736e',
   'faint-dark': '#a9b4ad',
   tint: '#e8f2ec',
   paper: '#f4f6f4',

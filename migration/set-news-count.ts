@@ -1,5 +1,5 @@
 /**
- * Nastaví widgetu Aktuality na úvodní stránce počet karet na 3.
+ * Nastaví widgetu Aktuality na úvodní stránce počet karet na 5.
  *
  * Změna `defaultValue` v configu bloku platí jen pro nově vkládané bloky —
  * existující dokument v databázi si drží uloženou hodnotu, takže se musí
@@ -10,7 +10,7 @@
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
 
-const COUNT = 3
+const COUNT = 5
 
 const payload = await getPayload({ config })
 

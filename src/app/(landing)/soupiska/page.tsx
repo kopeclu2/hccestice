@@ -50,7 +50,7 @@ export default async function SoupiskaPage() {
   ]
 
   return (
-    <SubpageShell>
+    <SubpageShell pattern={{ variant: 'dots', tone: 'club', fade: 'top' }}>
       <SoupiskaHeader
         pills={pills}
         seasonLabel={season ? seasonShortLabel(season) : null}

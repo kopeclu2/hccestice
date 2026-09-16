@@ -82,7 +82,25 @@ export function Kicker({ children, className }: { children: React.ReactNode; cla
   )
 }
 
-/** Lime zvýraznění části nadpisu (podpis designu). */
-export function Highlight({ children }: { children: React.ReactNode }) {
-  return <span className="bg-lime box-decoration-clone px-2">{children}</span>
+/**
+ * Lime zvýraznění části nadpisu (podpis designu).
+ *
+ * `dot` přilepí tečku za slovo v klubové zelené — je to součást kompozice,
+ * ne interpunkce, proto bez mezery. Psát ji zvlášť za `</Highlight>` jako
+ * text vedle sebe dřív nechávalo 8px mezeru z paddingu zvýraznění navíc
+ * (`bg-lime slovo. ` čtený jako „slovo .").
+ */
+export function Highlight({
+  children,
+  dot = false,
+}: {
+  children: React.ReactNode
+  dot?: boolean
+}) {
+  return (
+    <>
+      <span className="bg-lime box-decoration-clone px-2">{children}</span>
+      {dot && <span className="text-club">.</span>}
+    </>
+  )
 }

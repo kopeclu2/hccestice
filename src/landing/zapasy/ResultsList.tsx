@@ -69,6 +69,7 @@ export function ResultsList({
           icon="schedule"
           title="Zatím žádný odehraný zápas"
           titleAs="h3"
+          watermark="VČHL"
         >
           Za tuhle sezónu jsme ještě nehráli. Jakmile padne první buly, najdete tady výsledek i s
           třetinami.

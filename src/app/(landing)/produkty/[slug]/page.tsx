@@ -97,7 +97,7 @@ export default async function ProductDetailPage({ params }: Args) {
               </div>
               <div className="mt-3">
                 {product.available ? (
-                  <span className="text-club inline-flex items-center gap-1.5 text-meta font-bold [&_svg]:size-4">
+                  <span className="text-club-dark inline-flex items-center gap-1.5 text-meta font-bold [&_svg]:size-4">
                     <CircleCheck strokeWidth={2.5} /> V nabídce
                   </span>
                 ) : (

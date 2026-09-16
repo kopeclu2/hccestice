@@ -16,7 +16,7 @@ export function KontaktHeader() {
       perex={CONTACT.perex}
       title={
         <>
-          Pojďme se <Highlight>domluvit</Highlight>.
+          Pojďme se <Highlight dot>domluvit</Highlight>
         </>
       }
       trail={[{ label: CONTACT_PAGE.breadcrumb }]}

@@ -9,7 +9,7 @@ import { SubpageShell } from '@/landing/components/SubpageShell'
 import { countLabel } from '@/landing/data/format'
 import { fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
 import { fetchSponsors } from '@/landing/data/sponsors'
-import { PartnerRow } from '@/landing/sponzori/PartnerRow'
+import { PartnerCard } from '@/landing/sponzori/PartnerCard'
 import { PartnerSlotCta } from '@/landing/sponzori/PartnerSlotCta'
 import { SponzoriHeader } from '@/landing/sponzori/SponzoriHeader'
 
@@ -45,9 +45,14 @@ export default async function SponzoriPage() {
 
         <Reveal>
           <div className="mx-auto flex max-w-[67.5rem] flex-col gap-3">
-            {sponsors.map((sponsor) => (
-              <PartnerRow key={sponsor.id} sponsor={sponsor} />
-            ))}
+            {/* Mřížka, ne řádky pod sebou: patnáct plnošířkových řádků dělalo
+                na mobilu stránku přes 7000px vysokou. `min()` v `minmax` drží
+                dlaždici v kontejneru i na 320px displeji (viz AGENTS.md). */}
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(17rem,100%),1fr))] gap-3">
+              {sponsors.map((sponsor) => (
+                <PartnerCard key={sponsor.id} sponsor={sponsor} />
+              ))}
+            </div>
             <PartnerSlotCta />
           </div>
         </Reveal>

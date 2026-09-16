@@ -39,7 +39,7 @@ export function RailArrows({
       </button>
       <button
         aria-label={`Další ${itemLabel}`}
-        className="bg-contrast text-lime hover:bg-club grid size-9.5 cursor-pointer place-items-center rounded-full text-body font-bold transition-colors"
+        className="bg-contrast text-lime hover:bg-club hover:text-on-contrast grid size-9.5 cursor-pointer place-items-center rounded-full text-body font-bold transition-colors"
         onClick={scrollBy(step)}
         type="button"
       >

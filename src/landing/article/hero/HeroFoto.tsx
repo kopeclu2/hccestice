@@ -42,7 +42,7 @@ export function HeroFoto({ article }: { article: ArticleDetail }) {
 
         <div className="absolute inset-x-[clamp(1.125rem,3vw,3rem)] bottom-10 z-2">
           <CategoryBadge>{article.badge}</CategoryBadge>
-          <PageTitle balance="pretty" className="mt-4.5 max-w-250 text-white" size="lg">
+          <PageTitle balance="pretty" className="mt-4.5 max-w-250 text-white" size="md">
             <TitleParts
               accent="lime-text"
               highlight={article.titleHighlight}

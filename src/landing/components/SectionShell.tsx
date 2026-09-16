@@ -22,8 +22,8 @@ const sectionShellVariants = cva(
   {
     variants: {
       spacing: {
-        /** Sekce home page — 84px mobil, 128px tablet, 200px desktop (rytmus handoffu). */
-        landing: 'mt-21 md:mt-32 lg:mt-50',
+        /** Sekce home page — 72px mobil, 112px tablet, 160px desktop (rytmus handoffu, ztlumeno o ~20 %). */
+        landing: 'mt-18 md:mt-28 lg:mt-40',
         /** Lišta hned pod herem (oznámení) — drží se nahoře. */
         bar: 'mt-8 md:mt-10',
         /** Hlavička podstránky pod navigací. */

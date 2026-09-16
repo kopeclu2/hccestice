@@ -2,11 +2,11 @@ import type { LandingStatsBlock } from '@/payload-types'
 
 import React from 'react'
 
-import { Highlight } from '../../components/Kicker'
+import { SectionTitle } from '../../components/Heading'
+import { Highlight, Kicker } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
 import { SEASON_STATS } from '../../content'
 import { relId } from '../../data/format'
 import { fetchAutoStats } from '../../data/seasons'
@@ -48,45 +48,55 @@ export async function StatsBlockComponent({ block }: { block: LandingStatsBlock 
   return <StatsView stats={mapStats(block, auto)} />
 }
 
-/** „Sezóna 2025/2026 v číslech" — čtyři velká čísla, watermark PONÍCI. */
+/**
+ * „Sezóna 2025/2026 v číslech" — hlavička jako u ostatních sekcí (Kicker +
+ * SectionTitle), čtyři čísla v kartách po vzoru `HistorieHeader` (třetí
+ * tmavá). Dřív tu byla jen odstavcem malá věta uprostřed a čísla plavala bez
+ * rámce na pozadí — vedle historie, kde stejná čtveřice má karty, to
+ * působilo jako nedokončený blok.
+ */
 function StatsView({ stats }: { stats: StatsContent }) {
   const seasonLabel = stats.seasonLabel.trim()
   return (
     <SectionShell>
-      {/* Negativní offset až od `2xl`: dřív watermark přetékal pravou hranu
-          a `overflow-x-clip` z `PageCanvas` ho ustřihl uprostřed písmene. */}
-      <Watermark className="text-club/12 right-0 -bottom-25 text-watermark-xs 2xl:-right-5">
-        PONÍCI
-      </Watermark>
-
       <Reveal>
-        <p className="text-faint mb-8.5 text-center text-body">
-          {/* Bez označení sezóny nesmí zůstat dvojitá mezera ani prázdná
-              lime plocha — celé zvýraznění se proto vynechá. */}
+        <Kicker>Sezóna</Kicker>
+        <SectionTitle className="mt-3.5" size="md">
           {seasonLabel ? (
             <>
-              Sezóna <Highlight>{seasonLabel}</Highlight> v číslech
+              <Highlight>{seasonLabel}</Highlight> v číslech
             </>
           ) : (
             'Sezóna v číslech'
           )}
-        </p>
+        </SectionTitle>
 
         {/* Auto-fit až od `lg`: na tabletu se vešly tři sloupce ze čtyř a
             poslední číslo osiřelo na druhém řádku. Do 1024px proto zůstává
-            čtvercová mřížka 2×2. */}
-        <dl className="grid grid-cols-2 gap-6 lg:grid-cols-[repeat(auto-fit,minmax(min(11.875rem,100%),1fr))]">
-          {stats.items.map((stat) => (
-            <div className="text-center" key={stat.label}>
-              <dd>
-                <Numeral className={cn(stat.accent && 'text-club')} size="2xl">
+            čtvercová mřížka 2×2 — stejná past jako u `HistorieHeader`. */}
+        <div className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-[repeat(auto-fit,minmax(min(11.875rem,100%),1fr))] lg:gap-3.5">
+          {stats.items.map((stat, index) => {
+            const dark = index === 2
+            return (
+              <div
+                className={cn(
+                  'rounded-thumb px-4.5 py-4 text-center md:px-5 md:py-4.5 lg:px-5.5 lg:py-5',
+                  dark
+                    ? 'border border-transparent bg-contrast text-on-contrast'
+                    : 'border border-line-mid bg-surface',
+                )}
+                key={stat.label}
+              >
+                <Numeral className={cn(!dark && stat.accent && 'text-club-dark')} size="2xl">
                   {stat.value}
                 </Numeral>
-              </dd>
-              <dt className="text-faint mt-1 text-meta">{stat.label}</dt>
-            </div>
-          ))}
-        </dl>
+                <div className={cn('mt-1 text-meta', dark ? 'text-white/60' : 'text-faint')}>
+                  {stat.label}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </Reveal>
     </SectionShell>
   )

@@ -88,7 +88,7 @@ export function CardCta({
   return (
     <div
       className={cn(
-        'text-club mt-auto flex items-center gap-2 pt-4 text-caption font-bold',
+        'text-club-dark mt-auto flex items-center gap-2 pt-4 text-caption font-bold',
         className,
       )}
     >

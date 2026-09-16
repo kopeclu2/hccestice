@@ -16,7 +16,7 @@ export function KontaktCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href="/zapasy" variant="lime" withArrow>
+      <PillLink href="/zapasy" variant="light" withArrow>
         Rozpis zápasů
       </PillLink>
     </CtaStrip>

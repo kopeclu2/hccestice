@@ -80,7 +80,7 @@
   --ds-ink: #0f1512; /* hlavní text */
   --ds-ink-soft: #3d4a43; /* text kickerů/pilulek */
   --ds-dim: #535f58; /* odstavce */
-  --ds-faint: #7b837e; /* popisky, meta text */
+  --ds-faint: #6b736e; /* popisky, meta text (AA 4,88:1 na bílé — dřív #7b837e = 3,9:1) */
   --ds-inactive: #c8d2cb; /* neaktivní číslo stránkování, tečka oddělovače */
   --ds-prose: #22302a; /* text těla článku (utility `article-prose`) */
 
@@ -164,10 +164,10 @@
    * Klubová zelená, lime a pine jsou identita klubu; pine slouží jako podklad
    * fotek, takže se s tématem měnit nesmí. Výsledky (V/R/P) a chybová barva
    * nesou význam, ne náladu. */
-  --color-club: #17703a; /* klubová zelená — akcenty, hover, CTA plochy */
-  --color-club-dark: #0f5c2e; /* hover odkazů/zelených ploch */
-  --color-club-deep: #0a3f22; /* nejtmavší zelená — overlay gradient přes fotku */
-  --color-lime: #c9f24d; /* sekundární akcent — šipky ↗, skóre, zvýraznění */
+  --color-club: #5e9e46; /* klubová zelená — akcenty, hover, CTA plochy (oficiální barva obce) */
+  --color-club-dark: #497d36; /* hover odkazů/zelených ploch */
+  --color-club-deep: #44872b; /* nejtmavší zelená — overlay gradient přes fotku */
+  --color-lime: #7bcc5d; /* sekundární akcent — šipky ↗, skóre, zvýraznění (= --color-club) */
   --color-pine: #0f2a1a; /* podklad fotokaret před načtením */
   --color-pine-deep: #081a10; /* základ tmavých gradientů přes fotky */
 

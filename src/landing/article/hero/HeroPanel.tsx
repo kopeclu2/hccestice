@@ -32,7 +32,7 @@ export function HeroPanel({ article }: { article: ArticleDetail }) {
           <div>
             <Breadcrumbs badge={article.badge} className="mb-5.5" tone="panel" />
             <CategoryBadge>{article.badge}</CategoryBadge>
-            <PageTitle balance="pretty" className="mt-4.5 text-white" size="md">
+            <PageTitle balance="pretty" className="mt-4.5 text-white" size="sm">
               {article.title}
             </PageTitle>
             <AuthorMeta

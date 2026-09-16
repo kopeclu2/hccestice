@@ -96,7 +96,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   }
 
   return (
-    <SubpageShell>
+    <SubpageShell pattern={{ variant: 'grid', tone: 'club', fade: 'top-right' }}>
       <MatchesJsonLd fixtures={fixtures} results={results.rows} />
 
       <ZapasyHeader

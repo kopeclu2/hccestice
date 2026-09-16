@@ -23,7 +23,7 @@ export default async function HistorieKlubuPage() {
   const eras = await fetchHistoryEras()
 
   return (
-    <SubpageShell>
+    <SubpageShell pattern={{ variant: 'cross', tone: 'club', fade: 'center' }}>
       <HistorieHeader />
 
       {/* Šířku timeline drží vnitřní obal, ne `SectionShell`. Override

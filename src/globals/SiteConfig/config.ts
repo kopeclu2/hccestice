@@ -40,11 +40,11 @@ export const SiteConfig: GlobalConfig = {
     {
       name: 'postsListShowPhoto',
       type: 'checkbox',
-      label: 'Zobrazit fotky ve výpisu Aktuality',
+      label: 'Doplnit výchozí obrázek článkům bez fotky',
       defaultValue: false,
       admin: {
         description:
-          'Karty na /aktuality budou mít náhledovou fotku. Widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku v layoutu stránky.',
+          'Náhled má karta ve výpisu Aktuality vždy — článek bez vlastní fotky dostane vzorovou plochu. S touhle volbou se místo ní použije Výchozí obrázek článků. Widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku v layoutu stránky.',
       },
     },
     {

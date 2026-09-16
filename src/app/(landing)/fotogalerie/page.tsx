@@ -42,7 +42,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
   }
 
   return (
-    <SubpageShell>
+    <SubpageShell pattern={{ variant: 'glow-duo', tone: 'club', fade: 'top' }}>
       <GalerieHeader
         activeSlug={activeSlug}
         seasons={seasons

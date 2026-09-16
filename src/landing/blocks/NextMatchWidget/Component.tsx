@@ -2,13 +2,11 @@ import type { NextMatchWidgetBlock } from '@/payload-types'
 
 import React from 'react'
 
-import { CardTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
+import { NextMatchPanel } from '../../components/NextMatchPanel'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { fetchUpcoming } from '../../data/matches'
 import type { UpcomingMatch } from '../../types'
-import { Countdown } from '../Hero/Countdown'
 
 /** Widget nejbližšího zápasu — načte nadcházející zápas z kolekce. */
 export async function NextMatchWidgetBlockComponent({ block }: { block: NextMatchWidgetBlock }) {
@@ -16,7 +14,11 @@ export async function NextMatchWidgetBlockComponent({ block }: { block: NextMatc
   return <NextMatchWidgetView note={block.note ?? null} upcoming={upcoming} />
 }
 
-/** Nejbližší zápas — tmavá karta s live countdownem (mimo hero). */
+/**
+ * Nejbližší zápas — tmavá karta s live countdownem (mimo hero).
+ * Vzhled drží sdílený `NextMatchPanel` (stejný panel používá rozpis
+ * zápasů, když je v termínovce jediný zápas).
+ */
 function NextMatchWidgetView({
   upcoming,
   note,
@@ -27,28 +29,21 @@ function NextMatchWidgetView({
   return (
     <SectionShell>
       <Reveal>
-        {/* p-6 na mobilu: 32px odsazení sebralo z 320px šířky pětinu a
-            countdown se do zbytku nevešel. */}
-        <div className="bg-contrast relative overflow-hidden rounded-card p-6 text-on-contrast md:p-8 lg:p-12">
-          <div className="hatch absolute inset-0 opacity-40" />
-          {upcoming ? (
-            <div className="relative">
-              <div className="flex items-center gap-2.5">
-                <span className="bg-lime shadow-ring-lime size-2 rounded-full" />
-                <Eyebrow tone="lime">Nejbližší zápas · {upcoming.label}</Eyebrow>
-              </div>
-              <CardTitle as="h3" className="mt-2 leading-tight text-white" size="lg">
-                {upcoming.title}
-              </CardTitle>
-              <div className="text-meta text-white/65">{upcoming.subtitle}</div>
-              <Countdown targetISO={upcoming.kickoffISO} />
-            </div>
-          ) : (
+        {upcoming ? (
+          <NextMatchPanel
+            kickoffISO={upcoming.kickoffISO}
+            kicker={`Nejbližší zápas · ${upcoming.label}`}
+            subtitle={upcoming.subtitle}
+            title={upcoming.title}
+          />
+        ) : (
+          <div className="bg-contrast relative overflow-hidden rounded-card p-6 text-on-contrast md:p-8 lg:p-12">
+            <div className="hatch absolute inset-0 opacity-40" />
             <p className="relative text-white/85">
               {note ?? 'Žádný zápas není naplánovaný — rozpis nové sezóny připravujeme.'}
             </p>
-          )}
-        </div>
+          </div>
+        )}
       </Reveal>
     </SectionShell>
   )

@@ -11,13 +11,13 @@ export type BreadcrumbTone = 'photo' | 'panel' | 'light'
 const linkClass: Record<BreadcrumbTone, string> = {
   photo: 'text-white/85 hover:text-lime',
   panel: 'text-white/75 hover:text-lime',
-  light: 'text-club hover:text-club-dark',
+  light: 'text-club-dark hover:text-club',
 }
 
 const currentClass: Record<BreadcrumbTone, string> = {
   photo: 'text-lime',
   panel: 'text-lime',
-  light: 'text-club font-bold',
+  light: 'text-club-dark font-bold',
 }
 
 /** Drobečková navigace hero: Domů / Aktuality / kategorie článku. */

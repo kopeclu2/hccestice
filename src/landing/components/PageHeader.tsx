@@ -22,7 +22,7 @@ const perexVariants = cva('text-ink-soft mt-4.5 text-lead leading-[1.55] text-pr
 })
 
 /** Výchozí umístění obrysového watermarku v pravém horním rohu hlavičky. */
-const WATERMARK_CLASS = 'text-club/10 -top-15 -right-7.5 text-watermark-xl'
+const WATERMARK_CLASS = 'text-club/10 -top-15 right-0 text-watermark-lg'
 
 export type PageHeaderProps = {
   /** Titulek. `Highlight` část se předává jako JSX — každá stránka ji má jinde. */
