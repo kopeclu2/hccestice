@@ -38,6 +38,12 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Icon: '@/components/admin/graphics/Icon#Icon',
+        Logo: '@/components/admin/graphics/Logo#Logo',
+      },
+    },
     user: Users.slug,
     livePreview: {
       breakpoints: [
