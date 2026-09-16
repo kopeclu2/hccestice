@@ -103,6 +103,30 @@ export const Media: CollectionConfig = {
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     /**
+     * Bez whitelistu šel nahrát libovolný typ souboru — včetně `image/svg+xml`,
+     * které prohlížeč při přímém otevření `/api/media/file/:jmeno` vykreslí a
+     * spustí vložený `<script>` (stored XSS z účtu přihlášeného editora).
+     * Seznam odpovídá reálným typům v produkční databázi
+     * (`select distinct mime_type from media`) + `image/webp` pro budoucí
+     * uploady. Velikost souboru hlídá `upload.limits.fileSize`
+     * v `payload.config.ts` — tam je globální pro všechny upload kolekce.
+     */
+    mimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/tiff',
+      'image/x-icon',
+      'application/pdf',
+      'audio/mpeg',
+      'application/msword',
+      'application/x-cfb',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+    /**
      * Payload servíruje soubory přes `/api/media/file/:filename` a
      * **žádnou cache hlavičku nenastavuje** (ověřeno v
      * `node_modules/payload/dist/uploads/endpoints/getFile.js` — jen

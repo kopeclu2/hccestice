@@ -26,6 +26,14 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: {
+    // Payload defaultuje na `secure: false` — bez toho by prohlížeč poslal
+    // admin session cookie i po nešifrovaném HTTP. `httpOnly` je natvrdo
+    // `true` a nejde přepsat, to bezpečné je. Mimo produkci (lokální `bun
+    // dev` na `http://localhost`) musí zůstat vypnuté, jinak by se admin
+    // nemohl vůbec přihlásit.
+    cookies: {
+      secure: process.env.NODE_ENV === 'production',
+    },
     forgotPassword: {
       // Hodinu drží i výchozí Payload, uvedeno explicitně, protože stejnou
       // dobu píše šablona do textu mailu (`RESET_TOKEN_HOURS`).

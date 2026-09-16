@@ -96,6 +96,17 @@ export default buildConfig({
     Milestones,
   ],
   cors: [getServerSideURL()].filter(Boolean),
+  /**
+   * Globální limit velikosti nahrávaného souboru — bez něj šlo nahrát cokoli
+   * libovolně velkého a zaplnit disk produkčního boxu (`AGENTS.md`: 3,7 GB
+   * RAM bez swapu, omezený prostor). 25 MB má rezervu nad největším reálným
+   * souborem v `media` (19,3MB TIFF), ale zastaví řádově větší nahrávky.
+   * Platí pro všechny upload kolekce (jen `media`) — Payload tohle
+   * nekonfiguruje per-kolekci, jen globálně.
+   */
+  upload: {
+    limits: { fileSize: 25 * 1024 * 1024 },
+  },
   // Adapter se vybírá podle env proměnných (Resend / SMTP / jen log) —
   // `email` bere i Promise, takže se tu záměrně nečeká na `await`.
   email: emailAdapter(),
