@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import { PageCanvas } from '@/landing/components/PageCanvas'
+import { SubpageShell } from '@/landing/components/SubpageShell'
 import { BreadcrumbsJsonLd } from '@/landing/components/BreadcrumbsJsonLd'
 import { CardTitle, PageTitle } from '@/landing/components/Heading'
 import { Kicker } from '@/landing/components/Kicker'
@@ -32,6 +32,13 @@ type Args = { params: Promise<{ slug: string }> }
  * Detail produktu — layout podle shadcnblocks „product-detail1"
  * (mřížka fotek vlevo, název/cena/parametry vpravo) v klubovém
  * designu. Objednávky běží e-mailem, ne košíkem.
+ *
+ * `SubpageShell`, ne holý `PageCanvas` — stránka dřív neměla ani navigaci,
+ * ani patičku, protože tenhle jediný ručně psaný detail si je (na rozdíl
+ * od zbytku landing routes) sám netahal. Zpětný odkaz mířil na `/#kontakt`
+ * (kotva na homepage), ne na `/produkty-merch`, kde reálně žije mřížka
+ * produktů (`ProductsGridBlockComponent`) — návrat z detailu vedl jinam,
+ * než odkud se na produkt dalo prokliknout.
  */
 export default async function ProductDetailPage({ params }: Args) {
   const { slug } = await params
@@ -45,15 +52,17 @@ export default async function ProductDetailPage({ params }: Args) {
   const mailto = `mailto:${site.email}?subject=${encodeURIComponent(`Objednávka: ${product.name}`)}`
 
   return (
-    <PageCanvas className="min-h-screen" gutter="wide" hatch={false} surface="paper">
+    <SubpageShell gutter="wide" hatch={false} surface="paper">
       <ProductJsonLd photos={photos} product={product} />
-      <BreadcrumbsJsonLd trail={[{ href: '/#kontakt', label: 'Klubový merch' }, { label: product.name }]} />
+      <BreadcrumbsJsonLd
+        trail={[{ href: '/produkty-merch', label: 'Produkty merch' }, { label: product.name }]}
+      />
       <div className="mx-auto max-w-[80rem] pt-10">
         <Link
           className="text-faint hover:text-club inline-flex items-center gap-2 text-meta font-bold transition-colors [&_svg]:size-4"
-          href="/#kontakt"
+          href="/produkty-merch"
         >
-          <ArrowLeft strokeWidth={2.5} /> Zpět na web klubu
+          <ArrowLeft strokeWidth={2.5} /> Zpět na Produkty merch
         </Link>
 
         <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
@@ -170,7 +179,7 @@ export default async function ProductDetailPage({ params }: Args) {
           </div>
         </div>
       </div>
-    </PageCanvas>
+    </SubpageShell>
   )
 }
 

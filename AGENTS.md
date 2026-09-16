@@ -568,8 +568,6 @@ Pravidla, když se toho budete dotýkat:
   — handoff je nekreslí. Odstraněné jsou z komponenty, z configu i ze schématu,
   takže hodnoty, které v nich měly dokumenty založené před 21. 8. 2026, jsou
   ztracené; vracet je zpátky znamená revert migrace níž.
-- `RailArrows` zůstávají v `components/`, i když je Tréninky už nepoužívají —
-  jediný konzument je `zapasy/FixturesRail.tsx`.
 - Schéma rozšiřuje migrace `20260821_093653_trainings_cards` (aditivní:
   `venue`, `note`, `hidden_on_web`, `kicker`, `default_venue`) a zužuje
   `20260821_095556_trainings_drop_extras` (**destruktivní** — dropne

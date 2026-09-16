@@ -12,7 +12,7 @@ export function RosterCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href="/#kontakt" variant="light" withArrow>
+      <PillLink href="/#kontakt" variant="lime" withArrow>
         Chci hrát
       </PillLink>
     </CtaStrip>
