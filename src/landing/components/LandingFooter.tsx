@@ -116,8 +116,16 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * plochu zvětší na ~28px, aniž by se řádkování rozjelo — mezera
            * mezi odkazy zůstává 8px jako dřív. Na desktopu, kde se klika
            * myší, se padding ruší a rozestupy jsou přesně jako v handoffu.
+           *
+           * Minimum sloupce je `6.5rem` (104px), ne `9.375rem` (150px):
+           * dva sloupce (Klub/Hokej) se s 150px minimem na mobilu (~256–306px
+           * vnitřní šířky panelu) nevešly vedle sebe, takže `auto-fit` spadl
+           * na jeden — krátké odkazy pak zůstaly nalepené k levému okraji
+           * a napravo od nich zela přes polovinu šířky panelu prázdná zelená
+           * plocha. Slova jako „Fotoalbum"/„Aktuality" se do 104px vejdou
+           * s rezervou, takže sloupce zůstávají vedle sebe i na 320px displeji.
            */}
-          <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(9.375rem,100%),1fr))] gap-7 text-meta">
+          <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(6.5rem,100%),1fr))] gap-7 text-meta">
             {content.columns.map((column) => (
               <div className="flex flex-col gap-1" key={column.title}>
                 {/*

@@ -6,6 +6,7 @@ import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { CookieConsentInit } from '@/components/CookieConsent/CookieConsentInit'
+import { GlobalNav } from '@/landing/components/GlobalNav'
 import { MaintenanceNotice } from '@/landing/components/MaintenanceNotice'
 import { MaintenanceScreen } from '@/landing/components/MaintenanceScreen'
 import { PatternDevSwitcher } from '@/landing/components/PatternDevSwitcher'
@@ -88,7 +89,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {showMaintenance && site ? (
           <MaintenanceScreen maintenance={maintenance} site={site} />
         ) : (
-          children
+          <>
+            {/* Fixní lišta skrytá do prvního scrollu — doplňuje plovoucí
+                Hero navigaci a nesticky `ArticleNav`, obě po scrollu pryč
+                z prvního plátna mizí a web by jinak zbytek stránky
+                nechal bez menu. */}
+            <GlobalNav />
+            {children}
+          </>
         )}
 
         {/* DEV nástroj: plovoucí přepínač vzorů pozadí (jen ve vývoji) */}

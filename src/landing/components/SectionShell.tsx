@@ -16,9 +16,13 @@ import { cn } from '@/utilities/ui'
  * `lg` (1024px), na tabletu (768–1023px) je mezistupeň. Dokud desktopová
  * hodnota naskakovala hned na `md`, měl tablet mezi sekcemi 200px prázdna —
  * rytmus navržený pro 1440px šířku na poloviční ploše.
+ *
+ * `scroll-mt-20` (80px) je vyšší, než by sám o sobě potřeboval — pokrývá
+ * výšku `GlobalNav` (fixní lišta v root layoutu). Bez ní by kotva po kliku
+ * z lišty přistála pod ní zakrytá.
  */
 const sectionShellVariants = cva(
-  'relative z-1 mx-auto w-full max-w-[97.5rem] scroll-mt-8 px-[clamp(0.875rem,3vw,2.5rem)]',
+  'relative z-1 mx-auto w-full max-w-[97.5rem] scroll-mt-20 px-[clamp(0.875rem,3vw,2.5rem)]',
   {
     variants: {
       spacing: {

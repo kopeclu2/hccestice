@@ -22,16 +22,25 @@ import type { NavItem } from './types'
  * (`blocks/Club/Component.tsx` → `id="klub"` atd.). `path` je podstránka,
  * pokud sekce nějakou má. Položka bez `anchor` na homepage jako sekce
  * neexistuje, takže i home nav vede přímo na podstránku.
+ *
+ * Pořadí kopíruje skutečné pořadí bloků na homepage (`migration/seed-home-
+ * landing.ts`): Aktuality → Sezóna → Tréninky → O klubu → Fotoalbum →
+ * Historie → Lidé v klubu → Partneři. Položky bez vlastní sekce (Zápasy,
+ * Soupiska) jsou zařazené tematicky vedle Sezóny. Dřív menu jelo v jiném
+ * pořadí než sekce na stránce, takže klikání odkazy skákalo chaoticky
+ * nahoru/dolů po homepage — návštěvník si nemohl vytvořit mentální mapu,
+ * kde na stránce co je.
  */
 export const FALLBACK_NAV: NavItem[] = [
-  { label: 'O klubu', anchor: 'klub', path: null },
-  { label: 'Historie', anchor: 'historie', path: '/historie-klubu' },
-  { label: 'Soupiska', anchor: null, path: '/soupiska' },
-  { label: 'Zápasy', anchor: null, path: '/zapasy' },
   { label: 'Aktuality', anchor: 'aktuality', path: '/aktuality' },
   { label: 'Sezóna', anchor: 'sezona', path: null },
+  { label: 'Zápasy', anchor: null, path: '/zapasy' },
+  { label: 'Soupiska', anchor: null, path: '/soupiska' },
   { label: 'Tréninky', anchor: 'treninky', path: '/treninky' },
+  { label: 'O klubu', anchor: 'klub', path: null },
   { label: 'Fotoalbum', anchor: 'fotoalbum', path: '/fotogalerie' },
+  { label: 'Historie', anchor: 'historie', path: '/historie-klubu' },
+  { label: 'Lidé v klubu', anchor: 'lide', path: null },
   { label: 'Partneři', anchor: 'sponzori', path: '/sponzori' },
 ]
 

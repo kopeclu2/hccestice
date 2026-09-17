@@ -3,8 +3,8 @@ import type { LandingSeasonBlock } from '@/payload-types'
 import React from 'react'
 
 import { EmptyState } from '../../components/EmptyState'
-import { CardTitle } from '../../components/Heading'
-import { Highlight } from '../../components/Kicker'
+import { CardTitle, SectionTitle } from '../../components/Heading'
+import { Highlight, Kicker } from '../../components/Kicker'
 import { PillLink } from '../../components/PillLink'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
@@ -51,6 +51,13 @@ export async function SeasonBlockComponent({ block }: { block: LandingSeasonBloc
  * Sezóna — výřezy sekcí z /zapasy: pás nadcházejících zápasů a pod ním
  * dvojice Odehrané zápasy / Tabulka. Každý výřez má proklik na /zapasy.
  * Sekce nese kotvu `#sezona` (odkazuje na ni hlavní navigace i hero).
+ *
+ * Vlastní Kicker + nadpis nad výřezy — dřív sekce žádný neměla a rovnou
+ * začínala „Rozlosování / Nadcházející zápasy" (mikro-nadpis jednoho ze tří
+ * výřezů uvnitř). Na mobilu, kde není žádné vedlejší rozvržení, které by
+ * novou sekci naznačilo jinak, tak karty Aktualit přecházely přímo do
+ * rozpisu zápasů bez jakéhokoli ohlášení — jediná hlavní sekce homepage bez
+ * vlastního Kickeru (srovnej `NewsView`, `ClubView`, `HistoryView`…).
  */
 function SeasonView({
   fixtures,
@@ -67,6 +74,18 @@ function SeasonView({
 
   return (
     <>
+      <SectionShell id="sezona">
+        <Reveal>
+          <Kicker>Sezóna</Kicker>
+          <SectionTitle className="mt-3.5 text-pretty">
+            Rozlosování, výsledky a <Highlight>tabulka</Highlight>
+          </SectionTitle>
+        </Reveal>
+      </SectionShell>
+
+      {/* `spacing="content"` — menší odstup než plný sekční rytmus, sekce
+          už má nadpis těsně nad sebou (stejný vzor jako hlavička podstránky
+          → první obsahový blok). */}
       <Reveal>
         <FixturesRail
           emptyState={
@@ -92,9 +111,8 @@ function SeasonView({
           }
           fixtures={fixtures}
           headVariant="landing"
-          id="sezona"
           moreHref={ZAPASY_HREF}
-          spacing="landing"
+          spacing="content"
         />
       </Reveal>
 
