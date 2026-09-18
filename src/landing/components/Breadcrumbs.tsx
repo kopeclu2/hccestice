@@ -20,28 +20,34 @@ export type Crumb = {
  */
 export function Breadcrumbs({ className, trail }: { className?: string; trail: Crumb[] }) {
   return (
-    <div
-      className={cn(
-        'text-faint mb-5 flex items-center gap-2 text-caption font-semibold',
-        className,
-      )}
-    >
+    <nav aria-label="Drobečková navigace" className={cn('mb-5', className)}>
       <BreadcrumbsJsonLd trail={trail} />
-      <Link className="text-club-dark hover:text-club transition-colors" href="/">
-        Domů
-      </Link>
-      {trail.map((crumb, index) => (
-        <React.Fragment key={`${crumb.label}-${index}`}>
-          <span className="opacity-50">/</span>
-          {crumb.href ? (
-            <Link className="text-club-dark hover:text-club transition-colors" href={crumb.href}>
-              {crumb.label}
-            </Link>
-          ) : (
-            <span className="text-club-dark line-clamp-1 font-bold">{crumb.label}</span>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
+      <ol className="text-faint m-0 flex list-none items-center gap-2 p-0 text-caption font-semibold">
+        <li>
+          <Link className="text-club-dark hover:text-club transition-colors" href="/">
+            Domů
+          </Link>
+        </li>
+        {trail.map((crumb, index) => (
+          <li className="flex items-center gap-2" key={`${crumb.label}-${index}`}>
+            <span aria-hidden className="opacity-50">
+              /
+            </span>
+            {crumb.href ? (
+              <Link
+                className="text-club-dark hover:text-club transition-colors"
+                href={crumb.href}
+              >
+                {crumb.label}
+              </Link>
+            ) : (
+              <span aria-current="page" className="text-club-dark line-clamp-1 font-bold">
+                {crumb.label}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
   )
 }

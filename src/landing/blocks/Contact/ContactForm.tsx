@@ -80,147 +80,172 @@ export function ContactForm({
     }
   })
 
-  if (status === 'sent') {
-    return (
-      /* Tři stupně odsazení zrcadlí formulář níž — panel po odeslání stojí na
-         stejném místě, takže s pevným `p-8.5` si na tabletu bral okraje o dva
-         stupně větší než karta, kterou nahradil. */
-      <div
-        className={cn(
-          'rounded-panel relative mx-auto mt-10 max-w-170 p-4.5 text-left md:p-6.5 lg:p-8.5',
-          tone === 'dark'
-            ? 'bg-contrast text-on-contrast'
-            : /* `z-0`, ne jen `relative`: bez vlastního z-indexu karta nezaloží
-                 stacking context, takže `-z-1` uvnitř `GlowCircle` propadne až
-                 za tuhle kartu v kontextu nadřazeného `SectionShellu` (`z-1`)
-                 a její neprůhledné bílé pozadí kruh úplně zakryje. */
-              'border-line-soft bg-surface text-ink z-0 overflow-hidden border',
-        )}
-      >
-        {tone === 'light' && <GlowCircle className="-top-20 -right-20 size-60" tone="lime" />}
-        <div className="bg-lime text-ink relative mb-4 grid size-11 place-items-center rounded-full [&_svg]:size-5">
-          <Check strokeWidth={3} />
-        </div>
-        <CardTitle className="relative" size="xs">
-          Díky za zprávu!
-        </CardTitle>
-        <p
-          className={cn('relative mt-2 text-meta', tone === 'dark' ? 'text-white/70' : 'text-dim')}
-        >
-          Ozveme se co nejdřív — obvykle do pár dní. Když to spěchá, zavolejte komukoli ze sekce
-          Lidé v klubu.
-        </p>
-      </div>
-    )
-  }
-
+  /*
+   * `role="status" aria-live="polite"` na trvalém obalu, ne na jednotlivých
+   * variantách — přepnutí formuláře na potvrzení jinak proběhne tiše.
+   * Čtečka oznámí novou variantu jen tehdy, když samotný region (tenhle
+   * `div`) v DOM zůstane a měnil se jen jeho obsah, ne když se region
+   * sám nahradí jiným elementem.
+   */
   return (
-    <form
-      className={cn(
-        'rounded-panel relative mx-auto mt-10 max-w-170 p-4.5 text-left md:p-6.5 lg:p-8.5',
-        tone === 'dark'
-          ? 'bg-contrast text-on-contrast'
-          : 'border-line-soft bg-surface text-ink z-0 overflow-hidden border',
-      )}
-      noValidate
-      onSubmit={onSubmit}
-    >
-      {tone === 'light' && <GlowCircle className="-top-20 -right-20 size-60" tone="lime" />}
-
-      {tone === 'light' && (
-        <Eyebrow className="relative mb-2 block" tone="club">
-          Nebo přes formulář
-        </Eyebrow>
-      )}
-      <CardTitle className="relative mb-4.5" size="xs">
-        Poslat zprávu
-      </CardTitle>
-
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(11.25rem,100%),1fr))] gap-3.5">
-        <Field error={errors.name?.message} id="contact-name" label="Jméno" tone={tone}>
-          <Input
-            autoComplete="name"
-            className={fieldClass}
-            id="contact-name"
-            placeholder="Jan Novák"
-            type="text"
-            {...register('name')}
-          />
-        </Field>
-        <Field error={errors.email?.message} id="contact-email" label="E-mail" tone={tone}>
-          <Input
-            autoComplete="email"
-            className={fieldClass}
-            id="contact-email"
-            placeholder="jan@email.cz"
-            type="email"
-            {...register('email')}
-          />
-        </Field>
-      </div>
-
-      <fieldset className="mt-4">
-        <legend className={cn('mb-1.5 text-caption font-semibold', labelClass)}>
-          Čeho se to týká
-        </legend>
-        <div className="flex flex-wrap gap-2">
-          {topics.map((topic) => {
-            const isSelected = selectedTopic === topic
-            return (
-              <PillButton
-                aria-pressed={isSelected}
-                className={cn(
-                  isSelected && 'border-lime bg-lime text-ink hover:bg-lime hover:text-ink',
-                )}
-                key={topic}
-                onClick={() => setValue('topic', topic, { shouldValidate: true })}
-                size="sm"
-                variant={tone === 'dark' ? 'inverse' : 'outline'}
-              >
-                {topic}
-              </PillButton>
-            )
-          })}
+    <div role="status">
+      {status === 'sent' ? (
+        /* Tři stupně odsazení zrcadlí formulář níž — panel po odeslání stojí
+           na stejném místě, takže s pevným `p-8.5` si na tabletu bral okraje
+           o dva stupně větší než karta, kterou nahradil. */
+        <div
+          className={cn(
+            'rounded-panel relative mx-auto mt-10 max-w-170 p-4.5 text-left md:p-6.5 lg:p-8.5',
+            tone === 'dark'
+              ? 'bg-contrast text-on-contrast'
+              : /* `z-0`, ne jen `relative`: bez vlastního z-indexu karta nezaloží
+                   stacking context, takže `-z-1` uvnitř `GlowCircle` propadne až
+                   za tuhle kartu v kontextu nadřazeného `SectionShellu` (`z-1`)
+                   a její neprůhledné bílé pozadí kruh úplně zakryje. */
+                'border-line-soft bg-surface text-ink z-0 overflow-hidden border',
+          )}
+        >
+          {tone === 'light' && <GlowCircle className="-top-20 -right-20 size-60" tone="lime" />}
+          <div className="bg-lime text-ink relative mb-4 grid size-11 place-items-center rounded-full [&_svg]:size-5">
+            <Check strokeWidth={3} />
+          </div>
+          <CardTitle className="relative" size="xs">
+            Díky za zprávu!
+          </CardTitle>
+          <p
+            className={cn(
+              'relative mt-2 text-meta',
+              tone === 'dark' ? 'text-white/70' : 'text-dim',
+            )}
+          >
+            Ozveme se co nejdřív — obvykle do pár dní. Když to spěchá, zavolejte komukoli ze sekce
+            Lidé v klubu.
+          </p>
         </div>
-      </fieldset>
+      ) : (
+        <form
+          className={cn(
+            'rounded-panel relative mx-auto mt-10 max-w-170 p-4.5 text-left md:p-6.5 lg:p-8.5',
+            tone === 'dark'
+              ? 'bg-contrast text-on-contrast'
+              : 'border-line-soft bg-surface text-ink z-0 overflow-hidden border',
+          )}
+          noValidate
+          onSubmit={onSubmit}
+        >
+          {tone === 'light' && <GlowCircle className="-top-20 -right-20 size-60" tone="lime" />}
 
-      <Field
-        className="mt-4"
-        error={errors.message?.message}
-        id="contact-message"
-        label="Zpráva"
-        tone={tone}
-      >
-        <Textarea
-          className={cn(fieldClass, 'min-h-30 rounded-badge py-3.5')}
-          id="contact-message"
-          placeholder="Dobrý den, rád bych…"
-          {...register('message')}
-        />
-      </Field>
+          {tone === 'light' && (
+            <Eyebrow className="relative mb-2 block" tone="club">
+              Nebo přes formulář
+            </Eyebrow>
+          )}
+          <CardTitle className="relative mb-4.5" size="xs">
+            Poslat zprávu
+          </CardTitle>
 
-      {serverError && (
-        <p className={cn('mt-3 text-meta font-semibold', errorClass)}>{serverError}</p>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(11.25rem,100%),1fr))] gap-3.5">
+            <Field error={errors.name?.message} id="contact-name" label="Jméno" tone={tone}>
+              <Input
+                aria-describedby={errors.name ? 'contact-name-error' : undefined}
+                aria-invalid={Boolean(errors.name)}
+                autoComplete="name"
+                className={fieldClass}
+                id="contact-name"
+                placeholder="Jan Novák"
+                type="text"
+                {...register('name')}
+              />
+            </Field>
+            <Field error={errors.email?.message} id="contact-email" label="E-mail" tone={tone}>
+              <Input
+                aria-describedby={errors.email ? 'contact-email-error' : undefined}
+                aria-invalid={Boolean(errors.email)}
+                autoComplete="email"
+                className={fieldClass}
+                id="contact-email"
+                placeholder="jan@email.cz"
+                type="email"
+                {...register('email')}
+              />
+            </Field>
+          </div>
+
+          <fieldset className="mt-4">
+            <legend className={cn('mb-1.5 text-caption font-semibold', labelClass)}>
+              Čeho se to týká
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {topics.map((topic) => {
+                const isSelected = selectedTopic === topic
+                return (
+                  <PillButton
+                    aria-pressed={isSelected}
+                    className={cn(
+                      isSelected && 'border-lime bg-lime text-ink hover:bg-lime hover:text-ink',
+                    )}
+                    key={topic}
+                    onClick={() => setValue('topic', topic, { shouldValidate: true })}
+                    size="sm"
+                    variant={tone === 'dark' ? 'inverse' : 'outline'}
+                  >
+                    {topic}
+                  </PillButton>
+                )
+              })}
+            </div>
+          </fieldset>
+
+          <Field
+            className="mt-4"
+            error={errors.message?.message}
+            id="contact-message"
+            label="Zpráva"
+            tone={tone}
+          >
+            <Textarea
+              aria-describedby={errors.message ? 'contact-message-error' : undefined}
+              aria-invalid={Boolean(errors.message)}
+              className={cn(fieldClass, 'min-h-30 rounded-badge py-3.5')}
+              id="contact-message"
+              placeholder="Dobrý den, rád bych…"
+              {...register('message')}
+            />
+          </Field>
+
+          {serverError && (
+            <p className={cn('mt-3 text-meta font-semibold', errorClass)} role="alert">
+              {serverError}
+            </p>
+          )}
+
+          <PillButton
+            arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
+            /* Bez odsazení se tlačítko lepilo na textarea (~4px) — o stupeň víc
+               než rytmus polí (16px), aby se odsadilo od bloku formuláře. */
+            className="mt-5"
+            disabled={isSubmitting}
+            size="lg"
+            type="submit"
+            variant="lime"
+            withArrow
+          >
+            {isSubmitting ? 'Odesílám…' : 'Odeslat zprávu'}
+          </PillButton>
+        </form>
       )}
-
-      <PillButton
-        arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
-        /* Bez odsazení se tlačítko lepilo na textarea (~4px) — o stupeň víc
-           než rytmus polí (16px), aby se odsadilo od bloku formuláře. */
-        className="mt-5"
-        disabled={isSubmitting}
-        size="lg"
-        type="submit"
-        variant="lime"
-        withArrow
-      >
-        {isSubmitting ? 'Odesílám…' : 'Odeslat zprávu'}
-      </PillButton>
-    </form>
+    </div>
   )
 }
 
-/** Popisek + pole + chybová hláška (jednotný rytmus formuláře). */
+/**
+ * Popisek + pole + chybová hláška (jednotný rytmus formuláře).
+ *
+ * Všechna pole formuláře jsou povinná (`contactSchema`), proto hvězdička
+ * u popisku bez vlastního propu. Chybová hláška nese `id`, na které se
+ * pole napojuje přes `aria-describedby` (nastavuje volající u `Input`/
+ * `Textarea` — `Field` samo o sobě na vykreslené dítě nesahá).
+ */
 function Field({
   id,
   label,
@@ -239,7 +264,7 @@ function Field({
   return (
     <div className={className}>
       <Label className={cn('mb-1.5 text-caption font-semibold', labelClasses[tone])} htmlFor={id}>
-        {label}
+        {label} <span aria-hidden="true">*</span>
       </Label>
       {children}
       {error && (
@@ -248,6 +273,7 @@ function Field({
             'mt-1.5 text-caption font-semibold',
             tone === 'dark' ? 'text-danger-soft' : 'text-danger',
           )}
+          id={`${id}-error`}
           role="alert"
         >
           {error}

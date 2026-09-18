@@ -54,6 +54,12 @@ export function StickyNav({ items, cta }: { items: NavItem[]; cta: NavCta }) {
         'border-line fixed inset-x-0 top-0 z-30 border-b bg-surface/95 shadow-tile backdrop-blur-lg transition-all duration-300',
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-full opacity-0',
       )}
+      // Skrytá lišta byla jen `opacity-0`/`pointer-events-none` — vizuálně
+      // zmizí, ale odkazy uvnitř zůstávaly v tab-pořadí. Klávesnicoví
+      // uživatelé tak před viditelným obsahem procházeli přes neviditelné
+      // logo, pilulky a CTA. `inert` je vyřadí z tab-pořadí i z přístupnostního
+      // stromu úplně, dokud se lišta po scrollu nezjeví.
+      inert={!visible}
     >
       <nav className="mx-auto flex max-w-[97.5rem] items-center gap-2.5 px-[clamp(0.875rem,3vw,2.5rem)] py-2.5">
         <LogoStamp bordered href={context === 'home' ? '#home' : '/'} />

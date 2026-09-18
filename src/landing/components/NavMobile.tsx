@@ -52,6 +52,22 @@ export function NavMobile({
   const [open, setOpen] = React.useState(false)
   const [mounted, setMounted] = React.useState(false)
   const pathname = usePathname()
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
+  const closeRef = React.useRef<HTMLButtonElement>(null)
+  const wasOpenRef = React.useRef(false)
+
+  // Fokus se přesune do panelu při otevření a vrátí na burger při zavření —
+  // bez toho klávesnicoví uživatelé po otevření menu nevědí, kde jsou, a po
+  // zavření musí znovu najít pozici na stránce.
+  React.useEffect(() => {
+    if (open) {
+      closeRef.current?.focus()
+      wasOpenRef.current = true
+    } else if (wasOpenRef.current) {
+      triggerRef.current?.focus()
+      wasOpenRef.current = false
+    }
+  }, [open])
 
   // Portál (`createPortal`) smí vzniknout jen na klientovi — `mounted` je
   // úmyslný jednorázový příznak po hydrataci, ne odvozený stav.
@@ -109,6 +125,7 @@ export function NavMobile({
             : 'border-line text-ink hover:bg-contrast border bg-surface hover:text-on-contrast',
         )}
         onClick={() => setOpen(true)}
+        ref={triggerRef}
         type="button"
       >
         <Menu strokeWidth={2.25} />
@@ -132,6 +149,7 @@ export function NavMobile({
                 aria-label="Zavřít menu"
                 className="grid size-11 place-items-center rounded-full border border-white/28 bg-white/16 text-white transition-colors hover:bg-white/30 md:size-10 [&_svg]:size-5"
                 onClick={() => setOpen(false)}
+                ref={closeRef}
                 type="button"
               >
                 <X strokeWidth={2.25} />
