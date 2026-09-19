@@ -199,17 +199,23 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
               Nastavení cookies
             </button>
             <span className="py-1">{content.league}</span>
-            <Link
-              className="hover:text-lime py-1 transition-colors"
-              href="https://lukaskopecky.cz"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Web: Lukáš Kopecký
-            </Link>
           </span>
         </div>
       </div>
+
+      {/* Autorský odkaz je záměrně mimo zelený panel — na rozdíl od
+          klubových odkazů výš nejde o obsah webu, ale o kredit tvůrce, ať
+          se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
+      <p className="text-faint mt-4 text-center text-caption">
+        <Link
+          className="hover:text-club-dark transition-colors"
+          href="https://lukaskopecky.cz"
+          rel="noreferrer"
+          target="_blank"
+        >
+          Web: Lukáš Kopecký
+        </Link>
+      </p>
     </footer>
   )
 }
