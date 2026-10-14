@@ -72,6 +72,15 @@ export type VchlSettings = {
   }
 }
 
+/** Zápas, který v tomto běhu přešel do stavu „odehráno" (podklad pro e-mail o výsledku). */
+export type VchlPlayedNow = {
+  matchId: number
+  /** `2026-10-04 doma Pardubice` */
+  label: string
+  /** `5:6 sn` z pohledu Čestic; chybí, když ho diff nenesl */
+  score?: string
+}
+
 export type VchlRunResult = {
   runId: number | string | null
   status: 'ok' | 'partial' | 'error' | 'skipped'
@@ -80,6 +89,8 @@ export type VchlRunResult = {
   changes: VchlChanges
   warnings: VchlWarning[]
   diff?: VchlDiffEntry[]
+  /** jen u skutečných běhů; odvozeno z diffu zápasů (update, status → played) */
+  playedNow?: VchlPlayedNow[]
   error?: string
   requests: number
   durationMs: number

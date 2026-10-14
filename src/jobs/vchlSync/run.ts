@@ -25,7 +25,9 @@ import { syncStandings } from './sync/standings'
 import { checkStats } from './sync/statsCheck'
 import {
   emptyChanges,
+  type VchlDiffEntry,
   type VchlMode,
+  type VchlPlayedNow,
   type VchlRunResult,
   type VchlSettings,
   type VchlStatus,
@@ -249,6 +251,7 @@ async function runLocked(
     changes,
     warnings,
     diff: dry ? ctx?.diff : undefined,
+    playedNow: dry ? undefined : playedNowFromDiff(ctx?.diff),
     error,
     requests: client.requestCount,
     durationMs: Date.now() - t0,
@@ -262,6 +265,29 @@ async function runLocked(
     }
   }
   return result
+}
+
+/**
+ * Zápasy, které se v tomto běhu poprvé staly odehranými. Odvozuje se z diffu
+ * (u skutečného běhu se plní stejně jako v nanečisto): jen `update` s přechodem
+ * stavu na `played`. Nově založené zápasy se nepočítají — první běh nad prázdnou
+ * DB by jinak „oznámil" celou historii sezóny.
+ */
+export function playedNowFromDiff(diff: VchlDiffEntry[] | undefined): VchlPlayedNow[] {
+  const out: VchlPlayedNow[] = []
+  for (const e of diff ?? []) {
+    if (e.entity !== 'matches' || e.action !== 'update' || !e.fields.includes('status')) continue
+    if (e.after?.status !== 'played' || e.before?.status === 'played') continue
+    const matchId = Number(e.key.replace('ahl:', ''))
+    if (!Number.isInteger(matchId)) continue
+    const a = e.after
+    const score =
+      typeof a.scoreOurs === 'number' && typeof a.scoreOpp === 'number'
+        ? `${a.scoreOurs}:${a.scoreOpp}${a.shootout ? ' sn' : a.overtime ? ' pp' : ''}`
+        : undefined
+    out.push({ matchId, label: e.label ?? `zápas ${matchId}`, score })
+  }
+  return out
 }
 
 type Fetched = { season: SeasonCtx; lists: SeasonLists }
