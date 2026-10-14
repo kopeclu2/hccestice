@@ -187,6 +187,15 @@ export const Matches: CollectionConfig = {
         { name: 'hasReport', type: 'checkbox', label: 'Zápis vložen', admin: { readOnly: true } },
         { name: 'syncedAt', type: 'date', label: 'Naposledy synchronizováno', admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } } },
         { name: 'draftPostCreated', type: 'checkbox', label: 'Koncept reportáže vytvořen', admin: { readOnly: true } },
+        {
+          // Verze zpracování zápisu. Podle ní job pozná zápasy, které je potřeba
+          // znovu stáhnout, když se ze zápisu začne brát nové pole (backfill).
+          // `null` = verze 1.
+          name: 'detailVersion',
+          type: 'number',
+          label: 'Verze zpracování zápisu',
+          admin: { readOnly: true, hidden: true },
+        },
       ],
     },
     {
@@ -260,6 +269,76 @@ export const Matches: CollectionConfig = {
             { name: 'goals', type: 'number', label: 'Góly', min: 0 },
             { name: 'assists', type: 'number', label: 'Asistence', min: 0 },
             { name: 'pim', type: 'number', label: 'Trestné minuty', min: 0 },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'penalties',
+      type: 'array',
+      label: 'Tresty',
+      labels: { singular: 'Trest', plural: 'Tresty' },
+      access: { update: notSyncedFromAhl },
+      admin: {
+        initCollapsed: true,
+        description:
+          'Tresty hráčů HC Čestice ze zápisu o utkání. Plní synchronizace; tresty soupeře se neukládají.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'time', type: 'text', label: 'Čas (mm:ss)' },
+            { name: 'minutes', type: 'number', label: 'Minuty', min: 0 },
+            { name: 'kind', type: 'text', label: 'Druh trestu' },
+            { name: 'reason', type: 'text', label: 'Důvod' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'player', type: 'relationship', relationTo: 'players', label: 'Hráč' },
+            { name: 'playerName', type: 'text', label: 'Hráč (jméno z AHL)' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'stats',
+      type: 'group',
+      label: 'Statistika zápasu',
+      // Field access na pojmenované skupině platí pro celou skupinu: při
+      // zamčení se příchozí hodnota zahodí a doplní z uloženého dokumentu
+      // (payload/dist/fields/hooks/beforeValidate/promise.js, getFallbackValue).
+      access: { update: notSyncedFromAhl },
+      admin: { description: 'Ze zápisu o utkání na AHL.cz, pořadí HC Čestice : soupeř.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'penaltiesOurs', type: 'number', label: 'Vyloučení — HC Čestice', min: 0 },
+            { name: 'penaltiesOpp', type: 'number', label: 'Vyloučení — soupeř', min: 0 },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'majorsOurs', type: 'number', label: 'Vyšší tresty — HC Čestice', min: 0 },
+            { name: 'majorsOpp', type: 'number', label: 'Vyšší tresty — soupeř', min: 0 },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'ppGoalsOurs', type: 'number', label: 'Branky v přesilovce — HC Čestice', min: 0 },
+            { name: 'ppGoalsOpp', type: 'number', label: 'Branky v přesilovce — soupeř', min: 0 },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'ppTimeOurs', type: 'text', label: 'Čas v přesilovce — HC Čestice' },
+            { name: 'ppTimeOpp', type: 'text', label: 'Čas v přesilovce — soupeř' },
           ],
         },
       ],

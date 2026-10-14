@@ -90,6 +90,208 @@ describe('ahl: detail zápasu - okrajové případy', () => {
   })
 })
 
+const sumMinutes = (ps: { minutes: number | null }[]) => ps.reduce((n, p) => n + (p.minutes ?? 0), 0)
+const sumPim = (rows: { pim: number }[]) => rows.reduce((n, r) => n + r.pim, 0)
+
+describe('ahl: tresty a statistika zápasu', () => {
+  it('46616: tresty obou stran a statistika', () => {
+    const d = parseMatchDetail(fx('zapas-46616.html'), 46616)
+    const home = d.penalties!.filter((p) => p.side === 'home')
+    const away = d.penalties!.filter((p) => p.side === 'away')
+    expect(d.penalties).toHaveLength(13)
+    expect(home).toHaveLength(6)
+    expect(away).toHaveLength(7)
+    expect(d.penalties![1]).toEqual({
+      time: '8:18',
+      side: 'home',
+      teamCode: 'CES',
+      player: { name: 'Jakub Všetečka', playerId: 44079 },
+      playerText: null,
+      code: '2',
+      minutes: 2,
+      kind: 'Menší trest',
+      reason: 'Vysoká hůl',
+    })
+    expect(d.penalties![0]).toMatchObject({ side: 'away', teamCode: 'ZH', minutes: 2 })
+    expect(d.stats).toEqual({
+      penalties: { home: 6, away: 7 },
+      majors: { home: 0, away: 0 },
+      ppGoals: { home: 2, away: 2 },
+      ppTime: { home: '7:39', away: '6:21' },
+    })
+    expect(sumMinutes(home)).toBe(sumPim(d.lineups.home))
+    expect(sumMinutes(away)).toBe(sumPim(d.lineups.away))
+    expect(sumMinutes(home)).toBe(12)
+    expect(sumMinutes(away)).toBe(14)
+  })
+
+  it('46992: prázdný důvod je null, přípona JUN se z jména ořízne', () => {
+    const d = parseMatchDetail(fx('zapas-46992.html'), 46992)
+    const home = d.penalties!.filter((p) => p.side === 'home')
+    const away = d.penalties!.filter((p) => p.side === 'away')
+    expect(d.penalties).toHaveLength(19)
+    expect(home).toHaveLength(8)
+    expect(away).toHaveLength(11)
+    expect(d.stats.penalties).toEqual({ home: 8, away: 11 })
+    const vrba = d.penalties!.find((p) => p.time === '15:00' && p.player?.playerId === 37952)!
+    expect(vrba.reason).toBeNull()
+    expect(vrba.player?.name).toBe('Dominik Vrba')
+    expect(vrba.side).toBe('away')
+    expect(sumMinutes(home)).toBe(sumPim(d.lineups.home))
+    expect(sumMinutes(away)).toBe(sumPim(d.lineups.away))
+    expect(sumMinutes(home)).toBe(16)
+    expect(sumMinutes(away)).toBe(22)
+  })
+
+  it('neodehraný zápas: žádné tresty, statistika samé null', () => {
+    const d = parseMatchDetail(fx('zapas-46998-scheduled.html'), 46998)
+    expect(d.penalties).toEqual([])
+    expect(d.stats).toEqual({ penalties: null, majors: null, ppGoals: null, ppTime: null })
+  })
+
+  describe('syntetické řádky', () => {
+    const base = fx('zapas-46616.html')
+    const detail = parseMatchDetail(base, 46616)
+    const awayPlayerId = detail.lineups.away.find((r) => r.playerId !== null)!.playerId!
+
+    const row = (code: string, time: string, player: string, kind: string, reason = '') => `
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">${code}</td>
+	<td class="tabulka_cas">${time}</td>
+	<td class="tabulka_jmeno">${player}</td>
+	<td class="tabulka_jmeno">${kind}&nbsp;</td>
+	<td class="tabulka_jmeno">${reason}</td>
+</tr>`
+    const link = (id: number, name: string) =>
+      `<a href="soutez/x/hrac/?hracid=${id}" class="local_nadpis_link">${name}</a>`
+    // Řádky se vloží hned za <tbody> tabulky Tresty, takže jsou v poli první.
+    const withRows = (rows: string) => {
+      const cap = base.indexOf('Tresty</caption>')
+      const at = base.indexOf('<tbody>', cap) + '<tbody>'.length
+      return base.slice(0, at) + rows + base.slice(at)
+    }
+
+    it('větší trest a neznámý formát', () => {
+      const d = parseMatchDetail(
+        withRows(
+          row('CES', '1:00', link(44079, 'Všetečka, Jakub'), '5 - Větší trest', 'Napadení') +
+            row('CES', '2:00', link(44079, 'Všetečka, Jakub'), 'Osobní'),
+        ),
+        46616,
+      )
+      expect(d.penalties).toHaveLength(15)
+      expect(d.penalties![0]).toMatchObject({ minutes: 5, kind: 'Větší trest', reason: 'Napadení', side: 'home' })
+      expect(d.penalties![1]).toMatchObject({ code: null, minutes: null, kind: 'Osobní', reason: null, side: 'home' })
+    })
+
+    it('písmenný kód OK je trest do konce utkání za 20 minut, neznámý kód délku nemá', () => {
+      const d = parseMatchDetail(
+        withRows(
+          row('CES', '1:00', link(44079, 'Všetečka, Jakub'), 'OK - Trest do konce utkání') +
+            row('CES', '2:00', link(44079, 'Všetečka, Jakub'), 'XX - Něco'),
+        ),
+        46616,
+      )
+      expect(d.penalties![0]).toMatchObject({ code: 'OK', minutes: 20, kind: 'Trest do konce utkání', side: 'home' })
+      expect(d.penalties![1]).toMatchObject({ code: 'XX', minutes: null, kind: 'Něco', side: 'home' })
+    })
+
+    it('řádek bez hráče dostane stranu z mapy kódů', () => {
+      const d = parseMatchDetail(withRows(row('CES', '3:00', '', '2 - Menší trest', 'Střídání')), 46616)
+      expect(d.penalties![0]).toMatchObject({ player: null, side: 'home', teamCode: 'CES' })
+    })
+
+    it('kód, který zná jen sestava, se naučí a platí i pro trest lavice', () => {
+      const d = parseMatchDetail(
+        withRows(
+          row('QQQ', '3:00', '', '2 - Menší trest') +
+            row('QQQ', '4:00', link(awayPlayerId, 'Někdo, Jiný'), '2 - Menší trest'),
+        ),
+        46616,
+      )
+      expect(d.penalties![0]).toMatchObject({ player: null, side: 'away', teamCode: 'QQQ' })
+      expect(d.penalties![1].side).toBe('away')
+    })
+
+    // Chyba v trestech nesmí zahodit branky a sestavy.
+    const expectPenaltiesDropped = (html: string, error: RegExp) => {
+      const d = parseMatchDetail(html, 46616)
+      expect(d.penalties).toBeNull()
+      expect(d.penaltiesError).toMatch(error)
+      expect(d.goals).toHaveLength(11)
+      expect(d.lineups.home).toHaveLength(18)
+      expect(d.stats.penalties).toEqual({ home: 6, away: 7 })
+    }
+
+    it('neznámý kód bez hráče zahodí jen tresty', () => {
+      expectPenaltiesDropped(withRows(row('XYZ', '5:00', '', '2 - Menší trest')), /nelze určit stranu \(XYZ\)/)
+    })
+
+    it('nečitelný čas zahodí jen tresty', () => {
+      expectPenaltiesDropped(withRows(row('CES', 'x', '', '2 - Menší trest')), /nečitelný řádek trestu/)
+    })
+
+    it('změněné záhlaví zahodí jen tresty', () => {
+      const cap = base.indexOf('Tresty</caption>')
+      const at = base.indexOf('Důvod', cap)
+      const broken = base.slice(0, at) + 'Poznámka' + base.slice(at + 'Důvod'.length)
+      expectPenaltiesDropped(broken, /neočekávané záhlaví/)
+    })
+
+    it('úspěšné parsování má penaltiesError null', () => {
+      expect(detail.penaltiesError).toBeNull()
+    })
+
+    it('řádek bez odkazu nese jméno v playerText, prázdná buňka ne', () => {
+      const d = parseMatchDetail(
+        withRows(row('CES', '3:00', 'Novák, Petr', '2 - Menší trest') + row('CES', '4:00', '', '2 - Menší trest')),
+        46616,
+      )
+      expect(d.penalties![0]).toMatchObject({ player: null, playerText: 'Petr Novák', side: 'home' })
+      expect(d.penalties![1]).toMatchObject({ player: null, playerText: null })
+      // s odkazem jméno nese `player`
+      expect(detail.penalties![1]).toMatchObject({ playerText: null })
+    })
+
+    it('sestava si protiřečí s kódem z branek: tresty se zahodí', () => {
+      // 44079 je v sestavě domácích, ZH je podle branek strana hostů
+      expectPenaltiesDropped(
+        withRows(row('ZH', '3:00', link(44079, 'Všetečka, Jakub'), '2 - Menší trest')),
+        /patří straně away/,
+      )
+    })
+
+    it('z branek je znám kód jen jedné strany: trest lavice s jiným kódem je druhá strana', () => {
+      // Branky zredukované na první (domácí) a tresty jen na lavici soupeře.
+      const gcap = base.indexOf('Branky</caption>')
+      const gbody = base.indexOf('<tbody>', gcap) + '<tbody>'.length
+      const firstRowEnd = base.indexOf('</tr>', gbody) + '</tr>'.length
+      const goalsEnd = base.indexOf('</tbody>', gbody)
+      const oneGoal = base.slice(0, firstRowEnd) + base.slice(goalsEnd)
+      const tcap = oneGoal.indexOf('Tresty</caption>')
+      const tbody = oneGoal.indexOf('<tbody>', tcap) + '<tbody>'.length
+      const tend = oneGoal.indexOf('</tbody>', tbody)
+      const html = oneGoal.slice(0, tbody) + row('ZH', '6:00', '', '2 - Menší trest') + oneGoal.slice(tend)
+      const d = parseMatchDetail(html, 46616)
+      expect(d.goals).toHaveLength(1)
+      expect(d.penalties).toHaveLength(1)
+      expect(d.penalties![0]).toMatchObject({ teamCode: 'ZH', side: 'away', player: null })
+    })
+
+    it('chybějící tabulka Tresty je prázdné pole', () => {
+      const broken = base.replace('Tresty</caption>', 'Jiné</caption>')
+      expect(parseMatchDetail(broken, 46616).penalties).toEqual([])
+    })
+
+    it('nečitelná hodnota statistiky je null, ostatní zůstávají', () => {
+      const broken = base.replace(/(<td>Využití<\/td>\s*<td class="tabulka_komentar">)2:2/, '$1-')
+      const d = parseMatchDetail(broken, 46616)
+      expect(d.stats.ppGoals).toBeNull()
+      expect(d.stats.penalties).toEqual({ home: 6, away: 7 })
+    })
+  })
+})
+
 describe('ahl: tabulka', () => {
   const rows = parseStandings(fx('tabulky-1185.html'))
   it('10 týmů, Čestice šesté', () => {

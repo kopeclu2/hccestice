@@ -611,6 +611,7 @@ export interface Match {
     hasReport?: boolean | null;
     syncedAt?: string | null;
     draftPostCreated?: boolean | null;
+    detailVersion?: number | null;
   };
   /**
    * Plní synchronizace ze zápisu o utkání.
@@ -645,6 +646,33 @@ export interface Match {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Tresty hráčů HC Čestice ze zápisu o utkání. Plní synchronizace; tresty soupeře se neukládají.
+   */
+  penalties?:
+    | {
+        time?: string | null;
+        minutes?: number | null;
+        kind?: string | null;
+        reason?: string | null;
+        player?: (number | null) | Player;
+        playerName?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ze zápisu o utkání na AHL.cz, pořadí HC Čestice : soupeř.
+   */
+  stats?: {
+    penaltiesOurs?: number | null;
+    penaltiesOpp?: number | null;
+    majorsOurs?: number | null;
+    majorsOpp?: number | null;
+    ppGoalsOurs?: number | null;
+    ppGoalsOpp?: number | null;
+    ppTimeOurs?: string | null;
+    ppTimeOpp?: string | null;
+  };
   report?: (number | null) | Post;
   gallery?: (number | null) | Gallery;
   updatedAt: string;
@@ -3525,6 +3553,7 @@ export interface MatchesSelect<T extends boolean = true> {
         hasReport?: T;
         syncedAt?: T;
         draftPostCreated?: T;
+        detailVersion?: T;
       };
   goals?:
     | T
@@ -3552,6 +3581,29 @@ export interface MatchesSelect<T extends boolean = true> {
         assists?: T;
         pim?: T;
         id?: T;
+      };
+  penalties?:
+    | T
+    | {
+        time?: T;
+        minutes?: T;
+        kind?: T;
+        reason?: T;
+        player?: T;
+        playerName?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        penaltiesOurs?: T;
+        penaltiesOpp?: T;
+        majorsOurs?: T;
+        majorsOpp?: T;
+        ppGoalsOurs?: T;
+        ppGoalsOpp?: T;
+        ppTimeOurs?: T;
+        ppTimeOpp?: T;
       };
   report?: T;
   gallery?: T;

@@ -676,7 +676,7 @@ nelaďila dvě chování.
 | ročník | `souteznirocnikid` | `seasons.ahl.competitionYearId` | **mění se každý ročník** |
 | tým Čestice | `ucastniksouteznihorocnikuid` | `seasons.ahl.participantId` | **mění se každý ročník**, stabilní ID klubu AHL nemá |
 | soupeř | jen názvy | `opponents.aliases[]` | neznámý se založí a zapíše varování; hardcode `LEGACY_ALIASES` v `sync/opponents.ts` slouží jen k prvnímu naplnění |
-| branky, sestava, tabulka | žádné | pole uvnitř dokumentu | **přepisují se celé**, jen když se normalizovaný snapshot liší od DB |
+| branky, sestava, tabulka, tresty, statistika zápasu | žádné | pole uvnitř dokumentu (`matches.goals` / `lineup` / `penalties` / `stats`) | **přepisují se celé**, jen když se normalizovaný snapshot liší od DB; tresty jen naše, soupeřovy se neukládají |
 
 - ID ročníku a týmu patří k **sezóně**, ne do globalu. Prázdná se doplní
   autodetekcí (ročník je `<option selected>`, tým je odkaz `ucastnici/?…uid=`
@@ -714,6 +714,33 @@ nelaďila dvě chování.
 - **Popisky play-off se liší mezi výpisem a detailem**; fázi odvozuje
   `phaseFromCompetition` (`ahl/parse/dom.ts`) normalizací a regexem, ne
   přesnou shodou.
+- **Tabulka Tresty** se ukládá **jen za Čestice** (`matches.penalties`) —
+  tresty soupeře jsme se rozhodli neukládat. Řádek nese jen **kód týmu**
+  (`CES`, `ZH`), který nejde spárovat s názvem týmu, takže se strana určuje
+  postupně: `hracid` hráče v sestavě → mapa kód→strana odvozená z branek →
+  doplnění druhého kódu (`resolveSides` v `ahl/parse/match.ts`). Když stranu
+  určit nejde, parser hodí `AhlParseError` a detail se přeskočí (běh nezapíše
+  trest na špatnou stranu). „2 - Menší trest" se rozloží na minuty + druh;
+  neznámý formát nechá surový text místo hádání.
+- **Statistika zápasu** je na AHL domácí:hosté (ověřeno proti počtu trestů),
+  v CMS NAŠE:SOUPEŘ (`stats.*Ours` / `*Opp`). **Střely se neberou**: 0:0 tam
+  znamená „nevyplněno", ne žádné střely.
+- Součet minut našich trestů se kontroluje proti `TM` v sestavě; neshoda
+  zapíše varování typu `other` s `ref` `pim:<id>`.
+- **Nečitelná tabulka Tresty neblokuje branky ani sestavu.** Parser pak vrátí
+  `penalties: null` + `penaltiesError`; uložené tresty zůstanou beze změny,
+  minutová kontrola se přeskočí a vznikne varování `other` s `ref`
+  `penalties:<id>`. `detailVersion` se i tak zvedne (radši chybějící tresty
+  u jednoho zápasu než nekonečné opakované stahování; čerstvý zápas se
+  stejně stahuje 7 dní).
+- Kód `OK - Trest do konce utkání` nemá v textu minuty, počítá se jako 20 min
+  do `TM` (`PENALTY_CODE_MINUTES` v `ahl/parse/match.ts`), aby součet seděl.
+- **Sestava i tresty se ukládají v kanonickém pořadí** (sestava podle čísla
+  a jména, tresty podle času v sekundách a jména). AHL u shody příjmení
+  (dva Javůrkové, dva Vašatové) pořadí nedrží, a `normalize` v `diff.ts`
+  pořadí řádků zachovává — bez řazení by diff hlásil falešnou změnu
+  a zbytečný zápis do Auditního logu. Při prvním běhu po nasazení se proto
+  může jednou přepsat `lineup` zápasů uložených v původním pořadí.
 - Jména: v zápisu „Sajdl, Lukáš", jinde „Kapucián Vojtěch   S" s příponou
   `JUN`/`S`/`SDor` (`ahl/names.ts`) — proto je klíčem `hracid`.
 - Klient (`ahl/client.ts`): vlastní User-Agent, timeout 15 s, 1 retry, 400 ms
@@ -729,6 +756,16 @@ každém tiku. Ruční běh ho dotáhne a `hasReport` se nastaví z detailu
 `played` se bez skóre ve výpisu nevrací na `scheduled`; `venue` z výpisu se
 nastaví jen novému zápasu nebo prázdné hodnotě; doplnění času u zápasu
 založeného na půlnoc (`00:00`) není „přeložení" (`isReschedule`).
+
+Zápas **se zápisem zpracovaným starší verzí** se stáhne znovu při jakémkoli
+triggeru, i cron tiku (`ahl.detailVersion` < `DETAIL_VERSION` v
+`sync/matchDetail.ts`; `null` = verze 1). Je to jednorázový backfill po
+nasazení nové vlastnosti — zhruba jeden požadavek na odehraný zápas aktuální
+sezóny (`isCurrent`; starší sezóny job nesyncuje) —, po zápisu verze sedí
+a zápas se zase přestane stahovat. Probíhá při prvním skutečném (due) běhu
+se zapnutou synchronizací (`enabled`) a zapnutými částmi Výsledky + Detail
+zápasu — nebo ručním „Spustit teď". **Konstantu zvýšit, kdykoli se ze zápisu
+začne brát nové pole**, jinak ho už odehrané zápasy nikdy nedostanou.
 
 ## Sentry, notifikace, koncept reportáže
 
@@ -772,6 +809,16 @@ založeného na půlnoc (`00:00`) není „přeložení" (`isReschedule`).
   (task `vchlSync`) a datový krok (sezóna `2025-2026` → 973 / 8650).
   `down` vrací vše včetně sloupců, ale ne hodnoty ručně doplněné po migraci.
   Ověřeno `up` → `down` → `up` na čisté kopii schématu z `main`.
+- Migrace `20261014_134131_vchl_penalties` **před buildem**, stejně jako
+  předchozí. Je aditivní: tabulka `matches_penalties` (FK na `matches`
+  s `ON DELETE cascade` a na `players` s `set null`), sloupce `stats_*`
+  a `ahl_detail_version` na `matches`; na existující `matches` nepřidává žádné
+  `NOT NULL` (nová tabulka polí má standardní `NOT NULL` na `_order`,
+  `_parent_id` a `id`). `down` je odstraní. Backfill neproběhne sám po
+  nasazení: zápasy se zápisem verze 1 se znovu stáhnou při prvním skutečném
+  (due) běhu se zapnutou synchronizací a částmi Výsledky + Detail zápasu,
+  nebo ručním „Spustit teď" (viz `DETAIL_VERSION`). `matches` nemá verzování, takže
+  `_matches_v` tabulky nevznikají.
 - Env v Coolify: **`CRON_SECRET`** (povinný, viz výše), `NEXT_PUBLIC_SERVER_URL`
   (odkazy v mailech; zapéká se do buildu), `PAYLOAD_CRON` **nenastavovat**,
   `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN` jen pro upload source
