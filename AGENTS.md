@@ -116,6 +116,8 @@ plugin registruje a v `onInit` si dopíše `jobs.autoRun` s frontou
 `_initializeCrons()` až **za** `onInit` (`payload/dist/index.js:452` vs
 `:463`). Cron běží uvnitř Node procesu — při škálování na víc instancí by
 se úklid spouštěl vícekrát.
+Pozor: cron se po redeployi nespustí sám, dokud někdo neotevře admin — řeší to
+až `src/instrumentation.ts`, viz „Synchronizace VČHL → Past s crony".
 
 Buffer je nastavený na `realtime` místo výchozího `time`: výchozí strategie
 drží logy v RAM (ztráta při redeployi) a její `setInterval` v dev režimu
@@ -175,7 +177,7 @@ a datová cache se dělá `unstable_cache`, ne `use cache`.
 | statické + ISR 600 s | `/`, `/[slug]`, `/historie-klubu`, `/soupiska`, `/sponzori` |
 | SSG + ISR 600 s | `/aktuality/[slug]`, `/fotogalerie/[slug]`, `/produkty/[slug]` |
 | **plně dynamické** | `/aktuality`, `/fotogalerie`, `/zapasy` |
-| dynamické on-demand | `/clanky/*`, `/fotoalbum/*`, route handlery |
+| dynamické on-demand | `/clanky/*`, `/fotoalbum/*`, route handlery (vč. `/internal/revalidate`, viz Synchronizace VČHL) |
 
 Ty tři dynamické jsou dynamické kvůli `searchParams` (filtry a stránkování
 v URL), ne omylem. Důsledek, na kterém se to láme: **`revalidatePath` na ně
@@ -573,6 +575,185 @@ Pravidla, když se toho budete dotýkat:
   `20260821_095556_trainings_drop_extras` (**destruktivní** — dropne
   `photo_id`, `photo_title`, `photo_subtitle` a `event_*` na
   `pages_blocks_landing_trainings` i na verzovací tabulce).
+
+# Synchronizace VČHL (ahl.cz)
+
+Zápasy, výsledky, tabulka, branky a sestavy se z ahl.cz stahují automaticky.
+AHL **vždy vyhrává** — synchronizovaná pole jsou v adminu jen pro čtení.
+
+| co | kde |
+|---|---|
+| ovládací panel (spustit, nanečisto, historie, varování) | admin **Hokej → Synchronizace VČHL** (`/admin/vchl-sync`, `components/admin/VchlSync/`) |
+| nastavení (části, frekvence, notifikace) | global `vchl-sync` (`globals/VchlSync/`) |
+| historie běhů | kolekce `vchl-sync-runs` (Systém, read-only, retence 60 dní) |
+| endpointy panelu | `POST /api/vchl-sync/run`, `GET /api/vchl-sync/status` (`endpoints/vchlSync.ts`, jen přihlášený) |
+| job | `src/jobs/vchlSync/` (`task.ts`, `run.ts`, `isDue.ts`, `sync/*`) |
+| klient a parsery AHL | `src/ahl/` (jsdom, fixtury v `tests/fixtures/ahl/`) |
+| revalidace | `POST /internal/revalidate` (`app/internal/revalidate/route.ts`) |
+
+## Tick, ne frekvence v configu
+
+Frekvence cronu je v Payloadu statická, a správce ji chce měnit bez redeploye.
+Cron proto tiká pevně **každých 5 minut** (`VCHL_CRON = '0 */5 * * * *'` —
+u šestipolového výrazu je první pole vteřina) do fronty `vchl` a o tom, jestli
+se opravdu synchronizuje, rozhoduje `runVchlSync` podle globalu:
+
+- vypnuto (`enabled`) nebo nic na řadě → konec, **nezapíše se nic**;
+- *zápasový režim*: od začátku zápasu Čestic po `matchdayWindowHours`
+  (48 h), dokud zápas není odehraný se zápisem → každých
+  `matchdayIntervalMinutes` (15);
+- *klidový režim*: jinak každých `idleIntervalHours` (6);
+- po `error` se zkouší znovu v rychlém intervalu (`isDue.ts`, tolerance 1 min
+  kvůli pětiminutové mřížce).
+
+**Tick nesmí nic zapisovat.** Auditor loguje `afterChange` globalů i kolekcí,
+takže uložení stavu do globalu by přidalo 288 záznamů denně. Stav žije jen
+v `vchl-sync-runs` (auditor ji vynechává) a záznam vzniká jen při skutečném
+běhu. Zápis do `matches` / `players` / `seasons` jde jen tam, kde diff našel
+změnu — druhý běh nad stejnými daty musí skončit „0 změn" a bez záznamu
+v Auditním logu. Zápisy jdou s `context: { disableRevalidate: true }`.
+
+Zámek proti souběhu cronu a ručního běhu je **in-process** na `globalThis`
+(`Symbol.for('hccestice.vchlSync.lock')`; modulová proměnná by se v devu
+rozdvojila, Turbopack bundluje instrumentation a route handlery zvlášť).
+Platí jen pro **jednu instanci**; při škálování pojistí duplikáty `unique`
+indexy na `ahl.matchId` a `ahlPlayerId` (souběh zápis spíš shodí, než
+zdvojí). Starší než 15 min se zámek ignoruje (visící běh).
+
+## Past s crony: po deployi se samy nespustí
+
+`_initializeCrons()` běží jen při `getPayload({ cron: true })` — a to volá
+jen `initReq` z `@payloadcms/next` (request do adminu nebo API;
+`payload/dist/index.js:462`). Frontend volá `getPayload({ config })` bez
+cronu a `/health` Payload nevolá vůbec, takže po každém redeployi cron stojí,
+dokud někdo neotevře admin. Platilo to i pro úklid auditního logu.
+
+Řeší to `src/instrumentation.ts` → `startPayloadCrons()`
+(`jobs/vchlSync/startCrons.ts`). Spouští se jen když:
+
+- `NEXT_RUNTIME === 'nodejs'`,
+- `NEXT_PHASE !== 'phase-production-build'` (ne při prerenderu na runneru),
+- `PAYLOAD_CRON !== 'off'` — vypínač pro lokální vývoj a CI; `jobs.shouldAutoRun`
+  ho hlídá podruhé, protože `initReq` z requestu do adminu cron nastartuje taky.
+  V produkci nenastavovat.
+
+Bez `await` a s chytáním chyb (Sentry tag `vchl.stage: startup`), aby start
+serveru nečekal na databázi ani nespadl.
+
+## Revalidace přes `/internal/revalidate`
+
+`revalidateTag` / `revalidatePath` z cronu (mimo request) padají na
+`Invariant: static generation store missing` — chybí `workAsyncStorage`
+(`next/dist/server/web/spec-extension/revalidate.js`). Job proto po zápisu
+jednou zavolá interní route handler, uvnitř kterého store existuje
+(`jobs/vchlSync/revalidate.ts`). Ruční běh jde stejnou cestou, aby se
+nelaďila dvě chování.
+
+- Volá se na **`127.0.0.1:$PORT`**, ne `localhost` (standalone poslouchá jen
+  IPv4, viz healthcheck v Nasazení).
+- **`CRON_SECRET` je v produkci povinný.** Bez něj handler vrací 401 a job
+  revalidaci přeskočí (varování v logu) — data se zapíšou, ale web se obnoví
+  až po vypršení cache. Autorizace `Authorization: Bearer <CRON_SECRET>`
+  s `timingSafeEqual`.
+- Selhání revalidace běh neshodí (data jsou zapsaná).
+- Handler leží mimo route groupy a je `force-dynamic`, takže nad ním není
+  `loading.tsx` (viz „Cache a renderovací režimy").
+
+## Idempotence: klíče
+
+| entita | klíč z AHL | uloženo v | poznámka |
+|---|---|---|---|
+| zápas | `zapasid` | `matches.ahl.matchId` (unique) | stabilní od rozpisu po výsledek; zápas bez ID se napoprvé spáruje podle sezóna + den + soupeř |
+| hráč | `hracid` | `players.ahlPlayerId` (unique) | stabilní **napříč ročníky**; záloha je normalizované jméno, při shodě víc hráčů se nespáruje a zapíše varování |
+| ročník | `souteznirocnikid` | `seasons.ahl.competitionYearId` | **mění se každý ročník** |
+| tým Čestice | `ucastniksouteznihorocnikuid` | `seasons.ahl.participantId` | **mění se každý ročník**, stabilní ID klubu AHL nemá |
+| soupeř | jen názvy | `opponents.aliases[]` | neznámý se založí a zapíše varování; hardcode `LEGACY_ALIASES` v `sync/opponents.ts` slouží jen k prvnímu naplnění |
+| branky, sestava, tabulka | žádné | pole uvnitř dokumentu | **přepisují se celé**, jen když se normalizovaný snapshot liší od DB |
+
+- ID ročníku a týmu patří k **sezóně**, ne do globalu. Prázdná se doplní
+  autodetekcí (ročník je `<option selected>`, tým je odkaz `ucastnici/?…uid=`
+  u „Čestice") — umí jen **aktuální** ročník; 1. ročník (2025/26: 973 / 8650)
+  doplnila migrace.
+- **Odpojení zápasu od AHL**: smazat `ahl.matchId`. Pole se odemknou
+  a synchronizace zápas přestane znát. Přátelák nebo turnaj bez `matchId` je
+  plně editovatelný.
+- Zamčení řeší field access `access/notSyncedFromAhl.ts`
+  (`update: ({ doc }) => !doc?.ahl?.matchId`). Job píše přes Local API
+  (`overrideAccess: true`), takže ho to nebrzdí. Podrobnosti, proč to při
+  `create` funguje, jsou v komentáři souboru.
+- Zápas, který z AHL zmizel, se **nemaže**, jen se zapíše varování.
+  Neznámý hráč se zakládá jako `active: false`; existujícímu se doplní jen
+  `ahlPlayerId` a prázdné číslo (jméno a fotka zůstávají ruční).
+
+## Zvláštnosti HTML na ahl.cz
+
+Žádné API ani iCal, jen HTML v UTF-8. Co překvapí:
+
+- **Neexistující zápas vrací HTTP 200** s chybovou stránkou, takže stav
+  nestačí; parser hlásí `AhlParseError`, když chybí `#zapas_full_portlet_inner_box`.
+- **Třída `neni_zapis` ve výsledcích je nespolehlivá.** `hasReport` proto
+  bere z detailu zápasu, ne z výpisu.
+- **Rozhodující nájezd je zapsaný jako branka v 60:00** a započítá se
+  střelci. V CMS se značí `strength: 'SN'`, v textu konceptu „nájezd".
+- **`R` v tabulce je prohra v prodloužení/nájezdech** (sloupec `otLosses`),
+  `VP` je výhra v prodloužení.
+- **`scoreAfter` v CMS je NAŠE:SOUPEŘ**, na AHL domácí:hosté (`flipScore`
+  v `sync/matchDetail.ts`).
+- **Popisky play-off se liší mezi výpisem a detailem**; fázi odvozuje
+  `phaseFromCompetition` (`ahl/parse/dom.ts`) normalizací a regexem, ne
+  přesnou shodou.
+- Jména: v zápisu „Sajdl, Lukáš", jinde „Kapucián Vojtěch   S" s příponou
+  `JUN`/`S`/`SDor` (`ahl/names.ts`) — proto je klíčem `hracid`.
+- Klient (`ahl/client.ts`): vlastní User-Agent, timeout 15 s, 1 retry, 400 ms
+  mezi požadavky. Když parser nenajde očekávané řádky nebo sloupec, běh skončí
+  `error` a **nic se nezapíše ani nesmaže**.
+
+Detail zápasu se stahuje pro odehrané zápasy bez zápisu a pro zápasy mladší
+než `RECENT_DAYS = 7` (pozdní opravy zápisu).
+
+## Sentry, notifikace, koncept reportáže
+
+- **Cron monitor `vchl-sync-tick`** (`Sentry.withMonitor` v `task.ts`) dostává
+  check-in z **každého** tiku, i prázdného. Hlídá, že plánovač vůbec běží
+  (past výše), a nezávisí na `enabled`, takže vypnutí v adminu nespustí falešný
+  poplach. Bez `NEXT_PUBLIC_SENTRY_DSN` je vše no-op.
+- Fingerprinty (`jobs/vchlSync/sentry.ts`): rozbité HTML →
+  `['vchl-parse', stránka]` (jedno issue místo 288 denně); varování →
+  `['vchl-warning', typ, ref]`, do Sentry jen **nová** oproti minulému běhu.
+- **Notifikace** (`notify.ts`, šablona `email/templates/vchlSync.ts`):
+  selhání se hlásí **jen při přechodu** — když série `error`/`partial` dosáhne
+  přesně `failureThreshold` (2) —, pak jednou „obnoveno". Jinak by v zápasovém
+  režimu šlo 96 mailů denně. Noví hráči a soupeři se porovnávají s posledním
+  během. Prázdní adresáti = `siteConfig.contactEmail`. Odkazy v mailech skládá
+  `getServerSideURL()` → `NEXT_PUBLIC_SERVER_URL`.
+- **Koncept reportáže** (`sync/draftPost.ts`): `_status: 'draft'`, jen když
+  zápas právě přešel do „odehráno se zápisem" a je mladší než 7 dní. Řídí se
+  příznakem `ahl.draftPostCreated`, ne stavem, takže smazaný koncept se znovu
+  nezaloží. `match.report` se **nenastavuje** — karta zápasu by odkazovala na
+  nepublikovaný článek.
+
+## Nová sezóna
+
+1. V adminu založit sezónu a u ní zaškrtnout `isCurrent`.
+2. ID ročníku a týmu **nevyplňovat** — doplní je autodetekce při prvním běhu
+   (nebo tlačítko **Autodetekovat** na stránce Synchronizace VČHL).
+3. Spustit „Nanečisto" a zkontrolovat diff, pak „Spustit teď".
+
+## Nasazení
+
+- Migrace `20261014_114308_vchl_sync` **před buildem** (viz Nasazení →
+  Migrace). Je aditivní; přidává tabulky `vchl_sync*`, `matches_goals`,
+  `matches_lineup`, `opponents_aliases`, sloupce `ahl_*`, enumy `payload_jobs`
+  (task `vchlSync`) a datový krok (sezóna `2025-2026` → 973 / 8650).
+  `down` vrací vše včetně sloupců, ale ne hodnoty ručně doplněné po migraci.
+  Ověřeno `up` → `down` → `up` na čisté kopii schématu z `main`.
+- Env v Coolify: **`CRON_SECRET`** (povinný, viz výše), `NEXT_PUBLIC_SERVER_URL`
+  (odkazy v mailech; zapéká se do buildu), `PAYLOAD_CRON` **nenastavovat**,
+  `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN` jen pro upload source
+  map při buildu (monitor cronu a chyby jdou přes DSN).
+- Jednorázový backfill (spárování existujících zápasů, branky, sestavy) je
+  ruční „Spustit teď" po nasazení; `enabled` je ve výchozím stavu vypnuté.
+- Cron běží uvnitř Node procesu — víc instancí znamená víc tiků (viz zámek).
 
 # Nasazení (Coolify + GitHub Actions)
 

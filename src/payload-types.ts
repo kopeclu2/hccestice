@@ -4303,6 +4303,8 @@ export interface AlertBlock {
   blockType: 'alertBlock';
 }
 /**
+ * Nastavení synchronizace. Spouštění, nanečisto, historii běhů a varování najdete na stránce Synchronizace VČHL (/admin/vchl-sync).
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "vchl-sync".
  */
