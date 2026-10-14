@@ -8,10 +8,16 @@ import { Eyebrow } from '../components/Kicker'
 import { SectionShell } from '../components/SectionShell'
 import type { Outcome, TeamForm } from '../types'
 
-/** Barvy čtverečku podle výsledku (handoff: V lime tint, P cihlová, R šedá). */
+/**
+ * Barvy čtverečku podle výsledku (handoff: V lime tint, P cihlová, R šedá).
+ * Prohra po prodloužení / nájezdech je půlená úhlopříčkou — cihlová za
+ * prohru, zelená za bod (stejný princip jako štítek `split` ve výsledcích).
+ */
 const SQUARE_CLASS: Record<Outcome, string> = {
   win: 'bg-win text-win-ink',
   draw: 'bg-draw text-draw-ink',
+  otLoss:
+    'bg-[linear-gradient(135deg,var(--color-loss)_50%,var(--color-win)_50%)] text-loss-ink',
   loss: 'bg-loss text-loss-ink',
 }
 

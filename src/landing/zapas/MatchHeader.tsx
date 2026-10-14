@@ -9,14 +9,8 @@ import { Eyebrow } from '../components/Kicker'
 import { MatchScoreboard } from '../components/MatchScoreboard'
 import { NextMatchPanel } from '../components/NextMatchPanel'
 import { Numeral } from '../components/Numeral'
-import type { MatchDetail, Outcome, Photo } from '../types'
-
-/** Pilulka výsledku z pohledu Čestic — stejné barvy jako v `ResultsList`. */
-const OUTCOME: Record<Outcome, { label: string; variant: 'lime' | 'muted' | 'loss' }> = {
-  win: { label: 'Výhra', variant: 'lime' },
-  draw: { label: 'Remíza', variant: 'muted' },
-  loss: { label: 'Prohra', variant: 'loss' },
-}
+import { OUTCOME_BADGE } from '../components/outcome'
+import type { MatchDetail, Photo } from '../types'
 
 const SUFFIX_NOTE = { pp: 'po prodloužení', sn: 'po nájezdech' } as const
 
@@ -61,7 +55,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
 }
 
 function PlayedHeader({ match }: { match: MatchDetail }) {
-  const outcome = match.outcome ? OUTCOME[match.outcome] : null
+  const outcome = match.outcome ? OUTCOME_BADGE[match.outcome] : null
   const note = match.suffix ? SUFFIX_NOTE[match.suffix] : null
   const hasScore = match.homeScore != null && match.awayScore != null
 

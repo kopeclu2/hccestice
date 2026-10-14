@@ -116,7 +116,12 @@ export type MatchRow = {
 }
 
 /** Výsledek zápasu z pohledu HC Čestice. */
-export type Outcome = 'win' | 'draw' | 'loss'
+/**
+ * Výsledek z pohledu Čestic. `otLoss` = prohra po prodloužení nebo
+ * nájezdech — v tabulce VČHL za ni je bod (sloupec R), proto má vlastní
+ * „půlený" štítek, ne cihlový jako prohra v základní době.
+ */
+export type Outcome = 'win' | 'draw' | 'otLoss' | 'loss'
 
 /**
  * Strojově čitelná podoba zápasu pro `SportsEvent`.

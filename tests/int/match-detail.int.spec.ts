@@ -122,7 +122,8 @@ describe('toMatchDetail — domácí a venkovní zápas', () => {
     expect([detail.homeScore, detail.awayScore]).toEqual([8, 7])
     expect(detail.thirds).toEqual(['2:3', '2:2'])
     expect(firstGoals(detail)[0]?.score).toBe('0:1')
-    expect(detail.outcome).toBe('loss')
+    // Prohra po nájezdech má bod — vlastní výsledek, ne obyčejná prohra.
+    expect(detail.outcome).toBe('otLoss')
     expect(detail.suffix).toBe('sn')
     expect(matchHeadline(detail)).toBe('HC Zdar 8:7 HC Čestice')
   })
@@ -131,6 +132,13 @@ describe('toMatchDetail — domácí a venkovní zápas', () => {
     const detail = toMatchDetail(baseMatch({ scoreOurs: 2, scoreOpp: 2, overtime: true }), null)
     expect(detail.outcome).toBe('draw')
     expect(detail.suffix).toBe('pp')
+  })
+
+  it('prohra v základní době je `loss`, po prodloužení `otLoss`, výhra po prodloužení `win`', () => {
+    const outcome = (overrides: Partial<Match>) => toMatchDetail(baseMatch(overrides), null).outcome
+    expect(outcome({ scoreOurs: 2, scoreOpp: 4 })).toBe('loss')
+    expect(outcome({ scoreOurs: 2, scoreOpp: 3, overtime: true })).toBe('otLoss')
+    expect(outcome({ scoreOurs: 3, scoreOpp: 2, overtime: true })).toBe('win')
   })
 
   it('odkaz zpět nese slug a štítek sezóny', () => {

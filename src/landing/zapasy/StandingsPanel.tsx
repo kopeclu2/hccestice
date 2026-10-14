@@ -115,7 +115,7 @@ export function StandingsPanel({
           Tabulka VČHL se naplní, jakmile odehrajeme první zápasy sezóny.
         </EmptyState>
       ) : (
-        <div className="border-line-soft mt-5 rounded-card border bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
+        <div className="border-line-soft mt-5 rounded-tile border bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
           <Eyebrow as="div" tone="dark">
             <div className={cn('grid px-2.5 py-2.5 md:py-2.75 lg:py-3', gridCols)}>
               <span>P</span>
