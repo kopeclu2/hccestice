@@ -19,6 +19,13 @@ const PLAYER_FORMS: [string, string, string] = ['hráč', 'hráči', 'hráčů']
 const PEOPLE_FORMS: [string, string, string] = ['člověk', 'lidé', 'lidí']
 
 /**
+ * Pilulka Z/G/A/B/TM na kartách hráčů je zatím skrytá (rozhodnutí správce,
+ * 14. 10. 2026). Data se dál synchronizují; vypnutý je jen dotaz a vykreslení,
+ * takže zapnutí je změna téhle konstanty.
+ */
+const SHOW_SEASON_STATS = false
+
+/**
  * Soupiska A-týmu v landing designu — handoff „HC Cestice Soupiska".
  *
  * Hráči z kolekce `players` (jen aktivní) seskupení podle postu,
@@ -33,7 +40,7 @@ export default async function SoupiskaPage() {
   ])
 
   // Statistiky jsou doplněk — bez aktuální sezóny se karty kreslí bez nich.
-  const stats = season ? await fetchPlayerSeasonStats(season.id) : {}
+  const stats = SHOW_SEASON_STATS && season ? await fetchPlayerSeasonStats(season.id) : {}
 
   const totalPlayers = sections.reduce((sum, section) => sum + section.players.length, 0)
   const summary =
