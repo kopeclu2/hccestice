@@ -11,7 +11,11 @@ export const VchlSync: GlobalConfig = {
   slug: 'vchl-sync',
   label: 'Synchronizace VČHL',
   access: { read: authenticated, update: authenticated },
-  admin: { group: 'Hokej' },
+  admin: {
+    group: 'Hokej',
+    description:
+      'Nastavení synchronizace. Spouštění, nanečisto, historii běhů a varování najdete na stránce Synchronizace VČHL (/admin/vchl-sync).',
+  },
   fields: [
     {
       name: 'enabled',

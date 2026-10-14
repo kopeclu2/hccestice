@@ -3,6 +3,8 @@ import type { Payload } from 'payload'
 import { AHL_BASE_URL, AhlParseError, isOurTeam, parseCompetitionInfo, tabulkyUrl } from '@/ahl'
 import type { Season } from '@/payload-types'
 
+import type { AhlClient } from '@/ahl/client'
+
 import type { SyncContext } from './sync/ctx'
 
 export type SeasonCtx = {
@@ -59,7 +61,7 @@ export async function resolveSeasons(ctx: SyncContext): Promise<SeasonCtx[]> {
         })
         continue
       }
-      const found = await autodetect(ctx, year, participant, res.docs)
+      const found = await detectSeasonIds(ctx.client, year, participant, res.docs)
       year = found.year
       participant = found.participant
       const before = { ahl: doc.ahl ?? null }
@@ -88,15 +90,19 @@ export async function resolveSeasons(ctx: SyncContext): Promise<SeasonCtx[]> {
   return out
 }
 
-async function autodetect(
-  ctx: SyncContext,
+/**
+ * Autodetekce ID ročníku a týmu ze stránky AHL (sdílí ji job i admin endpoint).
+ * `allCurrent` slouží k obraně proti ročníku, který už patří jiné sezóně.
+ */
+export async function detectSeasonIds(
+  client: AhlClient,
   knownYear: number | null,
   knownParticipant: number | null,
   allCurrent: Season[],
 ): Promise<{ year: number; participant: number }> {
   // Bez ID ročníku ukazuje /tabulky/ ten aktuální.
   const url = knownYear ? tabulkyUrl(knownYear) : `${AHL_BASE_URL}/tabulky/`
-  const info = parseCompetitionInfo(await ctx.client.get(url))
+  const info = parseCompetitionInfo(await client.get(url))
 
   const year = knownYear ?? info.competitionYearId
   if (!knownYear && allCurrent.some((s) => s.ahl?.competitionYearId === year)) {

@@ -41,7 +41,9 @@ import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { Icon as Icon_34253356f327048e5e1d0c8dd6259985 } from '@/components/admin/graphics/Icon'
 import { Logo as Logo_7290b7198794a8ea161f702320c1cd8a } from '@/components/admin/graphics/Logo'
+import { VchlSyncNavLink as VchlSyncNavLink_68fa77682962f56b9f6bcbf726075875 } from '@/components/admin/VchlSync/NavLink'
 import { AdminManual as AdminManual_e10894ca3336bc2d3ee940129fc5cc64 } from '@/components/admin/AdminManual'
+import { VchlSyncView as VchlSyncView_0991f367f7ffb187ba3ada864af5a1e5 } from '@/components/admin/VchlSync/View'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -89,6 +91,8 @@ export const importMap = {
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/components/admin/graphics/Icon#Icon": Icon_34253356f327048e5e1d0c8dd6259985,
   "@/components/admin/graphics/Logo#Logo": Logo_7290b7198794a8ea161f702320c1cd8a,
+  "@/components/admin/VchlSync/NavLink#VchlSyncNavLink": VchlSyncNavLink_68fa77682962f56b9f6bcbf726075875,
   "@/components/admin/AdminManual#AdminManual": AdminManual_e10894ca3336bc2d3ee940129fc5cc64,
+  "@/components/admin/VchlSync/View#VchlSyncView": VchlSyncView_0991f367f7ffb187ba3ada864af5a1e5,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
