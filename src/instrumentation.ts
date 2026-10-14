@@ -17,6 +17,15 @@ export async function register() {
       tracesSampleRate: 1,
       debug: false,
     })
+
+    // Crony Payloadu se samy nespustí, dokud někdo neotevře admin — viz
+    // `startCrons.ts`. Ne při buildu (prerender na runneru), ne při
+    // `PAYLOAD_CRON=off` (lokální vývoj, CI). Bez `await`: start serveru
+    // nesmí čekat na databázi.
+    if (process.env.NEXT_PHASE !== 'phase-production-build' && process.env.PAYLOAD_CRON !== 'off') {
+      const { startPayloadCrons } = await import('./jobs/vchlSync/startCrons')
+      void startPayloadCrons()
+    }
   }
 
   if (process.env.NEXT_RUNTIME === 'edge') {

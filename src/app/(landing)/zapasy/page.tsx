@@ -8,9 +8,13 @@ import { EmptyState } from '@/landing/components/EmptyState'
 import { PillLink } from '@/landing/components/PillLink'
 import { SectionShell } from '@/landing/components/SectionShell'
 import { SubpageShell } from '@/landing/components/SubpageShell'
-import { STANDINGS } from '@/landing/content'
 import { fetchSeasonFixtures, fetchSeasonForm, fetchSeasonResults } from '@/landing/data/matches'
-import { fetchMatchSeasons, fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
+import {
+  fetchMatchSeasons,
+  fetchSeason,
+  mapStandingsFromSeason,
+  seasonShortLabel,
+} from '@/landing/data/seasons'
 import type { StandingsContent } from '@/landing/types'
 import { FixturesRail } from '@/landing/zapasy/FixturesRail'
 import { FormStrip } from '@/landing/zapasy/FormStrip'
@@ -74,18 +78,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
 
   // Prázdné řádky si řeší `StandingsPanel` sám (vlastní `EmptyState`) —
   // tabulka se proto skládá vždy, i pro sezónu bez vyplněné tabulky.
-  const standings: StandingsContent = {
-    seasonLabel:
-      activeSeason?.standings?.label ??
-      (activeSeason ? seasonShortLabel(activeSeason) : STANDINGS.seasonLabel),
-    fullTableUrl: activeSeason?.standings?.fullTableUrl ?? STANDINGS.fullTableUrl,
-    rows: (activeSeason?.standings?.rows ?? []).map((row) => ({
-      pos: row.pos,
-      team: row.team,
-      games: row.games ?? 0,
-      points: row.points ?? 0,
-    })),
-  }
+  const standings: StandingsContent = mapStandingsFromSeason(activeSeason)
 
   // Sezóny jsou řazené od nejnovější (`fetchMatchSeasons`), takže `seasons[0]`
   // je ta aktuální/nadcházející. U starších (dohraných) sezón nemá smysl
@@ -163,6 +156,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           hrefFor={hrefFor}
           page={results.page}
           rows={results.rows}
+          showScorers
           totalPages={results.totalPages}
         />
         <StandingsPanel standings={standings} />

@@ -21,12 +21,16 @@ import { People } from './collections/People'
 import { Products } from './collections/Products'
 import { Teams } from './collections/Teams'
 import { Users } from './collections/Users'
+import { VchlSyncRuns } from './collections/VchlSyncRuns'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Sidebar } from './globals/Sidebar/config'
 import { SiteConfig } from './globals/SiteConfig/config'
+import { VchlSync } from './globals/VchlSync/config'
 import { plugins } from './plugins'
+import { vchlSyncTask, VCHL_CRON, VCHL_QUEUE } from './jobs/vchlSync/task'
 import { emailAdapter } from './email/adapter'
+import { vchlSyncEndpoints } from './endpoints/vchlSync'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
@@ -44,6 +48,15 @@ export default buildConfig({
         Logo: '@/components/admin/graphics/Logo#Logo',
       },
       beforeDashboard: ['@/components/admin/AdminManual#AdminManual'],
+      afterNavLinks: ['@/components/admin/VchlSync/NavLink#VchlSyncNavLink'],
+      views: {
+        vchlSync: {
+          Component: '@/components/admin/VchlSync/View#VchlSyncView',
+          path: '/vchl-sync',
+          exact: true,
+          meta: { title: 'Synchronizace VČHL' },
+        },
+      },
     },
     user: Users.slug,
     livePreview: {
@@ -95,6 +108,7 @@ export default buildConfig({
     People,
     Products,
     Milestones,
+    VchlSyncRuns,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   /**
@@ -111,7 +125,8 @@ export default buildConfig({
   // Adapter se vybírá podle env proměnných (Resend / SMTP / jen log) —
   // `email` bere i Promise, takže se tu záměrně nečeká na `await`.
   email: emailAdapter(),
-  globals: [Header, Footer, SiteConfig, Sidebar],
+  endpoints: vchlSyncEndpoints,
+  globals: [Header, Footer, SiteConfig, Sidebar, VchlSync],
   // Administrace v češtině (fallback en pro nepřeložené řetězce)
   i18n: {
     fallbackLanguage: 'cs',
@@ -139,6 +154,13 @@ export default buildConfig({
         return authHeader === `Bearer ${secret}`
       },
     },
-    tasks: [],
+    tasks: [vchlSyncTask],
+    // Pole, ne funkce: auditor si v `onInit` přidává vlastní frontu a umí
+    // pole jen rozšířit. Výraz má vteřiny jako první pole (viz `task.ts`).
+    autoRun: [{ queue: VCHL_QUEUE, cron: VCHL_CRON }],
+    // Crony se při `PAYLOAD_CRON=off` nespouští z `instrumentation.ts`, ale
+    // `initReq` (první request do adminu) je nastartuje taky — tohle je
+    // druhá pojistka a cron se po prvním tiku zastaví.
+    shouldAutoRun: () => process.env.PAYLOAD_CRON !== 'off',
   },
 })

@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:fb="http://ogp.me/ns/fb#" xml:lang="cs" lang="cs">
+
+<head>
+	<title>Čestice - Pardubice 5:6 sn | AHL.cz</title>
+
+	<base href="https://www.ahl.cz/" />
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+
+	<!--  http://stackoverflow.com/questions/9182428/force-internet-explorer-9-to-use-ie-9-mode 
+	<meta http-equiv="X-UA-Compatible" content="IE=9">-->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		
+	<!-- facebook - info pro linkovani z FB -->
+	<meta property="og:type"               content="article" />
+	<meta property="og:title"              content="Čestice - Pardubice 5:6 sn" />
+	<meta property="og:description"        content="VCHL VČHL 2.ročník | Základní část | Neděle 4. 10. 2026, 16:30 | Rychnov nad Kněžnou" />
+	<meta property="og:image"              content="https://www.ahl.cz//data//loga-soutezi/large_200/vychodoceska_hokejova_liga.png" />
+	
+	
+	<link rel="stylesheet" type="text/css" href="fonts.css" />
+	<link rel="stylesheet" type="text/css" href="main-1789800407.css" />
+	<link rel="stylesheet" type="text/css"
+		href="css/jquery/jquery-ui-1.7.3.custom.css" />
+	<link rel="stylesheet" type="text/css"
+		href="css/jquery/jquery-ui-timepicker-addon.css" />
+
+	<link rel="stylesheet" type="text/css"
+		href="css/jquery/jquery.lightbox-0.5.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery/dd.css" />
+	<link rel="stylesheet" type="text/css"
+		href="css/fileuploader/fileuploader.css" />
+	<link rel="stylesheet" type="text/css"
+		href="css/autocomplete/jquery.autocomplete.css" />
+	<link rel="stylesheet" type="text/css"
+		href="css/autocomplete/thickbox.css" />
+
+	<link rel="icon"  type="image/png" href="img/favicon.png">
+
+	<!-- jquery -->
+	<!--
+			<script type="text/javascript" src="https://www.ahl.cz//js/jquery/jquery-1.3.2.min.js"></script>
+	-->
+
+	<!-- Google tag (gtag.js) 
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZPTBYZ1Q2T"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-ZPTBYZ1Q2T');
+	</script> -->
+
+	
+	<script type="text/javascript" src="js/jquery/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.tools.min.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.innerfade.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.corners.min.js"></script>
+	<script type="text/javascript"
+		src="js/jquery/jquery-ui-1.7.3.custom.min.js"></script>
+	<script type="text/javascript"
+		src="js/jquery/jquery-ui-timepicker-addon.js"></script>
+	<script type="text/javascript" src="js/jquery/quickpager.jquery.js"></script>
+	<script type="text/javascript"
+		src="js/jquery/jquery.lightbox-0.5.min.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.dd.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.expander.min.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery-menu.js"></script>
+	<script type="text/javascript" src="js/jquery/jqmodal.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.timers.js"></script>
+	<script type="text/javascript" src="js/jquery/jquery.threedots.min.js"></script>
+
+	<script type="text/javascript" src="js/jquery/jquery.validate.min.js"></script>
+
+	<script type="text/javascript"
+		src="js/autocomplete/jquery.autocomplete.js"></script>
+	<script type="text/javascript"
+		src="js/autocomplete/jquery.ajaxQueue.js"></script>
+	<script type="text/javascript"
+		src="js/autocomplete/jquery.bgiframe.min.js"></script>
+	<script type="text/javascript"
+		src="js/autocomplete/thickbox-compressed.js"></script>
+
+	<script type="text/javascript"
+		src="js/infieldlabel/jquery.infieldlabel.min.js"></script>
+	<script type="text/javascript"
+		src="https://www.ahl.cz//js/moment/moment.min.js"></script>
+
+	<script type="text/javascript" src="js/ahl-common-1735830269.js"></script>
+
+	<!-- natabovani portletu s tabulkou musi byt pred vyrovnanim vysek porteltu v panelu -->
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+			$("[name=title]").tooltip();
+
+			// infield labels
+			$(".do_infield").inFieldLabels();
+			$("form.do_infield_on_form label").inFieldLabels();
+		
+			$(".zapasy_tabs").tabs();
+
+			// spus togglery
+			togglers();
+
+			// nastartuj radky tabulky fungujici jako odkaz
+			startClickableRows();
+			
+		});
+	</script>
+
+	<!--  hover pro tabulky -->
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+			$(".tabulka tbody tr").hover(
+					function() {
+						$(this).addClass('hovered');
+					},
+					function() {
+						$(this).removeClass('hovered');
+					});
+		
+		});
+	</script>
+
+			<!--  Upozorneni -->
+		<script type="text/javascript" language="javascript">
+			$(document).ready(function() {
+
+								
+				
+			});
+		</script>     <!--  scrollable na slider soutezi -->
+	<script type="text/javascript" language="javascript">
+			// execute your scripts when the DOM is ready. this is a good habit
+			$(function() {
+
+				// initialize scrollable
+				$("div.scrollable").scrollable();
+
+			});
+		</script>
+
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+			$('.confirm_delete').click(function(){
+				var answer = confirm('Opravdu odstranit?');
+				return answer; // answer is a boolean
+			});
+
+			$('.confirm').click(function(){
+				var answer = confirm('Opravdu provést?');
+				return answer; // answer is a boolean
+			});
+		});  
+	</script>
+
+
+	<!-- po kazde zmene vysky fixne umisteneho headerboxu posun vrchni odsazeni obsahu pod nim-->
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+			$('#header_box').bind('header_resize', function(e) {
+					$('#central_bordered_box').css("padding-top", $('#header_box').height()); 
+			});
+		});  
+	</script>
+
+
+	<!-- Uprav sirku hlavicky (pevne pozicovana) pro velikost okna -->
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+			$('#header_box').css("width", $(window).width()); 
+
+			$(window).resize(function() {
+				$('#header_box').css("width", $(window).width()); 
+			});
+		});  
+	</script>
+
+
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+			$('table.sortable_table').sortableTable();
+		});
+
+	</script>
+
+
+</head>
+
+<body>
+	<script type="text/javascript" src="js/wz_tooltip/wz_tooltip.js"></script>
+	<div id="background_box">
+
+		<!-- fb -->
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+	        var js, fjs = d.getElementsByTagName(s)[0];
+	        if (d.getElementById(id)) return;
+	        js = d.createElement(s); js.id = id;
+	        js.src = "//connect.facebook.net/cs_CZ/all.js#xfbml=1&appId=158292174194015";
+	        fjs.parentNode.insertBefore(js, fjs);
+	      }(document, 'script', 'facebook-jssdk'));</script>
+		<!-- END fb -->
+
+		<!-- <div id="content_box">  -->
+
+		<!-- 			
+				
+	 -->
+		
+
+		<div id="main_box">
+
+			<div id="header_box">
+
+				<div id="header_box_inner_box" class="content_rastr">							
+							
+							<div id="login_box">
+
+			            		<div class="left" style="width: 10%;" >
+		<a href="./" style="border: 0"><img alt="Úvodní stránka." src="img/go-to-home-reverse.png" style=" vertical-align: middle; border: 0;" />&nbsp;</a>
+</div>
+
+<div class="left">
+		<a href="cs/" class="emphasiszed_2"><img src="img/cs.png" alt="Česky" title="Česky""/></a>
+		<a href="en/" class="emphasiszed_2"><img src="img/en.png" alt="In english" title="In english"/></a>
+</div>
+
+
+
+
+<div class="right login_form_box" style="text-align: right;">
+
+	<a href="login/formular/" style=" color: inherit; text-decoration: none;">Přihlásit se:</a>
+	<a href="#" id="fb_link"  
+		style="vertical-align: middle; height: 37px; display: inline-block; "
+		title="Přihlásit přes Facebook" ><img src="img/login-via-fb-button.png" alt="Facebook" /></a>
+
+	&nbsp;&nbsp;&nbsp;
+
+	<form method="post" action="login/" class="show_if_large do_infield_on_form right">
+
+		<div class="left">
+			<input type="text" value=""
+				placeholder="E-mail"
+				name="login" id="login_login" 
+				class="gradient_input" 
+				style=" border-top-left-radius: 3px; border-bottom-left-radius: 3px;"/> 
+		</div>
+			
+		<div class="left">
+				<input type="password" value="" name="heslo" id="login_password" placeholder="Heslo"
+					class="gradient_input"/> 
+		</div>
+		
+		<div class="left">
+			<input
+				type="hidden" value="ano" name="permalogin" /> <input type="submit"
+				value="OK" name="submit"
+				style=" border-top-right-radius: 3px; border-bottom-right-radius: 3px;" />
+		</div>
+		
+		<div class="viktor_cistic"></div>
+		
+
+	</form>
+
+
+
+	<form method="post" action="login/formular/" class="show_if_small right">
+
+		<div class="left">
+			<input
+				type="hidden" value="ano" name="permalogin" /> 
+			<input type="submit"
+				value="@" name="submit"
+				style=" border-top-right-radius: 3px; border-bottom-right-radius: 3px;" />
+		</div>
+		
+		<div class="viktor_cistic"></div>
+	</form>
+
+	<div class="viktor_cistic"></div>
+</div>
+
+<div class="viktor_cistic"></div>
+
+<script type="text/javascript">
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId: '25686335571000371',
+		    cookie     : true,  // enable cookies to allow the server to access the session
+		    xfbml      : true,  // parse social plugins on this page
+		    version    : 'v24.0', // use graph api version 24.0
+		    status: true,
+
+		});
+
+		// tento kod je spusten po naloadovani facebook knihovny
+		$("#fb_link").click(function(e) {
+			e.preventDefault();
+			doFBLogin();
+		});
+	};
+
+	// Load the SDK asynchronously
+	(function(d, s, id) {
+	    var js, fjs = d.getElementsByTagName(s)[0];
+	    if (d.getElementById(id)) return;
+	    js = d.createElement(s); js.id = id;
+	    js.src = "//connect.facebook.net/en_US/sdk.js";
+	    fjs.parentNode.insertBefore(js, fjs);
+	 }(document, 'script', 'facebook-jssdk'));
+
+	function doFBLogin() {
+		FB.login(function(response) {
+			if (response.status === 'connected') {
+			    // Logged into your app and Facebook.
+			    
+			    console.log(JSON.stringify(response));
+			    console.log("Logged, fwd to login or register via FB");
+			    window.location = 'login/fb/';
+			} else if (response.status === 'not_authorized') {
+			    // The person is logged into Facebook, but not your app.
+				console.log("The person is logged into Facebook, but not your app.");
+			} else {
+			    // The person is not logged into Facebook, so we're not sure if
+			    // they are logged into this app or not.
+			    console.log("The person is not logged into Facebook.");
+			}		
+		}, {scope: 'public_profile,email'});
+	};
+
+	
+</script>
+			                    
+			                </div> <!-- #login_box --></div>
+				<!-- #header_box_inner_box -->
+
+			</div>
+			<!-- #header box -->
+
+
+			<div id="central_bordered_box">
+				<!-- #central_bordered_box -->
+
+				<div id="menu_box">
+					<div class="central_rastr_inner_box">
+						<ul id="main_menu" class="jsddm"><li class="menu_item small">
+	<a href="registrovane-souteze/">Soutěže</a>
+</li>
+
+<li class="menu_item small" style="overflow-x: auto; white-space: nowrap; padding-left: 25px;">
+	
+	<script type="text/javascript">
+		/**
+		 * Blok s live zapasy, ktery se pravidelne obnovuje 
+		 * @param canvas je jquery objekt, do ktereho se kresli live zapasy
+		 * @param banner je jquery objekt s napisem "zive", skryje se pri 0 zapasech
+		 * @param refreshIntervalSecs je interval obnovy dat, defaultne 60 sekund
+		 */
+		function LiveZapasy(canvas, banner, refreshIntervalSecs) {
+			// To avoid scope issues, use 'base' instead of 'this'
+			// to reference this class from internal events and functions.
+			var base = this;
+
+			base.canvas = $(canvas);
+			
+			base.banner = $(banner);
+
+			base.refreshIntervalSecs = refreshIntervalSecs;
+
+			this.init = function() {
+				
+				// schovej banner "zive" pokud se nehraji zadne zapasy
+				if (base.canvas.html()) {
+					base.banner.show();
+				}
+
+				setInterval(base.loadAndDisplayZapasy, base.refreshIntervalSecs);
+			};
+
+			/**
+			 * Natahuje a zobrazuje content daneho mesice
+			 **/
+			this.loadAndDisplayZapasy = function() {
+										
+				$.ajax({
+						type: "GET",
+						url: "live-zapasy/export/",
+						success : function( data, textStatus, jqXHR ) {							
+							base.canvas.html(data);
+							base.displayBannerBasedOnData();								
+					}});
+			};
+			
+			this.displayBannerBasedOnData = function() {
+				if (base.canvas.html()) {
+					base.banner.fadeIn();
+				} else {
+					base.banner.fadeOut();
+				}
+			};
+			
+			this.init();
+		}
+
+
+		$(document).ready(function() {
+			// var liveGames = new LiveZapasy($("#live_zapasy_canvas"), $("#live_zapasy_banner"), 600000);
+
+			if ($(".live_game").length > 0) {
+				$("#live_zapasy_banner").show();
+				
+			}
+		});
+			
+
+
+	</script>
+			
+	<div class="live_banner" id="live_zapasy_banner" style="display: none;">
+		<div><a href="souteze/"><img src="img/green-red-animated.gif" style="width: 10px;"/>ŽIVĚ</a></div>
+	</div>
+	
+	
+		
+	
+	<!--
+	<div style="display: block; margin-left: 15px; height: 100%; overflow: scroll; " id="live_zapasy_canvas">
+		
+	</div>
+	
+-->
+</li>
+						</ul>
+
+
+
+
+						<div class="viktor_cistic"></div>
+
+
+						<script type="text/javascript">
+			                        jQuery(".menu_item").hover(
+			                        function () {
+			                            jQuery(this).addClass("menu_item_hover");
+			                        },
+			                        function () {
+			                            jQuery(this).removeClass("menu_item_hover");
+			                        }
+			                    );
+			                    </script>
+
+					</div>
+					<!-- .central_rastr_inner_box -->
+				</div>
+				<!-- #menu_box -->
+
+				<div id="portlet_box" class="content_rastr">
+
+					
+
+					
+					<div class="portlet_panel not_equalize cols_100">
+
+	<!--  soutez promo -->
+	<div class="portlet" id="soutez_promo_portlet">
+		<div class="portlet_inner_box">
+			<div id="soutez_promo_logo_box" class="show_if_large">
+				<a href="soutez/vychodoceska_hokejova_liga/"><img
+					src="data//loga-soutezi/large_200/vychodoceska_hokejova_liga.png"
+					alt="Logo soutěže VCHL" id="soutez_promo_logo" />
+				</a>
+
+			</div>
+
+			<div class="left">
+				<div id="soutez_promo_text" style="display: flex; align-items: flex-end; ">
+					<h2 id="soutez_promo_heading" style="margin-right: auto; white-space: nowrap;">
+						<a href="soutez/vychodoceska_hokejova_liga/">Východočeská hokejová liga</a>
+					</h2>
+					
+					<div style="margin-left: auto; margin-right: 15px;">
+				 		<!--  custom soutez reklama -->
+					<script type="text/javascript">
+						$(document).ready(function() {
+							$("#soutez-hlavicka-ccmphl").hide();
+							$("#soutez-hlavicka-mcra").hide();
+							$("#soutez-hlavicka-mcra_b").hide();
+							$("#soutez-hlavicka-mcra_c").hide();
+							$("#soutez-hlavicka-zamhl").hide();
+
+							if (('ccmphl' == 'vychodoceska_hokejova_liga') || ('ccmphl2' == 'vychodoceska_hokejova_liga')) {
+								$("#soutez-hlavicka-ccmphl").show();
+							} else if ('mcra' == 'vychodoceska_hokejova_liga') {
+								$("#soutez-hlavicka-mcra").show();
+							} else if ('mcra_b' == 'vychodoceska_hokejova_liga') {
+								$("#soutez-hlavicka-mcra_b").show();
+							} else if ('mcra_c' == 'vychodoceska_hokejova_liga') {
+								$("#soutez-hlavicka-mcra_c").show();
+							} else if (('zamhl' == 'vychodoceska_hokejova_liga') || ('zhol' == 'vychodoceska_hokejova_liga')) {
+								$("#soutez-hlavicka-zamhl").show();
+							}
+						});
+					</script>
+					
+
+                   	<div id="soutez-hlavicka-zamhl" style=" text-align: right; vertical-align: bottom; ">
+						<a href="https://www.beranizlin.cz/rozpis-ledu" target="_blank" ><img src="img/zamhl-rozpis.png" style="vertical-align: middle; "/></a>
+					</div>
+
+                    <div id="soutez-hlavicka-mcra" style=" text-align: right; vertical-align: bottom; ">
+						<a href="soutez/mcra_b/" class="button submit">Divize B</a> &nbsp;&nbsp;&nbsp;&nbsp;
+						<a href="soutez/mcra_c/" class="button submit">Divize C</a> &nbsp;&nbsp;&nbsp;&nbsp;
+					</div>
+
+					<div id="soutez-hlavicka-mcra_b" style=" text-align: right; vertical-align: bottom; ">
+						<a href="soutez/mcra/" class="button submit">Divize A</a> &nbsp;&nbsp;&nbsp;&nbsp;
+						<a href="soutez/mcra_c/" class="button submit">Divize C</a> &nbsp;&nbsp;&nbsp;&nbsp;
+					</div>
+
+					<div id="soutez-hlavicka-mcra_c" style=" text-align: right; vertical-align: bottom; ">
+						<a href="soutez/mcra/" class="button submit">Divize A</a> &nbsp;&nbsp;&nbsp;&nbsp;
+						<a href="soutez/mcra_b/" class="button submit">Divize B</a> &nbsp;&nbsp;&nbsp;&nbsp;
+					</div>
+
+					<div id="soutez-hlavicka-ccmphl" style=" text-align: right; vertical-align: bottom; ">
+
+						<a href="http://www.stridasport.cz/"><img src="img/ccmphl-ccm.png" style="vertical-align: bottom; height: 15px; margin-top: 5px;"></a> 
+
+						&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a href="https://www.hokejpro.cz/"><img src="img/ccmphl-hokejpro.png" title="Hokejové brusle, dresy, hokejky - Hokejpro.cz" style="vertical-align: bottom; height: 15px; margin-top: 5px; "/></a>
+
+						&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a href="https://www.stridasport.cz/"><img src="img/ccmphl-strida-2.png" style="vertical-align: bottom; height: 15px; margin-top: 5px;"/></a>
+
+  &nbsp;&nbsp;&nbsp;&nbsp;
+
+ <a href="http://www.totalservice.cz/" title="Outsourcing ICT,správa sítí - TOTAL SERVICE"><img src="img/ccmphl-totalservice.png" style="vertical-align: bottom; height: 13px; margin-top: 5px; "/></a>
+
+						
+					</div>
+
+					</div>
+
+					
+				</div>
+	
+				<div id="soutez_menu_box">
+					<div>
+						
+							<ul class="soutez_menu_list">
+	<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/" class="soutez_menu_item_link ">VCHL</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/vysledky/" class="soutez_menu_item_link soutez_menu_item_link_active">Zápasy</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/tabulky/" class="soutez_menu_item_link ">Tabulka</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/statistiky/" class="soutez_menu_item_link ">Statistiky</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/ucastnici/" class="soutez_menu_item_link ">Týmy</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/fotogalerie/" class="soutez_menu_item_link ">Fotky</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/rekordy/" class="soutez_menu_item_link ">Rekordy</a>
+</li>
+												<li class="soutez_menu_item">
+	<a href="soutez/vychodoceska_hokejova_liga/o-soutezi/" class="soutez_menu_item_link ">O soutěži</a>
+</li>
+												
+</ul>
+
+<div class="viktor_cistic"></div>
+						
+						
+					</div>
+				</div>
+			</div>
+	
+			<div class="viktor_cistic"></div>
+			
+			
+			
+
+		</div>
+	</div>
+</div>
+
+					<div class="portlet_panel" id="first_vertical_portlet_panel">
+                    
+	                    ﻿		<!-- natabovani portletu musi byt pred vyrovnanim vysek porteltu v panelu -->
+		<script>
+			$(document).ready(function() {
+				setEqualHeight( $("#zapas_tabs > div.zapas_detail_tabulka_box") );
+				$("#zapas_tabs").tabs({ selected: 0 } );
+			});
+		</script>
+
+					
+						<div id="zapas_full_portlet" class="portlet full_portlet">
+							<div id="zapas_full_portlet_inner_box" class="full_portlet_inner_box">
+								
+	 
+<div style="margin-top:0px; margin-bottom: 15px; ">VCHL VČHL 2.ročník | Základní část 
+		| Neděle 4. 10. 2026, 16:30 | Rychnov nad Kněžnou | Zápas č. 12</div>
+
+
+
+<div style="margin-bottom: 5px; width: 100%; ">
+	<div style="width: 100%;">
+		<div style="width: 40%; float: left; text-align:center; "> <!--  box domaci -->
+			<div style="float: left; width: 100px;">
+								<img src="data//loga-teamu/medium_100/cestice.png" alt="logo klubu" 
+					style="border-radius: 4px; width: 100%;">
+
+			</div>
+			
+			<div style="float: left; font-size: 20px; font-weight: bold; color: #D62431; text-align: left; padding: 0 10px;">
+				HC Čestice
+			</div>
+			
+			<div class="viktor_cistic"></div>
+		</div>
+		
+		<!-- box score -->
+		<div style="width: 20%;  float: left; text-align: center;  font-weight: bold;">
+			<div style=" color: #D62431; font-size: 24px;">5 : 6</div>
+			<div style="font-size: 20px; color: #D62431;" >sn</div>
+			<div style="margin-top: 20px;">(0:0, 3:1, 2:4)</div>
+			
+			
+		</div>
+		
+		
+		<div style="width: 40%; float: left; text-align:center; "> <!--  box hoste -->
+			
+			<div style="float: right; width: 100px;">
+								<img src="data//loga-teamu/medium_100/zavodka.png" alt="logo klubu" 
+					style="border-radius: 4px; width: 100%;">
+
+			</div>
+			
+			<div style="float: right;  font-size: 20px; font-weight: bold; color: #D62431; text-align: right; padding: 0 10px;">
+				Závodní hokejová Pardubice
+			</div>
+			
+			<div class="viktor_cistic"></div>
+		</div>
+		
+		<div class="viktor_cistic"></div>
+	</div>
+</div>
+
+
+<div id="zapas_tabs" style="padding-top: 10px;" >
+						<ul>
+							<li><a href="#zapas_tab_1"><span>Zápis</span></a></li>
+							<li><a href="#zapas_tab_2"><span>Video</span></a></li>
+							<li><a href="#zapas_tab_3"><span>Reportáž</span></a></li>
+						</ul>
+						
+						
+
+						<div class="zapas_detail_tabulka_box" id="zapas_tab_1">
+
+							<div class="left two_thirds" style="box-sizing: border-box; padding-right: 20px;">
+								<!-- layout sekce zapis v pripade, ze se zobrazuje vycet branek -->
+<a name="branky"></a>
+<div class="zapas_tabulka_box">							<table class="tabulka" cellspacing="0">
+								<caption class="tabulka_caption1">Branky</caption>
+								<thead>
+									<tr class="tabulka_radek_nadpis">
+										<th class="tabulka_team alpha">
+													Team</th>
+										<th class="tabulka_cas alpha">
+													Čas</th>
+										<th class="tabulka_jmeno alpha">
+													Střelec</th>
+										<th class="tabulka_jmeno alpha">
+													Asistence</th>
+										<th class="tabulka_vysledek alpha">
+													Typ</th>
+										<th class="tabulka_vysledek alpha">
+													Stav</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">30:41</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38031" 
+			class="local_nadpis_link">Kapucián, Vojtěch   S</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38011" 
+			class="local_nadpis_link">Sajdl, Radim</a>
+						</td>
+	<td class="tabulka_vysledek">5/4</td>
+	<td class="tabulka_vysledek">1:0</td>
+</tr>
+<tr class="tabulka_radek_sudy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">32:26</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44104" 
+			class="local_nadpis_link">Fuks, Roman</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38250" 
+			class="local_nadpis_link">Růžička, Vojtěch</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=40024" 
+			class="local_nadpis_link">Čapek, Jaroslav</a>
+						</td>
+	<td class="tabulka_vysledek">5/4</td>
+	<td class="tabulka_vysledek">1:1</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">37:27</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						</td>
+	<td class="tabulka_jmeno">&nbsp;</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">2:1</td>
+</tr>
+<tr class="tabulka_radek_sudy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">38:49</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44079" 
+			class="local_nadpis_link">Všetečka, Jakub</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">3:1</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">43:50</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38019" 
+			class="local_nadpis_link">Kopecký, Tomáš</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44079" 
+			class="local_nadpis_link">Všetečka, Jakub</a>
+						</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">4:1</td>
+</tr>
+<tr class="tabulka_radek_sudy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">44:25</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44105" 
+			class="local_nadpis_link">Indra, Marek</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38253" 
+			class="local_nadpis_link">Zadina, Tomáš</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44107" 
+			class="local_nadpis_link">Syrovec, David</a>
+						</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">4:2</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">45:02</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44107" 
+			class="local_nadpis_link">Syrovec, David</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39403" 
+			class="local_nadpis_link">Rudy, Samuel</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38253" 
+			class="local_nadpis_link">Zadina, Tomáš</a>
+						</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">4:3</td>
+</tr>
+<tr class="tabulka_radek_sudy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">46:54</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=40024" 
+			class="local_nadpis_link">Čapek, Jaroslav</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38253" 
+			class="local_nadpis_link">Zadina, Tomáš</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">4:4</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">51:10</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=40197" 
+			class="local_nadpis_link">Vinař, Daniel</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39403" 
+			class="local_nadpis_link">Rudy, Samuel</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44105" 
+			class="local_nadpis_link">Indra, Marek</a>
+						</td>
+	<td class="tabulka_vysledek">5/4</td>
+	<td class="tabulka_vysledek">4:5</td>
+</tr>
+<tr class="tabulka_radek_sudy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">57:16</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38009" 
+			class="local_nadpis_link">Vacek, Jan</a>
+						</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38031" 
+			class="local_nadpis_link">Kapucián, Vojtěch   S</a>
+						&nbsp;<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38022" 
+			class="local_nadpis_link">Kolář, Aleš   JUN</a>
+						</td>
+	<td class="tabulka_vysledek">5/4</td>
+	<td class="tabulka_vysledek">5:5</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">60:00</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44105" 
+			class="local_nadpis_link">Indra, Marek</a>
+						</td>
+	<td class="tabulka_jmeno">&nbsp;</td>
+	<td class="tabulka_vysledek">5/5</td>
+	<td class="tabulka_vysledek">5:6</td>
+</tr>
+
+								</tbody>
+							</table></div>
+
+<a name="tresty"></a>
+<div class="zapas_tabulka_box">							<table class="tabulka" cellspacing="0">
+								<caption class="tabulka_caption1">Tresty</caption>
+								<thead>
+									<tr class="tabulka_radek_nadpis">
+										<th class="tabulka_team alpha">
+													Team</th>
+										<th class="tabulka_cas alpha">
+													Čas</th>
+										<th class="tabulka_jmeno alpha">
+													Hráč</th>
+										<th class="tabulka_jmeno alpha">
+													Trest</th>
+										<th class="tabulka_jmeno alpha">
+													Důvod</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">4:25</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38253" 
+			class="local_nadpis_link">Zadina, Tomáš</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Hákování</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">8:18</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44079" 
+			class="local_nadpis_link">Všetečka, Jakub</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Vysoká hůl</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">11:39</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38257" 
+			class="local_nadpis_link">Vodehnal, Petr</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Podražení</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">24:48</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44080" 
+			class="local_nadpis_link">Zelený, Šimon</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Hrubost</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">24:48</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38015" 
+			class="local_nadpis_link">Šimerda, Filip</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Napadení</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">24:48</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38250" 
+			class="local_nadpis_link">Růžička, Vojtěch</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Hrubost</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">25:45</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44107" 
+			class="local_nadpis_link">Syrovec, David</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Vysoká hůl</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">26:48</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44080" 
+			class="local_nadpis_link">Zelený, Šimon</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Hrubost</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">30:09</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44107" 
+			class="local_nadpis_link">Syrovec, David</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Hákování</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">30:49</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44079" 
+			class="local_nadpis_link">Všetečka, Jakub</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Zdržování hry</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">38:49</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39402" 
+			class="local_nadpis_link">Mlateček, David</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Nesportovní chování</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">CES</td>
+	<td class="tabulka_cas">50:26</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Krosček</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team">ZH</td>
+	<td class="tabulka_cas">56:09</td>
+	<td class="tabulka_jmeno"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44104" 
+			class="local_nadpis_link">Fuks, Roman</a>
+						</td>
+	<td class="tabulka_jmeno">2 - Menší trest&nbsp;</td>
+	<td class="tabulka_jmeno">Sekání</td>
+</tr>
+
+								</tbody>
+							</table></div>
+
+<a name="najezdy"></a>
+<div class="zapas_tabulka_box">							<table class="tabulka" cellspacing="0">
+								<caption class="tabulka_caption1">Nájezdy</caption>
+								<thead>
+									<tr class="tabulka_radek_nadpis">
+										<th class="tabulka_team alpha">
+													Team</th>
+										<!-- th class="tabulka_cas">
+													čas</th -->
+										<th class="tabulka_jmeno alpha">
+													Hráč</th>
+										<th class="tabulka_jmeno alpha">
+													Brankář</th>
+										<th class="tabulka_vysledek alpha">
+													Gól</th>
+										<th class="tabulka_vysledek alpha">
+													Stav</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">ZH</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38253" 
+			class="local_nadpis_link">Zadina, Tomáš</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">0:0</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">CES</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ano</td>
+	<td class="tabulka_vysledek alpha">1:0</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">ZH</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38250" 
+			class="local_nadpis_link">Růžička, Vojtěch</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">1:0</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">CES</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38029" 
+			class="local_nadpis_link">Skála, Daniel</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">1:0</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">ZH</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38247" 
+			class="local_nadpis_link">Papadopulos, Nikolas</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">1:0</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">CES</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44079" 
+			class="local_nadpis_link">Všetečka, Jakub</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">1:0</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">ZH</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39403" 
+			class="local_nadpis_link">Rudy, Samuel</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ano</td>
+	<td class="tabulka_vysledek alpha">1:1</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">CES</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38022" 
+			class="local_nadpis_link">Kolář, Aleš   JUN</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">1:1</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">ZH</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44105" 
+			class="local_nadpis_link">Indra, Marek</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ano</td>
+	<td class="tabulka_vysledek alpha">1:2</td>
+</tr>
+<tr class="tabulka_radek_lichy">
+	<td class="tabulka_team alpha">CES</td>
+	<!-- td class="tabulka_cas">{NAJEZD_CAS}</td -->
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38028" 
+			class="local_nadpis_link">Javůrek, Jakub   JUN</a>
+						</td>
+	<td class="tabulka_jmeno alpha"><a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						&nbsp;</td>
+	<td class="tabulka_vysledek alpha">Ne</td>
+	<td class="tabulka_vysledek alpha">1:2</td>
+</tr>
+
+								</tbody>
+							</table>
+</div>
+
+<a name="hraci"></a>
+<div class="zapas_tabulka_box"><div>
+
+	<!--  domaci -->
+	<div class="zapas_detail_float_tabulka_box">
+		<table class="tabulka" style=""0">
+			<caption class="tabulka_caption1">Hráči - Čestice</caption>
+			<thead>
+				<tr class="tabulka_radek_nadpis">
+					<th class="tabulka_cislo alpha">#</th>
+					<th class="tabulka_team_zkratka alpha"
+							onmouseover="Tip('O - Obránce, Ú - Útočník, O/Ú - Obránce i útočník, H/B - Hráč i brankář')" onmouseout="UnTip()">
+							Post</th>
+					<th class="tabulka_jmeno alpha">Jméno</th>
+					<th class="tabulka_goly numeric">G</th>
+					<th class="tabulka_asistence numeric">A</th>
+					<th class="tabulka_body numeric">B</th>
+					<th class="tabulka_trestne_minuty numeric">TM</th>
+				</tr>
+			</thead>
+
+			<tbody>			<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							22</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38013" 
+			class="local_nadpis_link">Dvořák, Martin</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							1</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Brankář">B</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							16</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38028" 
+			class="local_nadpis_link">Javůrek, Jakub   JUN</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							14</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38031" 
+			class="local_nadpis_link">Kapucián, Vojtěch   S</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							2</td>
+				<td class="tabulka_body numeric">
+							2</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							24</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38022" 
+			class="local_nadpis_link">Kolář, Aleš   JUN</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							18</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38019" 
+			class="local_nadpis_link">Kopecký, Tomáš</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							10</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38024" 
+			class="local_nadpis_link">Kubasa, Václav</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							26</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38026" 
+			class="local_nadpis_link">Mráz, Martin   JUN</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							25</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38010" 
+			class="local_nadpis_link">Sajdl, Lukáš</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							2</td>
+				<td class="tabulka_asistence numeric">
+							2</td>
+				<td class="tabulka_body numeric">
+							4</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							15</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38011" 
+			class="local_nadpis_link">Sajdl, Radim</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							6</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38018" 
+			class="local_nadpis_link">Sajdl, Vojtěch</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							21</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38029" 
+			class="local_nadpis_link">Skála, Daniel</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							3</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44077" 
+			class="local_nadpis_link">Skála, Jan   JUN</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							29</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38015" 
+			class="local_nadpis_link">Šimerda, Filip</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							17</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38009" 
+			class="local_nadpis_link">Vacek, Jan</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							27</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38025" 
+			class="local_nadpis_link">Vašata, Marek</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							11</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44079" 
+			class="local_nadpis_link">Všetečka, Jakub</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							2</td>
+				<td class="tabulka_trestne_minuty numeric">
+							4</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							7</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44080" 
+			class="local_nadpis_link">Zelený, Šimon</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							4</td>
+			</tr>
+			
+			</tbody>
+
+		</table>
+	</div>
+
+
+	<!--  hoste -->
+	<div class="zapas_detail_float_tabulka_box">
+		<table class="tabulka" cellspacing="0">
+			<caption class="tabulka_caption1">Hráči - Pardubice</caption>
+			<thead>
+				<tr class="tabulka_radek_nadpis alpha">
+					<th class="tabulka_cislo alpha">#</th>
+					<th class="tabulka_team_zkratka alpha"
+						onmouseover="Tip('O - Obránce, Ú - Útočník, O/Ú - Obránce i útočník, H/B - Hráč i brankář')" onmouseout="UnTip()">
+						Post</th>	
+					<th class="tabulka_jmeno alpha">Jméno</th>
+					<th class="tabulka_goly numeric">G</th>
+					<th class="tabulka_asistence numeric">A</th>
+					<th class="tabulka_body numeric">B</th>
+					<th class="tabulka_trestne_minuty numeric">TM</th>
+				</tr>
+			</thead>
+			<tbody>			<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							18</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39408" 
+			class="local_nadpis_link">Boguaj, Přemek</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							27</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39560" 
+			class="local_nadpis_link">Cvrček, Michael</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							17</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=40024" 
+			class="local_nadpis_link">Čapek, Jaroslav</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							2</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							91</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44104" 
+			class="local_nadpis_link">Fuks, Roman</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							61</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44105" 
+			class="local_nadpis_link">Indra, Marek</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							2</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							3</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							97</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38245" 
+			class="local_nadpis_link">Kubálek, Petr</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							86</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44106" 
+			class="local_nadpis_link">Lubina, Radek</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							58</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39402" 
+			class="local_nadpis_link">Mlateček, David</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							24</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38247" 
+			class="local_nadpis_link">Papadopulos, Nikolas</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							29</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Brankář">B</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							4</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=39403" 
+			class="local_nadpis_link">Rudy, Samuel</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							2</td>
+				<td class="tabulka_body numeric">
+							2</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							7</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38250" 
+			class="local_nadpis_link">Růžička, Vojtěch</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							89</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44107" 
+			class="local_nadpis_link">Syrovec, David</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							1</td>
+				<td class="tabulka_body numeric">
+							2</td>
+				<td class="tabulka_trestne_minuty numeric">
+							4</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							16</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=40197" 
+			class="local_nadpis_link">Vinař, Daniel</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							1</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							1</td>
+				<td class="tabulka_trestne_minuty numeric">
+							0</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							13</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38257" 
+			class="local_nadpis_link">Vodehnal, Petr</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							0</td>
+				<td class="tabulka_body numeric">
+							0</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+						<tr class="tabulka_radek_lichy">
+				<td class="tabulka_cislo alpha">
+							25</td>
+				<td class="tabulka_team_zkratka alpha">
+							<abbr title="Hráč">O/Ú</abbr></td>
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38253" 
+			class="local_nadpis_link">Zadina, Tomáš</a>
+						</td>
+				<td class="tabulka_goly numeric">
+							0</td>
+				<td class="tabulka_asistence numeric">
+							3</td>
+				<td class="tabulka_body numeric">
+							3</td>
+				<td class="tabulka_trestne_minuty numeric">
+							2</td>
+			</tr>
+			
+			</tbody>
+		</table>
+	</div>
+
+	<div class="viktor_cistic"></div>
+
+</div></div>
+
+<a name="brankari"></a>
+<div class="zapas_tabulka_box"><div>
+	<!--  domaci -->
+	<div class="zapas_detail_float_tabulka_box">
+		<table class="tabulka" cellspacing="0">
+			<caption class="tabulka_caption1">Brankáři -
+				Čestice</caption>
+			<thead>
+				<tr class="tabulka_radek_nadpis">
+					<th class="tabulka_jmeno alpha">Jméno</th>
+					<th class="tabulka_minuty numeric"
+						onmouseover="Tip('Počet odehraných minut')" onmouseout="UnTip()">Min</th>
+					<th class="tabulka_obdrzene_goly numeric"
+						onmouseover="Tip('Počet obdržených gólů')" onmouseout="UnTip()">OG</th>
+					<th class="tabulka_prumer numeric"
+						onmouseover="Tip('Počet zákroků')" onmouseout="UnTip()">Zák</th>
+					<th class="tabulka_prumer numeric"
+						onmouseover="Tip('Procentuální úspěšnost')" onmouseout="UnTip()">%</th>
+					
+				</tr>
+			</thead>
+			<tbody>			<tr class="tabulka_radek_lichy">
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=44075" 
+			class="local_nadpis_link">Hanák, Miroslav</a>
+						</td>
+				<td class="tabulka_minuty numeric">
+							60</td>
+				<td class="tabulka_obdrzene_goly numeric">
+							6</td>
+				<td class="tabulka_zakroky numeric">
+							0</td>
+				<td class="tabulka_zakroky numeric">
+							0,00</td>
+				
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<!--  hoste -->
+	<div class="zapas_detail_float_tabulka_box">
+		<table class="tabulka" cellspacing="0">
+			<caption class="tabulka_caption1">Brankáři - Pardubice</caption>
+			<thead>
+				<tr class="tabulka_radek_nadpis">
+					<th class="tabulka_jmeno alpha">Jméno</th>
+					<th class="tabulka_minuty numeric"
+						onmouseover="Tip('Počet odehraných minut')" onmouseout="UnTip()">Min</th>
+					<th class="tabulka_obdrzene_goly numeric"
+						onmouseover="Tip('Počet obdržených gólů')" onmouseout="UnTip()">OG</th>
+					<th class="tabulka_prumer numeric"
+						onmouseover="Tip('Počet zákroků')" onmouseout="UnTip()">Zák</th>
+					<th class="tabulka_prumer numeric"
+						onmouseover="Tip('Procentuální úspěšnost')" onmouseout="UnTip()">%</th>
+					
+				</tr>
+			</thead>
+			<tbody>			<tr class="tabulka_radek_lichy">
+				<td class="tabulka_jmeno alpha">
+							<a href="soutez/vychodoceska_hokejova_liga/hrac/?hracid=38239" 
+			class="local_nadpis_link">Pavlík, Matěj</a>
+						</td>
+				<td class="tabulka_minuty numeric">
+							60</td>
+				<td class="tabulka_obdrzene_goly numeric">
+							5</td>
+				<td class="tabulka_zakroky numeric">
+							0</td>
+				<td class="tabulka_zakroky numeric">
+							0,00</td>
+				
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="viktor_cistic"></div>
+</div>
+</div>
+
+							</div>
+							
+							<!--  tabulka s dalsimi indformacemi-->
+							<div class="zapas_detail_tabulka_box left one_third" >
+							
+								<div class="zapas_tabulka_box">
+								
+									<table class="tabulka" style="width: 100%;" cellspacing="0">
+										<caption class="tabulka_caption1">Statistika zápasu</caption>
+										<tbody>
+											<tr class="">
+												<td>Stadion</td>											
+												<td class="tabulka_komentar">Rychnov nad Kněžnou</td>
+											</tr>
+											<tr class="">
+												<td>Rozhodčí</td>
+												<td class="tabulka_komentar">Veselý D., Kareš T.</td>
+											</tr>
+											<tr class="">
+												<td>Vyloučení</td>
+												<td class="tabulka_komentar">6:7</td>
+											</tr>
+											
+											<tr class="">
+												<td>Vyšší tresty</td>
+												<td class="tabulka_komentar">0:0</td>
+											</tr>
+											<tr class="">
+												<td>Využití</td>
+												<td class="tabulka_komentar">2:2</td>
+											</tr>
+											<tr class="">
+												<td>Čas v PP</td>
+												<td class="tabulka_komentar">7:39
+												: 6:21</td>
+											</tr>
+											
+											<tr class="">
+												<td>Střely</td>
+												<td class="tabulka_komentar">0:0</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								
+								
+								
+								<div class="zapas_tabulka_box">
+									<table class="tabulka" style="width: 100%;" cellspacing="0">
+										<caption class="tabulka_caption1">Další informace</caption>
+										<tbody>
+											<tr class="">
+												<td class="tabulka_komentar">Diváci: 70, Zdravotník: Alena Pail Provazníková, Hl. Pořadatel: Jakub Sajdl, Rozhodčí: Kareš, Veselý</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								
+							</div>
+						
+							<div class="viktor_cistic"></div>
+							
+							<div>
+								﻿
+<div>
+	<a href="mailto:HokejVC%40seznam.cz%2Cschreiner%40ahl.cz?subject=Chyba%20v%20z%C3%A1pise%20z%20utk%C3%A1n%C3%AD%20HC%20%C4%8Cestice%20-%20Z%C3%A1vodn%C3%AD%20hokejov%C3%A1%20Pardubice&body=Dobr%C3%BD%20den%2C%0Ana%C5%A1el%20jsem%20chybu%20v%20z%C3%A1pise%20k%20utk%C3%A1n%C3%AD%20HC%20%C4%8Cestice%20-%20Z%C3%A1vodn%C3%AD%20hokejov%C3%A1%20Pardubice%20%284.10.2026%29%3A%0A%0A%0A----%20SEM%20DOPL%C5%87TE%20POPIS%20CHYBY%20V%20Z%C3%81PISE%20---%20%0A%0AOpravte%20z%C3%A1pis%20zde%3A%0Ahttps%3A%2F%2Fwww.ahl.cz%2Fadministrace%2Fsoutez%2F%3Fid%3D276%26redirectto%3Dadministrace%2Fsoutez%2Fzapas%2Feditovat-odehrany%2F%3Fzapasid%3D46616%0A%0APro%20v%C3%ADce%20informac%C3%AD%20pros%C3%ADm%20odpov%C4%9Bzte%20na%20tento%20mail.%0A%0APozn%C3%A1mka%3A%20pokud%20je%20pro%20v%C3%A1s%20toto%20upozorn%C4%9Bn%C3%AD%20ne%C5%BE%C3%A1douc%C3%AD%20kontaktujte%2C%20pros%C3%ADm%2C%20t%C3%BDm%20AHL%20%28ahl%40ahl.cz%29%0A%0A" class="button submit">Nahlásit chybu v zápise</a>
+</div>
+
+							</div>
+							
+						</div>
+						
+						
+						
+						<div class="zapas_detail_tabulka_box" id="zapas_tab_2">
+						
+							K zápasu nebylo natočeno video.							
+								    		
+						</div>
+						
+
+						<div class="zapas_detail_tabulka_box" id="zapas_tab_3">
+						
+							<div style="margin-bottom: 50px;">
+								K zápasu nebyla dosud napsaná reportáž.
+							</div>
+							
+							<div>
+								
+							</div>
+						</div>
+						
+				</div> <!--  konec zapas tabs -->
+				
+				
+				<div class="social_buttons" style="height: 70px;">
+					<fb:like href="https://www.ahl.cz//vychodoceska_hokejova_liga/soutez/zapas/?zapasid=46616" send="false" layout="box_count" width="450" show_faces="false"></fb:like>
+				</div>
+				
+				
+				<div class=" chyba_v_zapise" >
+					<h3 class="spacing_dole" >Co je v zápise špatně?</h3>
+					
+					<form action="nahlasit-chybu-v-zapise/json/" class="chyba_v_zapise_form" >
+						<input type="hidden" name="zapasid" value="46616" />
+						
+						<textarea name="poznamka" class="spacing_dole"  style=" width: 400px; height: 100px;"></textarea>
+						
+						<input type="submit" class="button submit" value="Nahlásit chybu" />
+						
+						<input type="button" class=" button chyba_v_zapise_closer" value="Storno" />
+					</form>
+				</div>
+				
+				<script type="text/javascript">
+					$(document).ready(function() {
+						$(".chyba_v_zapise").dialog({
+							autoOpen: false,
+							height: 300,
+							width: 500,
+							modal: true,
+							closeOnEscape: true});
+
+						$(".chyba_v_zapise_launcher").click(function(e) {
+							e.preventDefault();
+							$(".chyba_v_zapise").dialog("open");
+						});
+
+						$(".chyba_v_zapise_closer").click(function(e) {
+							e.preventDefault();
+							$(".chyba_v_zapise").dialog("close");
+						});
+
+						$(".chyba_v_zapise_form").submit(function(e) {
+							e.preventDefault();
+
+							var form = $(this);
+
+							// loading
+							form.find("input[type=submit]").attr("disabled", "disabled");
+							form.find("input[type=submit]").addClass("button-loading");
+							
+							$.post($(this).attr("action"), $(this).serialize(), function(data, textStatus, jqXHR) {
+								if ("item" in data) {
+									form.find("input[type=submit]").removeClass("button-loading");
+									form.find("input[type=submit]").removeAttr("disabled");
+
+									$(".chyba_v_zapise_launcher").text("Chyba byla nahlášena");
+									$(".chyba_v_zapise_launcher").attr("disabled", "disabled");
+									
+								} else if ("error" in data) {
+									window.alert("Chybu se bohužel nepodařilo nahlásit:-( \n\nDůvod: " + data.error + " \n\nOmlouváme se.");
+								} else  {
+									window.alert("Chybu se bohužel nepodařilo nahlásit:-( \n\nDůvod: " + data.error + " \n\nOmlouváme se.");
+								}
+								$(".chyba_v_zapise").dialog("close");
+								
+							}, "json");
+						});
+
+					});
+				</script>
+											
+                    
+                    
+                    
+
+
+	 						</div>
+	 					</div>
+
+						
+                    </div> <!-- panel pro #first_vertical_portlet_panel -->
+					
+					<div class="viktor_cistic"></div>
+					
+
+
+
+
+					<!-- nový footer panel -->
+					<div class="portlet_panel not_equalize cols_100">
+
+						<!--  soutez promo -->
+						<div class="portlet" style="background-color: #d3d3d3;">
+							<div class="portlet_inner_box" style="margin: 0;">
+								
+								<div class="left" style="margin-right: 25px; margin-bottom: 25px; width: 200px;">
+									<h3 class="local_nadpis">AHL.cz</h3>
+
+									<ul>
+										<li><a href="napoveda/" class="doplnujici_link_husty">&#128161;Jak na to! Nápověda.</a></li>
+										<li><a href="uvod/#ahl_promo_about_box" class="doplnujici_link_husty">Co je AHL.cz?</a></li>
+										<li><a href="partneri/" class="doplnujici_link_husty">Partnerství</a></li>
+										<li><a href="kontakt/" class="doplnujici_link_husty">Kontakty</a></li>
+										<li><a href="online-zapisy/" class="doplnujici_link_husty">On-line zápis</a></li>
+										
+										<li><a href="podminky-uziti/"
+											class="doplnujici_link_husty">Podmínky užití</a></li>
+
+										<li><a href="https://twitter.com/ahl_cz"
+											class="doplnujici_link_husty">Co je nového na AHL?</a></li>
+									</ul>
+								</div>
+
+								<div class="left" style="max-width: 675px;">
+									<h3 class="local_nadpis">
+										<a href="souteze/#partneri">Partnerské soutěže</a>
+									</h3>
+
+								
+																	
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/ahl2011_-_amaterska_hokejova_liga/"><img
+											src="data//loga-soutezi/medium_100/ahl2011_-_amaterska_hokejova_liga.png"
+											alt="AHL Slovácko z.s." id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/ahlvm1/"><img
+											src="data//loga-soutezi/medium_100/ahlvm1.png"
+											alt="Amatérská hokejová liga - Valašské Meziříčí 1. liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/akhl/"><img
+											src="data//loga-soutezi/medium_100/akhl.png"
+											alt="Amatérská kutnohorská hokejová liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/ballh/"><img
+											src="data//loga-soutezi/medium_100/ballh.png"
+											alt="Brněnská amaterská liga ledního hokeje" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/bhhl/"><img
+											src="data//loga-soutezi/medium_100/bhhl.png"
+											alt="Brněnská Hobby Hokejová Liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/byshl/"><img
+											src="data//loga-soutezi/medium_100/byshl.png"
+											alt="Bystřická hokejová liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/ccmphl/"><img
+											src="data//loga-soutezi/medium_100/ccmphl.png"
+											alt="CCM liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/firemni_hokejova_liga/"><img
+											src="data//loga-soutezi/medium_100/firemni_hokejova_liga.png"
+											alt="Firemní Hokejová Liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/hlvzr/"><img
+											src="data//loga-soutezi/medium_100/hlvzr.png"
+											alt="Hokejová liga vesnic Žďár nad Sázavou" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/mestska_liga_mb/"><img
+											src="data//loga-soutezi/medium_100/mestska_liga_mb.png"
+											alt="Městská liga Moravské Budějovice - 1. liga 26/27" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/mlmb2/"><img
+											src="data//loga-soutezi/medium_100/mlmb2.png"
+											alt="Městská liga Moravské Budějovice - 2. liga 26/27" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/mlmb3/"><img
+											src="data//loga-soutezi/medium_100/mlmb3.png"
+											alt="Městská liga Moravské Budějovice - 3. liga 26/27" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/mlmbsuperliga/"><img
+											src="data//loga-soutezi/medium_100/mlmbsuperliga.png"
+											alt="Městská liga Moravské Budějovice - Superliga 26/27" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/mhl/"><img
+											src="data//loga-soutezi/medium_100/mhl.png"
+											alt="Moravian Hockey League" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/npl/"><img
+											src="data//loga-soutezi/medium_100/npl.png"
+											alt="Nejvyšší pojizerská liga - Turnov" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phl_-_pribramska_hokejova_liga/"><img
+											src="data//loga-soutezi/medium_100/phl_-_pribramska_hokejova_liga.png"
+											alt="PHL - Příbramská hokejová liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phlpe/"><img
+											src="data//loga-soutezi/medium_100/phlpe.png"
+											alt="PHL Pahorek PUB 26/27" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phlpeb/"><img
+											src="data//loga-soutezi/medium_100/phlpeb.png"
+											alt="PHL Stráž BAR 26/27" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phl12/"><img
+											src="data//loga-soutezi/medium_100/phl12.png"
+											alt="Prague Hockey Showdown 2012" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phl13/"><img
+											src="data//loga-soutezi/medium_100/phl13.png"
+											alt="Prague Hockey Showdown 2013" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phl14/"><img
+											src="data//loga-soutezi/medium_100/phl14.png"
+											alt="Prague Hockey Showdown 2014" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/phl16/"><img
+											src="data//loga-soutezi/medium_100/phl16.png"
+											alt="Prague Hockey Showdown 2016" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/slavica/"><img
+											src="data//loga-soutezi/medium_100/slavica.png"
+											alt="Slavica Cup" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/valasskahobbyliga/"><img
+											src="data//loga-soutezi/medium_100/valasskahobbyliga.png"
+											alt="Valašská hokejová hobby liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/vhl-a/"><img
+											src="data//loga-soutezi/medium_100/vhl-a.png"
+											alt="Valašská hokejová liga - A" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/vrskleague/"><img
+											src="data//loga-soutezi/medium_100/vrskleague.png"
+											alt="Vrskmaň league " id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/vychodoceska_hokejova_liga/"><img
+											src="data//loga-soutezi/medium_100/vychodoceska_hokejova_liga.png"
+											alt="Východočeská hokejová liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/zamhl/"><img
+											src="data//loga-soutezi/medium_100/zamhl.png"
+											alt="Zlínská amatérská hokejová liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/znhl_a/"><img
+											src="data//loga-soutezi/medium_100/znhl_a.png"
+											alt="Znojemská hokejová liga - Divize A" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/znhlb1/"><img
+											src="data//loga-soutezi/medium_100/znhlb1.png"
+											alt="Znojemská hokejová liga - Divize B" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/znhlc/"><img
+											src="data//loga-soutezi/medium_100/znhlc.png"
+											alt="Znojemská hokejová liga - Divize C" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+																
+									<div class="left"
+										style="margin-right: 26px; margin-bottom: 20px; width: 70px; height: 70px; ">
+										<a href="soutez/zbkhl/"><img
+											src="data//loga-soutezi/medium_100/zbkhl.png"
+											alt="Žamberská hokejová liga" id="soutez_promo_logo"
+											style="border-radius: 5px; width: 100%;" /> </a>
+
+									</div>
+								
+
+
+									<div class="viktor_cistic"></div>
+								</div>
+
+								<div class="viktor_cistic"></div>
+
+							</div>
+						</div>
+					</div>
+
+					<div class="viktor_cistic"></div>
+
+				</div>
+				<!-- #portlet box -->
+
+				<div class="viktor_cistic"></div>
+
+
+			</div>
+			<!-- #central_bordered_box  -->
+
+			<div id="footer_box" class="content_rastr">
+				<div id="credits_box">
+					<span class="credit">Design: <a href="http://www.ahl.cz/"
+						class="doplnujici_link">AHL</a> </span> 
+						
+					<span class="credit">
+						Copyright &copy; 2001-2025 <a href="https://www.ahl.cz/"
+						class="doplnujici_link">AHL.cz</a> </span>
+				</div>
+			</div>
+			<!--  footer_box -->
+
+		</div>
+		<!-- #main_box -->
+
+	</div>
+	<!-- #background box -->
+
+</body>
+</html>

@@ -3,6 +3,7 @@ import React from 'react'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
+import { Badge } from '../components/Badge'
 import { CardTitle } from '../components/Heading'
 import { Eyebrow } from '../components/Kicker'
 import { Numeral } from '../components/Numeral'
@@ -16,6 +17,11 @@ export type SoupiskaCard = {
   kicker: string
   number: number | null
   photo: Photo | null
+  /**
+   * Statistika za sezónu. `goalie` skryje G/A/B (u brankáře by byly samé
+   * nuly); null = hráč nemá odehraný zápas, nezobrazí se nic.
+   */
+  stats?: { games: number; goals: number; assists: number; goalie: boolean } | null
 }
 
 /** Iniciály pro kartu bez fotky — první 2 slova, tituly a „st./ml." se přeskočí. */
@@ -77,6 +83,8 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
         </>
       )}
 
+      {card.stats && <SeasonStats stats={card.stats} />}
+
       {card.number != null && (
         <Numeral as="div" className="absolute right-3.5 bottom-15" size="lg">
           <span className="bg-lime box-decoration-clone px-2.5 py-0.5">#{card.number}</span>
@@ -106,5 +114,40 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
         </CardTitle>
       </div>
     </div>
+  )
+}
+
+/**
+ * Pilulka Z / G / A / B v rohu fotky. Tmavé sklo (`glass`) čte na každé
+ * fotce i na rastru bez fotky. Vizuální zkratky jsou pro čtečku zbytečně
+ * stručné, takže nese celý popis v `aria-label`.
+ */
+function SeasonStats({ stats }: { stats: NonNullable<SoupiskaCard['stats']> }) {
+  const items: Array<[string, number]> = stats.goalie
+    ? [['Z', stats.games]]
+    : [
+        ['Z', stats.games],
+        ['G', stats.goals],
+        ['A', stats.assists],
+        ['B', stats.goals + stats.assists],
+      ]
+  const label = stats.goalie
+    ? `Zápasů v sezóně: ${stats.games}`
+    : `Zápasů ${stats.games}, branek ${stats.goals}, asistencí ${stats.assists}, bodů ${stats.goals + stats.assists}`
+
+  return (
+    <Badge
+      aria-label={label}
+      className="absolute top-2.5 left-2.5 gap-2 px-2.5 tabular-nums md:top-3.5 md:left-3.5 md:gap-2.5 md:px-3"
+      role="group"
+      size="xs"
+      variant="glass"
+    >
+      {items.map(([key, value]) => (
+        <span aria-hidden key={key}>
+          <span className="text-white/60">{key}</span> {value}
+        </span>
+      ))}
+    </Badge>
   )
 }

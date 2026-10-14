@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { notSyncedFromAhl } from '../access/notSyncedFromAhl'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
 
 export const Matches: CollectionConfig = {
@@ -19,6 +20,8 @@ export const Matches: CollectionConfig = {
   admin: {
     group: 'Hokej',
     useAsTitle: 'displayTitle',
+    description:
+      'Zápasy s vyplněným „ID zápasu na AHL" spravuje automatická synchronizace z AHL.cz — jejich údaje jsou jen pro čtení. Smazáním ID se zápas odpojí natrvalo (synchronizace ho už nepáruje ani nezakládá znovu) a jde upravit ručně.',
     defaultColumns: ['displayTitle', 'date', 'status', 'season', 'team'],
   },
   defaultSort: '-date',
@@ -31,8 +34,11 @@ export const Matches: CollectionConfig = {
       },
       hooks: {
         beforeChange: [
-          async ({ data, req }) => {
-            const opponentId = data?.opponent
+          async ({ data, originalDoc, req }) => {
+            // Update jen s části polí (např. `{ ahl: … }` z synchronizace) nenese
+            // `opponent` ani `home` — chybějící hodnoty se berou z uloženého
+            // dokumentu, jinak by se titulek přepsal na „soupeř x HC Čestice".
+            const opponentId = data?.opponent ?? originalDoc?.opponent
             let opponentName = 'soupeř'
             if (opponentId) {
               try {
@@ -46,7 +52,7 @@ export const Matches: CollectionConfig = {
                 /* ponechat výchozí */
               }
             }
-            const home = data?.home
+            const home = data?.home ?? originalDoc?.home
             return home ? `HC Čestice x ${opponentName}` : `${opponentName} x HC Čestice`
           },
         ],
@@ -54,6 +60,7 @@ export const Matches: CollectionConfig = {
     },
     {
       name: 'date',
+      access: { update: notSyncedFromAhl },
       type: 'date',
       required: true,
       index: true,
@@ -77,23 +84,27 @@ export const Matches: CollectionConfig = {
     },
     {
       name: 'competition',
+      access: { update: notSyncedFromAhl },
       type: 'text',
       admin: { description: 'OLLH, VČHL, přátelák, turnaj…' },
     },
     {
       name: 'opponent',
+      access: { update: notSyncedFromAhl },
       type: 'relationship',
       relationTo: 'opponents',
       required: true,
     },
     {
       name: 'home',
+      access: { update: notSyncedFromAhl },
       type: 'checkbox',
       defaultValue: true,
       label: 'Domácí zápas',
     },
     {
       name: 'venue',
+      access: { update: notSyncedFromAhl },
       type: 'text',
       label: 'Místo konání',
     },
@@ -102,12 +113,14 @@ export const Matches: CollectionConfig = {
       fields: [
         {
           name: 'scoreOurs',
+          access: { update: notSyncedFromAhl },
           type: 'number',
           label: 'Góly HC Čestice',
           min: 0,
         },
         {
           name: 'scoreOpp',
+          access: { update: notSyncedFromAhl },
           type: 'number',
           label: 'Góly soupeře',
           min: 0,
@@ -116,6 +129,7 @@ export const Matches: CollectionConfig = {
     },
     {
       name: 'status',
+      access: { update: notSyncedFromAhl },
       type: 'select',
       required: true,
       defaultValue: 'scheduled',
@@ -129,12 +143,13 @@ export const Matches: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'overtime', type: 'checkbox', label: 'Prodloužení', defaultValue: false },
-        { name: 'shootout', type: 'checkbox', label: 'Nájezdy', defaultValue: false },
+        { name: 'overtime', access: { update: notSyncedFromAhl }, type: 'checkbox', label: 'Prodloužení', defaultValue: false },
+        { name: 'shootout', access: { update: notSyncedFromAhl }, type: 'checkbox', label: 'Nájezdy', defaultValue: false },
       ],
     },
     {
       name: 'thirds',
+      access: { update: notSyncedFromAhl },
       type: 'array',
       label: 'Třetiny',
       maxRows: 5,
@@ -148,6 +163,103 @@ export const Matches: CollectionConfig = {
           fields: [
             { name: 'ours', type: 'number', label: 'HC Čestice', min: 0, required: true },
             { name: 'opp', type: 'number', label: 'Soupeř', min: 0, required: true },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'ahl',
+      type: 'group',
+      label: 'AHL.cz',
+      admin: { position: 'sidebar' },
+      fields: [
+        {
+          name: 'matchId',
+          type: 'number',
+          label: 'ID zápasu na AHL',
+          unique: true,
+          index: true,
+          admin: {
+            description:
+              'Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním ID zápas odpojíte natrvalo a můžete ho upravovat ručně — synchronizace ho už znovu nespáruje podle data a soupeře. Znovu připojit jde jen ručním vrácením ID.',
+          },
+        },
+        { name: 'hasReport', type: 'checkbox', label: 'Zápis vložen', admin: { readOnly: true } },
+        { name: 'syncedAt', type: 'date', label: 'Naposledy synchronizováno', admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } } },
+        { name: 'draftPostCreated', type: 'checkbox', label: 'Koncept reportáže vytvořen', admin: { readOnly: true } },
+      ],
+    },
+    {
+      name: 'goals',
+      type: 'array',
+      label: 'Branky',
+      labels: { singular: 'Branka', plural: 'Branky' },
+      access: { update: notSyncedFromAhl },
+      admin: { initCollapsed: true, description: 'Plní synchronizace ze zápisu o utkání.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'time', type: 'text', label: 'Čas (mm:ss)' },
+            {
+              name: 'side',
+              type: 'select',
+              label: 'Strana',
+              options: [
+                { label: 'HC Čestice', value: 'ours' },
+                { label: 'Soupeř', value: 'opp' },
+              ],
+            },
+            { name: 'strength', type: 'text', label: 'Početní stav (5/4)' },
+            { name: 'scoreAfter', type: 'text', label: 'Skóre po gólu' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'scorer', type: 'relationship', relationTo: 'players', label: 'Střelec' },
+            { name: 'scorerName', type: 'text', label: 'Střelec (jméno z AHL)' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'assist1', type: 'relationship', relationTo: 'players', label: '1. asistence' },
+            { name: 'assist1Name', type: 'text', label: '1. asistence (jméno z AHL)' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'assist2', type: 'relationship', relationTo: 'players', label: '2. asistence' },
+            { name: 'assist2Name', type: 'text', label: '2. asistence (jméno z AHL)' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'lineup',
+      type: 'array',
+      label: 'Sestava',
+      labels: { singular: 'Hráč', plural: 'Sestava' },
+      access: { update: notSyncedFromAhl },
+      admin: { initCollapsed: true, description: 'Plní synchronizace ze zápisu o utkání.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'player', type: 'relationship', relationTo: 'players', label: 'Hráč' },
+            { name: 'name', type: 'text', label: 'Jméno (z AHL)' },
+            { name: 'number', type: 'number', label: 'Číslo' },
+            { name: 'goalie', type: 'checkbox', label: 'Brankář', defaultValue: false },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'goals', type: 'number', label: 'Góly', min: 0 },
+            { name: 'assists', type: 'number', label: 'Asistence', min: 0 },
+            { name: 'pim', type: 'number', label: 'Trestné minuty', min: 0 },
           ],
         },
       ],

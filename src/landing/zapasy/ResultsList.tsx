@@ -34,6 +34,7 @@ export function ResultsList({
   moreHref,
   moreLabel = 'Všechny výsledky',
   headVariant,
+  showScorers = false,
 }: {
   rows: ResultRow[]
   page?: number
@@ -42,6 +43,8 @@ export function ResultsList({
   moreHref?: string | null
   moreLabel?: string
   headVariant?: SectionHeadVariant
+  /** Pod výsledkem řádek se střelci (jen /zapasy; výřez na home page je beze změny). */
+  showScorers?: boolean
 }) {
   return (
     <div className="scroll-mt-8 flex h-full flex-col" id="odehrane">
@@ -124,6 +127,15 @@ export function ResultsList({
                   {row.score}
                   {row.suffix && <span className="text-faint text-meta"> {row.suffix}</span>}
                 </Numeral>
+
+                {/* Střelci jedou na vlastním řádku přes celou šířku karty
+                    (`basis-full`); od `md` odsazení srovnané se sloupcem
+                    názvu zápasu (96 px datum + mezera 16 px). */}
+                {showScorers && row.scorers && (
+                  <p className="text-faint basis-full text-caption font-semibold text-pretty md:pl-28">
+                    <span className="text-ink font-bold">Střelci:</span> {row.scorers}
+                  </p>
+                )}
               </div>
             )
           })}

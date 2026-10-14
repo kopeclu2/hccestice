@@ -37,6 +37,17 @@ export const Opponents: CollectionConfig = {
       name: 'city',
       type: 'text',
     },
+    {
+      name: 'aliases',
+      type: 'array',
+      label: 'Názvy na AHL.cz',
+      labels: { singular: 'Název', plural: 'Názvy' },
+      admin: {
+        description:
+          'Krátké i plné názvy, podle kterých synchronizace soupeře pozná, např. „Pardubice", „Závodní hokejová Pardubice".',
+      },
+      fields: [{ name: 'name', type: 'text', label: 'Název', required: true }],
+    },
     slugField({ useAsSlug: 'name' }),
   ],
 }

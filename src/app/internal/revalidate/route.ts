@@ -1,0 +1,31 @@
+import { timingSafeEqual } from 'node:crypto'
+
+import { revalidateLandingNow } from '@/hooks/revalidateLanding'
+
+/**
+ * Interní revalidace pro synchronizaci VČHL (`jobs/vchlSync/revalidate.ts`).
+ *
+ * Proč route handler: job běží z cronu v Node procesu Nextu, ale MIMO request,
+ * takže `revalidateTag`/`revalidatePath` tam nemají `workAsyncStorage` a padají
+ * na `Invariant: static generation store missing`. Uvnitř route handleru store
+ * existuje. Job ho volá přes `127.0.0.1` (ne `localhost` — standalone server
+ * poslouchá jen na IPv4, viz healthcheck v AGENTS.md).
+ *
+ * `force-dynamic`: handler nesmí být prerenderovaný; leží mimo route groupy,
+ * takže nad ním není žádný `loading.tsx` ani layout.
+ */
+export const dynamic = 'force-dynamic'
+
+function authorized(req: Request): boolean {
+  const secret = process.env.CRON_SECRET
+  if (!secret) return false
+  const given = Buffer.from(req.headers.get('authorization') ?? '')
+  const expected = Buffer.from(`Bearer ${secret}`)
+  return given.length === expected.length && timingSafeEqual(given, expected)
+}
+
+export function POST(req: Request) {
+  if (!authorized(req)) return new Response('Unauthorized', { status: 401 })
+  revalidateLandingNow({ info: (msg) => console.info(`[vchl-sync] ${msg}`) })
+  return Response.json({ revalidated: true }, { headers: { 'Cache-Control': 'no-store' } })
+}

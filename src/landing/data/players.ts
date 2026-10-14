@@ -1,12 +1,14 @@
 import type { Player } from '@/payload-types'
 
 import configPromise from '@payload-config'
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
-import type { RosterPlayer } from '../types'
+import type { PlayerSeasonStat, RosterPlayer } from '../types'
 
 import { toPhoto } from './format'
+import { CACHE_TAGS } from './tags'
 
 /** Hráči — fetchery pro soupisky a hráčské karty. */
 
@@ -94,3 +96,47 @@ export const fetchPickedPlayers = cache(async (playerIds: number[]): Promise<Ros
     .filter((player): player is Player => Boolean(player))
     .map(playerToRosterPlayer)
 })
+
+/**
+ * Statistiky hráčů za sezónu — součet `lineup` odehraných zápasů.
+ *
+ * Neukládají se na hráči: sezóna má ~20 zápasů, takže je levnější je
+ * sečíst než udržovat odvozená pole v synchronizaci. Klíč mapy je ID
+ * hráče (JSON z `unstable_cache` číselné klíče stejně převede na řetězce).
+ * Hráč, který v žádném zápisu není, v mapě chybí — UI pak nic nezobrazí
+ * místo řady nul.
+ *
+ * Tag `matches` + `revalidate`: viz AGENTS.md „Tři pravidla" — bez
+ * `revalidate` má `unstable_cache` TTL rok. Žádné `new Date()` uvnitř.
+ */
+const loadPlayerSeasonStats = unstable_cache(
+  async (seasonId: number): Promise<Record<string, PlayerSeasonStat>> => {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'matches',
+      where: { and: [{ season: { equals: seasonId } }, { status: { equals: 'played' } }] },
+      limit: 0,
+      depth: 0,
+      pagination: false,
+      select: { lineup: { player: true, goals: true, assists: true, pim: true } },
+    })
+
+    const stats: Record<string, PlayerSeasonStat> = {}
+    for (const match of docs) {
+      for (const entry of match.lineup ?? []) {
+        // Hráč mimo kolekci (host, nespárovaný) nemá soupisku, kam by se zapsal.
+        if (typeof entry.player !== 'number') continue
+        const stat = (stats[entry.player] ??= { games: 0, goals: 0, assists: 0, pim: 0 })
+        stat.games += 1
+        stat.goals += entry.goals ?? 0
+        stat.assists += entry.assists ?? 0
+        stat.pim += entry.pim ?? 0
+      }
+    }
+    return stats
+  },
+  ['player-season-stats'],
+  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+)
+
+export const fetchPlayerSeasonStats = cache(loadPlayerSeasonStats)

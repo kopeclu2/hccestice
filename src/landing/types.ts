@@ -175,6 +175,8 @@ export type ResultRow = MatchSchemaFields & {
   score: string
   suffix: '' | 'sn' | 'pp'
   outcome: Outcome
+  /** Naši střelci bez nájezdů, „Sajdl 2, Vacek"; null = zápis chybí. */
+  scorers: string | null
 }
 
 /** Čtvereček formy (posledních 5 zápasů) i s obsahem tooltipu. */
@@ -299,6 +301,30 @@ export type ArticleScoreboard = {
   /** Třetiny „1:1" v pořadí domácí : hosté; prázdné = nezobrazovat. */
   thirds: string[]
   suffix: '' | 'sn' | 'pp'
+  /** Průběh branek ze zápisu; prázdné = timeline se nevykreslí. */
+  goals: ArticleGoal[]
+}
+
+/** Jedna branka v timeline reportáže. */
+export type ArticleGoal = {
+  /** „12:34". */
+  time: string
+  ours: boolean
+  scorer: string
+  /** Asistenti (0–2 jména). */
+  assists: string[]
+  /** Stav po brance v pořadí domácí : hosté. */
+  score: string
+  /** Přesilovka (PP) / oslabení (OS) z pohledu Čestic, nájezd; jinak null. */
+  special: 'pp' | 'os' | 'sn' | null
+}
+
+/** Statistika hráče za sezónu — součet ze sestav odehraných zápasů. */
+export type PlayerSeasonStat = {
+  games: number
+  goals: number
+  assists: number
+  pim: number
 }
 
 /** Kompletní view-model detailu článku. */
@@ -344,7 +370,19 @@ export type HeroModernContent = Omit<HeroContent, 'ctaLabel'> & {
 }
 
 /** Řádek tabulky soutěže. */
-export type StandingsRow = { pos: number; team: string; games: number; points: number }
+export type StandingsRow = {
+  pos: number
+  team: string
+  games: number
+  points: number
+  /** Rozšířená tabulka ze synchronizace — chybí u ručně vedených sezón. */
+  wins?: number
+  otWins?: number
+  otLosses?: number
+  losses?: number
+  goalsFor?: number
+  goalsAgainst?: number
+}
 
 export type StandingsContent = {
   seasonLabel: string

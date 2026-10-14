@@ -28,6 +28,8 @@ const RETENTION_MS = 90 * 24 * 60 * 60 * 1000
  * Vědomě chybí:
  * - `form-submissions` — plní je veřejný kontaktní formulář, ne editor,
  * - `search` — zrcadlo článků, které si searchPlugin přepisuje sám,
+ * - `vchl-sync-runs` — protokol běhů synchronizace (každých 15 minut
+ *   v zápasový den by log zaplavil; sám je o sobě záznam),
  * - `payload-*` systémové kolekce.
  */
 const TRACKED_COLLECTIONS = [
@@ -51,7 +53,7 @@ const TRACKED_COLLECTIONS = [
   'navigation-items',
 ] as const
 
-const TRACKED_GLOBALS = ['header', 'footer', 'siteConfig', 'sidebar'] as const
+const TRACKED_GLOBALS = ['header', 'footer', 'siteConfig', 'sidebar', 'vchl-sync'] as const
 
 /**
  * Strukturální nadtyp argumentů všech hooků — balíček své typy neexportuje
