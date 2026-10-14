@@ -4,6 +4,9 @@ import type {
   AhlGoal,
   AhlLineupRow,
   AhlMatchDetail,
+  AhlMatchStats,
+  AhlPair,
+  AhlPenalty,
   AhlPersonRef,
   AhlScore,
   AhlScoreSuffix,
@@ -100,7 +103,17 @@ function parseHeader(doc: Document, matchId: number) {
   return { home, away, score, periods, dateISO, venue, competition, phaseName }
 }
 
-function parseGoals(doc: Document, matchId: number): AhlGoal[] {
+type Side = 'home' | 'away'
+
+/**
+ * Písmenné kódy trestů a jejich délka v TM. OK = osobní trest do konce utkání,
+ * do trestných minut v sestavě se počítá za 20 (ověřeno na zápasech 46732:
+ * 2+2+2+2+2+5 + OK = 35, a 40236: 2+5+2+2+2+2+2 + OK = 37). Neznámý kód dostane
+ * `minutes: null`, ať se délka nevymýšlí.
+ */
+const PENALTY_CODE_MINUTES: Record<string, number> = { OK: 20 }
+
+function parseGoals(doc: Document, matchId: number): { goals: AhlGoal[]; codeSide: Map<string, Side> } {
   const page = `zapas ${matchId}`
   const table = tableByCaption(doc, /^Branky$/i)
   if (!table) throw new AhlParseError(page, 'chybí tabulka Branky')
@@ -123,7 +136,7 @@ function parseGoals(doc: Document, matchId: number): AhlGoal[] {
   // ten je v hlavičce zápasu nikde neuvedený a nelze ho spárovat s názvem.
   let prevHome = 0
   let prevAway = 0
-  const codeSide = new Map<string, 'home' | 'away'>()
+  const codeSide = new Map<string, Side>()
 
   for (const tr of bodyRows(table)) {
     const cells = Array.from(tr.children)
@@ -158,7 +171,137 @@ function parseGoals(doc: Document, matchId: number): AhlGoal[] {
       scoreAfter: state,
     })
   }
-  return goals
+  return { goals, codeSide }
+}
+
+/**
+ * Tresty obou stran. Kód týmu (CES, ZH) nejde spárovat s názvem v hlavičce,
+ * takže strana se odvozuje postupně — viz `resolveSides`. Tabulka u zápasu bez
+ * trestů nebo u neodehraného zápasu v HTML úplně chybí, to je `[]`.
+ */
+function parsePenalties(
+  doc: Document,
+  matchId: number,
+  ctx: { codeSide: Map<string, Side>; lineups: { home: AhlLineupRow[]; away: AhlLineupRow[] } },
+): AhlPenalty[] {
+  const page = `zapas ${matchId}`
+  const table = tableByCaption(doc, /^Tresty$/i)
+  if (!table) return []
+
+  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) => text(th))
+  const idx = {
+    team: headers.indexOf('Team'),
+    time: headers.indexOf('Čas'),
+    player: headers.indexOf('Hráč'),
+    kind: headers.indexOf('Trest'),
+    reason: headers.indexOf('Důvod'),
+  }
+  if (Object.values(idx).some((i) => i < 0)) {
+    throw new AhlParseError(page, `tabulka Tresty má neočekávané záhlaví (${headers.join(', ')})`)
+  }
+
+  // Sloupce Hráč, Trest a Důvod mají stejnou třídu `tabulka_jmeno`, proto se
+  // indexují podle pozice záhlaví, ne podle třídy.
+  const rows = bodyRows(table).map((tr) => {
+    const cells = Array.from(tr.children)
+    const teamCode = text(cells[idx.team])
+    const time = text(cells[idx.time])
+    if (!teamCode || !/^\d+:\d{2}$/.test(time)) {
+      throw new AhlParseError(page, `nečitelný řádek trestu (${teamCode}|${time})`)
+    }
+    const link = cells[idx.player]?.querySelector('a')
+    const playerRaw = text(cells[idx.player])
+    const kindRaw = text(cells[idx.kind])
+    const km = kindRaw.match(/^(\d+)\s*-\s*(.+)$/)
+    const cm = km ? null : kindRaw.match(/^([A-ZÁ-Ž]{1,4})\s*-\s*(.+)$/)
+    return {
+      time,
+      teamCode,
+      player: link ? personFromLink(link) : null,
+      playerText: !link && playerRaw ? displayName(playerRaw) : null,
+      code: km ? km[1] : cm ? cm[1] : null,
+      minutes: km ? +km[1] : cm ? (PENALTY_CODE_MINUTES[cm[1]] ?? null) : null,
+      kind: km ? km[2].trim() : cm ? cm[2].trim() : kindRaw,
+      reason: text(cells[idx.reason]) || null,
+    }
+  })
+
+  const sides = resolveSides(rows, ctx, page)
+  return rows.map((r, i) => ({ ...r, side: sides[i] }))
+}
+
+/**
+ * Strana trestu v pořadí od nejspolehlivějšího zdroje:
+ * 1. `hracid` hráče je v sestavě domácích / hostů;
+ * 2. kód týmu se už potkal u branky;
+ * 3. kód se naučil z trestu rozhodnutého krokem 1 (trest lavice téhož týmu
+ *    tak dostane stranu, i když tým v zápase nestřelil);
+ * 4. známe kódy jen jednoho týmu a tenhle je jiný → je to ten druhý.
+ * Dvouprůchodově proto, aby výsledek nezávisel na pořadí řádků.
+ */
+function resolveSides(
+  rows: { time: string; teamCode: string; player: AhlPersonRef | null }[],
+  ctx: { codeSide: Map<string, Side>; lineups: { home: AhlLineupRow[]; away: AhlLineupRow[] } },
+  page: string,
+): Side[] {
+  const playerSide = new Map<number, Side>()
+  for (const r of ctx.lineups.home) if (r.playerId !== null) playerSide.set(r.playerId, 'home')
+  for (const r of ctx.lineups.away) if (r.playerId !== null) playerSide.set(r.playerId, 'away')
+
+  const codeSide = new Map(ctx.codeSide)
+  const fromLineup = rows.map((r) => (r.player?.playerId != null ? playerSide.get(r.player.playerId) : undefined))
+  // Sestava je nejspolehlivější, proto se z ní kódy učí první — a když si
+  // protiřečí s tím, co už víme (z branek nebo z jiného řádku), je vstup
+  // nedůvěryhodný celý, ne jen ten řádek.
+  rows.forEach((r, i) => {
+    const side = fromLineup[i]
+    if (!side) return
+    const known = codeSide.get(r.teamCode)
+    if (known && known !== side) {
+      throw new AhlParseError(
+        page,
+        `trest ${r.time}: hráč ${r.player?.name} je v sestavě ${side}, ale kód ${r.teamCode} patří straně ${known}`,
+      )
+    }
+    codeSide.set(r.teamCode, side)
+  })
+
+  return rows.map((r, i) => {
+    const side = fromLineup[i] ?? codeSide.get(r.teamCode)
+    if (side) return side
+    const knownSides = new Set(codeSide.values())
+    if (knownSides.size === 1) {
+      const [only] = knownSides
+      return only === 'home' ? 'away' : 'home'
+    }
+    throw new AhlParseError(page, `trest ${r.time}: nelze určit stranu (${r.teamCode})`)
+  })
+}
+
+const NO_STATS: AhlMatchStats = { penalties: null, majors: null, ppGoals: null, ppTime: null }
+
+function parseMatchStats(doc: Document): AhlMatchStats {
+  const table = tableByCaption(doc, /^Statistika zápasu$/i)
+  if (!table) return { ...NO_STATS }
+
+  const pair = (raw: string): AhlPair | null => {
+    const m = raw.match(/^(\d+)\s*:\s*(\d+)$/)
+    return m ? { home: +m[1], away: +m[2] } : null
+  }
+  const values = new Map<string, string>()
+  // Řádky tu nemají třídy lichy/sudy, takže se bere každé `tr` s dvěma buňkami.
+  for (const tr of Array.from(table.querySelectorAll('tr'))) {
+    const tds = tr.querySelectorAll('td')
+    if (tds.length >= 2) values.set(text(tds[0]), text(tds[1]))
+  }
+  const ppTimeMatch = (values.get('Čas v PP') ?? '').match(/(\d+:\d{2})\s*:\s*(\d+:\d{2})/)
+
+  return {
+    penalties: pair(values.get('Vyloučení') ?? ''),
+    majors: pair(values.get('Vyšší tresty') ?? ''),
+    ppGoals: pair(values.get('Využití') ?? ''),
+    ppTime: ppTimeMatch ? { home: ppTimeMatch[1], away: ppTimeMatch[2] } : null,
+  }
 }
 
 function parseLineup(table: Element, matchId: number, label: string): AhlLineupRow[] {
@@ -198,7 +341,7 @@ export function parseMatchDetail(html: string, matchId: number): AhlMatchDetail 
   const page = `zapas ${matchId}`
   const doc = parseDocument(html, page)
   const header = parseHeader(doc, matchId)
-  const goals = parseGoals(doc, matchId)
+  const { goals, codeSide } = parseGoals(doc, matchId)
 
   const lineupTables = Array.from(doc.querySelectorAll('table')).filter((t) => {
     const cap = t.querySelector('caption')
@@ -218,6 +361,20 @@ export function parseMatchDetail(html: string, matchId: number): AhlMatchDetail 
   const played =
     hasReport || header.score.home + header.score.away > 0 || header.score.suffix !== null
 
+  // Neodehraný zápas ukazuje ve statistice nuly, které nic neznamenají.
+  let penalties: AhlPenalty[] | null = []
+  let penaltiesError: string | null = null
+  if (played) {
+    try {
+      penalties = parsePenalties(doc, matchId, { codeSide, lineups })
+    } catch (e) {
+      if (!(e instanceof AhlParseError)) throw e
+      penalties = null
+      penaltiesError = e.message
+    }
+  }
+  const stats = played ? parseMatchStats(doc) : { ...NO_STATS }
+
   return {
     matchId,
     dateISO: header.dateISO,
@@ -231,5 +388,8 @@ export function parseMatchDetail(html: string, matchId: number): AhlMatchDetail 
     hasReport,
     goals,
     lineups,
+    penalties,
+    penaltiesError,
+    stats,
   }
 }

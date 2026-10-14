@@ -4,9 +4,22 @@ import { describe, expect, it } from 'vitest'
 
 import { parseMatchDetail, parseMatchList } from '../../src/ahl'
 import { buildPatch } from '../../src/jobs/vchlSync/diff'
-import { buildGoals, buildLineup, buildThirds, ourCandidates } from '../../src/jobs/vchlSync/sync/matchDetail'
 import {
+  buildGoals,
+  buildLineup,
+  buildMatchStats,
+  buildPenalties,
+  buildThirds,
+  DETAIL_VERSION,
+  ourCandidates,
+  ourSide,
+  penaltyMinutesMismatch,
+} from '../../src/jobs/vchlSync/sync/matchDetail'
+import {
+  ahlNeedsWrite,
   desiredStatus,
+  isDetailOutdated,
+  nextDetailVersion,
   isReschedule,
   mergeLists,
   pairLegacy,
@@ -18,6 +31,8 @@ import { foldTeam, opponentKeys, stripClubPrefix } from '../../src/jobs/vchlSync
 const fx = (name: string) => readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')
 const detail = parseMatchDetail(fx('zapas-46616.html'), 46616)
 const players = { idFor: (id: number | null) => (id === 38010 ? 24 : null) }
+const detail2 = parseMatchDetail(fx('zapas-46992.html'), 46992)
+const idPlayers = { idFor: (id: number | null) => id }
 
 describe('vchl zápasy: sestavení z detailu', () => {
   it('třetiny jen z prvních tří period, z pohledu Čestic', () => {
@@ -69,6 +84,225 @@ describe('vchl zápasy: sestavení z detailu', () => {
       stored[k] = stored[k].map((row: object, i: number) => ({ id: `row${i}`, ...row }))
     }
     expect(buildPatch(stored, build()).fields).toEqual([])
+  })
+})
+
+describe('vchl zápasy: tresty a statistika', () => {
+  it('tresty jen Čestic, s vazbou na hráče', () => {
+    const rows = buildPenalties(detail, 'home', idPlayers)
+    expect(rows).toHaveLength(6)
+    expect(rows.every((r) => r.player != null)).toBe(true)
+    expect(rows.find((r) => r.time === '8:18')).toEqual({
+      time: '8:18',
+      minutes: 2,
+      kind: 'Menší trest',
+      reason: 'Vysoká hůl',
+      player: 44079,
+      playerName: 'Jakub Všetečka',
+    })
+    expect(rows.some((r) => r.playerName === 'Roman Fuks')).toBe(false)
+  })
+
+  it('tresty hostů: 46992 z pohledu hostujícího týmu', () => {
+    expect(detail2.away.name).toMatch(/Divo/)
+    const rows = buildPenalties(detail2, 'away', idPlayers)
+    expect(rows).toHaveLength(11)
+    expect(detail2.penalties!.filter((p) => p.side === 'away').every((p) => p.teamCode === 'DIV')).toBe(true)
+    expect(buildPenalties(detail2, 'home', idPlayers)).toHaveLength(8)
+  })
+
+  it('nespárovaný hráč nechá vazbu prázdnou, jméno zůstane', () => {
+    const rows = buildPenalties(detail, 'home', { idFor: () => null })
+    expect(rows.every((r) => r.player === null && r.playerName)).toBe(true)
+  })
+
+  it('kandidáti na hráče zahrnují i hráče z trestů', () => {
+    const only = { ...detail, goals: [], lineups: { home: [], away: [] } }
+    expect(ourCandidates(only, 'home').map((c) => c.ahlPlayerId)).toContain(44079)
+    expect(ourCandidates(only, 'away').map((c) => c.name)).not.toContain('Jakub Všetečka')
+  })
+
+  it('kandidáti z trestů: hráč ze sestavy se nezdvojuje, trest bez hracid nezakládá hráče', () => {
+    const base = detail.penalties!.find((p) => p.side === 'home' && p.player?.playerId === 44079)!
+    const inLineup = detail.lineups.home.find((r) => r.playerId != null)!
+    const pen = (player: typeof base.player) => ({ ...base, player })
+    const d = {
+      ...detail,
+      goals: [],
+      penalties: [
+        pen({ name: inLineup.name, playerId: inLineup.playerId }),
+        pen({ name: 'Trenér Bez Id', playerId: null }),
+        pen(null),
+        pen({ name: 'Host Z Trestu', playerId: 99999 }),
+      ],
+    }
+    const out = ourCandidates(d, 'home')
+    expect(out.filter((c) => c.ahlPlayerId === inLineup.playerId)).toHaveLength(1)
+    expect(out.some((c) => c.name === 'Trenér Bez Id')).toBe(false)
+    expect(out.some((c) => c.ahlPlayerId === 99999)).toBe(true)
+  })
+
+  it('nečitelná tabulka trestů (null): helpery to unesou', () => {
+    const broken = { ...detail, penalties: null, penaltiesError: 'chybí tabulka' } as never
+    expect(buildPenalties(broken, 'home', idPlayers)).toEqual([])
+    expect(penaltyMinutesMismatch(broken, 'home')).toBeNull()
+    expect(ourCandidates(broken, 'home').length).toBeGreaterThan(0)
+  })
+
+  it('trest bez odkazu na hráče bere jméno z textu buňky', () => {
+    const base = detail.penalties!.find((p) => p.side === 'home')!
+    const d = { ...detail, penalties: [{ ...base, player: null, playerText: 'Trenér Novák' }] } as never
+    expect(buildPenalties(d, 'home', idPlayers)[0]).toMatchObject({ player: null, playerName: 'Trenér Novák' })
+  })
+
+  it('statistika se otáčí na naše:soupeř', () => {
+    expect(buildMatchStats(detail, 'home')).toEqual({
+      penaltiesOurs: 6,
+      penaltiesOpp: 7,
+      majorsOurs: 0,
+      majorsOpp: 0,
+      ppGoalsOurs: 2,
+      ppGoalsOpp: 2,
+      ppTimeOurs: '7:39',
+      ppTimeOpp: '6:21',
+    })
+    expect(buildMatchStats(detail, 'away')).toEqual({
+      penaltiesOurs: 7,
+      penaltiesOpp: 6,
+      majorsOurs: 0,
+      majorsOpp: 0,
+      ppGoalsOurs: 2,
+      ppGoalsOpp: 2,
+      ppTimeOurs: '6:21',
+      ppTimeOpp: '7:39',
+    })
+  })
+
+  it('chybějící statistika → samé null', () => {
+    const none = { ...detail, stats: { penalties: null, majors: null, ppGoals: null, ppTime: null } }
+    const stats = buildMatchStats(none, 'home')
+    expect(Object.keys(stats)).toHaveLength(8)
+    expect(Object.values(stats).every((v) => v === null)).toBe(true)
+  })
+
+  it('součet minut trestů sedí se sestavou; po úpravě vrátí čísla', () => {
+    expect(ourSide(detail)).toBe('home')
+    expect(penaltyMinutesMismatch(detail, 'home')).toBeNull()
+    expect(penaltyMinutesMismatch(detail, 'away')).toBeNull()
+    expect(penaltyMinutesMismatch(detail2, 'away')).toBeNull()
+    expect(penaltyMinutesMismatch(detail2, 'home')).toBeNull()
+    const idx = detail.penalties!.findIndex((p) => p.side === 'home' && p.minutes === 2)
+    const cut = { ...detail, penalties: detail.penalties!.filter((_, i) => i !== idx) }
+    expect(penaltyMinutesMismatch(cut, 'home')).toEqual({ penalties: 10, pim: 12 })
+    // minuty null se ignorují
+    const nulled = {
+      ...detail,
+      penalties: detail.penalties!.map((p, i) => (i === idx ? { ...p, minutes: null } : p)),
+    }
+    expect(penaltyMinutesMismatch(nulled, 'home')).toEqual({ penalties: 10, pim: 12 })
+  })
+
+  it('idempotence: stav z DB (stats objekt, řádky s id, relace jako id) = žádný patch', () => {
+    const build = () => ({
+      penalties: buildPenalties(detail, 'home', idPlayers),
+      stats: buildMatchStats(detail, 'home'),
+    })
+    const stored = JSON.parse(JSON.stringify(build()))
+    stored.penalties = stored.penalties.map((row: object, i: number) => ({ id: `row${i}`, ...row }))
+    // Payload u skupiny vrací klíče v jiném pořadí
+    stored.stats = Object.fromEntries(Object.entries(stored.stats).reverse())
+    expect(buildPatch(stored, build()).fields).toEqual([])
+  })
+
+  it('stats: samé null vs. objekt z DB s null / chybějící skupina = shoda', () => {
+    const none = { ...detail, stats: { penalties: null, majors: null, ppGoals: null, ppTime: null } }
+    const desired = { stats: buildMatchStats(none, 'home') }
+    expect(buildPatch({ stats: { penaltiesOurs: null, ppTimeOpp: null } }, desired).fields).toEqual([])
+    expect(buildPatch({}, desired).fields).toEqual([])
+  })
+
+  it('nula není prázdná hodnota: 0 vyloučení vs. chybějící statistika se liší', () => {
+    const desired = { stats: buildMatchStats(detail, 'home') }
+    expect(buildPatch({ stats: { penaltiesOurs: null } }, desired).fields).toEqual(['stats'])
+    const stored = { stats: { ...desired.stats, majorsOurs: 0 } }
+    expect(buildPatch(stored, desired).fields).toEqual([])
+  })
+
+  it('zápas bez trestů: prázdné pole vs. prázdné pole z DB = shoda', () => {
+    const none = { ...detail, penalties: [] }
+    expect(buildPatch({ penalties: [] }, { penalties: buildPenalties(none, 'home', idPlayers) }).fields).toEqual([])
+    expect(buildPatch({}, { penalties: buildPenalties(none, 'home', idPlayers) }).fields).toEqual([])
+  })
+
+  it('pořadí řádků nezávisí na pořadí v HTML (AHL u shody příjmení pořadí nedrží)', () => {
+    const shuffled = {
+      ...detail,
+      lineups: { ...detail.lineups, home: [...detail.lineups.home].reverse() },
+      penalties: [...detail.penalties!].reverse(),
+    }
+    expect(buildLineup(shuffled, 'home', idPlayers)).toEqual(buildLineup(detail, 'home', idPlayers))
+    expect(buildPenalties(shuffled, 'home', idPlayers)).toEqual(buildPenalties(detail, 'home', idPlayers))
+    const desired = {
+      lineup: buildLineup(detail, 'home', idPlayers),
+      penalties: buildPenalties(detail, 'home', idPlayers),
+    }
+    const other = {
+      lineup: buildLineup(shuffled, 'home', idPlayers),
+      penalties: buildPenalties(shuffled, 'home', idPlayers),
+    }
+    expect(buildPatch(other, desired).fields).toEqual([])
+  })
+
+  it('stejné příjmení: řádky se stejným číslem/jménem se řadí deterministicky', () => {
+    const row = (name: string, playerId: number, number: number) =>
+      ({ ...detail.lineups.home[0], name, playerId, number, goalie: false }) as (typeof detail.lineups.home)[number]
+    const a = [row('Jakub Javůrek', 1, 7), row('Jan Javůrek', 2, 7), row('Matěj Vašata', 3, 9)]
+    const mk = (rows: typeof a) => ({ ...detail, lineups: { ...detail.lineups, home: rows } })
+    expect(buildLineup(mk([a[1], a[0], a[2]]), 'home', idPlayers)).toEqual(buildLineup(mk(a), 'home', idPlayers))
+    // číslo null na konec
+    const noNum = { ...a[2], number: null } as (typeof a)[number]
+    expect(buildLineup(mk([noNum, a[0]]), 'home', idPlayers).map((r) => r.number)).toEqual([7, null])
+  })
+
+  it('tresty se řadí podle času numericky (9:59 před 10:00)', () => {
+    const pen = (time: string) => ({ ...detail.penalties!.find((p) => p.side === 'home')!, time })
+    const d = { ...detail, penalties: [pen('10:00'), pen('9:59'), pen('2:05')] }
+    expect(buildPenalties(d, 'home', idPlayers).map((r) => r.time)).toEqual(['2:05', '9:59', '10:00'])
+  })
+
+  it('zastaralá verze: jen zápas se zápisem a nižší verzí (null = 1)', () => {
+    const doc = (ahl: object) => ({ ahl }) as never
+    expect(isDetailOutdated(doc({ hasReport: true }))).toBe(true)
+    expect(isDetailOutdated(doc({ hasReport: true, detailVersion: 1 }))).toBe(true)
+    expect(isDetailOutdated(doc({ hasReport: true, detailVersion: DETAIL_VERSION }))).toBe(false)
+    expect(isDetailOutdated(doc({ hasReport: false }))).toBe(false)
+    expect(isDetailOutdated(null)).toBe(false)
+  })
+
+  it('verze po zápisu: detail zvedne, bez detailu zůstane uložená hodnota (i null)', () => {
+    const doc = (v: number | null) => ({ ahl: { detailVersion: v } }) as never
+    expect(nextDetailVersion(doc(null), detail)).toBe(DETAIL_VERSION)
+    expect(nextDetailVersion(null, detail)).toBe(DETAIL_VERSION)
+    expect(nextDetailVersion(doc(null), null)).toBeNull()
+    expect(nextDetailVersion(doc(1), null)).toBe(1)
+    expect(nextDetailVersion(doc(DETAIL_VERSION), null)).toBe(DETAIL_VERSION)
+  })
+
+  it('samotná změna verze vede k zápisu `ahl`; druhý běh už ne', () => {
+    const next = { matchId: 46616, hasReport: true, detailVersion: DETAIL_VERSION }
+    const old = { ahl: { matchId: 46616, hasReport: true, detailVersion: null } } as never
+    expect(ahlNeedsWrite(old, next)).toBe(true)
+    const done = { ahl: { matchId: 46616, hasReport: true, detailVersion: DETAIL_VERSION } } as never
+    expect(ahlNeedsWrite(done, next)).toBe(false)
+    expect(ahlNeedsWrite(null, next)).toBe(true)
+    expect(ahlNeedsWrite(done, { ...next, hasReport: false })).toBe(true)
+    expect(ahlNeedsWrite(done, { ...next, matchId: 1 })).toBe(true)
+    // zápas bez detailu v tomto běhu: verze se nemění
+    expect(ahlNeedsWrite(old, { ...next, detailVersion: nextDetailVersion(old, null) })).toBe(false)
+  })
+
+  it('verze zpracování je alespoň 2 (tresty a statistika)', () => {
+    expect(DETAIL_VERSION).toBeGreaterThanOrEqual(2)
   })
 })
 
@@ -176,9 +410,10 @@ describe('vchl: stav zápasu', () => {
 })
 
 describe('vchl: stahování detailu', () => {
-  const base = { played: true, recent: false, hasReport: false }
-  it('neodehraný se nestahuje', () => {
+  const base = { played: true, recent: false, hasReport: false, outdated: false }
+  it('neodehraný se nestahuje (ani zastaralý)', () => {
     expect(shouldFetchDetail({ ...base, played: false, recent: true, trigger: 'manual' })).toBe(false)
+    expect(shouldFetchDetail({ ...base, played: false, hasReport: true, outdated: true, trigger: 'manual' })).toBe(false)
   })
   it('čerstvý odehraný vždy (i se zápisem, i z cronu)', () => {
     expect(shouldFetchDetail({ ...base, recent: true, hasReport: true, trigger: 'cron' })).toBe(true)
@@ -188,7 +423,13 @@ describe('vchl: stahování detailu', () => {
     expect(shouldFetchDetail({ ...base, trigger: 'manual' })).toBe(true)
     expect(shouldFetchDetail({ ...base, trigger: 'dry' })).toBe(true)
   })
-  it('starý se zápisem se nestahuje nikdy', () => {
+  it('starý se zápisem se nestahuje, dokud je zpracovaný aktuální verzí', () => {
     expect(shouldFetchDetail({ ...base, hasReport: true, trigger: 'manual' })).toBe(false)
+    expect(shouldFetchDetail({ ...base, hasReport: true, trigger: 'cron' })).toBe(false)
+  })
+  it('starý se zápisem zpracovaným starší verzí se stáhne znovu i z cronu (backfill)', () => {
+    for (const trigger of ['cron', 'manual', 'dry'] as const) {
+      expect(shouldFetchDetail({ ...base, hasReport: true, outdated: true, trigger })).toBe(true)
+    }
   })
 })

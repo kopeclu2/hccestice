@@ -8,6 +8,7 @@ import * as migration_20260821_093332_posts_list_show_photo from './20260821_093
 import * as migration_20260821_093653_trainings_cards from './20260821_093653_trainings_cards';
 import * as migration_20260821_095556_trainings_drop_extras from './20260821_095556_trainings_drop_extras';
 import * as migration_20261014_114308_vchl_sync from './20261014_114308_vchl_sync';
+import * as migration_20261014_134131_vchl_penalties from './20261014_134131_vchl_penalties';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261014_114308_vchl_sync.up,
     down: migration_20261014_114308_vchl_sync.down,
-    name: '20261014_114308_vchl_sync'
+    name: '20261014_114308_vchl_sync',
+  },
+  {
+    up: migration_20261014_134131_vchl_penalties.up,
+    down: migration_20261014_134131_vchl_penalties.down,
+    name: '20261014_134131_vchl_penalties'
   },
 ];

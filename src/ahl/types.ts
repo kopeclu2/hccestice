@@ -59,6 +59,50 @@ export type AhlLineupRow = {
   pim: number
 }
 
+export type AhlPenalty = {
+  /** `m:ss` / `mm:ss` od začátku zápasu */
+  time: string
+  side: 'home' | 'away'
+  /** zkratka týmu z AHL (CES, ZH) — jen informativně, strana je v `side` */
+  teamCode: string
+  /** null = řádek bez odkazu na hráče (trest lavice / trenéra) */
+  player: AhlPersonRef | null
+  /**
+   * Jméno z buňky Hráč, když v ní není odkaz (`displayName` bez přípon) — ať
+   * se u trestu bez `hracid` neztratí, kdo ho dostal. S odkazem nebo u prázdné
+   * buňky null (jméno pak nese `player`).
+   */
+  playerText: string | null
+  /** Kód před pomlčkou: číslo („2", „5") nebo písmenný kód („OK"); neznámý formát → null */
+  code: string | null
+  /** „2 - Menší trest" → 2, „OK - Trest do konce utkání" → 20; neznámý kód nebo formát → null */
+  minutes: number | null
+  /** Text za pomlčkou („Menší trest"); neznámý formát → celý surový text */
+  kind: string
+  /** prázdný důvod → null */
+  reason: string | null
+}
+
+export type AhlPair = { home: number; away: number }
+
+/**
+ * Tabulka „Statistika zápasu". Všechny hodnoty jsou v pořadí domácí:hosté
+ * (ověřeno proti počtu trestů po stranách). Chybí-li řádek nebo je nečitelný,
+ * je null — jsou to vedlejší data a nestojí za pád běhu. Střely tu záměrně
+ * nejsou: když je rozhodčí nevyplní, stránka ukazuje 0:0, takže hodnota
+ * nerozliší „žádná střela" od „nevyplněno".
+ */
+export type AhlMatchStats = {
+  /** Vyloučení */
+  penalties: AhlPair | null
+  /** Vyšší tresty */
+  majors: AhlPair | null
+  /** Využití přesilovek (góly) */
+  ppGoals: AhlPair | null
+  /** Čas v PP, `m:ss` */
+  ppTime: { home: string; away: string } | null
+}
+
 export type AhlMatchDetail = {
   matchId: number
   dateISO: string | null
@@ -75,6 +119,16 @@ export type AhlMatchDetail = {
   hasReport: boolean
   goals: AhlGoal[]
   lineups: { home: AhlLineupRow[]; away: AhlLineupRow[] }
+  /**
+   * Tresty obou stran; u neodehraného zápasu `[]`. Null = tabulka Tresty je
+   * nečitelná (důvod v `penaltiesError`). Tresty jsou vedlejší data, takže
+   * jejich chyba nesmí zahodit branky a sestavy ani zablokovat zápas, který
+   * by se jinak donekonečna stahoval znovu.
+   */
+  penalties: AhlPenalty[] | null
+  /** Zpráva `AhlParseError` z parsování trestů; null při úspěchu a u neodehraného zápasu. */
+  penaltiesError: string | null
+  stats: AhlMatchStats
 }
 
 /**

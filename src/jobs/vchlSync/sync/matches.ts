@@ -10,10 +10,14 @@ import type { SyncContext } from './ctx'
 import {
   buildGoals,
   buildLineup,
+  buildMatchStats,
+  buildPenalties,
   buildThirds,
+  DETAIL_VERSION,
   fetchMatchDetail,
   ourCandidates,
   ourSide,
+  penaltyMinutesMismatch,
 } from './matchDetail'
 import { ahlNameKeys, keysIntersect, opponentKeys, type OpponentResolver } from './opponents'
 import type { PlayerResolver } from './players'
@@ -92,21 +96,60 @@ export function desiredStatus(
 
 /**
  * Stahovat detail zápasu v tomto běhu? Jen odehrané (se skóre). Čerstvé
- * (do `RECENT_DAYS`) vždy — pozdní opravy zápisu. Starší jen když ještě nemají
- * zápis, a to jen při ručním/dry běhu: při cron tiku (každých 15 minut) by se
- * zápas, který AHL nikdy nezapíše, stahoval pořád dokola. Ruční běh ho
- * dotáhne a `hasReport` se pak nastaví z detailu.
+ * (do `RECENT_DAYS`) vždy — pozdní opravy zápisu. Zápas se zápisem zpracovaným
+ * starší verzí (`outdated`, viz `DETAIL_VERSION`) taky, a to při jakémkoli
+ * triggeru: je to jednorázový backfill (po zápisu verze sedí a zápas se už
+ * nestahuje). Ostatní starší jen když ještě nemají zápis, a to jen při
+ * ručním/dry běhu: při cron tiku (každých 15 minut) by se zápas, který AHL
+ * nikdy nezapíše, stahoval pořád dokola. Ruční běh ho dotáhne a `hasReport`
+ * se pak nastaví z detailu.
  */
 export function shouldFetchDetail(opts: {
   played: boolean
   recent: boolean
   hasReport: boolean
+  /** má zápis, ale zpracovaný starší verzí než `DETAIL_VERSION` */
+  outdated: boolean
   trigger: 'cron' | 'manual' | 'dry'
 }): boolean {
   if (!opts.played) return false
   if (opts.recent) return true
+  if (opts.outdated) return true
   if (opts.hasReport) return false
   return opts.trigger !== 'cron'
+}
+
+/** Zápas má zápis zpracovaný starší verzí, než je `DETAIL_VERSION` (`null` = verze 1). */
+export function isDetailOutdated(existing: Pick<Match, 'ahl'> | null | undefined): boolean {
+  return Boolean(existing?.ahl?.hasReport) && (existing?.ahl?.detailVersion ?? 1) < DETAIL_VERSION
+}
+
+/**
+ * Verze zpracování k zápisu: po staženém detailu aktuální, jinak uložená
+ * hodnota (včetně `null`) — nikdy se nepřepisuje na nižší.
+ */
+export function nextDetailVersion(
+  existing: Pick<Match, 'ahl'> | null | undefined,
+  detail: AhlMatchDetail | null,
+): number | null {
+  return detail ? DETAIL_VERSION : (existing?.ahl?.detailVersion ?? null)
+}
+
+/**
+ * Je potřeba zapsat skupinu `ahl`? Změna `detailVersion` se počítá, jinak by
+ * se backfill nezapsal u zápasu, jehož `penalties`/`stats` se neliší (bez
+ * trestů). Po zápisu verze sedí, takže druhý běh nezapíše nic.
+ */
+export function ahlNeedsWrite(
+  existing: Pick<Match, 'ahl'> | null | undefined,
+  next: { matchId: number; hasReport: boolean; detailVersion: number | null },
+): boolean {
+  return (
+    !existing ||
+    existing.ahl?.matchId !== next.matchId ||
+    Boolean(existing.ahl?.hasReport) !== next.hasReport ||
+    (existing.ahl?.detailVersion ?? null) !== next.detailVersion
+  )
 }
 
 /**
@@ -261,7 +304,8 @@ export async function syncSeasonMatches(
         const date = it.existing ? new Date(it.existing.date) : resolveMatchDate(it.entry, null, null)
         const recent = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
         const hasReport = Boolean(it.existing?.ahl?.hasReport)
-        if (!shouldFetchDetail({ played, recent, hasReport, trigger: ctx.trigger })) continue
+        const outdated = isDetailOutdated(it.existing)
+        if (!shouldFetchDetail({ played, recent, hasReport, outdated, trigger: ctx.trigger })) continue
         const detail = await fetchMatchDetail(ctx, it.entry.matchId)
         if (!detail) continue
         const side = ourSide(detail)
@@ -333,13 +377,36 @@ export async function syncSeasonMatches(
         desired.thirds = buildThirds(detail, side)
         desired.goals = buildGoals(detail, side, players)
         desired.lineup = buildLineup(detail, side, players)
+        desired.stats = buildMatchStats(detail, side)
+        if (detail.penalties === null) {
+          // Nečitelná tabulka Tresty neblokuje branky ani sestavu: uložené tresty
+          // zůstanou, jen vznikne varování.
+          ctx.warn({
+            type: 'other',
+            ref: `penalties:${entry.matchId}`,
+            message: `Zápas ${entry.matchId} (${it.opponentName}): tabulku trestů se nepodařilo přečíst (${detail.penaltiesError ?? 'neznámá chyba'}), tresty ponechány beze změny.`,
+          })
+        } else {
+          desired.penalties = buildPenalties(detail, side, players)
+          const mismatch = penaltyMinutesMismatch(detail, side)
+          if (mismatch) {
+            ctx.warn({
+              type: 'other',
+              ref: `pim:${entry.matchId}`,
+              message: `Zápas ${entry.matchId} (${it.opponentName}): tresty ze zápisu dávají ${mismatch.penalties} min, sestava ${mismatch.pim} TM.`,
+            })
+          }
+        }
         details.set(entry.matchId, detail)
       }
 
       const hasReport = detail ? detail.hasReport : Boolean(existing?.ahl?.hasReport)
       const { patch, fields, before, after } = buildPatch(existing as unknown as Record<string, unknown>, desired)
-      const ahlChanged =
-        !existing || existing.ahl?.matchId !== entry.matchId || Boolean(existing.ahl?.hasReport) !== hasReport
+      // Verze zpracování se zvedá jen po staženém detailu; bez něj zůstává stará
+      // (nikdy se nepřepisuje na null). Změna verze musí vyvolat zápis `ahl`
+      // i tehdy, když se `penalties`/`stats` neliší (zápas bez trestů).
+      const detailVersion = nextDetailVersion(existing, detail)
+      const ahlChanged = ahlNeedsWrite(existing, { matchId: entry.matchId, hasReport, detailVersion })
       const label = `${utcToPragueLocal(date).day} ${it.weAreHome ? 'doma' : 'venku'} ${it.opponentName}`
 
       if (existing && fields.length === 0 && !ahlChanged) {
@@ -362,6 +429,7 @@ export async function syncSeasonMatches(
         matchId: entry.matchId,
         hasReport,
         draftPostCreated: Boolean(existing?.ahl?.draftPostCreated),
+        ...(detailVersion != null ? { detailVersion } : {}),
         syncedAt: ctx.now.toISOString(),
       }
 
@@ -379,7 +447,7 @@ export async function syncSeasonMatches(
           action: 'update',
           fields: changedFields,
           before: ahlChanged ? { ...before, ahl: existing.ahl ?? null } : before,
-          after: ahlChanged ? { ...after, ahl: { matchId: ahl.matchId, hasReport } } : after,
+          after: ahlChanged ? { ...after, ahl: { matchId: ahl.matchId, hasReport, detailVersion } } : after,
         })
         await ctx.update('matches', existing.id, full)
         ctx.changes.matchesUpdated += 1

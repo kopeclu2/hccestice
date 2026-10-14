@@ -18,10 +18,10 @@ export type SoupiskaCard = {
   number: number | null
   photo: Photo | null
   /**
-   * Statistika za sezónu. `goalie` skryje G/A/B (u brankáře by byly samé
+   * Statistika za sezónu. `goalie` skryje G/A/B/TM (u brankáře by byly samé
    * nuly); null = hráč nemá odehraný zápas, nezobrazí se nic.
    */
-  stats?: { games: number; goals: number; assists: number; goalie: boolean } | null
+  stats?: { games: number; goals: number; assists: number; pim: number; goalie: boolean } | null
 }
 
 /** Iniciály pro kartu bez fotky — první 2 slova, tituly a „st./ml." se přeskočí. */
@@ -118,7 +118,7 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
 }
 
 /**
- * Pilulka Z / G / A / B v rohu fotky. Tmavé sklo (`glass`) čte na každé
+ * Pilulka Z / G / A / B / TM v rohu fotky. Tmavé sklo (`glass`) čte na každé
  * fotce i na rastru bez fotky. Vizuální zkratky jsou pro čtečku zbytečně
  * stručné, takže nese celý popis v `aria-label`.
  */
@@ -130,10 +130,11 @@ function SeasonStats({ stats }: { stats: NonNullable<SoupiskaCard['stats']> }) {
         ['G', stats.goals],
         ['A', stats.assists],
         ['B', stats.goals + stats.assists],
+        ['TM', stats.pim],
       ]
   const label = stats.goalie
     ? `Zápasů v sezóně: ${stats.games}`
-    : `Zápasů ${stats.games}, branek ${stats.goals}, asistencí ${stats.assists}, bodů ${stats.goals + stats.assists}`
+    : `Zápasů ${stats.games}, branek ${stats.goals}, asistencí ${stats.assists}, bodů ${stats.goals + stats.assists}, trestných minut ${stats.pim}`
 
   return (
     <Badge
@@ -143,8 +144,11 @@ function SeasonStats({ stats }: { stats: NonNullable<SoupiskaCard['stats']> }) {
       size="xs"
       variant="glass"
     >
+      {/* TM až od `md`: ve dvousloupcové mřížce na mobilu (karta 130–150px)
+          pilulka s pěti položkami přetéká a `overflow-hidden` ji ustřihne
+          (změřeno na 320 a 360px). Čtečka ji má v `aria-label` vždy. */}
       {items.map(([key, value]) => (
-        <span aria-hidden key={key}>
+        <span aria-hidden className={key === 'TM' ? 'hidden md:inline' : undefined} key={key}>
           <span className="text-white/60">{key}</span> {value}
         </span>
       ))}
