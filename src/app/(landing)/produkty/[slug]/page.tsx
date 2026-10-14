@@ -18,6 +18,7 @@ import { fetchSite } from '@/landing/data/site'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getServerSideURL } from '@/utilities/getURL'
 import { cn } from '@/utilities/ui'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 
 export const revalidate = 600
 
@@ -212,7 +213,7 @@ function ProductJsonLd({
   }
 
   return (
-    <script dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} type="application/ld+json" />
+    <script dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} type="application/ld+json" />
   )
 }
 

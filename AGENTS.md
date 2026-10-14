@@ -148,7 +148,7 @@ v produkci (`NODE_ENV=production`) je `push` vypnutý
 |---|---|
 | `@payloadcms/plugin-seo` | pole `meta` (title, description, image) na `pages` a `posts` |
 | `src/utilities/generateMeta.ts` | `generateMetadata` na stránkách frontendu |
-| `src/app/(frontend)/(sitemaps)/*` + `next-sitemap` | `/sitemap.xml`, `/robots.txt` |
+| `src/app/(landing)/(sitemaps)/*` + `next-sitemap` | `/sitemap.xml` (index), `pages-`, `posts-`, `gallery-` a `matches-sitemap.xml`, `/robots.txt` |
 | `src/app/llms.txt/route.ts` | `/llms.txt` |
 
 ## llms.txt
@@ -175,7 +175,7 @@ a datová cache se dělá `unstable_cache`, ne `use cache`.
 | režim | routy |
 |---|---|
 | statické + ISR 600 s | `/`, `/[slug]`, `/historie-klubu`, `/soupiska`, `/sponzori` |
-| SSG + ISR 600 s | `/aktuality/[slug]`, `/fotogalerie/[slug]`, `/produkty/[slug]` |
+| SSG + ISR 600 s | `/aktuality/[slug]`, `/fotogalerie/[slug]`, `/produkty/[slug]`, `/zapasy/[slug]` |
 | **plně dynamické** | `/aktuality`, `/fotogalerie`, `/zapasy` |
 | dynamické on-demand | `/clanky/*`, `/fotoalbum/*`, route handlery (vč. `/internal/revalidate`, viz Synchronizace VČHL) |
 
@@ -220,9 +220,13 @@ s meta tagem, po odebrání `loading.tsx` 308 na `/historie-klubu`. Přesun
 redirectu do `generateMetadata` to **neřeší** — boundary je i nad ní
 (taky ověřeno).
 
-Fallback proto žije jen v `zapasy/loading.tsx`: `/zapasy` je jediná dynamická
-routa bez potomků. `/aktuality` a `/fotogalerie` ho nedostaly, protože jejich
-`[slug]` děti redirecty servírují.
+Fallback proto žije jen v `zapasy/(vypis)/loading.tsx`. Výpis `/zapasy` je
+jediná dynamická routa, jejíž potomek (`/zapasy/[slug]`, detail zápasu) žádný
+redirect nepotřebuje — ale `notFound()` na něm by při Suspense boundary
+nad ním taky vracelo 200. Proto je výpis v route group `(vypis)`: `loading.tsx`
+platí jen pro něj a detail ho nad sebou nemá (viz „Detail zápasu").
+`/aktuality` a `/fotogalerie` ho nedostaly, protože jejich `[slug]` děti
+redirecty servírují.
 
 Redirecty se dělají `permanentRedirect()` (308), ne `redirect()` — ten posílá
 **307 Temporary** (`docs/…/functions/redirect.md`, „Why does `redirect` use
@@ -826,6 +830,168 @@ začne brát nové pole**, jinak ho už odehrané zápasy nikdy nedostanou.
 - Jednorázový backfill (spárování existujících zápasů, branky, sestavy) je
   ruční „Spustit teď" po nasazení; `enabled` je ve výchozím stavu vypnuté.
 - Cron běží uvnitř Node procesu — víc instancí znamená víc tiků (viz zámek).
+- Migrace `20261014_150444_match_slug` **před buildem**, stejně jako
+  předchozí (prerender `/zapasy/[slug]` čte sloupec `slug`). Je aditivní:
+  nullable sloupec `matches.slug`, SQL backfill pro existující zápasy
+  (`YYYY-MM-DD-<opponents.slug>`, den v Europe/Prague, kolize `-2`, `-3`…)
+  a až potom unikátní index `matches_slug_idx`. Kolize shodí migraci, ne
+  běžící web. `down` index i sloupec odstraní.
+
+# Detail zápasu
+
+`/zapasy/[slug]` — souhrn jednoho zápasu: hlavička s tabulí, Branky po
+třetinách, Tresty HC Čestice, Statistika a karta reportáže.
+
+| co | kde |
+|---|---|
+| route | `src/app/(landing)/zapasy/[slug]/page.tsx` (SSG + ISR 600 s, `generateStaticParams`, `notFound()`) |
+| výpis | `src/app/(landing)/zapasy/(vypis)/` (`page.tsx` + `loading.tsx`) |
+| fetchery | `src/landing/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
+| view-model | `src/landing/data/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
+| komponenty | `src/landing/zapas/*` (`MatchHeader`, `GoalsSummary`, `PenaltiesSummary`, `MatchStats`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
+| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/utilities/matchSlug.ts` a `slugifyCs.ts` |
+| sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
+
+## Slug
+
+Formát `YYYY-MM-DD-<opponents.slug>` (den v Europe/Prague), např.
+`2025-10-12-hc-zdar`; zápas bez soupeře dostane jen den. Generuje ho
+`beforeChange` hook **jednou**, dokud dokument slug nemá. Při přeložení
+zápasu ani přejmenování soupeře se **nemění** — odkaz, který už někdo
+sdílel, má dál vést na tentýž zápas. Cenou je, že ve slugu může zůstat
+zastaralé datum; je to záměr, ne chyba. Pravidla:
+
+- Kolize (stejný den a soupeř, např. turnaj) dostane příponu `-2`, `-3`…
+  (`uniqueSlug`). Stejnou logiku musí mít SQL backfill v migraci — formát
+  měnit na obou místech.
+- Ručně upravený slug se při uložení očistí (`slugifyCs`). Prázdné pole
+  — i takové, ze kterého po očištění nic nezbude („???") — znamená
+  „vygeneruj znovu". Ruční změna slugu rozbije už sdílené odkazy (stará
+  adresa dá 404, přesměrování se nezakládá); upozorňuje na to popis pole.
+- `slugifyCs`, **ne** `slugify` z Payloadu: ten zahazuje písmena
+  s diakritikou celá (`Žamberk` → `amberk`), kdežto soupeři mají slug
+  `sk-zamberk`. Proto `Opponents` předává `slugField({ slugify })` vlastní
+  funkci nad `slugifyCs` (`HC Žďár` → `hc-zdar`, ne `hc-r`) a hook zápasu
+  slug soupeře ještě jednou očistí. Existující slugy soupeřů se tím nemění
+  (`slugifyCs(name)` dává tentýž výstup, ověřeno nad DB).
+- Duplikát zápasu v adminu slug **nedědí**, je `unique`. `beforeDuplicate`
+  na poli slug proto vrací **`null`**, ne `undefined`: Payload hodnotu
+  přepíše, jen když hook vrátí něco jiného než `undefined`
+  (`fields/hooks/beforeDuplicate/promise.js`), takže s `undefined` slug
+  originálu zůstane, hook ho vezme za ručně zadaný a insert spadne na
+  unikátním indexu. S `null` je `originalDoc.slug` prázdný (a `originalDoc`
+  je bez `id`) a hook vygeneruje `…-2`. Stejně se duplikuje `ahl.matchId`
+  (taky `unique`): kopie je ruční zápas bez vazby na AHL. Ověřeno
+  `payload.duplicate` nad lokální DB.
+- Synchronizace VČHL `slug` neposílá (`buildPatch` prochází jen klíče
+  z `desired`), takže ho při `create` doplní hook a diff ho nikdy nehlásí
+  jako změnu.
+- Pole nemá `notSyncedFromAhl`: adresa patří webu, ne AHL.
+
+## `(vypis)` a `loading.tsx`
+
+Výpis je v route group `(vypis)` kvůli sekci „`loading.tsx` nesmí být nad
+routou, která redirectuje": `loading.tsx` ve `zapasy/` by stál i nad
+detailem a `notFound()` by po začátku streamingu vracelo HTTP 200. Group
+URL nemění. Nový soubor, který má platit pro **oba** (např. `error.tsx`),
+patří do `zapasy/`; to, co patří jen výpisu, do `(vypis)`.
+
+## Vazba zápas ↔ reportáž
+
+Dva směry a oba jsou legitimní: `matches.report` (ruční, jediný u archivu
+2023/24) a `posts.match` (zapisuje synchronizace a koncept reportáže).
+Rozhoduje se **při čtení**, ne zápisem do dokumentu — `resolveReport` /
+`pickReport`:
+
+1. `matches.report`, jen když je publikovaný;
+2. jinak nejnovější **publikovaný** článek s `match` = id zápasu
+   (řazeno `publishedAt`);
+3. jinak nic.
+
+Koncept se nikdy neodkáže (karta by vedla na 404). `resolveReport` je
+sdílený s kartou zápasu (`reportHref`), aby výpis a detail neodkazovaly
+jinam. Zpětný odkaz z reportáže na detail zápasu dělá `fetchMatchSlugForPost`:
+`post.match` má přednost, archiv bez něj se dohledá dotazem na zápas
+s `report = post.id`.
+
+## Bloky detailu
+
+- **Branky po třetinách** — rozhodující nájezd je v CMS `strength: 'SN'`
+  a patří do vlastního mezititulku, ne do 3. třetiny (viz Zvláštnosti HTML
+  na ahl.cz).
+- **Tresty HC Čestice** — jen naše, soupeřovy se neukládají.
+- **Statistika** — Čestice : soupeř (`stats.*Ours` / `*Opp`), střely se
+  neberou.
+- **Sestava na detailu není** — rozhodnutí uživatele 14. 10. 2026.
+  `lineup` je proto v `select` záměrně vynechaná (nejdelší pole, jinak by se
+  serializovalo do cache).
+
+Blok bez dat se nevykreslí. Odehraný zápas bez branek, trestů i statistiky
+ukáže pod hlavičkou poznámku „Podrobný zápis z utkání není k dispozici"
+a případnou kartu reportáže a odkaz na galerii (`match.gallery`, `depth: 2`
+a `populate.galleries`); naplánovaný zápas má hlavičku s odpočtem, a pokud
+mu reportáž ani galerie nepatří, nic dalšího. Odehraný zápas **bez skóre**
+nemá tabuli, takže `h1` s titulkem je viditelný (jinak je u tabule jen
+`sr-only`); `matchDescription` ho nenazve „se hraje".
+
+Branky se před seskupením stabilně řadí podle času (nájezd `SN` na konec) —
+ručně zadané neseřazené branky by jinak daly dvě skupiny téhož názvu
+a duplicitní React `key`. Statistika čte stranu pro čtečku z `sr-only`
+věty („Vyloučení: HC Čestice 3, HC Polička B 4"), vizuální tabulka je
+`aria-hidden`.
+
+## Metadata a JSON-LD
+
+`generateMetadata` bere OG obrázek z fotky reportáže (`getMediaUrl`
+s `updatedAt`, absolutní URL) a kartu `summary_large_image`; bez fotky je
+to čtvercové logo klubu a `summary`. Slug z URL se dekóduje přes
+`readSlug`: neplatné kódování (`/zapasy/%25zz`) je `notFound()`, ne 500.
+
+JSON-LD se serializuje přes `serializeJsonLd` (`src/utilities/jsonLd.ts`),
+který nahrazuje `<` za `\u003c` — jména střelců a soupeřů jsou scrapovaná
+z ahl.cz a `JSON.stringify` samo `</script>` neescapuje (viz
+`node_modules/next/dist/docs/01-app/02-guides/json-ld.md`). Každé nové
+`<script type="application/ld+json">` v repu musí jít přes něj.
+
+## Cache a revalidace
+
+`fetchMatchDetail` je `unstable_cache` s tagy `matches-list` **i**
+`posts-list` (zápas, soupeř, hráči → první; publikovaná reportáž → druhý)
+a `revalidate: 3600` jako záchranná síť. Platí tři pravidla z „Cache
+a renderovací režimy": tag i `revalidate`, `{ expire: 0 }` u redakčního
+obsahu a žádné `new Date()` uvnitř cache (naplánovaný zápas řeší odpočet
+na klientu: `Countdown` po uplynutí času buly místo nul ukáže „Zápas právě
+probíhá nebo čeká na výsledek", server vždy kreslí „--", takže bez hydration
+mismatch; platí i v hero a ve widgetu Nejbližší zápas). Tag se propaguje do prerenderované stránky, takže
+`revalidatePath` na detail není potřeba.
+
+Cesty, kterými se tagy expirují:
+
+| změna | cesta |
+|---|---|
+| zápas v adminu | `revalidateLanding` → `LANDING_CACHE_TAGS` (`matches-list`) |
+| zápas ze synchronizace | `/internal/revalidate` → `revalidateLandingNow` (stejné tagy) |
+| soupeř (název, logo, slug) | `Opponents` hooks `afterChange` / `afterDelete` → `revalidateLanding` / `revalidateLandingDelete` (`matches-list`); synchronizace zakládá soupeře s `disableRevalidate` a revaliduje jednou na konci běhu |
+| reportáž (publikace, odpublikování, smazání) | `revalidatePost` / `revalidateDelete` → `posts-list` |
+
+Nový zápas vzniklý po buildu nemá prerenderovanou stránku; `dynamicParams`
+je výchozí `true`, takže se vyrenderuje při první návštěvě a dál drží ISR.
+
+## Sitemapa
+
+`/matches-sitemap.xml` obsahuje `/zapasy/<slug>` **všech** zápasů se slugem,
+i naplánovaných a zrušených — detail mají všechny. `lastmod` je
+`updatedAt`. Cache jako u `gallery-sitemap.xml`: tag `matches-sitemap`
++ `revalidate: 86400`. Tag invaliduje `'max'` (crawlerský feed):
+
+- `hooks/revalidateMatchFeeds.ts` na `afterChange` i `afterDelete` kolekce
+  `matches` (respektuje `disableRevalidate`);
+- `/internal/revalidate` — synchronizace zakládá zápasy s `disableRevalidate`,
+  takže hook neběží a nové detaily by jinak v sitemapě chyběly rok.
+
+Sitemapa je v `next-sitemap.config.cjs` jak v `exclude`, tak v
+`additionalSitemaps` (jinak by se `sitemap.xml` index a `robots.txt`
+o ní nedozvěděly). Přidávat další sitemapu znamená sáhnout na obě místa.
 
 # Nasazení (Coolify + GitHub Actions)
 

@@ -5,6 +5,7 @@ import { cn } from '@/utilities/ui'
 import { Countdown } from '../blocks/Hero/Countdown'
 import { CardTitle } from './Heading'
 import { Eyebrow } from './Kicker'
+import { StretchedLink, stretchHost } from './StretchedLink'
 
 /**
  * Tmavý panel nejbližšího zápasu s živým odpočtem.
@@ -40,6 +41,8 @@ export function NextMatchPanel({
   actions,
   layout = 'stack',
   radius = 'card',
+  titleAs = 'h3',
+  href,
 }: {
   /** Uppercase label u lime tečky — „Nejbližší zápas · Doma". */
   kicker: React.ReactNode
@@ -55,6 +58,13 @@ export function NextMatchPanel({
   actions?: React.ReactNode
   layout?: 'stack' | 'wide'
   radius?: 'card' | 'section'
+  /** `h1` na stránce, kde je panel celou hlavičkou (detail zápasu); jinde `h3`. */
+  titleAs?: 'h1' | 'h3'
+  /**
+   * Detail zápasu. Titulek se stane odkazem přes celý panel (stretched link),
+   * takže `actions` s vlastními odkazy dostanou `z-1`. Chybí-li, panel není klikací.
+   */
+  href?: string | null
 }) {
   const wide = layout === 'wide'
 
@@ -64,6 +74,7 @@ export function NextMatchPanel({
     <div
       className={cn(
         'bg-contrast relative overflow-hidden p-6 text-on-contrast md:p-8 lg:p-12',
+        href && stretchHost,
         radius === 'card' ? 'rounded-card' : 'rounded-section',
       )}
     >
@@ -79,8 +90,14 @@ export function NextMatchPanel({
             <span className="bg-lime shadow-ring-lime size-2 rounded-full" />
             <Eyebrow tone="lime">{kicker}</Eyebrow>
           </div>
-          <CardTitle as="h3" className="mt-2 leading-tight text-white" size="lg">
-            {title}
+          <CardTitle as={titleAs} className="mt-2 leading-tight text-white" size="lg">
+            {/* `-inset-*` = odsazení panelu, aby klikací byl i jeho okraj. */}
+            <StretchedLink
+              className="decoration-lime underline-offset-6 hover:underline after:-inset-6 md:after:-inset-8 lg:after:-inset-12"
+              href={href ?? null}
+            >
+              {title}
+            </StretchedLink>
           </CardTitle>
           {subtitle && <div className="text-meta text-white/65">{subtitle}</div>}
           {meta}
@@ -90,7 +107,7 @@ export function NextMatchPanel({
             zarovnaný doprava by se od nadpisu odtrhl. */}
         <div className={cn(wide && 'mt-7 flex flex-col lg:mt-0 lg:items-end')}>
           <Countdown targetISO={kickoffISO} />
-          {actions}
+          {actions && (href ? <div className="relative z-1">{actions}</div> : actions)}
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ import { TRAININGS } from '../../content'
 import type { TrainingSlot, TrainingsContent } from '../../types'
 
 import { parseTrainingSchedule } from './openingHours'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
@@ -174,7 +175,7 @@ function TrainingsJsonLd({ rows }: { rows: TrainingSlot[] }) {
     <>
       {jsonLd.map((entry, index) => (
         <script
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(entry) }}
           key={index}
           type="application/ld+json"
         />

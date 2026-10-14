@@ -3,7 +3,9 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { notSyncedFromAhl } from '../access/notSyncedFromAhl'
+import { generateMatchSlug } from '../hooks/matchSlug'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
+import { revalidateMatchFeeds, revalidateMatchFeedsDelete } from '../hooks/revalidateMatchFeeds'
 
 export const Matches: CollectionConfig = {
   slug: 'matches',
@@ -56,6 +58,27 @@ export const Matches: CollectionConfig = {
             return home ? `HC Čestice x ${opponentName}` : `${opponentName} x HC Čestice`
           },
         ],
+      },
+    },
+    {
+      // Adresa patří webu, ne AHL — proto bez `notSyncedFromAhl`.
+      name: 'slug',
+      type: 'text',
+      label: 'Adresa (slug)',
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Adresa detailu zápasu: /zapasy/<slug>. Vygeneruje se jednou při založení (datum + soupeř) a při přeložení zápasu se záměrně nemění, aby odkazy zůstaly stabilní. Prázdné pole se při uložení doplní. POZOR: ruční změna adresy rozbije už sdílené odkazy — stará adresa pak vrací 404 (přesměrování se nezakládá).',
+      },
+      hooks: {
+        // Duplikát zápasu nesmí zdědit adresu originálu (je `unique`).
+        // `undefined` nestačí: Payload hodnotu přepíše, jen když hook vrátí
+        // něco jiného než `undefined` (`beforeDuplicate/promise.js`), takže
+        // by slug originálu zůstal a insert by spadl na unikátním indexu.
+        // S `null` hook `generateMatchSlug` slug vygeneruje znovu (`-2`).
+        beforeDuplicate: [() => null],
       },
     },
     {
@@ -179,6 +202,11 @@ export const Matches: CollectionConfig = {
           label: 'ID zápasu na AHL',
           unique: true,
           index: true,
+          hooks: {
+            // Duplikát zápasu z AHL by zdědil `unique` ID a insert by spadl
+            // (ověřeno `payload.duplicate`). Kopie je ruční zápas bez vazby.
+            beforeDuplicate: [() => null],
+          },
           admin: {
             description:
               'Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním ID zápas odpojíte natrvalo a můžete ho upravovat ručně — synchronizace ho už znovu nespáruje podle data a soupeře. Znovu připojit jde jen ručním vrácením ID.',
@@ -357,9 +385,11 @@ export const Matches: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeChange: [generateMatchSlug],
     // /zapasy ani home blok Sezóna nemají ISR — bez revalidace by se nový
-    // zápas neobjevil až do dalšího buildu.
-    afterChange: [revalidateLanding],
-    afterDelete: [revalidateLandingDelete],
+    // zápas neobjevil až do dalšího buildu. `revalidateMatchFeeds` k tomu
+    // invaliduje `matches-sitemap.xml` (detaily `/zapasy/[slug]`).
+    afterChange: [revalidateLanding, revalidateMatchFeeds],
+    afterDelete: [revalidateLandingDelete, revalidateMatchFeedsDelete],
   },
 }

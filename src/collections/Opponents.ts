@@ -3,6 +3,8 @@ import { slugField } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
+import { slugifyCs } from '../utilities/slugifyCs'
 
 export const Opponents: CollectionConfig = {
   slug: 'opponents',
@@ -48,6 +50,19 @@ export const Opponents: CollectionConfig = {
       },
       fields: [{ name: 'name', type: 'text', label: 'Název', required: true }],
     },
-    slugField({ useAsSlug: 'name' }),
+    // Výchozí slugify Payloadu zahazuje písmena s diakritikou (`HC Žďár` →
+    // `hc-r`), proto vlastní. Slug soupeře je součástí adresy zápasu.
+    slugField({
+      useAsSlug: 'name',
+      slugify: ({ valueToSlugify }) =>
+        typeof valueToSlugify === 'string' ? slugifyCs(valueToSlugify) : undefined,
+    }),
   ],
+  hooks: {
+    // Název a logo soupeře jsou na detailu zápasu i ve výpisech. Synchronizace
+    // zapisuje s `context.disableRevalidate` (`sync/ctx.ts`) a revaliduje sama
+    // jednou na konci běhu.
+    afterChange: [revalidateLanding],
+    afterDelete: [revalidateLandingDelete],
+  },
 }

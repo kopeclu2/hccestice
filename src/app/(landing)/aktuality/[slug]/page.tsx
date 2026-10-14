@@ -5,6 +5,7 @@ import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { PillLink } from '@/landing/components/PillLink'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { ArticleBody } from '@/landing/article/ArticleBody'
 import { ArticleRelated } from '@/landing/article/ArticleRelated'
@@ -18,6 +19,7 @@ import {
   fetchRelatedPostCards,
   toArticleDetail,
 } from '@/landing/data/posts'
+import { fetchMatchSlugForPost } from '@/landing/data/matchDetail'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { generateMeta } from '@/utilities/generateMeta'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -25,6 +27,7 @@ import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import type { ArticleDetail } from '@/landing/types'
 import type { Post } from '@/payload-types'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /** ISR pojistka; publikace revaliduje okamžitě (hook `revalidatePost`). */
 export const revalidate = 600
@@ -52,7 +55,11 @@ export default async function ArticlePage({ params }: Args) {
   const post = await fetchPostBySlug(slug, draft)
   if (!post) return <PayloadRedirects url={`/aktuality/${slug}`} />
 
-  const article = toArticleDetail(post, await fetchDefaultPostPhoto())
+  const article = toArticleDetail(
+    post,
+    await fetchDefaultPostPhoto(),
+    await fetchMatchSlugForPost(post),
+  )
   const related = article.showRelated ? await fetchRelatedPostCards(post) : []
   // Karty doporučených článků jsou tytéž jako na výpisu, takže i fotky na nich
   // řídí týž přepínač v Nastavení webu (`postsListShowPhoto`).
@@ -69,6 +76,14 @@ export default async function ArticlePage({ params }: Args) {
       <ArticleBody post={post} />
 
       <div className="relative z-1 mx-auto max-w-[51.25rem] px-[clamp(0.875rem,3vw,2.5rem)]">
+        {/* Hero E (zápasový výsledek) odkaz na detail nese sám, tady by byl dvakrát. */}
+        {article.matchHref && article.variant !== 'zapas' && (
+          <div className="mt-10">
+            <PillLink href={article.matchHref} size="md" variant="outline" withArrow>
+              Detail zápasu
+            </PillLink>
+          </div>
+        )}
         <TagRow tags={article.tags} />
         <AuthorCard author={article.author} />
       </div>
@@ -120,7 +135,7 @@ function StructuredData({
 
   return (
     <script
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       type="application/ld+json"
     />
   )

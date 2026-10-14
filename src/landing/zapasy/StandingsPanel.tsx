@@ -51,7 +51,7 @@ function trimRows(rows: StandingsRow[], limit: number): StandingsRow[] {
  * ~104 px — „HC Spartak Choceň B" se odřízl na „HC Spartak …", zatímco
  * ve sloupcích pro dvojciferná čísla zůstala polovina místa nevyužitá.
  * Škála má **tři stupně**: desktopová šířka začíná až na `lg`, protože do
- * dvou sloupců se panel zužuje taky až tam (`zapasy/page.tsx`). Dokud
+ * dvou sloupců se panel zužuje taky až tam (`zapasy/(vypis)/page.tsx`). Dokud
  * naskakovala na `md`, byl sloupec „Tým" na 1024px užší (~209 px) než na
  * 390px telefonu a názvy se `truncate` ořezávaly.
  *

@@ -71,7 +71,7 @@ function SeasonView({
   standings: StandingsContent
 }) {
   // Obě prázdné karty mají mít stejnou výšku — viz stejná úvaha v
-  // `app/(landing)/zapasy/page.tsx`.
+  // `app/(landing)/zapasy/(vypis)/page.tsx`.
   const bothEmpty = results.length === 0 && standings.rows.length === 0
 
   return (

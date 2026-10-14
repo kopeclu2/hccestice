@@ -1,5 +1,6 @@
 /**
- * Fallback pro `/zapasy` — jediná plně dynamická routa webu bez potomků.
+ * Fallback pro `/zapasy` — plně dynamická routa webu, jejíž výpis nemá
+ * potomky s redirecty (detail `zapasy/[slug]` je mimo tuhle boundary).
  *
  * Tenhle soubor **záměrně nestojí na `(landing)/`**, kde původně byl.
  * `loading.tsx` zavádí Suspense boundary nad celý podstrom, a jakmile
@@ -16,6 +17,13 @@
  * dynamické: jejich detailové routy (`[slug]`) redirecty servírují, takže
  * boundary v jejich segmentu by je rozbila stejně. Tagovaná cache jim TTFB
  * stlačila natolik, že je to bez užitku — viz `posts.ts` a `galleries.ts`.
+ *
+ * Leží v route group `(vypis)`, ne přímo v `zapasy/`, ze stejného důvodu:
+ * `zapasy/[slug]` (detail zápasu) volá `notFound()` pro neznámý slug. Kdyby
+ * `loading.tsx` stál v `zapasy/`, jeho Suspense boundary by byla nad
+ * detailem, streaming by začal dřív, než `notFound()` doběhne, a odpověď by
+ * místo 404 dostala HTTP 200 se stránkou „nenalezeno". Route group URL
+ * nemění (`/zapasy` zůstává), jen zužuje, na co se boundary vztahuje.
  *
  * Proužek, ne skeleton: znát layout každé stránky by znamenalo držet dvě
  * verze designu synchronně.
