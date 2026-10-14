@@ -46,7 +46,8 @@ function streakOf(runs: PrevRun[]): number {
  * (série ≥ práh). `partial` se počítá jako selhání: trvalá dílčí chyba
  * (rozbitý zápis jednoho zápasu) je přesně to, co správce chce vědět.
  *
- * Nové entity se porovnávají proti POSLEDNÍMU běhu, ne proti celé historii:
+ * Nové entity se porovnávají proti POSLEDNÍMU ÚSPĚŠNÉMU běhu (`ok`/`partial`,
+ * ne `error`/`skipped`/`dry`), ne proti celé historii:
  * nejednoznačný hráč se hlásí při každém běhu znovu, ale e-mail dostane jen
  * poprvé. Přeložený zápas se rozlišuje podle textu (obsahuje staré a nové
  * datum), takže druhé přeložení téhož zápasu už se neztratí.
@@ -85,7 +86,10 @@ export function decideNotifications(
     }
   }
 
-  const last = prevRuns[0]
+  // Reference pro „nové oproti minulému": poslední běh, který skončil `ok`
+  // nebo `partial`. `error` běh varování nemá, takže po něm by se všechna
+  // trvalá varování hlásila znovu.
+  const last = prevRuns.find((r) => r.status === 'ok' || r.status === 'partial')
   if (on.has('new-entity')) {
     const seen = new Set(
       (last?.warnings ?? []).filter((w) => ENTITY_TYPES.has(w.type)).map((w) => `${w.type}:${w.ref ?? ''}`),

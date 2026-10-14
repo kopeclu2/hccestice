@@ -80,6 +80,23 @@ describe('vchl notifikace: entity, přeložení, výsledky', () => {
     expect(plan?.ambiguousPlayers).toHaveLength(1)
   })
 
+  it('error běh nemá varování: porovnává se s posledním ok/partial během, ne s errorem', () => {
+    const current = run('ok', { warnings: [w('unknown-player', '38010'), w('ambiguous-player', '5')] })
+    const history = [prev('error'), prev('ok', [{ type: 'unknown-player', ref: '38010' }, { type: 'ambiguous-player', ref: '5' }])]
+    expect(decideNotifications(history, current, settings({ failureThreshold: 5 }))).toBeNull()
+  })
+
+  it('přeložení: po error běhu se stejné znění nehlásí znovu', () => {
+    const a = w('rescheduled', '1', 'Zápas přeložen: A → B')
+    const history = [prev('error'), prev('partial', [a])]
+    expect(decideNotifications(history, run('ok', { warnings: [a] }), settings({ failureThreshold: 5 }))).toBeNull()
+  })
+
+  it('bez předchozího úspěšného běhu je všechno nové', () => {
+    const current = run('ok', { warnings: [w('unknown-player', '1')] })
+    expect(decideNotifications([prev('error')], current, settings({ failureThreshold: 5 }))?.newPlayers).toHaveLength(1)
+  })
+
   it('stejný nejednoznačný hráč v řadě běhů se hlásí jen jednou', () => {
     const current = run('ok', { warnings: [w('ambiguous-player', '5')] })
     expect(decideNotifications([prev('ok', [{ type: 'ambiguous-player', ref: '5' }])], current, settings())).toBeNull()

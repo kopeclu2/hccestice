@@ -1,5 +1,7 @@
 /** Formátování pro ovládací stránku synchronizace (česky, pražský čas). */
 
+import { plural } from '@/utilities/plural'
+
 const dtf = new Intl.DateTimeFormat('cs-CZ', {
   day: 'numeric',
   month: 'numeric',
@@ -48,7 +50,7 @@ export const WARNING_LABEL: Record<string, string> = {
   'unknown-opponent': 'Neznámý soupeř',
   'ambiguous-player': 'Nejednoznačný hráč',
   rescheduled: 'Přeložený zápas',
-  'missing-on-ahl': 'Zápas zmizel z AHL',
+  'missing-on-ahl': 'Zápas chybí na AHL',
   'stats-mismatch': 'Neshoda statistik',
   other: 'Jiné',
 }
@@ -61,14 +63,15 @@ export const ENTITY_LABEL: Record<string, string> = {
   posts: 'Koncepty článků',
 }
 
-export const CHANGE_LABEL: Record<string, string> = {
-  matchesCreated: 'zápasů přidáno',
-  matchesUpdated: 'zápasů upraveno',
-  playersCreated: 'hráčů přidáno',
-  playersUpdated: 'hráčů upraveno',
-  opponentsCreated: 'soupeřů přidáno',
-  standingsUpdated: 'tabulek aktualizováno',
-  draftPosts: 'konceptů článků',
+/** Tvary pro skloňování: 1 / 2–4 / 5+ (`plural`). */
+const CHANGE_LABEL: Record<string, [one: string, few: string, many: string]> = {
+  matchesCreated: ['zápas přidán', 'zápasy přidány', 'zápasů přidáno'],
+  matchesUpdated: ['zápas upraven', 'zápasy upraveny', 'zápasů upraveno'],
+  playersCreated: ['hráč přidán', 'hráči přidáni', 'hráčů přidáno'],
+  playersUpdated: ['hráč upraven', 'hráči upraveni', 'hráčů upraveno'],
+  opponentsCreated: ['soupeř přidán', 'soupeři přidáni', 'soupeřů přidáno'],
+  standingsUpdated: ['tabulka aktualizována', 'tabulky aktualizovány', 'tabulek aktualizováno'],
+  draftPosts: ['koncept článku', 'koncepty článků', 'konceptů článků'],
 }
 
 export function totalChanges(changes: unknown): number {
@@ -83,6 +86,9 @@ export function describeChanges(changes: unknown): string {
   if (!changes || typeof changes !== 'object') return 'beze změn'
   const parts = Object.entries(changes as Record<string, unknown>)
     .filter(([, v]) => typeof v === 'number' && v > 0)
-    .map(([k, v]) => `${v} ${CHANGE_LABEL[k] ?? k}`)
+    .map(([k, v]) => {
+      const l = CHANGE_LABEL[k]
+      return l ? `${v} ${plural(v as number, ...l)}` : `${v} ${k}`
+    })
   return parts.length ? parts.join(', ') : 'beze změn'
 }

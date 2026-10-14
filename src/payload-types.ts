@@ -570,7 +570,7 @@ export interface Category {
   createdAt: string;
 }
 /**
- * Zápasy s vyplněným „ID zápasu na AHL" spravuje automatická synchronizace z AHL.cz — jejich údaje jsou jen pro čtení. Smazáním ID se zápas odpojí a jde upravit ručně.
+ * Zápasy s vyplněným „ID zápasu na AHL" spravuje automatická synchronizace z AHL.cz — jejich údaje jsou jen pro čtení. Smazáním ID se zápas odpojí natrvalo (synchronizace ho už nepáruje ani nezakládá znovu) a jde upravit ručně.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches".
@@ -605,7 +605,7 @@ export interface Match {
     | null;
   ahl?: {
     /**
-     * Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním zápas odpojíte a můžete ho upravovat ručně.
+     * Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním ID zápas odpojíte natrvalo a můžete ho upravovat ručně — synchronizace ho už znovu nespáruje podle data a soupeře. Znovu připojit jde jen ručním vrácením ID.
      */
     matchId?: number | null;
     hasReport?: boolean | null;
@@ -4328,7 +4328,7 @@ export interface VchlSync {
      */
     matchdayIntervalMinutes?: number | null;
     /**
-     * Zápasový režim platí od tolika hodin před zápasem do doby, než je zápis hotový (nebo toto okno po zápase uplyne).
+     * Zápasový režim platí od začátku zápasu, dokud není zápis hotový nebo dokud od začátku zápasu neuplyne tolik hodin.
      */
     matchdayWindowHours?: number | null;
   };

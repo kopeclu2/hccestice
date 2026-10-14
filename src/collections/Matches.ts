@@ -21,7 +21,7 @@ export const Matches: CollectionConfig = {
     group: 'Hokej',
     useAsTitle: 'displayTitle',
     description:
-      'Zápasy s vyplněným „ID zápasu na AHL" spravuje automatická synchronizace z AHL.cz — jejich údaje jsou jen pro čtení. Smazáním ID se zápas odpojí a jde upravit ručně.',
+      'Zápasy s vyplněným „ID zápasu na AHL" spravuje automatická synchronizace z AHL.cz — jejich údaje jsou jen pro čtení. Smazáním ID se zápas odpojí natrvalo (synchronizace ho už nepáruje ani nezakládá znovu) a jde upravit ručně.',
     defaultColumns: ['displayTitle', 'date', 'status', 'season', 'team'],
   },
   defaultSort: '-date',
@@ -34,8 +34,11 @@ export const Matches: CollectionConfig = {
       },
       hooks: {
         beforeChange: [
-          async ({ data, req }) => {
-            const opponentId = data?.opponent
+          async ({ data, originalDoc, req }) => {
+            // Update jen s části polí (např. `{ ahl: … }` z synchronizace) nenese
+            // `opponent` ani `home` — chybějící hodnoty se berou z uloženého
+            // dokumentu, jinak by se titulek přepsal na „soupeř x HC Čestice".
+            const opponentId = data?.opponent ?? originalDoc?.opponent
             let opponentName = 'soupeř'
             if (opponentId) {
               try {
@@ -49,7 +52,7 @@ export const Matches: CollectionConfig = {
                 /* ponechat výchozí */
               }
             }
-            const home = data?.home
+            const home = data?.home ?? originalDoc?.home
             return home ? `HC Čestice x ${opponentName}` : `${opponentName} x HC Čestice`
           },
         ],
@@ -178,7 +181,7 @@ export const Matches: CollectionConfig = {
           index: true,
           admin: {
             description:
-              'Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním zápas odpojíte a můžete ho upravovat ručně.',
+              'Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním ID zápas odpojíte natrvalo a můžete ho upravovat ručně — synchronizace ho už znovu nespáruje podle data a soupeře. Znovu připojit jde jen ručním vrácením ID.',
           },
         },
         { name: 'hasReport', type: 'checkbox', label: 'Zápis vložen', admin: { readOnly: true } },

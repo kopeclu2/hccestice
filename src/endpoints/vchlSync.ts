@@ -223,7 +223,29 @@ const detect: Endpoint = {
       competitionYearId: season.ahl?.competitionYearId ?? null,
       participantId: season.ahl?.participantId ?? null,
     }
+    const changed =
+      current.competitionYearId !== detected.year || current.participantId !== detected.participant
     const saved = body.save === true
+    // Mezi sezónami AHL ještě ukazuje starý ročník — bez výslovného souhlasu
+    // se ID sezóny, která je už oba má, nepřepisují.
+    if (
+      saved &&
+      changed &&
+      current.competitionYearId != null &&
+      current.participantId != null &&
+      body.overwrite !== true
+    ) {
+      return json(
+        {
+          message: `Sezóna už má ID ${current.competitionYearId} / ${current.participantId}, AHL hlásí ${detected.year} / ${detected.participant}. Přepsat?`,
+          needsOverwrite: true,
+          season: { id: season.id, title: season.title },
+          current,
+          detected: { competitionYearId: detected.year, participantId: detected.participant },
+        },
+        409,
+      )
+    }
     if (saved) {
       await payload.update({
         collection: 'seasons',
@@ -237,8 +259,7 @@ const detect: Endpoint = {
       season: { id: season.id, title: season.title },
       current,
       detected: { competitionYearId: detected.year, participantId: detected.participant },
-      changed:
-        current.competitionYearId !== detected.year || current.participantId !== detected.participant,
+      changed,
       saved,
     })
   }),

@@ -18,10 +18,10 @@ export function stripClubPrefix(folded: string): string {
 }
 
 /**
- * Most ze starých seed skriptů (`migration/seed-matches-ahl.ts`,
- * `OPPONENT_ALIAS`): plné názvy ze stránek zápasů → název soupeře v CMS.
- * Při prvním zjištění se přepíše do `opponents.aliases`, takže hardcode
- * slouží jen jednou a po backfillu jde smazat.
+ * Most z historického importu zápasů (seed skripty už v repu nejsou):
+ * plné názvy ze stránek zápasů → název soupeře v CMS. Při prvním zjištění se
+ * přepíše do `opponents.aliases`, takže hardcode slouží jen jednou a po
+ * backfillu jde smazat.
  */
 const LEGACY_ALIASES: Record<string, string> = {
   'aloha': 'HC Aloha Lanškroun',

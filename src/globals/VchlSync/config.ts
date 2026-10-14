@@ -76,7 +76,7 @@ export const VchlSync: GlobalConfig = {
           max: 168,
           admin: {
             description:
-              'Zápasový režim platí od tolika hodin před zápasem do doby, než je zápis hotový (nebo toto okno po zápase uplyne).',
+              'Zápasový režim platí od začátku zápasu, dokud není zápis hotový nebo dokud od začátku zápasu neuplyne tolik hodin.',
           },
         },
       ],

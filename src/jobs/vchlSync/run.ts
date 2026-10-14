@@ -14,7 +14,7 @@ import { resolveSeasons, resolveTeamId, type SeasonCtx } from './context'
 import { isDue } from './isDue'
 import { notifyRun } from './notify'
 import { revalidateAfterSync } from './revalidate'
-import { breadcrumb, captureFailure, captureWarning, span } from './sentry'
+import { breadcrumb, captureFailure, captureWarning, rootSpan, span } from './sentry'
 import { loadSettings } from './settings'
 import { createSyncContext, type SyncContext } from './sync/ctx'
 import { createDraftPost } from './sync/draftPost'
@@ -54,9 +54,11 @@ const LOCK_STALE_MS = 15 * 60_000
  * Zámek proti souběhu ručního běhu a cronu: in-process, ne v DB.
  *
  * Projekt běží v jednom Node procesu (stejný předpoklad jako cron úklidu
- * auditu v AGENTS.md). Při škálování na víc instancí by se běhy mohly
- * překrýt — pojistkou pak zůstávají `unique` indexy na `ahl.matchId`
- * a `ahlPlayerId` (souběh duplikát nevytvoří, zápis jen spadne).
+ * auditu v AGENTS.md). Při škálování na víc instancí (nebo krátce při rolling
+ * deployi, kdy běží starý i nový proces) se běhy mohly překrýt — pojistkou
+ * zůstávají `unique` indexy na `ahl.matchId` a `ahlPlayerId` (souběh
+ * duplikát nevytvoří, zápis jen spadne). Hráče párované jménem, soupeře
+ * a koncepty reportáží indexy nechrání.
  *
  * Stav je na `globalThis`, ne v modulové proměnné: Next v dev režimu
  * (Turbopack) bundluje instrumentation a route handlery zvlášť, takže by
@@ -64,10 +66,10 @@ const LOCK_STALE_MS = 15 * 60_000
  * Dotaz na `payload-jobs` (plán) nejde: tik sám je rozpracovaný job.
  */
 const LOCK_KEY = Symbol.for('hccestice.vchlSync.lock')
-type Lock = { running: boolean; since: number }
+type Lock = { running: boolean; since: number; /** kdo zámek drží; `finally` cizí zámek neuvolní */ token: symbol | null }
 function lockState(): Lock {
   const g = globalThis as unknown as Record<symbol, Lock | undefined>
-  return (g[LOCK_KEY] ??= { running: false, since: 0 })
+  return (g[LOCK_KEY] ??= { running: false, since: 0, token: null })
 }
 const isLocked = () => {
   const l = lockState()
@@ -116,6 +118,22 @@ async function checkDue(payload: Payload, settings: VchlSettings, now: Date): Pr
   return { ...r, lastRun }
 }
 
+/** Poslední skutečný běh, který doběhl (`ok`/`partial`) — základ pro deduplikaci varování. */
+async function lastSuccessfulRun(payload: Payload): Promise<VchlSyncRun | null> {
+  try {
+    const r = await payload.find({
+      collection: 'vchl-sync-runs',
+      where: { and: [{ trigger: { not_equals: 'dry' } }, { status: { in: ['ok', 'partial'] } }] },
+      sort: '-startedAt',
+      limit: 1,
+      depth: 0,
+    })
+    return r.docs[0] ?? null
+  } catch {
+    return null
+  }
+}
+
 function skipped(reason: 'disabled' | 'not-due' | 'locked', mode: VchlMode, t0: number): VchlRunResult {
   return {
     runId: null,
@@ -144,12 +162,20 @@ export async function runVchlSync(
   if (isLocked()) return skipped('locked', 'idle', t0)
 
   const lock = lockState()
+  // Token: zámek starší než `LOCK_STALE_MS` převezme nový běh. Visící běh,
+  // který se pak dokončí, by jinak ve `finally` uvolnil zámek běhu, který
+  // právě běží, a pustil by třetí souběžný.
+  const token = Symbol('vchl-run')
   lock.running = true
   lock.since = t0
+  lock.token = token
   try {
     return await runLocked(payload, opts, t0)
   } finally {
-    lock.running = false
+    if (lock.token === token) {
+      lock.running = false
+      lock.token = null
+    }
   }
 }
 
@@ -158,7 +184,6 @@ async function runLocked(
   opts: { trigger: VchlTrigger; force?: boolean },
   t0: number,
 ): Promise<VchlRunResult> {
-  const { trigger } = opts
   const now = new Date()
   const settings = await loadSettings(payload)
   const due = await checkDue(payload, settings, now)
@@ -168,6 +193,19 @@ async function runLocked(
     if (!due.due) return skipped('not-due', due.mode, t0)
   }
 
+  // Jeden kořenový span: dílčí `vchl.*` spany by jinak byly samostatné transakce.
+  return rootSpan(() => executeRun(payload, opts, t0, now, settings, due))
+}
+
+async function executeRun(
+  payload: Payload,
+  opts: { trigger: VchlTrigger; force?: boolean },
+  t0: number,
+  now: Date,
+  settings: VchlSettings,
+  due: Due,
+): Promise<VchlRunResult> {
+  const { trigger } = opts
   const client = createAhlClient({ onRequest: breadcrumb })
   const changes = emptyChanges()
   let ctx: SyncContext | null = null
@@ -195,8 +233,12 @@ async function runLocked(
   // Do Sentry jen NOVÁ upozornění: stejné varování v řadě běhů by jinak
   // znamenalo spam (neznámý hráč se hlásí, dokud ho správce nepřiřadí).
   if (!dry) {
+    // Porovnává se s posledním během, který skončil `ok`/`partial`: `error`
+    // běh varování nemá, takže by po něm další OK běh poslal všechna trvalá
+    // varování znovu.
+    const reference = await lastSuccessfulRun(payload)
     const prev = new Set(
-      (due.lastRun?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`),
+      (reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`),
     )
     for (const w of warnings) {
       if (prev.has(`${w.type}:${w.ref ?? ''}`)) continue
@@ -395,7 +437,7 @@ async function createDrafts(ctx: SyncContext, drafts: DraftCandidate[]): Promise
         continue
       }
       try {
-        const created = await createDraftPost(ctx.payload, doc, detail, ctx)
+        const created = await createDraftPost(ctx.payload, doc, detail)
         if (!created) continue
         await ctx.update('matches', doc.id, { ahl: { ...doc.ahl, draftPostCreated: true } })
         ctx.changes.draftPosts += 1

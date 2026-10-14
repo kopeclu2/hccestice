@@ -25,6 +25,16 @@ const TABS = [
 ] as const
 type TabKey = (typeof TABS)[number]['key']
 
+class ApiError extends Error {
+  readonly status: number
+  readonly data: Record<string, unknown>
+  constructor(message: string, status: number, data: Record<string, unknown>) {
+    super(message)
+    this.status = status
+    this.data = data
+  }
+}
+
 async function api<T>(path: string, init?: { method: 'POST'; body?: unknown }): Promise<T> {
   const res = await fetch(`/api/vchl-sync/${path}`, {
     method: init?.method ?? 'GET',
@@ -33,7 +43,9 @@ async function api<T>(path: string, init?: { method: 'POST'; body?: unknown }): 
     body: init ? JSON.stringify(init.body ?? {}) : undefined,
   })
   const data = (await res.json().catch(() => ({}))) as T & { message?: string }
-  if (!res.ok) throw new Error(data.message || `Požadavek selhal (HTTP ${res.status}).`)
+  if (!res.ok) {
+    throw new ApiError(data.message || `Požadavek selhal (HTTP ${res.status}).`, res.status, data as Record<string, unknown>)
+  }
   return data
 }
 
@@ -449,17 +461,24 @@ const Settings: React.FC = () => {
   const [detect, setDetect] = useState<DetectPayload | null>(null)
   const [busy, setBusy] = useState<null | 'detect' | 'save'>(null)
 
-  const call = async (save: boolean) => {
+  const call = async (save: boolean, overwrite = false) => {
     setBusy(save ? 'save' : 'detect')
+    let confirmed = false
     try {
-      const res = await api<DetectPayload>('detect', { method: 'POST', body: { save } })
+      const res = await api<DetectPayload>('detect', { method: 'POST', body: { save, overwrite } })
       setDetect(res)
       if (save) toast.success('ID uložena do sezóny.')
     } catch (e) {
-      toast.error(errMsg(e))
+      if (e instanceof ApiError && e.status === 409 && e.data.needsOverwrite === true) {
+        // Sezóna už má obě ID a AHL hlásí jiná (typicky mezi sezónami ještě starý ročník).
+        confirmed = window.confirm(e.message)
+      } else {
+        toast.error(errMsg(e))
+      }
     } finally {
       setBusy(null)
     }
+    if (confirmed) await call(true, true)
   }
 
   return (

@@ -112,6 +112,10 @@ describe('ahl: tabulka', () => {
     expect(() => parseStandings('')).toThrow(AhlParseError)
     expect(() => parseStandings(fx('vysledky-1185.html'))).toThrow(AhlParseError)
   })
+  it('tabulka jiné fáze než základní část se nepoužije (žádný fallback na první tabulku)', () => {
+    const playoff = fx('tabulky-1185.html').replace('Základní část', 'Play-off')
+    expect(() => parseStandings(playoff)).toThrow(/základní části/)
+  })
 })
 
 describe('ahl: výsledky', () => {

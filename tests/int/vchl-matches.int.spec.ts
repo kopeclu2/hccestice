@@ -5,7 +5,14 @@ import { describe, expect, it } from 'vitest'
 import { parseMatchDetail, parseMatchList } from '../../src/ahl'
 import { buildPatch } from '../../src/jobs/vchlSync/diff'
 import { buildGoals, buildLineup, buildThirds, ourCandidates } from '../../src/jobs/vchlSync/sync/matchDetail'
-import { mergeLists, pairLegacy, resolveMatchDate } from '../../src/jobs/vchlSync/sync/matches'
+import {
+  desiredStatus,
+  isReschedule,
+  mergeLists,
+  pairLegacy,
+  resolveMatchDate,
+  shouldFetchDetail,
+} from '../../src/jobs/vchlSync/sync/matches'
 import { foldTeam, opponentKeys, stripClubPrefix } from '../../src/jobs/vchlSync/sync/opponents'
 
 const fx = (name: string) => readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')
@@ -132,5 +139,56 @@ describe('vchl soupeři', () => {
     const k = opponentKeys({ name: 'ZH Pardubice', aliases: [{ name: 'Závodní hokejová Pardubice' }] } as never)
     expect(k.has('pardubice')).toBe(true)
     expect(k.has('zavodni hokejova pardubice')).toBe(true)
+  })
+})
+
+describe('vchl: přeložení termínu', () => {
+  it('doplnění času u zápasu založeného na půlnoc není přeložení', () => {
+    // 00:00 Prague (SELČ) = 22:00 UTC předchozího dne
+    expect(isReschedule('2026-10-03T22:00:00.000Z', '2026-10-04T14:30:00.000Z')).toBe(false)
+  })
+  it('změna dne je přeložení, i když byl čas neznámý', () => {
+    expect(isReschedule('2026-10-03T22:00:00.000Z', '2026-10-11T14:30:00.000Z')).toBe(true)
+  })
+  it('změna známého času je přeložení', () => {
+    expect(isReschedule('2026-10-04T14:30:00.000Z', '2026-10-04T16:00:00.000Z')).toBe(true)
+  })
+  it('stejný okamžik není přeložení', () => {
+    expect(isReschedule('2026-10-04T14:30:00.000Z', '2026-10-04T14:30:00.000Z')).toBe(false)
+  })
+})
+
+describe('vchl: stav zápasu', () => {
+  it('skóre → played', () => {
+    expect(desiredStatus('scheduled', true, false)).toBe('played')
+  })
+  it('odehraný zápas se bez skóre ve výpisu nevrací na scheduled', () => {
+    expect(desiredStatus('played', false, true)).toBeUndefined()
+  })
+  it('zrušený zůstává; nový a naplánovaný jde na scheduled', () => {
+    expect(desiredStatus('canceled', false, true)).toBeUndefined()
+    expect(desiredStatus(undefined, false, true)).toBe('scheduled')
+    expect(desiredStatus('scheduled', false, true)).toBe('scheduled')
+  })
+  it('bez řádku v rozpisu se stav bez skóre neřeší', () => {
+    expect(desiredStatus('scheduled', false, false)).toBeUndefined()
+  })
+})
+
+describe('vchl: stahování detailu', () => {
+  const base = { played: true, recent: false, hasReport: false }
+  it('neodehraný se nestahuje', () => {
+    expect(shouldFetchDetail({ ...base, played: false, recent: true, trigger: 'manual' })).toBe(false)
+  })
+  it('čerstvý odehraný vždy (i se zápisem, i z cronu)', () => {
+    expect(shouldFetchDetail({ ...base, recent: true, hasReport: true, trigger: 'cron' })).toBe(true)
+  })
+  it('starý bez zápisu: cron ne, ruční a nanečisto ano', () => {
+    expect(shouldFetchDetail({ ...base, trigger: 'cron' })).toBe(false)
+    expect(shouldFetchDetail({ ...base, trigger: 'manual' })).toBe(true)
+    expect(shouldFetchDetail({ ...base, trigger: 'dry' })).toBe(true)
+  })
+  it('starý se zápisem se nestahuje nikdy', () => {
+    expect(shouldFetchDetail({ ...base, hasReport: true, trigger: 'manual' })).toBe(false)
   })
 })

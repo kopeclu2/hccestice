@@ -4,7 +4,6 @@ import type { AhlMatchDetail } from '@/ahl'
 import type { Match, Post } from '@/payload-types'
 
 import { utcToPragueLocal } from '../time'
-import type { SyncContext } from './ctx'
 import { ourSide } from './matchDetail'
 
 const CLUB = 'HC Čestice'
@@ -147,7 +146,6 @@ export async function createDraftPost(
   payload: Payload,
   matchDoc: Match,
   detail: AhlMatchDetail,
-  _ctx: SyncContext,
 ): Promise<boolean> {
   const side = ourSide(detail)
   if (!side) return false

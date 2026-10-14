@@ -7,6 +7,7 @@
  */
 import { LANDING_COLORS as C } from '@/landing/tokens'
 import { getServerSideURL } from '@/utilities/getURL'
+import { plural } from '@/utilities/plural'
 
 import { emailBranding } from '../config'
 import { escapeHtml, renderEmailHtml, renderEmailText, type RenderEmailArgs } from '../render'
@@ -37,9 +38,6 @@ export type NotificationPlan = {
 type Item = { text: string; href?: string }
 type Section = { title: string; items: Item[]; note?: string }
 
-/** České skloňování: 1 / 2–4 / 5+. */
-export const plural = (n: number, one: string, few: string, many: string): string =>
-  n === 1 ? one : n >= 2 && n <= 4 ? few : many
 
 const MAX_ITEMS = 15
 

@@ -12,10 +12,13 @@ export function parseStandings(html: string): AhlStandingRow[] {
   const doc = parseDocument(html, PAGE)
 
   const tables = Array.from(doc.querySelectorAll('table.tabulka_tymu'))
-  // Vícetabulkové stránky (skupiny, play-off) — bereme základní část.
-  const table =
-    tables.find((t) => /základní/i.test(text(t.querySelector('caption')))) ?? tables[0]
-  if (!table) throw new AhlParseError(PAGE, 'chybí tabulka týmů (table.tabulka_tymu)')
+  if (tables.length === 0) throw new AhlParseError(PAGE, 'chybí tabulka týmů (table.tabulka_tymu)')
+  // Vícetabulkové stránky (skupiny, play-off) — bereme základní část. Bez
+  // fallbacku na první tabulku: v play-off by se tiše zapsala jiná fáze.
+  const table = tables.find((t) => /základní/i.test(text(t.querySelector('caption'))))
+  if (!table) {
+    throw new AhlParseError(PAGE, 'nenalezena tabulka základní části (caption „Základní část")')
+  }
 
   const rows = Array.from(table.querySelectorAll('tr.tabulka_radek'))
   if (rows.length === 0) throw new AhlParseError(PAGE, 'tabulka týmů nemá žádný řádek')

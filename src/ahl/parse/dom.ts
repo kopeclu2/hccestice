@@ -32,16 +32,6 @@ export function paramFromHref(href: string | null | undefined, param: string): n
   return m ? Number.parseInt(m[1], 10) : null
 }
 
-/**
- * Mapa „název sloupce → index" z řádku záhlaví. Záhlaví nese uvnitř
- * `<span class="show_if_large">Zápasy</span><span class="show_if_small">Z</span>`,
- * takže se porovnává přes `includes` na spojeném textu i přes třídu `th`.
- */
-export function headerCells(table: Element): Element[] {
-  const row = table.querySelector('tr.tabulka_radek_nadpis')
-  return row ? Array.from(row.querySelectorAll('th')) : []
-}
-
 export function phaseFromCompetition(raw: string): 'regular' | 'playoff' | 'other' {
   const s = raw
     .normalize('NFD')

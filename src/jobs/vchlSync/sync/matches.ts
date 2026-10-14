@@ -63,6 +63,53 @@ const relId = (v: unknown): number | null =>
   v == null ? null : typeof v === 'object' ? ((v as { id: number }).id ?? null) : (v as number)
 
 /**
+ * Je změna data skutečné přeložení? Zápas založený bez času je v CMS na lokální
+ * půlnoci (`00:00`) — doplnění času není přeložení, jen tiché upřesnění.
+ * Přeložení je změna dne, nebo změna času, který už byl známý.
+ */
+export function isReschedule(previous: Date | string, next: Date | string): boolean {
+  const a = utcToPragueLocal(previous)
+  const b = utcToPragueLocal(next)
+  if (a.day !== b.day) return true
+  return a.time !== '00:00' && a.time !== b.time
+}
+
+/**
+ * Stav, který se má zapsat (nebo `undefined` = nechat). Zápas, který je v CMS
+ * `played` (se skóre), se nikdy nevrací na `scheduled` jen proto, že ve výpisu
+ * výsledků skóre chvíli chybí; `canceled` se bez skóre také nepřepisuje.
+ */
+export function desiredStatus(
+  existingStatus: Match['status'] | null | undefined,
+  hasScore: boolean,
+  hasRozpisRow: boolean,
+): Match['status'] | undefined {
+  if (hasScore) return 'played'
+  if (!hasRozpisRow) return undefined
+  if (existingStatus === 'played' || existingStatus === 'canceled') return undefined
+  return 'scheduled'
+}
+
+/**
+ * Stahovat detail zápasu v tomto běhu? Jen odehrané (se skóre). Čerstvé
+ * (do `RECENT_DAYS`) vždy — pozdní opravy zápisu. Starší jen když ještě nemají
+ * zápis, a to jen při ručním/dry běhu: při cron tiku (každých 15 minut) by se
+ * zápas, který AHL nikdy nezapíše, stahoval pořád dokola. Ruční běh ho
+ * dotáhne a `hasReport` se pak nastaví z detailu.
+ */
+export function shouldFetchDetail(opts: {
+  played: boolean
+  recent: boolean
+  hasReport: boolean
+  trigger: 'cron' | 'manual' | 'dry'
+}): boolean {
+  if (!opts.played) return false
+  if (opts.recent) return true
+  if (opts.hasReport) return false
+  return opts.trigger !== 'cron'
+}
+
+/**
  * Datum zápasu v UTC. Pořadí důvěryhodnosti: rozpis (má čas) → detail
  * (má čas) → výsledky (jen den). Výpis výsledků čas NEMÁ (`T00:00:00`), takže
  * se z něj čas nikdy nepřepisuje — jinak by každý odehraný zápas „skočil"
@@ -167,7 +214,13 @@ export async function syncSeasonMatches(
     })
     for (const d of found.docs) byMatchId.set(d.ahl!.matchId!, d)
   }
-  const legacyPool = seasonDocs.filter((d) => d.ahl?.matchId == null)
+  // Legacy párování jen pro zápasy, které job nikdy nezapsal (`syncedAt` se
+  // nastavuje při každém zápisu, včetně prvního spárování, a pole je readOnly).
+  // Zápas, kterému správce smazal `matchId`, má `syncedAt` — je ODPOJENÝ a
+  // nesmí se znovu spárovat podle dne a soupeře ani založit podruhé.
+  const neverSynced = (d: Match) => d.ahl?.matchId == null && !d.ahl?.syncedAt
+  const legacyPool = seasonDocs.filter(neverSynced)
+  const detachedPool = seasonDocs.filter((d) => d.ahl?.matchId == null && d.ahl?.syncedAt)
   const claimed = new Set<number>()
 
   // --- 1. spárování + soupeři ---------------------------------------------
@@ -185,6 +238,17 @@ export async function syncSeasonMatches(
         legacy = true
       }
     }
+    if (!existing && detachedPool.length > 0) {
+      const detached = pairLegacy(entry, detachedPool, opponents)
+      if (detached) {
+        ctx.warn({
+          type: 'other',
+          ref: `detached:${entry.matchId}`,
+          message: `Zápas ${entry.matchId} (${base.dateISO.slice(0, 10)} ${opponentName}) na AHL existuje, ale v CMS je odpojený správcem (smazané ID zápasu), proto je přeskočen. Znovu připojit jde vrácením ID ručně.`,
+        })
+        continue
+      }
+    }
     const opponentId = await opponents.resolve(opponentName)
     items.push({ entry, weAreHome, opponentName, existing, legacy, opponentId, detail: null })
   }
@@ -194,10 +258,10 @@ export async function syncSeasonMatches(
     await span('vchl.matchDetail', async () => {
       for (const it of items) {
         const played = Boolean(it.entry.vysledky?.score)
-        if (!played) continue
         const date = it.existing ? new Date(it.existing.date) : resolveMatchDate(it.entry, null, null)
         const recent = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
-        if (it.existing?.ahl?.hasReport && !recent) continue
+        const hasReport = Boolean(it.existing?.ahl?.hasReport)
+        if (!shouldFetchDetail({ played, recent, hasReport, trigger: ctx.trigger })) continue
         const detail = await fetchMatchDetail(ctx, it.entry.matchId)
         if (!detail) continue
         const side = ourSide(detail)
@@ -251,19 +315,19 @@ export async function syncSeasonMatches(
         competition: base.competition || undefined,
         opponent,
         home: it.weAreHome,
-        venue: detail?.venue ?? base.venue ?? undefined,
+        // Výpis místo nastaví jen u nového zápasu nebo prázdné hodnoty; jinak
+        // by přepsal přesnější místo z detailu stažené v dřívějším běhu.
+        venue: detail?.venue ?? (!existing?.venue ? (base.venue ?? undefined) : undefined),
       }
+      const status = desiredStatus(existing?.status, Boolean(score), Boolean(lists.rozpis && entry.rozpis))
+      if (status) desired.status = status
       if (lists.vysledky) {
         if (score) {
-          desired.status = 'played'
           desired.scoreOurs = it.weAreHome ? score.home : score.away
           desired.scoreOpp = it.weAreHome ? score.away : score.home
           desired.overtime = score.suffix === 'pp'
           desired.shootout = score.suffix === 'sn'
         }
-      }
-      if (!score && lists.rozpis && entry.rozpis && existing?.status !== 'canceled') {
-        desired.status = 'scheduled'
       }
       if (detail) {
         desired.thirds = buildThirds(detail, side)
@@ -284,7 +348,7 @@ export async function syncSeasonMatches(
 
       // Změna termínu u zápasu, který už byl s AHL spárovaný, je důvod
       // k upozornění (hráči a diváci se musí dozvědět nový čas).
-      if (existing?.ahl?.matchId != null && fields.includes('date')) {
+      if (existing?.ahl?.matchId != null && fields.includes('date') && isReschedule(existing.date, date)) {
         ctx.warn({
           type: 'rescheduled',
           ref: String(entry.matchId),

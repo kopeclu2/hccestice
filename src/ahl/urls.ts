@@ -30,7 +30,3 @@ export function statistikyUrl(competitionYearId: number, participantId: number):
     `&souteznirocnikids[]=${competitionYearId}&limit=500`
   )
 }
-
-export function ucastnikUrl(participantId: number): string {
-  return `${AHL_BASE_URL}/ucastnici/?&ucastniksouteznihorocnikuid=${participantId}`
-}

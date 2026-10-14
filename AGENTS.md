@@ -616,9 +616,17 @@ v Auditním logu. Zápisy jdou s `context: { disableRevalidate: true }`.
 Zámek proti souběhu cronu a ručního běhu je **in-process** na `globalThis`
 (`Symbol.for('hccestice.vchlSync.lock')`; modulová proměnná by se v devu
 rozdvojila, Turbopack bundluje instrumentation a route handlery zvlášť).
-Platí jen pro **jednu instanci**; při škálování pojistí duplikáty `unique`
-indexy na `ahl.matchId` a `ahlPlayerId` (souběh zápis spíš shodí, než
-zdvojí). Starší než 15 min se zámek ignoruje (visící běh).
+Platí jen pro **jednu instanci**. Zámek drží token běhu: `finally` ho uvolní
+jen tomu, kdo ho převzal, takže visící běh po 15 min (kdy se zámek ignoruje)
+nepustí třetí souběžný.
+
+Při **rolling deployi** mohou krátce běžet dva procesy (starý a nový), každý
+s vlastním zámkem a vlastním cronem — to je stejná situace jako škálování.
+Chrání jen `unique` indexy na `ahl.matchId` a `ahlPlayerId` (souběh zápis spíš
+shodí, než zdvojí zápas nebo hráče s ID z AHL). **Nechrání** hráče párované
+jménem (`ahlPlayerId` ještě není), soupeře (`opponents` se zakládají podle
+názvu) ani koncepty reportáží (`ahl.draftPostCreated` se zapisuje až po
+založení) — tam souběh může vyrobit duplikát, který se čistí ručně.
 
 ## Past s crony: po deployi se samy nespustí
 
@@ -675,8 +683,12 @@ nelaďila dvě chování.
   u „Čestice") — umí jen **aktuální** ročník; 1. ročník (2025/26: 973 / 8650)
   doplnila migrace.
 - **Odpojení zápasu od AHL**: smazat `ahl.matchId`. Pole se odemknou
-  a synchronizace zápas přestane znát. Přátelák nebo turnaj bez `matchId` je
-  plně editovatelný.
+  a synchronizace zápas přestane znát **natrvalo**. Přátelák nebo turnaj bez
+  `matchId` je plně editovatelný. Legacy párování (podle dne a soupeře) bere
+  jen zápasy, které job nikdy nezapsal (`ahl.syncedAt` prázdné); zápas
+  s `syncedAt` a bez `matchId` je odpojený a blokuje založení nového zápasu
+  se stejným dnem, stranou a soupeřem — job zapíše jen varování typu `other`
+  („odpojen správcem, přeskočen"). Znovu připojit = vrátit ID ručně.
 - Zamčení řeší field access `access/notSyncedFromAhl.ts`
   (`update: ({ doc }) => !doc?.ahl?.matchId`). Job píše přes Local API
   (`overrideAccess: true`), takže ho to nebrzdí. Podrobnosti, proč to při
@@ -708,8 +720,15 @@ nelaďila dvě chování.
   mezi požadavky. Když parser nenajde očekávané řádky nebo sloupec, běh skončí
   `error` a **nic se nezapíše ani nesmaže**.
 
-Detail zápasu se stahuje pro odehrané zápasy bez zápisu a pro zápasy mladší
-než `RECENT_DAYS = 7` (pozdní opravy zápisu).
+Detail zápasu se stahuje pro odehrané zápasy mladší než `RECENT_DAYS = 7`
+(pozdní opravy zápisu) a pro starší odehrané zápasy **bez zápisu jen při
+ručním/nanečisto běhu**. Cron tik (`trigger: 'cron'`) starší zápasy bez
+zápisu nestahuje — zápas, který AHL nikdy nezapíše, by se jinak stahoval při
+každém tiku. Ruční běh ho dotáhne a `hasReport` se nastaví z detailu
+(`shouldFetchDetail` v `sync/matches.ts`). Další pravidla zápisu zápasu:
+`played` se bez skóre ve výpisu nevrací na `scheduled`; `venue` z výpisu se
+nastaví jen novému zápasu nebo prázdné hodnotě; doplnění času u zápasu
+založeného na půlnoc (`00:00`) není „přeložení" (`isReschedule`).
 
 ## Sentry, notifikace, koncept reportáže
 
@@ -719,12 +738,16 @@ než `RECENT_DAYS = 7` (pozdní opravy zápisu).
   poplach. Bez `NEXT_PUBLIC_SENTRY_DSN` je vše no-op.
 - Fingerprinty (`jobs/vchlSync/sentry.ts`): rozbité HTML →
   `['vchl-parse', stránka]` (jedno issue místo 288 denně); varování →
-  `['vchl-warning', typ, ref]`, do Sentry jen **nová** oproti minulému běhu.
+  `['vchl-warning', typ, ref]`, do Sentry jen **nová** oproti poslednímu
+  běhu, který skončil `ok`/`partial` (`error` běh varování nemá); selhání
+  stahování (`AhlFetchError`) → `['vchl-fetch', <typ stránky>]`. Celý běh je
+  jeden kořenový span `vchl.run`. Při `trigger: 'dry'` se do Sentry neposílá
+  nic (jen log a výsledek).
 - **Notifikace** (`notify.ts`, šablona `email/templates/vchlSync.ts`):
   selhání se hlásí **jen při přechodu** — když série `error`/`partial` dosáhne
   přesně `failureThreshold` (2) —, pak jednou „obnoveno". Jinak by v zápasovém
   režimu šlo 96 mailů denně. Noví hráči a soupeři se porovnávají s posledním
-  během. Prázdní adresáti = `siteConfig.contactEmail`. Odkazy v mailech skládá
+  úspěšným během (`ok`/`partial`). Prázdní adresáti = `siteConfig.contactEmail`. Odkazy v mailech skládá
   `getServerSideURL()` → `NEXT_PUBLIC_SERVER_URL`.
 - **Koncept reportáže** (`sync/draftPost.ts`): `_status: 'draft'`, jen když
   zápas právě přešel do „odehráno se zápisem" a je mladší než 7 dní. Řídí se
@@ -736,7 +759,9 @@ než `RECENT_DAYS = 7` (pozdní opravy zápisu).
 
 1. V adminu založit sezónu a u ní zaškrtnout `isCurrent`.
 2. ID ročníku a týmu **nevyplňovat** — doplní je autodetekce při prvním běhu
-   (nebo tlačítko **Autodetekovat** na stránce Synchronizace VČHL).
+   (nebo tlačítko **Autodetekovat** na stránce Synchronizace VČHL). Sezóna, která
+   už má obě ID, se přepíše jen po potvrzení (`/detect` bez `overwrite: true`
+   vrací 409) — mezi sezónami AHL ukazuje ještě starý ročník.
 3. Spustit „Nanečisto" a zkontrolovat diff, pak „Spustit teď".
 
 ## Nasazení
