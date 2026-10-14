@@ -21,10 +21,12 @@ import { People } from './collections/People'
 import { Products } from './collections/Products'
 import { Teams } from './collections/Teams'
 import { Users } from './collections/Users'
+import { VchlSyncRuns } from './collections/VchlSyncRuns'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Sidebar } from './globals/Sidebar/config'
 import { SiteConfig } from './globals/SiteConfig/config'
+import { VchlSync } from './globals/VchlSync/config'
 import { plugins } from './plugins'
 import { emailAdapter } from './email/adapter'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -95,6 +97,7 @@ export default buildConfig({
     People,
     Products,
     Milestones,
+    VchlSyncRuns,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   /**
@@ -111,7 +114,7 @@ export default buildConfig({
   // Adapter se vybírá podle env proměnných (Resend / SMTP / jen log) —
   // `email` bere i Promise, takže se tu záměrně nečeká na `await`.
   email: emailAdapter(),
-  globals: [Header, Footer, SiteConfig, Sidebar],
+  globals: [Header, Footer, SiteConfig, Sidebar, VchlSync],
   // Administrace v češtině (fallback en pro nepřeložené řetězce)
   i18n: {
     fallbackLanguage: 'cs',

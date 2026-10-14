@@ -61,6 +61,17 @@ export const Players: CollectionConfig = {
       ],
     },
     {
+      name: 'ahlPlayerId',
+      type: 'number',
+      label: 'ID hráče na AHL.cz',
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'ID hráče na AHL.cz — páruje se podle něj statistika ze zápisů.',
+      },
+    },
+    {
       name: 'active',
       type: 'checkbox',
       label: 'Aktivní hráč',

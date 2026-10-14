@@ -82,6 +82,7 @@ export interface Config {
     people: Person;
     products: Product;
     milestones: Milestone;
+    'vchl-sync-runs': VchlSyncRun;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -117,6 +118,7 @@ export interface Config {
     people: PeopleSelect<false> | PeopleSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     milestones: MilestonesSelect<false> | MilestonesSelect<true>;
+    'vchl-sync-runs': VchlSyncRunsSelect<false> | VchlSyncRunsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -140,6 +142,7 @@ export interface Config {
     footer: Footer;
     siteConfig: SiteConfig;
     sidebar: Sidebar;
+    'vchl-sync': VchlSync;
     'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
@@ -147,6 +150,7 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
     siteConfig: SiteConfigSelect<false> | SiteConfigSelect<true>;
     sidebar: SidebarSelect<false> | SidebarSelect<true>;
+    'vchl-sync': VchlSyncSelect<false> | VchlSyncSelect<true>;
     'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
@@ -565,6 +569,8 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Zápasy s vyplněným „ID zápasu na AHL" spravuje automatická synchronizace z AHL.cz — jejich údaje jsou jen pro čtení. Smazáním ID se zápas odpojí a jde upravit ručně.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches".
  */
@@ -596,6 +602,48 @@ export interface Match {
         id?: string | null;
       }[]
     | null;
+  ahl?: {
+    /**
+     * Podle tohoto ID se zápas páruje s AHL.cz. Dokud je vyplněné, synchronizovaná pole (datum, soupeř, skóre, branky, sestavy…) přepisuje AHL. Smazáním zápas odpojíte a můžete ho upravovat ručně.
+     */
+    matchId?: number | null;
+    hasReport?: boolean | null;
+    syncedAt?: string | null;
+    draftPostCreated?: boolean | null;
+  };
+  /**
+   * Plní synchronizace ze zápisu o utkání.
+   */
+  goals?:
+    | {
+        time?: string | null;
+        side?: ('ours' | 'opp') | null;
+        strength?: string | null;
+        scoreAfter?: string | null;
+        scorer?: (number | null) | Player;
+        scorerName?: string | null;
+        assist1?: (number | null) | Player;
+        assist1Name?: string | null;
+        assist2?: (number | null) | Player;
+        assist2Name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Plní synchronizace ze zápisu o utkání.
+   */
+  lineup?:
+    | {
+        player?: (number | null) | Player;
+        name?: string | null;
+        number?: number | null;
+        goalie?: boolean | null;
+        goals?: number | null;
+        assists?: number | null;
+        pim?: number | null;
+        id?: string | null;
+      }[]
+    | null;
   report?: (number | null) | Post;
   gallery?: (number | null) | Gallery;
   updatedAt: string;
@@ -617,17 +665,31 @@ export interface Season {
   startYear: number;
   isCurrent?: boolean | null;
   /**
+   * Identifikátory ročníku se mění s každou sezónou. Prázdné hodnoty dohledá synchronizace autodetekcí.
+   */
+  ahl?: {
+    competitionYearId?: number | null;
+    participantId?: number | null;
+  };
+  /**
    * Průběžná/konečná tabulka soutěže v této sezóně — zobrazuje ji homepage a bloky. Řádek HC Čestice se zvýrazní automaticky.
    */
   standings?: {
     label?: string | null;
     fullTableUrl?: string | null;
+    syncedAt?: string | null;
     rows?:
       | {
           pos: number;
           team: string;
           games?: number | null;
           points?: number | null;
+          wins?: number | null;
+          otWins?: number | null;
+          otLosses?: number | null;
+          losses?: number | null;
+          goalsFor?: number | null;
+          goalsAgainst?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -676,10 +738,45 @@ export interface Opponent {
   logo?: (number | null) | Media;
   city?: string | null;
   /**
+   * Krátké i plné názvy, podle kterých synchronizace soupeře pozná, např. „Pardubice", „Závodní hokejová Pardubice".
+   */
+  aliases?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Soupiska se skládá z hráčů označených jako „Aktivní hráč".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "players".
+ */
+export interface Player {
+  id: number;
+  /**
+   * Jméno a příjmení, např. „Lukáš Sajdl"
+   */
+  name: string;
+  photo?: (number | null) | Media;
+  number?: number | null;
+  position?: ('G' | 'D' | 'F') | null;
+  /**
+   * ID hráče na AHL.cz — páruje se podle něj statistika ze zápisů.
+   */
+  ahlPlayerId?: number | null;
+  /**
+   * Neaktivní hráči se nezobrazují na soupisce.
+   */
+  active?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1347,28 +1444,6 @@ export interface PlayerCardBlock {
   blockType: 'playerCard';
 }
 /**
- * Soupiska se skládá z hráčů označených jako „Aktivní hráč".
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "players".
- */
-export interface Player {
-  id: number;
-  /**
-   * Jméno a příjmení, např. „Lukáš Sajdl"
-   */
-  name: string;
-  photo?: (number | null) | Media;
-  number?: number | null;
-  position?: ('G' | 'D' | 'F') | null;
-  /**
-   * Neaktivní hráči se nezobrazují na soupisce.
-   */
-  active?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PlayersPickerBlock".
  */
@@ -1911,6 +1986,49 @@ export interface Milestone {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vchl-sync-runs".
+ */
+export interface VchlSyncRun {
+  id: number;
+  trigger?: ('cron' | 'manual' | 'dry') | null;
+  status?: ('ok' | 'partial' | 'error' | 'skipped') | null;
+  requests?: number | null;
+  startedAt?: string | null;
+  finishedAt?: string | null;
+  changes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  warnings?:
+    | {
+        type?:
+          | (
+              | 'unknown-player'
+              | 'unknown-opponent'
+              | 'ambiguous-player'
+              | 'rescheduled'
+              | 'missing-on-ahl'
+              | 'stats-mismatch'
+              | 'other'
+            )
+          | null;
+        message?: string | null;
+        ref?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  error?: string | null;
+  sentryEventId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2312,6 +2430,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'milestones';
         value: number | Milestone;
+      } | null)
+    | ({
+        relationTo: 'vchl-sync-runs';
+        value: number | VchlSyncRun;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3310,11 +3432,18 @@ export interface SeasonsSelect<T extends boolean = true> {
   title?: T;
   startYear?: T;
   isCurrent?: T;
+  ahl?:
+    | T
+    | {
+        competitionYearId?: T;
+        participantId?: T;
+      };
   standings?:
     | T
     | {
         label?: T;
         fullTableUrl?: T;
+        syncedAt?: T;
         rows?:
           | T
           | {
@@ -3322,6 +3451,12 @@ export interface SeasonsSelect<T extends boolean = true> {
               team?: T;
               games?: T;
               points?: T;
+              wins?: T;
+              otWins?: T;
+              otLosses?: T;
+              losses?: T;
+              goalsFor?: T;
+              goalsAgainst?: T;
               id?: T;
             };
       };
@@ -3352,6 +3487,7 @@ export interface PlayersSelect<T extends boolean = true> {
   photo?: T;
   number?: T;
   position?: T;
+  ahlPlayerId?: T;
   active?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -3381,6 +3517,41 @@ export interface MatchesSelect<T extends boolean = true> {
         opp?: T;
         id?: T;
       };
+  ahl?:
+    | T
+    | {
+        matchId?: T;
+        hasReport?: T;
+        syncedAt?: T;
+        draftPostCreated?: T;
+      };
+  goals?:
+    | T
+    | {
+        time?: T;
+        side?: T;
+        strength?: T;
+        scoreAfter?: T;
+        scorer?: T;
+        scorerName?: T;
+        assist1?: T;
+        assist1Name?: T;
+        assist2?: T;
+        assist2Name?: T;
+        id?: T;
+      };
+  lineup?:
+    | T
+    | {
+        player?: T;
+        name?: T;
+        number?: T;
+        goalie?: T;
+        goals?: T;
+        assists?: T;
+        pim?: T;
+        id?: T;
+      };
   report?: T;
   gallery?: T;
   updatedAt?: T;
@@ -3394,6 +3565,12 @@ export interface OpponentsSelect<T extends boolean = true> {
   name?: T;
   logo?: T;
   city?: T;
+  aliases?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -3504,6 +3681,30 @@ export interface MilestonesSelect<T extends boolean = true> {
   text?: T;
   photo?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vchl-sync-runs_select".
+ */
+export interface VchlSyncRunsSelect<T extends boolean = true> {
+  trigger?: T;
+  status?: T;
+  requests?: T;
+  startedAt?: T;
+  finishedAt?: T;
+  changes?: T;
+  warnings?:
+    | T
+    | {
+        type?: T;
+        message?: T;
+        ref?: T;
+        id?: T;
+      };
+  error?: T;
+  sentryEventId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -4102,6 +4303,50 @@ export interface AlertBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vchl-sync".
+ */
+export interface VchlSync {
+  id: number;
+  enabled?: boolean | null;
+  parts?: {
+    schedule?: boolean | null;
+    results?: boolean | null;
+    matchDetail?: boolean | null;
+    standings?: boolean | null;
+    draftPosts?: boolean | null;
+  };
+  timing?: {
+    /**
+     * Jak často se synchronizuje mimo zápasové dny (rozlosování, tabulka).
+     */
+    idleIntervalHours?: number | null;
+    /**
+     * Jak často se synchronizuje v okolí zápasu, kdy čekáme na výsledek a zápis.
+     */
+    matchdayIntervalMinutes?: number | null;
+    /**
+     * Zápasový režim platí od tolika hodin před zápasem do doby, než je zápis hotový (nebo toto okno po zápase uplyne).
+     */
+    matchdayWindowHours?: number | null;
+  };
+  notifications?: {
+    notifyOn?: ('failure' | 'new-entity' | 'rescheduled' | 'result')[] | null;
+    /**
+     * Prázdné = kontaktní e-mail z Nastavení webu.
+     */
+    recipients?:
+      | {
+          email: string;
+          id?: string | null;
+        }[]
+      | null;
+    failureThreshold?: number | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs-stats".
  */
 export interface PayloadJobsStat {
@@ -4307,6 +4552,44 @@ export interface AlertBlockSelect<T extends boolean = true> {
   style?: T;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vchl-sync_select".
+ */
+export interface VchlSyncSelect<T extends boolean = true> {
+  enabled?: T;
+  parts?:
+    | T
+    | {
+        schedule?: T;
+        results?: T;
+        matchDetail?: T;
+        standings?: T;
+        draftPosts?: T;
+      };
+  timing?:
+    | T
+    | {
+        idleIntervalHours?: T;
+        matchdayIntervalMinutes?: T;
+        matchdayWindowHours?: T;
+      };
+  notifications?:
+    | T
+    | {
+        notifyOn?: T;
+        recipients?:
+          | T
+          | {
+              email?: T;
+              id?: T;
+            };
+        failureThreshold?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

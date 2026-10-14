@@ -44,6 +44,24 @@ export const Seasons: CollectionConfig = {
       label: 'Aktuální sezóna',
     },
     {
+      name: 'ahl',
+      type: 'group',
+      label: 'AHL.cz',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Identifikátory ročníku se mění s každou sezónou. Prázdné hodnoty dohledá synchronizace autodetekcí.',
+      },
+      fields: [
+        { name: 'competitionYearId', type: 'number', label: 'ID ročníku (souteznirocnikid)' },
+        {
+          name: 'participantId',
+          type: 'number',
+          label: 'ID HC Čestice v ročníku (ucastniksouteznihorocnikuid)',
+        },
+      ],
+    },
+    {
       name: 'standings',
       type: 'group',
       label: 'Tabulka ligy',
@@ -60,6 +78,12 @@ export const Seasons: CollectionConfig = {
           ],
         },
         {
+          name: 'syncedAt',
+          type: 'date',
+          label: 'Naposledy synchronizováno',
+          admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } },
+        },
+        {
           name: 'rows',
           type: 'array',
           label: 'Řádky',
@@ -72,6 +96,17 @@ export const Seasons: CollectionConfig = {
                 { name: 'team', type: 'text', label: 'Tým', required: true },
                 { name: 'games', type: 'number', label: 'Zápasy' },
                 { name: 'points', type: 'number', label: 'Body' },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'wins', type: 'number', label: 'Výhry' },
+                { name: 'otWins', type: 'number', label: 'Výhry v prodloužení/nájezdech' },
+                { name: 'otLosses', type: 'number', label: 'Prohry v prodloužení/nájezdech' },
+                { name: 'losses', type: 'number', label: 'Prohry' },
+                { name: 'goalsFor', type: 'number', label: 'Vstřelené góly' },
+                { name: 'goalsAgainst', type: 'number', label: 'Obdržené góly' },
               ],
             },
           ],
