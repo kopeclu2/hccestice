@@ -347,10 +347,23 @@ export type ArticleDetail = {
 
 /* ── Detail zápasu (/zapasy/[slug]) ──────────────────────────────────────── */
 
-/** Mezititulek v souhrnu branek: třetiny, prodloužení, nájezdy. */
-export type MatchGoalGroup = {
+/**
+ * Událost na časové ose detailu zápasu. Gól soupeře nese jen stav — jména
+ * střelce a asistentů v typu záměrně nejsou, aby nedoputovala do cache ani
+ * do RSC payloadu (osa ukazuje jen události HC Čestice, soupeřův gól je
+ * tam kvůli průběhu skóre).
+ */
+export type MatchTimelineEvent =
+  | ({ type: 'goal'; ours: true } & Omit<ArticleGoal, 'ours'>)
+  | { type: 'goal'; ours: false; time: string; score: string }
+  | ({ type: 'penalty' } & MatchPenaltyRow)
+
+/** Úsek časové osy: třetina, prodloužení, nájezdy. */
+export type MatchTimelinePeriod = {
   label: string
-  goals: ArticleGoal[]
+  /** Skóre úseku „1:1" v pořadí domácí : hosté; null = neznámé (nájezdy). */
+  score: string | null
+  events: MatchTimelineEvent[]
 }
 
 /** Trest hráče HC Čestice (soupeřovy tresty zápis do CMS neukládá). */
@@ -416,7 +429,10 @@ export type MatchDetail = {
   /** Slug sezóny pro odkaz zpět na `/zapasy?sezona=…`; null = sezóna bez slugu. */
   seasonSlug: string | null
   seasonLabel: string | null
-  goalGroups: MatchGoalGroup[]
+  /** Časová osa po třetinách (branky + naše tresty); prázdná = bez zápisu. */
+  timeline: MatchTimelinePeriod[]
+  /** Počet našich branek na ose (doplněk v hlavičce panelu). */
+  goalsOurs: number
   penalties: MatchPenaltyRow[]
   /** Součet minut našich trestů. */
   penaltyMinutes: number

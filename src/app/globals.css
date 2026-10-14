@@ -183,6 +183,11 @@
   --color-loss: #f6e4e0;
   --color-loss-ink: #8a4437;
 
+  /* Trest na časové ose detailu zápasu — minuty ve žlutém poli jako na
+   * Livesportu (`zapas/MatchTimeline.tsx`). Vyšší tresty jdou do `danger`. */
+  --color-penalty: #f5c518;
+  --color-penalty-ink: #2b2300;
+
   /* Stavy. Landing palette žádnou chybovou barvu neměla, proto formuláře
    * padaly na `text-red-500` / `text-red-300` mimo design systém. */
   --color-danger: #b91c1c; /* chyba na světlém podkladu */

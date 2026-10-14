@@ -139,7 +139,9 @@ const loadMatchDetail = unstable_cache(
 
     return toMatchDetail(match, await resolveReport(match))
   },
-  ['match-detail'],
+  // `v2` = view-model s časovou osou (`timeline`); stará entry bez ní by
+  // stránku shodila, takže změna tvaru znamená novou verzi klíče.
+  ['match-detail', 'v2'],
   { tags: [CACHE_TAGS.matches, CACHE_TAGS.posts], revalidate: 3600 },
 )
 

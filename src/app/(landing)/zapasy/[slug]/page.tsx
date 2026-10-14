@@ -13,12 +13,11 @@ import { fetchMatchDetail, fetchMatchSlugs } from '@/landing/data/matchDetail'
 import { matchDescription, matchHeadline } from '@/landing/data/matchDetailView'
 import { formatFullDate } from '@/landing/data/format'
 import type { MatchDetail } from '@/landing/types'
-import { GoalsSummary } from '@/landing/zapas/GoalsSummary'
 import { MatchHeader } from '@/landing/zapas/MatchHeader'
 import { MatchJsonLd } from '@/landing/zapas/MatchJsonLd'
 import { MatchReportCard } from '@/landing/zapas/MatchReportCard'
 import { MatchStats } from '@/landing/zapas/MatchStats'
-import { PenaltiesSummary } from '@/landing/zapas/PenaltiesSummary'
+import { MatchTimeline } from '@/landing/zapas/MatchTimeline'
 import { brandTitle } from '@/utilities/brandTitle'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -54,7 +53,7 @@ const readSlug = async ({ params }: Args): Promise<string | null> => {
 }
 
 /**
- * `sizes` fotky reportáže kopírují layout stránky: s brankami je karta
+ * `sizes` fotky reportáže kopírují layout stránky: s časovou osou je karta
  * v pravém sloupci mřížky (0.85fr z ~1320 px), bez nich je jediná a má
  * strop `lg:max-w-[48rem]` — viz `MatchReportCard` a mřížku níž.
  */
@@ -68,9 +67,9 @@ const listHref = (match: MatchDetail): string => {
 }
 
 /**
- * Detail zápasu — souhrn po blocích (Branky, Tresty HC Čestice, Statistika,
- * Reportáž), ne časová osa. Handoff pro něj neexistuje, drží se vizuální
- * jazyk `/zapasy` a hero reportáže.
+ * Detail zápasu — časová osa ve stylu Livesportu (góly a tresty HC Čestice,
+ * góly soupeře jen jako stav), vedle ní Statistika a Reportáž. Handoff pro
+ * něj neexistuje, drží se vizuální jazyk `/zapasy` a hero reportáže.
  *
  * Neznámý slug je `notFound()`, ne `PayloadRedirects`: žádný legacy
  * redirect na `/zapasy/*` nikdy neexistoval, takže by hledání v kolekci
@@ -83,9 +82,8 @@ export default async function MatchDetailPage(args: Args) {
   const match = slug ? await fetchMatchDetail(slug) : null
   if (!match) notFound()
 
-  const hasBlocks =
-    match.goalGroups.length > 0 || match.penalties.length > 0 || match.stats.length > 0
-  const hasGoals = match.goalGroups.length > 0
+  const hasTimeline = match.timeline.length > 0
+  const hasBlocks = hasTimeline || match.stats.length > 0
   const opponentName = match.weAreHome ? match.awayName : match.homeName
 
   return (
@@ -120,31 +118,35 @@ export default async function MatchDetailPage(args: Args) {
         <SectionShell
           className={cn(
             'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)]',
-            hasGoals && 'lg:grid-cols-[1.15fr_0.85fr]',
+            hasTimeline && 'lg:grid-cols-[1.15fr_0.85fr]',
           )}
           spacing="split"
         >
           {/* Levý sloupec je průběh zápasu, pravý jeho shrnutí a doprovod.
               Prázdný sloupec se nevykreslí vůbec, aby mřížka nenechala díru. */}
-          {hasGoals && (
+          {hasTimeline && (
             <div className="min-w-0">
-              <GoalsSummary groups={match.goalGroups} />
+              <MatchTimeline
+                goalsOurs={match.goalsOurs}
+                opponentName={opponentName}
+                penaltyMinutes={match.penaltyMinutes}
+                periods={match.timeline}
+              />
             </div>
           )}
-          {/* Bez branek (starší sezóny) zbývá jen jeden sloupec — bez stropu šířky
+          {/* Bez osy (starší sezóny) zbývá jen jeden sloupec — bez stropu šířky
               by se karta reportáže roztáhla přes celých 1320 px. */}
           <div
             className={cn(
               'flex min-w-0 flex-col gap-[clamp(1.25rem,3vw,2.5rem)] empty:hidden',
-              !hasGoals && 'lg:max-w-[min(100%,48rem)]',
+              !hasTimeline && 'lg:max-w-[min(100%,48rem)]',
             )}
           >
-            <PenaltiesSummary minutes={match.penaltyMinutes} rows={match.penalties} />
             <MatchStats opponentName={opponentName} rows={match.stats} />
             <MatchReportCard
               gallery={match.gallery}
               report={match.report}
-              sizes={hasGoals ? REPORT_SIZES_SPLIT : REPORT_SIZES_SINGLE}
+              sizes={hasTimeline ? REPORT_SIZES_SPLIT : REPORT_SIZES_SINGLE}
             />
           </div>
         </SectionShell>

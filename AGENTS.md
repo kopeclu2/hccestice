@@ -839,8 +839,8 @@ začne brát nové pole**, jinak ho už odehrané zápasy nikdy nedostanou.
 
 # Detail zápasu
 
-`/zapasy/[slug]` — souhrn jednoho zápasu: hlavička s tabulí, Branky po
-třetinách, Tresty HC Čestice, Statistika a karta reportáže.
+`/zapasy/[slug]` — jeden zápas: hlavička s tabulí, časová osa „Průběh
+zápasu" ve stylu Livesportu, Statistika a karta reportáže.
 
 | co | kde |
 |---|---|
@@ -848,7 +848,7 @@ třetinách, Tresty HC Čestice, Statistika a karta reportáže.
 | výpis | `src/app/(landing)/zapasy/(vypis)/` (`page.tsx` + `loading.tsx`) |
 | fetchery | `src/landing/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
 | view-model | `src/landing/data/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
-| komponenty | `src/landing/zapas/*` (`MatchHeader`, `GoalsSummary`, `PenaltiesSummary`, `MatchStats`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
+| komponenty | `src/landing/zapas/*` (`MatchHeader`, `MatchTimeline`, `MatchStats`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
 | slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/utilities/matchSlug.ts` a `slugifyCs.ts` |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
@@ -916,10 +916,22 @@ s `report = post.id`.
 
 ## Bloky detailu
 
-- **Branky po třetinách** — rozhodující nájezd je v CMS `strength: 'SN'`
-  a patří do vlastního mezititulku, ne do 3. třetiny (viz Zvláštnosti HTML
-  na ahl.cz).
-- **Tresty HC Čestice** — jen naše, soupeřovy se neukládají.
+- **Průběh zápasu** (`MatchTimeline`, `buildTimeline` v
+  `matchDetailView.ts`) — jedna časová osa po třetinách místo dřívějších
+  bloků Branky + Tresty (rozhodnutí uživatele 14. 10. 2026, předlohou je
+  Livesport). Ukazuje **jen stranu HC Čestice**: naše góly (puk v lime
+  kruhu, stav, střelec, PP/OS/SN, asistence) a naše tresty (minuty ve
+  žlutém poli, od 5 min v červeném — token `--color-penalty` v
+  `globals.css`, `danger`). Gól soupeře je jen tlumený řádek se stavem
+  a názvem soupeře, kvůli průběhu skóre; jména střelce a asistentů typ
+  `MatchTimelineEvent` vůbec nenese, takže nejdou ani do cache. Soupeřovy
+  tresty se neukládají vůbec.
+  - Rozhodující nájezd je v CMS `strength: 'SN'` a patří do úseku
+    „Nájezdy", ne do 3. třetiny (viz Zvláštnosti HTML na ahl.cz).
+  - Skóre úseku: třetiny 1–3 z `thirds` (synchronizace ukládá jen tři),
+    když chybí, a u prodloužení vždy, se spočítá z branek úseku. Nájezdy
+    skóre nemají.
+  - Řazení je stabilní podle času, při shodném čase branka před trestem.
 - **Statistika** — Čestice : soupeř (`stats.*Ours` / `*Opp`), střely se
   neberou.
 - **Sestava na detailu není** — rozhodnutí uživatele 14. 10. 2026.
@@ -934,9 +946,11 @@ mu reportáž ani galerie nepatří, nic dalšího. Odehraný zápas **bez skór
 nemá tabuli, takže `h1` s titulkem je viditelný (jinak je u tabule jen
 `sr-only`); `matchDescription` ho nenazve „se hraje".
 
-Branky se před seskupením stabilně řadí podle času (nájezd `SN` na konec) —
-ručně zadané neseřazené branky by jinak daly dvě skupiny téhož názvu
-a duplicitní React `key`. Statistika čte stranu pro čtečku z `sr-only`
+Události osy se před seskupením stabilně řadí podle času (nájezd `SN` na
+konec) — ručně zadané neseřazené branky by jinak daly dvě skupiny téhož
+názvu a duplicitní React `key`. Změna tvaru view-modelu znamená novou verzi
+klíče `unstable_cache` (`['match-detail', 'v2']`), jinak by stará entry
+stránku shodila. Statistika čte stranu pro čtečku z `sr-only`
 věty („Vyloučení: HC Čestice 3, HC Polička B 4"), vizuální tabulka je
 `aria-hidden`.
 
