@@ -106,7 +106,8 @@ export const toResultRow = (match: Match): ResultRow => ({
   href: hrefOf(match),
 })
 
-const OUTCOME_LETTER: Record<Outcome, string> = { win: 'V', draw: 'R', loss: 'P' }
+/** Prohra po prodloužení / nájezdech je taky „P" — odliší ji půlená barva čtverečku. */
+const OUTCOME_LETTER: Record<Outcome, string> = { win: 'V', draw: 'R', otLoss: 'P', loss: 'P' }
 
 export const toFormSquare = (match: Match): FormSquare => ({
   id: match.id,

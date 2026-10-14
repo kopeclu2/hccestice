@@ -840,7 +840,7 @@ začne brát nové pole**, jinak ho už odehrané zápasy nikdy nedostanou.
 # Detail zápasu
 
 `/zapasy/[slug]` — jeden zápas: hlavička s tabulí, časová osa „Průběh
-zápasu" ve stylu Livesportu, Statistika a karta reportáže.
+zápasu" ve stylu Livesportu a karta reportáže.
 
 | co | kde |
 |---|---|
@@ -848,7 +848,7 @@ zápasu" ve stylu Livesportu, Statistika a karta reportáže.
 | výpis | `src/app/(landing)/zapasy/(vypis)/` (`page.tsx` + `loading.tsx`) |
 | fetchery | `src/landing/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
 | view-model | `src/landing/data/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
-| komponenty | `src/landing/zapas/*` (`MatchHeader`, `MatchTimeline`, `MatchStats`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
+| komponenty | `src/landing/zapas/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
 | slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/utilities/matchSlug.ts` a `slugifyCs.ts` |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
@@ -919,10 +919,10 @@ s `report = post.id`.
 - **Průběh zápasu** (`MatchTimeline`, `buildTimeline` v
   `matchDetailView.ts`) — jedna časová osa po třetinách místo dřívějších
   bloků Branky + Tresty (rozhodnutí uživatele 14. 10. 2026, předlohou je
-  Livesport). Ukazuje **jen stranu HC Čestice**: naše góly (puk v lime
-  kruhu, stav, střelec, PP/OS/SN, asistence) a naše tresty (minuty ve
-  žlutém poli, od 5 min v červeném — token `--color-penalty` v
-  `globals.css`, `danger`). Gól soupeře je jen tlumený řádek se stavem
+  Livesport). Ukazuje **jen stranu HC Čestice**: naše góly (tmavý puk bez
+  podkladu, stav, střelec, PP/OS/SN, asistence) a naše tresty (minuty
+  v malém žlutém poli, od 5 min v červeném — token `--color-penalty`
+  v `globals.css`, `danger`). Gól soupeře je jen tlumený řádek se stavem
   a názvem soupeře, kvůli průběhu skóre; jména střelce a asistentů typ
   `MatchTimelineEvent` vůbec nenese, takže nejdou ani do cache. Soupeřovy
   tresty se neukládají vůbec.
@@ -932,8 +932,9 @@ s `report = post.id`.
     když chybí, a u prodloužení vždy, se spočítá z branek úseku. Nájezdy
     skóre nemají.
   - Řazení je stabilní podle času, při shodném čase branka před trestem.
-- **Statistika** — Čestice : soupeř (`stats.*Ours` / `*Opp`), střely se
-  neberou.
+- **Statistika se na detailu nezobrazuje** (rozhodnutí uživatele
+  14. 10. 2026). Data (`stats.*Ours` / `*Opp`) se dál synchronizují
+  a view-model je nese kvůli rozhodnutí o `missingProtocol`.
 - **Sestava na detailu není** — rozhodnutí uživatele 14. 10. 2026.
   `lineup` je proto v `select` záměrně vynechaná (nejdelší pole, jinak by se
   serializovalo do cache).
@@ -949,10 +950,25 @@ nemá tabuli, takže `h1` s titulkem je viditelný (jinak je u tabule jen
 Události osy se před seskupením stabilně řadí podle času (nájezd `SN` na
 konec) — ručně zadané neseřazené branky by jinak daly dvě skupiny téhož
 názvu a duplicitní React `key`. Změna tvaru view-modelu znamená novou verzi
-klíče `unstable_cache` (`['match-detail', 'v2']`), jinak by stará entry
-stránku shodila. Statistika čte stranu pro čtečku z `sr-only`
-věty („Vyloučení: HC Čestice 3, HC Polička B 4"), vizuální tabulka je
-`aria-hidden`.
+klíče `unstable_cache` (teď `['match-detail', 'v3']`), jinak by stará
+entry stránku shodila.
+
+## Výsledek zápasu a výpisy na `/zapasy`
+
+`Outcome` má čtyři hodnoty: `win`, `draw`, `otLoss`, `loss`. **`otLoss`**
+je prohra po prodloužení nebo nájezdech (`matchOutcome` v
+`matchFormat.ts`): v tabulce VČHL za ni je bod, proto má „půlený" štítek
+— varianta `split` v `Badge` (cihlová | světle zelená), ve formě čtvereček
+půlený úhlopříčkou s písmenem P. Mapa štítků je jedna,
+`landing/components/outcome.ts`, sdílí ji `ResultsList` i `MatchHeader`.
+Výhra po prodloužení zůstává `win` (suffix `pp`/`sn` u skóre ji odliší).
+
+Odehrané zápasy (`ResultsList`) i rozlosování (`FixturesRail` →
+`FixtureList`) jsou **jedna karta s řádky oddělenými linkou**
+(`rounded-tile border-line-soft`), se stejnými sloupci, takže lícují.
+Stejný rádius a rámeček má forma i tabulka (`StandingsPanel`) — dřív
+každý blok jel na jiném (`rounded-row`, `rounded-card`). Tmavé panely
+(nejbližší zápas, hlavička detailu) zůstávají `rounded-section`.
 
 ## Metadata a JSON-LD
 

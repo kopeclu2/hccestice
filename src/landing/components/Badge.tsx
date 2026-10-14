@@ -16,6 +16,8 @@ import { cn } from '@/utilities/ui'
  * - `chip`    — neutrální světlý štítek („Venku", fáze soutěže)
  * - `muted`   — neutrální se ztišeným textem (remíza)
  * - `loss`    — cihlová (prohra)
+ * - `split`   — půlený cihlová | světle zelená (prohra po prodloužení /
+ *               nájezdech, za kterou je bod)
  * - `club`    — klubová zelená plocha (rozpis: domácí zápas)
  * - `outline` — obrys na světlém pozadí (pilulky milníků)
  */
@@ -26,6 +28,8 @@ const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowr
       chip: 'bg-chip text-ink font-extrabold',
       muted: 'bg-chip text-ink-soft font-extrabold',
       loss: 'bg-loss text-loss-ink font-extrabold',
+      split:
+        'bg-[linear-gradient(90deg,var(--color-loss)_50%,var(--color-win)_50%)] text-loss-ink font-extrabold',
       club: 'bg-club text-white font-extrabold',
       outline: 'border-line text-ink-soft border font-bold',
       /** Bílý štítek na tmavé ploše / v zelené kartě. */

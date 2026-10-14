@@ -10,19 +10,14 @@ import { Numeral } from '../components/Numeral'
 import { Pagination } from '../components/Pagination'
 import { PillLink } from '../components/PillLink'
 import { StretchedLink, stretchHost } from '../components/StretchedLink'
-import type { Outcome, ResultRow } from '../types'
+import { OUTCOME_BADGE } from '../components/outcome'
+import type { ResultRow } from '../types'
 
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 
-/** Badge výsledku (handoff: výhra lime, remíza šedá, prohra cihlová). */
-const BADGE: Record<Outcome, { label: string; variant: 'lime' | 'muted' | 'loss' }> = {
-  win: { label: 'Výhra', variant: 'lime' },
-  draw: { label: 'Remíza', variant: 'muted' },
-  loss: { label: 'Prohra', variant: 'loss' },
-}
-
 /**
- * Odehrané zápasy — řádkové karty se stránkováním po šesti.
+ * Odehrané zápasy — jedna karta s řádky oddělenými linkou, stejně jako
+ * rozlosování (`FixturesRail` → `FixtureList`), stránkování po šesti.
  * Stav stránkování žije v URL (`?strana=`), odkazy dodá volající.
  *
  * Bez `hrefFor` se stránkování nevykreslí, hlavička dostane proklik
@@ -81,14 +76,16 @@ export function ResultsList({
           třetinami.
         </EmptyState>
       ) : (
-        <div className="mt-5 flex flex-col gap-2.5">
+        <ol className="border-line-soft divide-line-soft mt-5 divide-y overflow-hidden rounded-tile border bg-surface">
           {rows.map((row) => {
-            const badge = BADGE[row.outcome]
+            const badge = OUTCOME_BADGE[row.outcome]
             return (
-              <div
+              <li
                 className={cn(
-                  'border-line-soft hover:border-club flex flex-wrap items-center gap-y-3 gap-x-4 rounded-row border bg-surface px-4.5 py-3.5 transition-colors md:px-6 md:py-4 lg:px-7 lg:py-4.5',
+                  'hover:bg-chip/40 flex flex-wrap items-center gap-y-3 gap-x-4 px-4.5 py-3.5 transition-colors md:px-6 md:py-4 lg:px-7 lg:py-4.5',
+                  // Karta má `overflow-hidden`, takže obrys uvnitř, ne vně řádku.
                   stretchHost,
+                  'has-[[data-stretched]:focus-visible]:-outline-offset-2',
                 )}
                 key={row.id}
               >
@@ -102,7 +99,8 @@ export function ResultsList({
                     místo" — ty se do 64 px nevejdou ani s prostrkáním podle
                     designu, přetékaly do názvu zápasu a u „O 3. místo" navíc
                     zvedaly řádek ze 44 na 68 px. Je to vědomá odchylka od
-                    handoffu ve prospěch delších českých názvů fází. */}
+                    handoffu ve prospěch delších českých názvů fází. Šířku
+                    sdílí s rozlosováním, takže oba výpisy lícují. */}
                 <div className="flex w-full items-baseline gap-2.5 md:w-24 md:flex-none md:block">
                   <div className="text-meta font-extrabold tabular-nums">{row.dateLabel}</div>
                   <Eyebrow className="md:mt-0.5" tight tone="dark">
@@ -128,6 +126,7 @@ export function ResultsList({
 
                 <Badge className="flex-none md:ml-auto" variant={badge.variant}>
                   {badge.label}
+                  {badge.note && <span className="sr-only"> {badge.note}</span>}
                 </Badge>
 
                 <Numeral className="ml-auto min-w-13 flex-none text-right md:ml-0" size="xs">
@@ -143,10 +142,10 @@ export function ResultsList({
                     <span className="text-ink font-bold">Střelci:</span> {row.scorers}
                   </p>
                 )}
-              </div>
+              </li>
             )
           })}
-        </div>
+        </ol>
       )}
 
       {hrefFor && totalPages > 1 && (

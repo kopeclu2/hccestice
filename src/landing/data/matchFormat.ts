@@ -33,7 +33,7 @@ export const matchOutcome = (match: Match): Outcome => {
   const ours = match.scoreOurs ?? 0
   const theirs = match.scoreOpp ?? 0
   if (ours > theirs) return 'win'
-  if (ours < theirs) return 'loss'
+  if (ours < theirs) return match.overtime || match.shootout ? 'otLoss' : 'loss'
   return 'draw'
 }
 

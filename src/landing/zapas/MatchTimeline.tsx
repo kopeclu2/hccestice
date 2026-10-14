@@ -27,11 +27,11 @@ const ROW =
  * Časová osa zápasu ve stylu Livesportu, ale jen se stranou HC Čestice:
  * pruh třetiny se skóre úseku, pod ním události v pořadí, jak šly.
  *
- * - **Náš gól** — puk v lime kruhu, stav, střelec, PP/OS/SN, asistence.
- * - **Gól soupeře** — prázdný kroužek a tlumený stav, bez jmen (rozhodnutí
+ * - **Náš gól** — tmavý puk, stav, střelec, PP/OS/SN, asistence.
+ * - **Gól soupeře** — světlý puk a tlumený stav, bez jmen (rozhodnutí
  *   uživatele 14. 10. 2026; jména ve view-modelu ani nejsou). Je tu jen
  *   proto, aby byl vidět průběh skóre.
- * - **Trest** — minuty ve žlutém poli, vyšší tresty v červeném. Soupeřovy
+ * - **Trest** — minuty v malém žlutém poli, vyšší tresty v červeném. Soupeřovy
  *   tresty zápis do CMS neukládá.
  *
  * Stav po brance je v pořadí domácí : hosté, stejně jako tabule v hlavičce.
@@ -120,7 +120,7 @@ function EventIcon({ event }: { event: MatchTimelineEvent }) {
     return (
       <span
         className={cn(
-          'inline-grid h-7 min-w-5.5 place-items-center rounded-md px-1 text-caption font-extrabold tabular-nums',
+          'inline-grid h-5 min-w-4 place-items-center rounded-sm px-0.75 text-eyebrow font-extrabold tabular-nums',
           event.minutes != null && event.minutes >= MAJOR_MINUTES
             ? 'bg-danger text-on-contrast'
             : 'bg-penalty text-penalty-ink',
@@ -130,16 +130,8 @@ function EventIcon({ event }: { event: MatchTimelineEvent }) {
       </span>
     )
   }
-  return (
-    <span
-      className={cn(
-        'grid size-7 place-items-center rounded-full',
-        event.ours ? 'bg-lime text-ink' : 'border-line text-faint border',
-      )}
-    >
-      <PuckIcon className="size-4" />
-    </span>
-  )
+  // Puk bez podkladu: náš plný v barvě textu, soupeřův ztišený.
+  return <PuckIcon className={cn('size-5', event.ours ? 'text-ink' : 'text-faint/45')} />
 }
 
 function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponentName: string }) {

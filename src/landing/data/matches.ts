@@ -150,7 +150,7 @@ export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<Ma
 
 /*
  * Klíče tagovaných cache nesou verzi tvaru (`v2` = výsledek má `href` na detail
- * zápasu). `unstable_cache` skládá klíč jen z těchto řetězců a argumentů, takže
+ * zápasu, `v3` = výsledek `otLoss`). `unstable_cache` skládá klíč jen z těchto řetězců a argumentů, takže
  * entry uložená před změnou tvaru by bez nového klíče žila až do `revalidate`
  * (hodina) bez odkazů. Tag (`matches-list`) zůstává, takže hook zápasů
  * invaliduje i nové entry.
@@ -228,7 +228,7 @@ const loadSeasonResults = unstable_cache(
       totalDocs: result.totalDocs,
     }
   },
-  ['season-results', 'v2'],
+  ['season-results', 'v3'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
@@ -251,15 +251,18 @@ const loadSeasonForm = unstable_cache(
 
     const squares: FormSquare[] = docs.map(toFormSquare).reverse()
 
-    const counts = { win: 0, draw: 0, loss: 0 }
+    const counts = { win: 0, draw: 0, otLoss: 0, loss: 0 }
     for (const square of squares) counts[square.outcome] += 1
 
+    // Prohry po prodloužení / nájezdech se počítají do proher, závorka jen
+    // řekne kolik z nich přineslo bod (bez nich by byla zbytečná).
+    const ot = counts.otLoss ? ` (${counts.otLoss}× po prodl./sn)` : ''
     return {
       squares,
-      summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss}× prohra`,
+      summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss + counts.otLoss}× prohra${ot}`,
     }
   },
-  ['season-form', 'v2'],
+  ['season-form', 'v3'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
