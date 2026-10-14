@@ -46,6 +46,16 @@ const revalidate = (
 
   if (context.disableRevalidate || isDraft) return
 
+  revalidateLandingNow(logger)
+}
+
+/**
+ * Samotná revalidace bez kontroly kontextu. Volá ji i interní route handler
+ * `/internal/revalidate`, kterým synchronizace VČHL revaliduje z cronu —
+ * mimo request `revalidatePath`/`revalidateTag` padají na
+ * `Invariant: static generation store missing` (`jobs/vchlSync/revalidate.ts`).
+ */
+export const revalidateLandingNow = (logger: { info: (msg: string) => void }) => {
   logger.info(`Revaliduji landing stránky (${LANDING_PATHS.join(', ')})`)
   for (const path of LANDING_PATHS) revalidatePath(path)
 

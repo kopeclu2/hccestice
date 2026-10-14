@@ -160,6 +160,7 @@ export interface Config {
   user: User;
   jobs: {
     tasks: {
+      vchlSync: TaskVchlSync;
       'cleanup-payload-auditor-log': TaskCleanupPayloadAuditorLog;
       schedulePublish: TaskSchedulePublish;
       inline: {
@@ -2315,7 +2316,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'cleanup-payload-auditor-log' | 'schedulePublish';
+        taskSlug: 'inline' | 'vchlSync' | 'cleanup-payload-auditor-log' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -2348,7 +2349,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'cleanup-payload-auditor-log' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'vchlSync' | 'cleanup-payload-auditor-log' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -4610,6 +4611,20 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskVchlSync".
+ */
+export interface TaskVchlSync {
+  input?: unknown;
+  output: {
+    status?: string | null;
+    skippedReason?: string | null;
+    mode?: string | null;
+    runId?: string | null;
+    requests?: number | null;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

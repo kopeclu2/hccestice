@@ -28,6 +28,7 @@ import { Sidebar } from './globals/Sidebar/config'
 import { SiteConfig } from './globals/SiteConfig/config'
 import { VchlSync } from './globals/VchlSync/config'
 import { plugins } from './plugins'
+import { vchlSyncTask, VCHL_CRON, VCHL_QUEUE } from './jobs/vchlSync/task'
 import { emailAdapter } from './email/adapter'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -142,6 +143,13 @@ export default buildConfig({
         return authHeader === `Bearer ${secret}`
       },
     },
-    tasks: [],
+    tasks: [vchlSyncTask],
+    // Pole, ne funkce: auditor si v `onInit` přidává vlastní frontu a umí
+    // pole jen rozšířit. Výraz má vteřiny jako první pole (viz `task.ts`).
+    autoRun: [{ queue: VCHL_QUEUE, cron: VCHL_CRON }],
+    // Crony se při `PAYLOAD_CRON=off` nespouští z `instrumentation.ts`, ale
+    // `initReq` (první request do adminu) je nastartuje taky — tohle je
+    // druhá pojistka a cron se po prvním tiku zastaví.
+    shouldAutoRun: () => process.env.PAYLOAD_CRON !== 'off',
   },
 })
