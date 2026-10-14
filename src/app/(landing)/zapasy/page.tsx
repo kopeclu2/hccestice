@@ -137,6 +137,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
         }
         fixtures={fixtures}
         id="rozlosovani"
+        layout="list"
       />
 
       {form && <FormStrip form={form} />}

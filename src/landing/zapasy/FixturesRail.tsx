@@ -38,6 +38,12 @@ const RAIL_ID = 'rozlosovani-pas'
  * skrývá) je to jediný náznak, že se dá scrollovat. Pravý okraj pásu se
  * proto pod `md` prolíná do prázdna (maska).
  *
+ * `layout="list"` (stránka /zapasy) nahradí mřížku i pás tabulkovým výpisem:
+ * nejbližší zápas zůstane v `NextMatchPanel`, ostatní jdou pod sebe jako
+ * řádky jedné karty. Celé rozlosování se tak čte shora dolů jako termínovka,
+ * místo přeskakování očima mezi dlaždicemi. Výřez na home page zůstává
+ * u karet (`cards`).
+ *
  * `moreHref` přidá do hlavičky proklik a `headVariant` přepne styl nadpisu
  * (výřez sekce na home page), `id` + `className` slouží ke zakotvení sekce
  * v layoutu volajícího. `spacing` řídí odstup — na home je to plný rytmus
@@ -57,6 +63,7 @@ export function FixturesRail({
   emptyState,
   id,
   spacing = 'content',
+  layout = 'cards',
 }: {
   fixtures: FixtureCard[]
   moreHref?: string | null
@@ -67,6 +74,8 @@ export function FixturesRail({
   emptyState?: React.ReactNode
   id?: string
   spacing?: SectionShellProps['spacing']
+  /** `list` = nejbližší zápas v panelu, zbytek jako řádky pod sebou (/zapasy). */
+  layout?: 'cards' | 'list'
 }) {
   if (fixtures.length === 0) {
     if (!emptyState) return null
@@ -80,7 +89,7 @@ export function FixturesRail({
   }
 
   const solo = fixtures.length === 1 ? fixtures[0]! : null
-  const stacked = fixtures.length > 2
+  const stacked = fixtures.length > 2 || (layout === 'list' && !solo)
   const nearest = stacked ? fixtures[0]! : null
   const rest = stacked ? fixtures.slice(1) : fixtures
 
@@ -97,11 +106,15 @@ export function FixturesRail({
       ) : stacked ? (
         <div className="mt-5 space-y-3.5 md:space-y-4">
           <SoloFixturePanel fixture={nearest!} />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {rest.map((fixture) => (
-              <FixtureTile fixture={fixture} key={fixture.id} />
-            ))}
-          </div>
+          {layout === 'list' ? (
+            <FixtureList fixtures={rest} />
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {rest.map((fixture) => (
+                <FixtureTile fixture={fixture} key={fixture.id} />
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <div
@@ -109,7 +122,11 @@ export function FixturesRail({
           id={RAIL_ID}
         >
           {rest.map((fixture) => (
-            <FixtureTile className="w-[78%] flex-none snap-start md:w-77.5" fixture={fixture} key={fixture.id} />
+            <FixtureTile
+              className="w-[78%] flex-none snap-start md:w-77.5"
+              fixture={fixture}
+              key={fixture.id}
+            />
           ))}
         </div>
       )}
@@ -153,6 +170,47 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
         <div className="mt-1 text-caption font-semibold opacity-65">{fixture.venue}</div>
       )}
     </article>
+  )
+}
+
+/**
+ * Rozlosování jako tabulka — jedna karta, řádky oddělené linkou.
+ *
+ * Sloupce kopírují `ResultsList` (96 px datum + čas, název, štítek vpravo),
+ * takže rozlosování a výsledky pod ním lícují. Na mobilu jde datum a čas
+ * na vlastní řádek nad název, stejně jako u výsledků.
+ */
+function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
+  return (
+    <ol className="border-line-soft divide-line-soft divide-y overflow-hidden rounded-tile border bg-surface">
+      {fixtures.map((fixture) => {
+        const meta = [fixture.stage, fixture.venue].filter(Boolean).join(' · ')
+        return (
+          <li
+            className="hover:bg-chip/40 flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4.5 py-3.5 transition-colors md:flex-nowrap md:px-6 md:py-4 lg:px-7 lg:py-4.5"
+            key={fixture.id}
+          >
+            <div className="flex w-full items-baseline gap-2.5 md:block md:w-24 md:flex-none">
+              <div className="text-meta font-extrabold tabular-nums">{fixture.dateLabel}</div>
+              <div className="text-faint text-caption font-bold tabular-nums md:mt-0.5">
+                {fixture.timeLabel}
+              </div>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <div className="text-body font-bold tracking-[-0.01em] text-pretty">
+                {fixture.title}
+              </div>
+              {meta && <div className="text-faint mt-0.5 text-eyebrow font-semibold">{meta}</div>}
+            </div>
+
+            <Badge className="flex-none" variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}>
+              {fixture.kind}
+            </Badge>
+          </li>
+        )
+      })}
+    </ol>
   )
 }
 
