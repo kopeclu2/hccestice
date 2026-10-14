@@ -52,6 +52,8 @@ export type UpcomingMatch = {
   subtitle: string
   /** Štítek nad názvem, např. „18. kolo VČHL". */
   label: string
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Poslední odehraný výsledek — fallback hero karty po konci sezóny. */
@@ -63,26 +65,8 @@ export type LastResult = {
   suffix: '' | 'sn' | 'pp'
   dateLabel: string
   won: boolean
-}
-
-/** Karta reportu odehraného zápasu (sekce Sezóna). */
-export type MatchReport = {
-  id: number
-  title: string
-  /** Např. „8. 3. · Play-off". */
-  badge: string
-  score: string
-  suffix: '' | 'sn' | 'pp'
-  photo: Photo | null
-}
-
-/** Řádek výčtu nadcházejících zápasů. */
-export type Fixture = {
-  id: number
-  dateLabel: string
-  timeLabel: string
-  title: string
-  home: boolean
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Milník timeline na /historie-klubu. */
@@ -127,6 +111,8 @@ export type MatchRow = {
   /** Vyplněné jen u odehraných zápasů. */
   score: string | null
   suffix: '' | 'sn' | 'pp'
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Výsledek zápasu z pohledu HC Čestice. */
@@ -161,6 +147,8 @@ export type FixtureCard = MatchSchemaFields & {
   venue: string | null
   /** Nejbližší zápas — lime tečka „Nejbližší". */
   isNext: boolean
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Řádek výpisu odehraných zápasů na /zapasy. */
@@ -177,6 +165,8 @@ export type ResultRow = MatchSchemaFields & {
   outcome: Outcome
   /** Naši střelci bez nájezdů, „Sajdl 2, Vacek"; null = zápis chybí. */
   scorers: string | null
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Čtvereček formy (posledních 5 zápasů) i s obsahem tooltipu. */
@@ -190,6 +180,8 @@ export type FormSquare = {
   stage: string
   title: string
   dateLabel: string
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Forma HC Čestice — čtverečky zleva od nejstaršího a slovní bilance. */
@@ -241,6 +233,8 @@ export type MatchCardData = {
   won: boolean | null
   /** Odkaz na reportáž (`/aktuality/{slug}`), pokud je nalinkovaná. */
   reportHref: string | null
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+  href: string | null
 }
 
 /** Hráč ve widgetu Soupiska. */
@@ -344,9 +338,95 @@ export type ArticleDetail = {
   readingLabel: string
   author: ArticleAuthor
   scoreboard: ArticleScoreboard | null
+  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = reportáž s zápasem nesouvisí. */
+  matchHref: string | null
   /** Štítky pod článkem (tituly kategorií). */
   tags: string[]
   showRelated: boolean
+}
+
+/* ── Detail zápasu (/zapasy/[slug]) ──────────────────────────────────────── */
+
+/** Mezititulek v souhrnu branek: třetiny, prodloužení, nájezdy. */
+export type MatchGoalGroup = {
+  label: string
+  goals: ArticleGoal[]
+}
+
+/** Trest hráče HC Čestice (soupeřovy tresty zápis do CMS neukládá). */
+export type MatchPenaltyRow = {
+  /** „12:34". */
+  time: string
+  player: string
+  minutes: number | null
+  /** „Menší trest", „Vyšší trest"… (text ze zápisu). */
+  kind: string | null
+  reason: string | null
+}
+
+/** Řádek statistiky v pořadí Čestice : soupeř. */
+export type MatchStatRow = {
+  label: string
+  ours: string
+  opp: string
+  /** Čísla pro poměrový pruh; null = hodnota není číslo (čas „m:ss"), pruh se nekreslí. */
+  oursValue: number | null
+  oppValue: number | null
+}
+
+/** Reportáž u zápasu — sjednocená z `matches.report` a `posts.match`. */
+export type MatchDetailReport = {
+  title: string
+  excerpt: string | null
+  photo: Photo | null
+  href: string
+}
+
+/** Kompletní view-model detailu zápasu. */
+export type MatchDetail = {
+  id: number
+  slug: string
+  status: 'scheduled' | 'played' | 'canceled'
+  /** ISO úvodního buly (odpočet naplánovaného zápasu). */
+  kickoffISO: string
+  /** „12. října 2025". */
+  dateLabel: string
+  /** „17:00". */
+  timeLabel: string
+  venue: string | null
+  /** Soutěž tak, jak je v CMS („VČHL — 18. kolo"); null = nevyplněno. */
+  competition: string | null
+  /** Krátký štítek fáze („18. kolo", „Semifinále"). */
+  phase: string
+  /** „HC Čestice × HC Zdar" (domácí × hosté). */
+  title: string
+  homeName: string
+  awayName: string
+  homeLogo: Photo | null
+  awayLogo: Photo | null
+  weAreHome: boolean
+  /** Skóre v pořadí domácí : hosté; null = zápas není odehraný. */
+  homeScore: number | null
+  awayScore: number | null
+  /** Třetiny „1:1" v pořadí domácí : hosté. */
+  thirds: string[]
+  suffix: '' | 'sn' | 'pp'
+  /** Výsledek z pohledu Čestic; null = zápas není odehraný. */
+  outcome: Outcome | null
+  /** Slug sezóny pro odkaz zpět na `/zapasy?sezona=…`; null = sezóna bez slugu. */
+  seasonSlug: string | null
+  seasonLabel: string | null
+  goalGroups: MatchGoalGroup[]
+  penalties: MatchPenaltyRow[]
+  /** Součet minut našich trestů. */
+  penaltyMinutes: number
+  stats: MatchStatRow[]
+  /** Naši střelci jedním řádkem („Sajdl 2, Vacek") pro popis stránky; null = bez zápisu. */
+  scorers: string | null
+  report: MatchDetailReport | null
+  gallery: { title: string; href: string } | null
+  /** Odehraný zápas bez branek i trestů — stránka řekne, že zápis chybí. */
+  missingProtocol: boolean
 }
 
 /* ── Redakční obsah sekcí (global `landingPage` + fallbacky) ─────────────── */
@@ -514,8 +594,6 @@ export type LandingData = {
   site: SiteLinks
   upcoming: UpcomingMatch | null
   lastResult: LastResult | null
-  reports: MatchReport[]
-  fixtures: Fixture[]
   sponsors: Sponsor[]
   /** Počet hráčů aktuální sezóny (hero „24 hráčů"). */
   playerCount: number

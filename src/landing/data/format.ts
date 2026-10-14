@@ -68,6 +68,10 @@ export const formatLongDate = (iso: string): string =>
 export const postPath = (slug: string | null | undefined): string | null =>
   slug ? `/aktuality/${slug}` : null
 
+/** URL detailu zápasu (`/zapasy/{slug}`). Zápas bez slugu detail nemá. */
+export const matchPath = (slug: string | null | undefined): string | null =>
+  slug ? `/zapasy/${slug}` : null
+
 /** Media dokument → Photo view-model pro `next/image`. */
 export const toPhoto = (media: Media): Photo => ({
   url: media.url ?? '',

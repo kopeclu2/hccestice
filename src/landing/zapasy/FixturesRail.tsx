@@ -9,6 +9,7 @@ import { MoreLink } from '../components/MoreLink'
 import { NextMatchPanel } from '../components/NextMatchPanel'
 import { Numeral } from '../components/Numeral'
 import { PillLink } from '../components/PillLink'
+import { StretchedLink, stretchHost } from '../components/StretchedLink'
 import { SectionShell, type SectionShellProps } from '../components/SectionShell'
 import type { FixtureCard } from '../types'
 
@@ -140,6 +141,7 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
     <article
       className={cn(
         'border-line-soft hover:border-club overflow-hidden rounded-tile border bg-surface px-5 py-5 transition-colors md:px-6 md:py-5.5 lg:px-6.5 lg:py-6',
+        stretchHost,
         className,
       )}
     >
@@ -158,7 +160,7 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
       </div>
 
       <CardTitle className="mt-3.5 text-pretty" size="sm">
-        {fixture.title}
+        <StretchedLink href={fixture.href}>{fixture.title}</StretchedLink>
       </CardTitle>
 
       <div className="mt-3 flex items-baseline gap-2.5">
@@ -187,7 +189,12 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
         const meta = [fixture.stage, fixture.venue].filter(Boolean).join(' · ')
         return (
           <li
-            className="hover:bg-chip/40 flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4.5 py-3.5 transition-colors md:flex-nowrap md:px-6 md:py-4 lg:px-7 lg:py-4.5"
+            className={cn(
+              'hover:bg-chip/40 flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4.5 py-3.5 transition-colors md:flex-nowrap md:px-6 md:py-4 lg:px-7 lg:py-4.5',
+              // Tabulka má `overflow-hidden`, takže obrys uvnitř, ne vně řádku.
+              stretchHost,
+              'has-[[data-stretched]:focus-visible]:-outline-offset-2',
+            )}
             key={fixture.id}
           >
             <div className="flex w-full items-baseline gap-2.5 md:block md:w-24 md:flex-none">
@@ -199,7 +206,7 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
 
             <div className="min-w-0 flex-1">
               <div className="text-body font-bold tracking-[-0.01em] text-pretty">
-                {fixture.title}
+                <StretchedLink href={fixture.href}>{fixture.title}</StretchedLink>
               </div>
               {meta && <div className="text-faint mt-0.5 text-eyebrow font-semibold">{meta}</div>}
             </div>
@@ -251,6 +258,7 @@ function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
       }
       radius="section"
       subtitle={subtitle || undefined}
+      href={fixture.href}
       title={fixture.title}
     />
   )

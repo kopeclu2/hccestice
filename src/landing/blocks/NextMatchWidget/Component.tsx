@@ -31,6 +31,7 @@ function NextMatchWidgetView({
       <Reveal>
         {upcoming ? (
           <NextMatchPanel
+            href={upcoming.href}
             kickoffISO={upcoming.kickoffISO}
             kicker={`Nejbližší zápas · ${upcoming.label}`}
             subtitle={upcoming.subtitle}

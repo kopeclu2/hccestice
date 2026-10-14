@@ -14,6 +14,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { getServerSideURL } from '@/utilities/getURL'
 
 import type { SiteLinks } from '@/landing/types'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /**
  * ISR pojistka — obsah se reviduje i bez zásahu v adminu. Změny home
@@ -155,11 +156,11 @@ function StructuredData({ site }: { site: SiteLinks }) {
   return (
     <>
       <script
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(team) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(team) }}
         type="application/ld+json"
       />
       <script
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(website) }}
         type="application/ld+json"
       />
     </>

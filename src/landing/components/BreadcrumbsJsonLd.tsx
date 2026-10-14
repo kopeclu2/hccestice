@@ -3,6 +3,7 @@ import React from 'react'
 import { getServerSideURL } from '@/utilities/getURL'
 
 import type { Crumb } from './Breadcrumbs'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /**
  * JSON-LD (schema.org BreadcrumbList) k viditelným drobečkům.
@@ -39,7 +40,7 @@ export function BreadcrumbsJsonLd({ trail }: { trail: Crumb[] }) {
 
   return (
     <script
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       type="application/ld+json"
     />
   )

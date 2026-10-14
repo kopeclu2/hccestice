@@ -6,30 +6,39 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import type {
-  Fixture,
   FixtureCard,
   FormSquare,
   LastResult,
   MatchCardData,
-  MatchReport,
   MatchRow,
-  MatchSchemaFields,
-  Outcome,
   ResultRow,
   TeamForm,
   UpcomingMatch,
 } from '../types'
 
+import { formatDateTime, matchPath, postPath, toPhoto } from './format'
+import { resolveReport } from './matchDetail'
 import {
-  formatDateTime,
-  formatDay,
-  formatTime,
-  formatWeekdayDay,
-  postPath,
-  toPhoto,
-  uploadToPhoto,
-} from './format'
+  matchOutcome,
+  matchScore,
+  matchTitle,
+  phaseLabel,
+  scorersLabel,
+  scoreSuffix,
+} from './matchFormat'
+import {
+  toFixtureCard,
+  toFormSquare,
+  toLastResult,
+  toMatchRow,
+  toResultRow,
+  toUpcoming,
+} from './matchRows'
 import { CACHE_TAGS } from './tags'
+
+// Čisté popisky zápasu žijí v `matchFormat.ts` (testy je importují bez Payloadu);
+// odtud se re-exportují, aby zůstaly dosavadní importy beze změny.
+export { matchOutcome, matchScore, matchTitle, phaseLabel, scorersLabel, scoreSuffix }
 
 /**
  * Zápasy — fetchery a odvozeniny pro hero countdown, karty reportů,
@@ -53,87 +62,9 @@ const scheduleFrom = (): string => {
   return boundary.toISOString()
 }
 
-/** Jméno soupeře z relace (zápasy mají depth ≥ 1). */
-const opponentName = (match: Match): string =>
-  typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
-
-const CLUB_NAME = 'HC Čestice'
-
-/** „HC Čestice × Soupeř" v pořadí domácí × hosté. */
-export const matchTitle = (match: Match): string =>
-  match.home ? `${CLUB_NAME} × ${opponentName(match)}` : `${opponentName(match)} × ${CLUB_NAME}`
-
-/**
- * Pole pro `SportsEvent`. Zápas ukládá jen `home` a soupeře, takže se
- * strany musí prohodit stejně jako v `matchTitle` — proto společný
- * helper a ne dvě místa, kde se dá pořadí splést.
- */
-const schemaFields = (match: Match): MatchSchemaFields => ({
-  startDate: match.date,
-  homeName: match.home ? CLUB_NAME : opponentName(match),
-  awayName: match.home ? opponentName(match) : CLUB_NAME,
-})
-
-/** Skóre v pořadí domácí : hosté (zápas ukládá góly z našeho pohledu). */
-export const matchScore = (match: Match): string => {
-  const ours = match.scoreOurs ?? 0
-  const theirs = match.scoreOpp ?? 0
-  return match.home ? `${ours}:${theirs}` : `${theirs}:${ours}`
-}
-
-export const scoreSuffix = (match: Match): '' | 'sn' | 'pp' =>
-  match.shootout ? 'sn' : match.overtime ? 'pp' : ''
-
-/** Výsledek z pohledu Čestic (jen u odehraných zápasů). */
-export const matchOutcome = (match: Match): Outcome => {
-  const ours = match.scoreOurs ?? 0
-  const theirs = match.scoreOpp ?? 0
-  if (ours > theirs) return 'win'
-  if (ours < theirs) return 'loss'
-  return 'draw'
-}
-
-const ROUND_PATTERN = /(\d+)\.\s*kolo/i
-const PHASE_PATTERN =
-  /(čtvrtfinále|semifinále|finále|o 3\. místo|play-?off|baráž|turnaj|přátel\w*)/i
-
-/**
- * Krátký štítek soutěže do karet a výpisů — texty v CMS bývají dlouhé
- * („2. kolo OLLH play-off"), štítek má ale jen pár znaků na šířku.
- * Přednost má číslo kola, pak fáze soutěže; jinak zůstane text celý.
- */
-export const phaseLabel = (match: Match): string => {
-  const competition = (match.competition ?? '').replace(/^VČHL\s*(play-off\s*)?/i, '').trim()
-  if (!competition) return 'VČHL'
-
-  const round = competition.match(ROUND_PATTERN)
-  if (round) return `${round[1]}. kolo`
-
-  const phase = competition.match(PHASE_PATTERN)
-  const label = phase ? phase[1] : competition
-  return label.charAt(0).toUpperCase() + label.slice(1)
-}
-
-/** Fotka reprezentující galerii zápasu — cover, jinak první fotka alba. */
-const galleryPhoto = (gallery: Match['gallery']) => {
-  if (typeof gallery !== 'object' || !gallery) return null
-  if (typeof gallery.cover === 'object' && gallery.cover) return toPhoto(gallery.cover)
-  return uploadToPhoto(gallery.photos?.[0]?.image)
-}
-
-const toMatchRow = (match: Match): MatchRow => ({
-  id: match.id,
-  dateLabel: formatWeekdayDay(match.date),
-  timeLabel: formatTime(match.date),
-  title: matchTitle(match),
-  home: Boolean(match.home),
-  score: match.status === 'played' ? matchScore(match) : null,
-  suffix: scoreSuffix(match),
-})
-
-/** Nejbližší naplánovaný zápas (countdown) + výčet dalších kol. */
+/** Nejbližší naplánovaný zápas (countdown). */
 export const fetchUpcoming = cache(
-  async (): Promise<{ upcoming: UpcomingMatch | null; fixtures: Fixture[] }> => {
+  async (): Promise<{ upcoming: UpcomingMatch | null }> => {
     const payload = await getPayload({ config: configPromise })
     const { docs } = await payload.find({
       collection: 'matches',
@@ -144,65 +75,29 @@ export const fetchUpcoming = cache(
         ],
       },
       sort: 'date',
-      limit: 4,
+      limit: 1,
       depth: 1,
     })
 
     const [next] = docs
-    const upcoming: UpcomingMatch | null = next
-      ? {
-          title: matchTitle(next),
-          kickoffISO: next.date,
-          subtitle: [formatDateTime(next.date), next.venue].filter(Boolean).join(' · '),
-          label: next.competition ?? 'VČHL',
-        }
-      : null
-
-    const fixtures: Fixture[] = docs.map((match) => ({
-      id: match.id,
-      dateLabel: formatWeekdayDay(match.date),
-      timeLabel: formatTime(match.date),
-      title: matchTitle(match),
-      home: Boolean(match.home),
-    }))
-
-    return { upcoming, fixtures }
+    return { upcoming: next ? toUpcoming(next) : null }
   },
 )
 
-/** Poslední výsledek + karty reportů (foto z nalinkované galerie zápasu). */
+/** Poslední výsledek (hero). */
 export const fetchPlayed = cache(
-  async (): Promise<{ lastResult: LastResult | null; reports: MatchReport[] }> => {
+  async (): Promise<{ lastResult: LastResult | null }> => {
     const payload = await getPayload({ config: configPromise })
     const { docs } = await payload.find({
       collection: 'matches',
       where: { status: { equals: 'played' } },
       sort: '-date',
-      limit: 4,
-      depth: 2,
+      limit: 1,
+      depth: 1,
     })
 
     const [last] = docs
-    const lastResult: LastResult | null = last
-      ? {
-          title: matchTitle(last),
-          score: matchScore(last),
-          suffix: scoreSuffix(last),
-          dateLabel: `${formatDay(last.date)} · ${phaseLabel(last)}`,
-          won: (last.scoreOurs ?? 0) > (last.scoreOpp ?? 0),
-        }
-      : null
-
-    const reports: MatchReport[] = docs.map((match) => ({
-      id: match.id,
-      title: matchTitle(match),
-      badge: `${formatDay(match.date)} · ${phaseLabel(match)}`,
-      score: matchScore(match),
-      suffix: scoreSuffix(match),
-      photo: galleryPhoto(match.gallery),
-    }))
-
-    return { lastResult, reports }
+    return { lastResult: last ? toLastResult(last) : null }
   },
 )
 
@@ -253,6 +148,14 @@ export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<Ma
 
 /* ── /zapasy ─────────────────────────────────────────────────────────────── */
 
+/*
+ * Klíče tagovaných cache nesou verzi tvaru (`v2` = výsledek má `href` na detail
+ * zápasu). `unstable_cache` skládá klíč jen z těchto řetězců a argumentů, takže
+ * entry uložená před změnou tvaru by bez nového klíče žila až do `revalidate`
+ * (hodina) bez odkazů. Tag (`matches-list`) zůstává, takže hook zápasů
+ * invaliduje i nové entry.
+ */
+
 /** Rozlosování sezóny — celé, od nejbližšího zápasu (pás karet na /zapasy). */
 const loadSeasonFixtures = unstable_cache(
   async (seasonId: number, from: string): Promise<FixtureCard[]> => {
@@ -271,86 +174,15 @@ const loadSeasonFixtures = unstable_cache(
       depth: 1,
     })
 
-    return docs.map((match, index) => ({
-      ...schemaFields(match),
-      id: match.id,
-      kind: match.home ? 'Doma' : 'Venku',
-      stage: phaseLabel(match),
-      dateLabel: formatDay(match.date),
-      timeLabel: formatTime(match.date),
-      title: matchTitle(match),
-      venue: match.venue ?? null,
-      isNext: index === 0,
-    }))
+    return docs.map((match, index) => toFixtureCard(match, index === 0))
   },
-  ['season-fixtures'],
+  ['season-fixtures', 'v2'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
 export const fetchSeasonFixtures = cache(
   async (seasonId: number): Promise<FixtureCard[]> => loadSeasonFixtures(seasonId, scheduleFrom()),
 )
-
-/** Příjmení z „Jméno Příjmení" — tituly a „ml./st." (končí tečkou) se přeskočí. */
-const surnameOf = (name: string): string => {
-  const words = name.split(/\s+/).filter((word) => word && !word.endsWith('.'))
-  return words[words.length - 1] ?? name
-}
-
-/**
- * Naši střelci do řádku výsledku: „Sajdl 2, Vacek, Kopecký".
- *
- * Řazení: víc branek první, při shodě pořadí první branky. Rozhodující
- * nájezd (`strength === 'SN'`) se nepočítá — do skóre se zapíše jako
- * jediná branka nájezdů, ale není to gól do statistik. Když se v zápase
- * sejdou dva střelci se stejným příjmením (Sajdlové), přidá se iniciála.
- * Bez zápisu (`goals` prázdné) vrací null a řádek se nevykreslí.
- */
-export const scorersLabel = (match: Pick<Match, 'goals'>): string | null => {
-  const tally = new Map<string, { name: string; count: number }>()
-  for (const goal of match.goals ?? []) {
-    if (goal.side !== 'ours' || goal.strength === 'SN') continue
-    const player = typeof goal.scorer === 'object' && goal.scorer ? goal.scorer : null
-    const name = goal.scorerName ?? player?.name
-    if (!name) continue
-    const key = typeof goal.scorer === 'number' ? `id:${goal.scorer}` : (player ? `id:${player.id}` : name)
-    const entry = tally.get(key)
-    if (entry) entry.count += 1
-    else tally.set(key, { name, count: 1 })
-  }
-  if (tally.size === 0) return null
-
-  const entries = [...tally.values()]
-  const surnameCount = new Map<string, number>()
-  for (const { name } of entries) {
-    const surname = surnameOf(name)
-    surnameCount.set(surname, (surnameCount.get(surname) ?? 0) + 1)
-  }
-
-  return entries
-    .map((entry, index) => ({ ...entry, index }))
-    .sort((a, b) => b.count - a.count || a.index - b.index)
-    .map(({ name, count }) => {
-      const surname = surnameOf(name)
-      const label =
-        (surnameCount.get(surname) ?? 0) > 1 ? `${name.trim().charAt(0)}. ${surname}` : surname
-      return count > 1 ? `${label} ${count}` : label
-    })
-    .join(', ')
-}
-
-const toResultRow = (match: Match): ResultRow => ({
-  ...schemaFields(match),
-  id: match.id,
-  dateLabel: formatDay(match.date),
-  stage: phaseLabel(match),
-  title: matchTitle(match),
-  venue: match.venue ?? null,
-  score: matchScore(match),
-  suffix: scoreSuffix(match),
-  outcome: matchOutcome(match),
-  scorers: scorersLabel(match),
-})
 
 /** Odehrané zápasy sezóny po stranách (výpis na /zapasy, 6 na stranu). */
 const loadSeasonResults = unstable_cache(
@@ -372,6 +204,7 @@ const loadSeasonResults = unstable_cache(
       // Jen pole, která `toResultRow` čte — `lineup` a jména asistentů by
       // payload stránky zbytečně nafoukly. Hráč (relace) jen se jménem.
       select: {
+        slug: true,
         date: true,
         opponent: true,
         home: true,
@@ -395,13 +228,11 @@ const loadSeasonResults = unstable_cache(
       totalDocs: result.totalDocs,
     }
   },
-  ['season-results'],
+  ['season-results', 'v2'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
 export const fetchSeasonResults = cache(loadSeasonResults)
-
-const OUTCOME_LETTER: Record<Outcome, string> = { win: 'V', draw: 'R', loss: 'P' }
 
 /** Forma za posledních 5 odehraných zápasů sezóny (zleva nejstarší). */
 const loadSeasonForm = unstable_cache(
@@ -418,18 +249,7 @@ const loadSeasonForm = unstable_cache(
     })
     if (docs.length === 0) return null
 
-    const squares: FormSquare[] = docs
-      .map((match) => ({
-        id: match.id,
-        letter: OUTCOME_LETTER[matchOutcome(match)],
-        outcome: matchOutcome(match),
-        score: matchScore(match),
-        suffix: scoreSuffix(match),
-        stage: phaseLabel(match),
-        title: matchTitle(match),
-        dateLabel: formatDay(match.date),
-      }))
-      .reverse()
+    const squares: FormSquare[] = docs.map(toFormSquare).reverse()
 
     const counts = { win: 0, draw: 0, loss: 0 }
     for (const square of squares) counts[square.outcome] += 1
@@ -439,7 +259,7 @@ const loadSeasonForm = unstable_cache(
       summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss}× prohra`,
     }
   },
-  ['season-form'],
+  ['season-form', 'v2'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
@@ -452,7 +272,9 @@ export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardDa
   if (!match) return null
 
   const opponent = typeof match.opponent === 'object' ? match.opponent : null
-  const report = typeof match.report === 'object' ? match.report : null
+  // Jen publikovaná reportáž: ruční vazba `matches.report` může mířit na
+  // koncept, jehož URL je 404 (`resolveReport` navíc doplní článek ze sync).
+  const report = await resolveReport(match)
 
   return {
     id: match.id,
@@ -470,5 +292,6 @@ export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardDa
     suffix: scoreSuffix(match),
     won: match.status === 'played' ? (match.scoreOurs ?? 0) > (match.scoreOpp ?? 0) : null,
     reportHref: postPath(report?.slug),
+    href: matchPath(match.slug),
   }
 })

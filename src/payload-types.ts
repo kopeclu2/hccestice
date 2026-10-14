@@ -578,6 +578,10 @@ export interface Category {
 export interface Match {
   id: number;
   displayTitle?: string | null;
+  /**
+   * Adresa detailu zápasu: /zapasy/<slug>. Vygeneruje se jednou při založení (datum + soupeř) a při přeložení zápasu se záměrně nemění, aby odkazy zůstaly stabilní. Prázdné pole se při uložení doplní. POZOR: ruční změna adresy rozbije už sdílené odkazy — stará adresa pak vrací 404 (přesměrování se nezakládá).
+   */
+  slug?: string | null;
   date: string;
   season: number | Season;
   team: number | Team;
@@ -3527,6 +3531,7 @@ export interface PlayersSelect<T extends boolean = true> {
  */
 export interface MatchesSelect<T extends boolean = true> {
   displayTitle?: T;
+  slug?: T;
   date?: T;
   season?: T;
   team?: T;

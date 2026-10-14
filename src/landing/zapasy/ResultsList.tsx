@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { cn } from '@/utilities/ui'
+
 import { Badge } from '../components/Badge'
 import { EmptyState } from '../components/EmptyState'
 import { Eyebrow } from '../components/Kicker'
@@ -7,6 +9,7 @@ import { MoreLink } from '../components/MoreLink'
 import { Numeral } from '../components/Numeral'
 import { Pagination } from '../components/Pagination'
 import { PillLink } from '../components/PillLink'
+import { StretchedLink, stretchHost } from '../components/StretchedLink'
 import type { Outcome, ResultRow } from '../types'
 
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
@@ -83,7 +86,10 @@ export function ResultsList({
             const badge = BADGE[row.outcome]
             return (
               <div
-                className="border-line-soft hover:border-club flex flex-wrap items-center gap-y-3 gap-x-4 rounded-row border bg-surface px-4.5 py-3.5 transition-colors md:px-6 md:py-4 lg:px-7 lg:py-4.5"
+                className={cn(
+                  'border-line-soft hover:border-club flex flex-wrap items-center gap-y-3 gap-x-4 rounded-row border bg-surface px-4.5 py-3.5 transition-colors md:px-6 md:py-4 lg:px-7 lg:py-4.5',
+                  stretchHost,
+                )}
                 key={row.id}
               >
                 {/* Na mobilu datum a fáze vedle sebe v samostatném řádku:
@@ -108,7 +114,8 @@ export function ResultsList({
                     se místo toho zalomí na druhý řádek (handoff: data-m-wrap) */}
                 <div className="min-w-40 flex-1">
                   <div className="text-body font-bold tracking-[-0.01em] text-pretty">
-                    {row.title}
+                    {/* Celý řádek je klikací (stretched link na titulku). */}
+                    <StretchedLink href={row.href}>{row.title}</StretchedLink>
                   </div>
                   {/* Místo zápasu je v handoffu běžný text (11px, semibold),
                       ne uppercase eyebrow — z „RYCHNOV NAD KNĚŽNOU" byl

@@ -71,13 +71,25 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
             />
           </div>
 
-          {match.reportHref && (
-            <Link
-              className="text-club-dark hover:text-club mt-6 inline-flex items-center gap-2 text-meta font-bold"
-              href={match.reportHref}
-            >
-              Reportáž ze zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
-            </Link>
+          {(match.reportHref || match.href) && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+              {match.reportHref && (
+                <Link
+                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-meta font-bold"
+                  href={match.reportHref}
+                >
+                  Reportáž ze zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
+                </Link>
+              )}
+              {match.href && (
+                <Link
+                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-meta font-bold"
+                  href={match.href}
+                >
+                  Detail zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
+                </Link>
+              )}
+            </div>
           )}
         </div>
       </Reveal>

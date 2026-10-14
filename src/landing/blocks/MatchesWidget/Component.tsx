@@ -2,12 +2,15 @@ import type { MatchesWidgetBlock } from '@/payload-types'
 
 import React from 'react'
 
+import { cn } from '@/utilities/ui'
+
 import { Badge } from '../../components/Badge'
 import { EmptyState } from '../../components/EmptyState'
 import { CardTitle } from '../../components/Heading'
 import { PillLink } from '../../components/PillLink'
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
+import { StretchedLink, stretchHost } from '../../components/StretchedLink'
 import { relId } from '../../data/format'
 import { fetchMatchRows } from '../../data/matches'
 import type { MatchRow } from '../../types'
@@ -66,14 +69,22 @@ export function MatchesWidgetView({
                 /* Na mobilu dvousloupcová: datum s časem na vlastním řádku
                    nad názvem zápasu. S desktopovým sloupcem 88px zbylo na
                    320px na název ~88px a lisoval se do „HC / Čestice / × HC". */
-                className="border-line-soft grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 border-b py-3.25 last:border-b-0 md:grid-cols-[5.5rem_1fr_auto] md:gap-4"
+                className={cn(
+                  'border-line-soft grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 border-b py-3.25 last:border-b-0 md:grid-cols-[5.5rem_1fr_auto] md:gap-4',
+                  stretchHost,
+                  // Hover a obrys uvnitř karty widgetu, ne přes její okraj.
+                  row.href && 'hover:bg-chip/40 transition-colors',
+                  'has-[[data-stretched]:focus-visible]:-outline-offset-2',
+                )}
                 key={row.id}
               >
                 <div className="col-span-2 flex items-baseline gap-2 md:col-span-1 md:block">
                   <div className="text-body font-extrabold">{row.dateLabel}</div>
                   <div className="text-faint text-eyebrow">{row.timeLabel}</div>
                 </div>
-                <div className="text-body font-bold">{row.title}</div>
+                <div className="text-body font-bold">
+                  <StretchedLink href={row.href}>{row.title}</StretchedLink>
+                </div>
                 {row.score ? (
                   <Badge className="tabular-nums" variant="lime">
                     {row.score}

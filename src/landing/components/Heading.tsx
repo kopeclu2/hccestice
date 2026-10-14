@@ -129,11 +129,12 @@ export type CardTitleProps = React.ComponentProps<'h3'> &
   VariantProps<typeof cardTitleVariants> & {
     /**
      * Kvůli hierarchii dokumentu jde vyrenderovat jako h4 (karta uvnitř karty)
-     * nebo h2 (karta, která je celým obsahem sekce — prázdné stavy).
+     * nebo h2 (karta, která je celým obsahem sekce — prázdné stavy) či h1
+     * (panel, který je celou hlavičkou stránky — detail zápasu).
      * Velikost a úroveň jsou záměrně nezávislé: první je typografie, druhá
      * struktura dokumentu.
      */
-    as?: 'h2' | 'h3' | 'h4'
+    as?: 'h1' | 'h2' | 'h3' | 'h4'
   }
 
 export function CardTitle({ children, className, size, as = 'h3', ...props }: CardTitleProps) {

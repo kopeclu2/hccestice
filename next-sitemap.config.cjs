@@ -11,6 +11,7 @@ module.exports = {
     '/posts-sitemap.xml',
     '/pages-sitemap.xml',
     '/gallery-sitemap.xml',
+    '/matches-sitemap.xml',
     '/*',
     '/posts/*',
   ],
@@ -28,6 +29,7 @@ module.exports = {
       `${SITE_URL}/pages-sitemap.xml`,
       `${SITE_URL}/posts-sitemap.xml`,
       `${SITE_URL}/gallery-sitemap.xml`,
+      `${SITE_URL}/matches-sitemap.xml`,
     ],
   },
 }

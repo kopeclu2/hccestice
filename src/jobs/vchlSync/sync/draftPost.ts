@@ -3,6 +3,8 @@ import type { Payload } from 'payload'
 import type { AhlMatchDetail } from '@/ahl'
 import type { Match, Post } from '@/payload-types'
 
+import { slugifyCs } from '@/utilities/slugifyCs'
+
 import { utcToPragueLocal } from '../time'
 import { ourSide } from './matchDetail'
 
@@ -67,12 +69,7 @@ export function draftTitle(opponentName: string, weAreHome: boolean, detail: Ahl
 
 /** `2026-10-04-pardubice`; bez diakritiky, protože slug jde do URL. */
 export function draftSlug(day: string, opponentName: string): string {
-  const name = opponentName
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+  const name = slugifyCs(opponentName)
   return name ? `${day}-${name}` : day
 }
 

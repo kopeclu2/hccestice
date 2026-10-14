@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 import { cn } from '@/utilities/ui'
@@ -42,20 +43,33 @@ export function FormStrip({ form }: { form: TeamForm }) {
         <div className="flex gap-1.5 md:gap-2">
           {form.squares.map((square, index) => {
             const alignRight = index >= form.squares.length - 2
+            const squareClass = cn(
+              'grid size-10 place-items-center rounded-field text-lead font-extrabold md:size-11',
+              SQUARE_CLASS[square.outcome],
+            )
             return (
               <div className="group relative" key={square.id}>
-                <div
-                  className={cn(
-                    'grid size-10 place-items-center rounded-field text-lead font-extrabold md:size-11',
-                    SQUARE_CLASS[square.outcome],
-                  )}
-                >
-                  {square.letter}
-                </div>
+                {square.href ? (
+                  // Název čtverečku je jen „V" — odkaz proto nese celý popis zápasu.
+                  // Tooltip je pro čtečku skrytý (`aria-hidden`), jinak by ho četla dvakrát.
+                  <Link
+                    aria-label={`${square.score}${square.suffix ? ` ${square.suffix}` : ''}, ${square.stage}, ${square.title}, ${square.dateLabel} — detail zápasu`}
+                    className={cn(
+                      squareClass,
+                      'focus-visible:outline-club transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2',
+                    )}
+                    href={square.href}
+                  >
+                    {square.letter}
+                  </Link>
+                ) : (
+                  <div className={squareClass}>{square.letter}</div>
+                )}
 
                 <div
+                  aria-hidden={square.href ? true : undefined}
                   className={cn(
-                    'bg-contrast pointer-events-none absolute bottom-[calc(100%+0.5rem)] z-5 translate-y-1 rounded-xl px-3.5 py-2 text-center whitespace-nowrap text-on-contrast opacity-0 shadow-tooltip transition-[opacity,transform] duration-150 group-hover:translate-y-0 group-hover:opacity-100',
+                    'bg-contrast pointer-events-none absolute bottom-[calc(100%+0.5rem)] z-5 translate-y-1 rounded-xl px-3.5 py-2 text-center whitespace-nowrap text-on-contrast opacity-0 shadow-tooltip transition-[opacity,transform] duration-150 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100',
                     alignRight ? 'right-0' : 'left-1/2 -translate-x-1/2',
                   )}
                 >

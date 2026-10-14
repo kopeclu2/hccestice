@@ -8,7 +8,8 @@ import { Badge } from '../../components/Badge'
 import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
 import { PageTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
+import { MatchScoreboard } from '../../components/MatchScoreboard'
+import { PillLink } from '../../components/PillLink'
 import type { ArticleDetail, ArticleGoal } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'
@@ -65,71 +66,22 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
             </span>
           </div>
 
-          <div className="my-[clamp(1.75rem,3vw,2.75rem)] flex flex-wrap items-center justify-center gap-[clamp(1.25rem,4vw,3.5rem)] text-center">
-            <div className="min-w-30 flex-1 text-right">
-              <div className="text-[clamp(1.125rem,2vw,1.875rem)] font-extrabold tracking-[-0.02em]">
-                {scoreboard.homeName}
-              </div>
-              <div className="mt-1 text-caption font-semibold text-white/55">Domácí</div>
-            </div>
-
-            <Numeral
-              as="div"
-              className="max-md:text-numeral-2xl flex flex-none items-baseline gap-3.5"
-              size="score"
-            >
-              <span className={cn(scoreboard.weWon && scoreboard.weAreHome && 'text-lime')}>
-                {scoreboard.homeScore}
-              </span>
-              {/* Dvě tečky, ne text „:" — Archivo kreslí dvojtečku jako dva
-                  hranaté body, které v drobném řezu na tmavém pozadí čtou
-                  jako náhodné čtverečky, ne jako oddělovač skóre. */}
-              <span className="flex flex-col items-center gap-2.5 self-center">
-                <span className="bg-white/30 size-2 rounded-full" />
-                <span className="bg-white/30 size-2 rounded-full" />
-              </span>
-              <span className={cn(scoreboard.weWon && !scoreboard.weAreHome && 'text-lime')}>
-                {scoreboard.awayScore}
-              </span>
-              {scoreboard.suffix && (
-                <span className="self-start text-[.3em] font-bold text-white/60">
-                  {scoreboard.suffix}
-                </span>
-              )}
-            </Numeral>
-
-            <div className="min-w-30 flex-1 text-left">
-              <div className="text-[clamp(1.125rem,2vw,1.875rem)] font-extrabold tracking-[-0.02em]">
-                {scoreboard.awayName}
-              </div>
-              <div className="mt-1 text-caption font-semibold text-white/55">Hosté</div>
-            </div>
-          </div>
-
-          {scoreboard.thirds.length > 0 && (
-            <div className="flex justify-center gap-2">
-              {scoreboard.thirds.map((third, index) => {
-                // zvýrazněná je závěrečná třetina vítězného zápasu
-                const winning = scoreboard.weWon && index === scoreboard.thirds.length - 1
-                return (
-                  <Badge
-                    className={cn(
-                      'text-white/70',
-                      winning && 'border-lime/40 bg-lime/12 text-lime',
-                    )}
-                    key={index}
-                    size="sm"
-                    variant="glassOutline"
-                  >
-                    {third}
-                  </Badge>
-                )
-              })}
-            </div>
-          )}
+          <MatchScoreboard scoreboard={scoreboard} />
 
           {scoreboard.goals.length > 0 && (
             <GoalTimeline goals={scoreboard.goals} />
+          )}
+
+          {/* Detail zápasu je jediné místo s tresty a statistikou; timeline
+              tu je jen výřez. Odkaz stojí pod ním, ne v hlavičce panelu —
+              tam by se na mobilu (metaLine je skrytá) ztratil mezi kickerem
+              a skóre. */}
+          {article.matchHref && (
+            <div className="mt-[clamp(1.25rem,2.5vw,1.75rem)] flex justify-center">
+              <PillLink href={article.matchHref} size="sm" variant="glass" withArrow>
+                Detail zápasu
+              </PillLink>
+            </div>
           )}
 
           <div className="my-[clamp(1.625rem,3vw,2.5rem)] h-px bg-white/16" />

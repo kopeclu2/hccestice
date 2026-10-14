@@ -11,13 +11,13 @@ import { STANDINGS } from '../content'
 import type { StandingsContent, StatsContent } from '../types'
 
 import { pluralForm } from './format'
+import { seasonShortLabel } from './seasonLabel'
 import { CACHE_TAGS } from './tags'
 
 /** Sezóny — aktuální sezóna, tabulka ligy a auto-výpočet čísel. */
 
-/** „2025/26" ze startYear (title „2025 – 2026" by dal „2025/2026"). */
-export const seasonShortLabel = (season: Pick<Season, 'startYear'>): string =>
-  `${season.startYear}/${String(season.startYear + 1).slice(2)}`
+// Popisek sezóny žije v `seasonLabel.ts` (čistý, bez Payloadu); re-export kvůli dosavadním importům.
+export { seasonShortLabel }
 
 /**
  * Sezóny, ve kterých existuje aspoň jeden dokument dané kolekce —

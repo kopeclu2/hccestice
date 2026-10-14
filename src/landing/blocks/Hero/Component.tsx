@@ -1,5 +1,6 @@
 import type { LandingHeroBlock } from '@/payload-types'
 
+import Link from 'next/link'
 import React from 'react'
 
 import { PageTitle } from '../../components/Heading'
@@ -102,7 +103,7 @@ function HeroView({
               <>
                 <MatchLabel label={`Nejbližší zápas · ${upcoming.label}`} />
                 <div className="text-[clamp(1.25rem,1.8vw,1.625rem)] leading-tight font-extrabold tracking-tight text-white">
-                  {upcoming.title}
+                  <HeroMatchLink href={upcoming.href}>{upcoming.title}</HeroMatchLink>
                 </div>
                 <div className="text-meta text-white/65">{upcoming.subtitle}</div>
                 <Countdown targetISO={upcoming.kickoffISO} />
@@ -112,7 +113,7 @@ function HeroView({
                 <>
                   <MatchLabel label={`Poslední výsledek · ${lastResult.dateLabel}`} />
                   <div className="text-[clamp(1.25rem,1.8vw,1.625rem)] leading-tight font-extrabold tracking-tight text-white">
-                    {lastResult.title}
+                    <HeroMatchLink href={lastResult.href}>{lastResult.title}</HeroMatchLink>
                   </div>
                   <div className="mt-2.5 flex items-baseline gap-2 md:justify-end">
                     <span className="text-lime text-[clamp(1.875rem,2.6vw,2.625rem)] font-extrabold tracking-tight tabular-nums">
@@ -130,6 +131,24 @@ function HeroView({
         </div>
       </PhotoTile>
     </header>
+  )
+}
+
+/**
+ * Název zápasu v hero kartě jako odkaz na detail. Karta leží přímo na fotce
+ * bez vlastního pozadí, takže se nestretchuje přes celou plochu (klikala by
+ * se fotka kolem) — odkaz je jen titulek, s podtržením na hover a focus.
+ * Bez `href` zůstane prostý text.
+ */
+function HeroMatchLink({ href, children }: { href: string | null; children: React.ReactNode }) {
+  if (!href) return <>{children}</>
+  return (
+    <Link
+      className="decoration-lime underline-offset-4 hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime"
+      href={href}
+    >
+      {children}
+    </Link>
   )
 }
 
