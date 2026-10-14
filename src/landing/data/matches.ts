@@ -291,6 +291,54 @@ export const fetchSeasonFixtures = cache(
   async (seasonId: number): Promise<FixtureCard[]> => loadSeasonFixtures(seasonId, scheduleFrom()),
 )
 
+/** Příjmení z „Jméno Příjmení" — tituly a „ml./st." (končí tečkou) se přeskočí. */
+const surnameOf = (name: string): string => {
+  const words = name.split(/\s+/).filter((word) => word && !word.endsWith('.'))
+  return words[words.length - 1] ?? name
+}
+
+/**
+ * Naši střelci do řádku výsledku: „Sajdl 2, Vacek, Kopecký".
+ *
+ * Řazení: víc branek první, při shodě pořadí první branky. Rozhodující
+ * nájezd (`strength === 'SN'`) se nepočítá — do skóre se zapíše jako
+ * jediná branka nájezdů, ale není to gól do statistik. Když se v zápase
+ * sejdou dva střelci se stejným příjmením (Sajdlové), přidá se iniciála.
+ * Bez zápisu (`goals` prázdné) vrací null a řádek se nevykreslí.
+ */
+export const scorersLabel = (match: Pick<Match, 'goals'>): string | null => {
+  const tally = new Map<string, { name: string; count: number }>()
+  for (const goal of match.goals ?? []) {
+    if (goal.side !== 'ours' || goal.strength === 'SN') continue
+    const player = typeof goal.scorer === 'object' && goal.scorer ? goal.scorer : null
+    const name = goal.scorerName ?? player?.name
+    if (!name) continue
+    const key = typeof goal.scorer === 'number' ? `id:${goal.scorer}` : (player ? `id:${player.id}` : name)
+    const entry = tally.get(key)
+    if (entry) entry.count += 1
+    else tally.set(key, { name, count: 1 })
+  }
+  if (tally.size === 0) return null
+
+  const entries = [...tally.values()]
+  const surnameCount = new Map<string, number>()
+  for (const { name } of entries) {
+    const surname = surnameOf(name)
+    surnameCount.set(surname, (surnameCount.get(surname) ?? 0) + 1)
+  }
+
+  return entries
+    .map((entry, index) => ({ ...entry, index }))
+    .sort((a, b) => b.count - a.count || a.index - b.index)
+    .map(({ name, count }) => {
+      const surname = surnameOf(name)
+      const label =
+        (surnameCount.get(surname) ?? 0) > 1 ? `${name.trim().charAt(0)}. ${surname}` : surname
+      return count > 1 ? `${label} ${count}` : label
+    })
+    .join(', ')
+}
+
 const toResultRow = (match: Match): ResultRow => ({
   ...schemaFields(match),
   id: match.id,
@@ -301,6 +349,7 @@ const toResultRow = (match: Match): ResultRow => ({
   score: matchScore(match),
   suffix: scoreSuffix(match),
   outcome: matchOutcome(match),
+  scorers: scorersLabel(match),
 })
 
 /** Odehrané zápasy sezóny po stranách (výpis na /zapasy, 6 na stranu). */
@@ -320,10 +369,27 @@ const loadSeasonResults = unstable_cache(
       limit: options.perPage,
       page: options.page,
       depth: 1,
+      // Jen pole, která `toResultRow` čte — `lineup` a jména asistentů by
+      // payload stránky zbytečně nafoukly. Hráč (relace) jen se jménem.
+      select: {
+        date: true,
+        opponent: true,
+        home: true,
+        venue: true,
+        competition: true,
+        status: true,
+        scoreOurs: true,
+        scoreOpp: true,
+        overtime: true,
+        shootout: true,
+        goals: { side: true, strength: true, scorer: true, scorerName: true },
+      },
+      populate: { players: { name: true } },
     })
 
     return {
-      rows: result.docs.map(toResultRow),
+      // `select` zúžil dokument; `toResultRow` čte jen vybraná pole.
+      rows: result.docs.map((doc) => toResultRow(doc as Match)),
       page: result.page ?? 1,
       totalPages: result.totalPages,
       totalDocs: result.totalDocs,

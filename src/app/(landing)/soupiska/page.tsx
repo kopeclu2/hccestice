@@ -5,7 +5,7 @@ import React from 'react'
 import { SectionShell } from '@/landing/components/SectionShell'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { countLabel } from '@/landing/data/format'
-import { fetchRosterSections, POSITION_LABEL } from '@/landing/data/players'
+import { fetchPlayerSeasonStats, fetchRosterSections, POSITION_LABEL } from '@/landing/data/players'
 import { fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
 import { fetchAllPeople } from '@/landing/data/site'
 import type { SoupiskaCard } from '@/landing/soupiska/PlayerTile'
@@ -31,6 +31,9 @@ export default async function SoupiskaPage() {
     fetchAllPeople(),
     fetchSeason(null),
   ])
+
+  // Statistiky jsou doplněk — bez aktuální sezóny se karty kreslí bez nich.
+  const stats = season ? await fetchPlayerSeasonStats(season.id) : {}
 
   const totalPlayers = sections.reduce((sum, section) => sum + section.players.length, 0)
   const summary =
@@ -70,6 +73,9 @@ export default async function SoupiskaPage() {
               kicker: (player.position && POSITION_LABEL[player.position]) || 'Hráč',
               number: player.number,
               photo: player.photo,
+              stats: stats[player.id]
+                ? { ...stats[player.id], goalie: player.position === 'G' }
+                : null,
             }))}
             count={countLabel(section.players.length, PLAYER_FORMS)}
             key={section.anchor}

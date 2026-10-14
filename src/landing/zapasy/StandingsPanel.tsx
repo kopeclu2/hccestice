@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { isOurTeam } from '@/ahl/ourTeam'
 import { cn } from '@/utilities/ui'
 
 import { EmptyState } from '../components/EmptyState'
@@ -10,8 +11,22 @@ import type { StandingsContent, StandingsRow } from '../types'
 
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 
-/** Řádek naší tabulky se zvýrazní (jediné místo, kde se tým pozná podle jména). */
-const isUs = (team: string): boolean => /čestice/i.test(team)
+/** Řádek naší tabulky se zvýrazní — jednotný helper s ostatními místy (`src/ahl/ourTeam`). */
+const isUs = isOurTeam
+
+/**
+ * Šablony sloupců. Rozšířená tabulka (V / VP / PP / P a skóre) potřebuje
+ * místo, které je jen v plné šířce panelu: pod `md` (mobil) se skrývá,
+ * od `md` má celý panel (jedna kolona) dost, na `lg` se panel zužuje do
+ * pravého sloupce (~380 px) a extra sloupce by sežraly název týmu, takže
+ * se vrací základní čtveřice a plné sloupce naskočí až na `2xl`.
+ */
+const GRID_BASE =
+  'grid-cols-[1.75rem_1fr_2rem_2.25rem] md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5'
+const GRID_EXTENDED =
+  'grid-cols-[1.75rem_1fr_2rem_2.25rem] md:grid-cols-[2.25rem_1fr_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_1fr_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
+/** Extra sloupce: skryté na mobilu i na `lg`–`xl`, kde je panel úzký. */
+const EXTRA = 'hidden text-center md:block lg:hidden 2xl:block'
 
 /**
  * Zkrácení tabulky pro výřez na home page: čelo tabulky a k němu vždy
@@ -60,6 +75,10 @@ export function StandingsPanel({
   headVariant?: SectionHeadVariant
 }) {
   const rows = limit ? trimRows(standings.rows, limit) : standings.rows
+  // Výřez na home page (`limit`) zůstává ve čtyřech sloupcích; rozšíření
+  // se kreslí, jen když ho mají všechny řádky (ručně vedené sezóny nemají).
+  const extended = !limit && rows.length > 0 && rows.every((row) => row.wins != null && row.goalsFor != null)
+  const gridCols = extended ? GRID_EXTENDED : GRID_BASE
 
   return (
     <div className="flex h-full flex-col">
@@ -98,10 +117,19 @@ export function StandingsPanel({
       ) : (
         <div className="border-line-soft mt-5 rounded-card border bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
           <Eyebrow as="div" tone="dark">
-            <div className="grid grid-cols-[1.75rem_1fr_2rem_2.25rem] px-2.5 py-2.5 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 md:py-2.75 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5 lg:py-3">
+            <div className={cn('grid px-2.5 py-2.5 md:py-2.75 lg:py-3', gridCols)}>
               <span>P</span>
               <span>Tým</span>
               <span className="text-center">Z</span>
+              {extended && (
+                <>
+                  <span className={EXTRA} title="Výhry">V</span>
+                  <span className={EXTRA} title="Výhry v prodloužení / na nájezdy">VP</span>
+                  <span className={EXTRA} title="Prohry v prodloužení / na nájezdy">PP</span>
+                  <span className={EXTRA} title="Prohry">P</span>
+                  <span className={EXTRA} title="Skóre">Skóre</span>
+                </>
+              )}
               <span className="text-right">B</span>
             </div>
           </Eyebrow>
@@ -111,7 +139,8 @@ export function StandingsPanel({
             return (
               <div
                 className={cn(
-                  'grid grid-cols-[1.75rem_1fr_2rem_2.25rem] items-center rounded-field px-2.5 py-2.75 md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 md:py-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5 lg:py-3.25',
+                  'grid items-center rounded-field px-2.5 py-2.75 md:py-3 lg:py-3.25',
+                  gridCols,
                   ours && 'bg-tint',
                 )}
                 key={`${row.pos}-${row.team}`}
@@ -135,6 +164,25 @@ export function StandingsPanel({
                 <span className="text-faint text-center text-meta font-semibold tabular-nums">
                   {row.games}
                 </span>
+                {extended && (
+                  <>
+                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                      {row.wins ?? 0}
+                    </span>
+                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                      {row.otWins ?? 0}
+                    </span>
+                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                      {row.otLosses ?? 0}
+                    </span>
+                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                      {row.losses ?? 0}
+                    </span>
+                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                      {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
+                    </span>
+                  </>
+                )}
                 <span className="text-right text-meta font-extrabold tabular-nums">
                   {row.points}
                 </span>

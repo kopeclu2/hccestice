@@ -2,6 +2,8 @@ import type { LandingSeasonBlock } from '@/payload-types'
 
 import React from 'react'
 
+import { isOurTeam } from '@/ahl/ourTeam'
+
 import { EmptyState } from '../../components/EmptyState'
 import { CardTitle, SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
@@ -176,7 +178,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
       ) : (
         <>
           {standings.rows.map((row) => {
-            const isOurs = row.team === 'HC Čestice'
+            const isOurs = isOurTeam(row.team)
             return (
               <div
                 className={cn(

@@ -5,6 +5,8 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { isOurTeam } from '@/ahl/ourTeam'
+
 import { STANDINGS } from '../content'
 import type { StandingsContent, StatsContent } from '../types'
 
@@ -104,6 +106,15 @@ export function mapStandingsFromSeason(season: Season | null): StandingsContent 
       team: row.team,
       games: row.games ?? 0,
       points: row.points ?? 0,
+      // Rozšířené sloupce jen když je synchronizace vyplnila — `null`
+      // z databáze se na `undefined` mapuje, aby `StandingsPanel` poznal,
+      // že ručně vedená sezóna je nemá, a nekreslil sloupce nul.
+      ...(row.wins != null && { wins: row.wins }),
+      ...(row.otWins != null && { otWins: row.otWins }),
+      ...(row.otLosses != null && { otLosses: row.otLosses }),
+      ...(row.losses != null && { losses: row.losses }),
+      ...(row.goalsFor != null && { goalsFor: row.goalsFor }),
+      ...(row.goalsAgainst != null && { goalsAgainst: row.goalsAgainst }),
     })),
   }
 }
@@ -124,7 +135,7 @@ export const fetchAutoStats = cache(
     const payload = await getPayload({ config: configPromise })
     const items: StatsContent['items'] = []
 
-    const ourRow = (season.standings?.rows ?? []).find((row) => row.team.includes('Čestice'))
+    const ourRow = (season.standings?.rows ?? []).find((row) => isOurTeam(row.team))
     if (ourRow) {
       items.push({ value: `${ourRow.pos}.`, label: 'místo v tabulce VČHL', accent: false })
       const points = ourRow.points ?? 0
