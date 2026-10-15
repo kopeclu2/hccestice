@@ -36,7 +36,7 @@ function GalleryEmbedView({ title, photos }: { title: string | null; photos: Pho
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {photos.map((photo, index) => (
             <PhotoTile
-              className="aspect-[4/3] rounded-thumb"
+              className="aspect-4/3 rounded-thumb"
               gradient="none"
               key={`${photo.url}-${index}`}
               photo={photo}

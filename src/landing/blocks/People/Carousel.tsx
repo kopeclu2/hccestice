@@ -31,7 +31,7 @@ export function PeopleCarousel({ people, intro }: { people: PersonCard[]; intro:
   return (
     <SectionShell id="lide">
       <Watermark
-        className="-top-8 -right-13 text-watermark-md tracking-[-0.05em] text-ink/4"
+        className="-top-8 -right-13 text-watermark-md tracking-tighter text-ink/4"
         outlined={false}
       >
         ŠATNA
@@ -117,7 +117,7 @@ function PersonTile({ person }: { person: PersonCard }) {
 
         {/* glass jmenovka */}
         <a
-          className="absolute inset-x-3.5 bottom-3.5 flex items-center justify-between gap-3 rounded-badge bg-white/94 px-4.5 py-3.25 shadow-float backdrop-blur-md"
+          className="absolute inset-x-3.5 bottom-3.5 flex items-center justify-between gap-3 rounded-badge bg-on-contrast-strong px-4.5 py-3.25 shadow-float backdrop-blur-md"
           href={contactHref}
           title={person.mail ?? person.phone ?? undefined}
         >

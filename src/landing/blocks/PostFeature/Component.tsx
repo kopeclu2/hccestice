@@ -63,9 +63,9 @@ function PostFeatureView({
       <TileBadge className="top-4 left-4" tone="lime">
         {tag}
       </TileBadge>
-      <div className="absolute inset-x-5.5 bottom-5.5 text-white">
+      <div className="absolute inset-x-5.5 bottom-5.5 text-on-contrast">
         <div className="text-xs font-medium opacity-75">{dateLabel}</div>
-        <CardTitle as="h3" className="mt-1.5 max-w-160 text-pretty text-white" size="lg">
+        <CardTitle as="h3" className="mt-1.5 max-w-160 text-pretty text-on-contrast" size="lg">
           {title}
         </CardTitle>
         {perex && <div className="mt-2 max-w-160 text-sm opacity-85">{perex}</div>}

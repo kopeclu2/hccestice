@@ -140,7 +140,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
     <SectionShell id="fotoalbum">
       <GlowCircle className="-top-20 -right-60 size-190" tone="lime" />
       <Watermark
-        className="top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-[-0.06em] text-club/8 [writing-mode:vertical-rl]"
+        className="top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-display text-club/8 [writing-mode:vertical-rl]"
         outlined={false}
       >
         PONÍCI
@@ -171,7 +171,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
                 /* Odsazení pásu se musí rovnat odsazení sekce
                    (`clamp(0.875rem,3vw,2.5rem)`), jinak dlaždice na mobilu
                    nekončí na stejné svislici jako nadpis nad nimi. */
-                '-mx-[clamp(0.875rem,3vw,2.5rem)] no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
+                '-mx-gutter no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-gutter pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
                 sparse
                   ? 'md:auto-rows-[13.75rem] lg:grid-cols-3'
                   : 'md:auto-rows-[11.25rem] lg:grid-cols-4',
@@ -227,7 +227,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
               </Badge>
             )}
             {tile.title && (
-              <div className="line-clamp-2 text-xs leading-snug font-semibold text-white text-shadow-photo">
+              <div className="line-clamp-2 text-xs leading-snug font-semibold text-on-contrast text-shadow-photo">
                 {tile.title}
               </div>
             )}
@@ -239,14 +239,14 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
             /* Na mobilu o stupeň nižší řez a menší odsazení: 21px nadpis se
                v pásu lámal po slabikách („PLAY- / OFF o…"). Od `md` je
                dlaždice součástí mozaiky a platí velikost z handoffu. */
-            className="absolute right-14 bottom-3.5 left-4 line-clamp-2 text-lg tracking-[-0.02em] text-white md:right-18 md:bottom-4.5 md:left-5 md:text-xl"
+            className="absolute right-14 bottom-3.5 left-4 line-clamp-2 text-lg tracking-subheading text-on-contrast md:right-18 md:bottom-4.5 md:left-5 md:text-xl"
             size="sm"
           >
             {tile.title}
           </CardTitle>
         )}
         {tile.title && tile.span === 'wide' && (
-          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm font-semibold text-white md:text-base">
+          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm font-semibold text-on-contrast md:text-base">
             {tile.title}
           </div>
         )}

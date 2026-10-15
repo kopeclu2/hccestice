@@ -72,14 +72,14 @@ function HeroModernView({
         {/* logo je součástí navigace (prostřední sloupec jejího gridu) */}
         <HeroModernNav cta={navCta} items={navItems} />
 
-        <div className="relative z-3 px-4.5 pt-70 pb-5.5 md:absolute md:inset-x-[clamp(1.125rem,3vw,3rem)] md:bottom-9 md:p-0">
+        <div className="relative z-3 px-4.5 pt-70 pb-5.5 md:absolute md:inset-x-hero-inset md:bottom-9 md:p-0">
           <div className="max-w-160">
             {content.cta && (
               <PillLink href={content.cta.href} size="lg" variant={content.cta.variant} withArrow>
                 {content.cta.label}
               </PillLink>
             )}
-            <p className="mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-white/92 text-shadow-photo">
+            <p className="mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-on-contrast-strong text-shadow-photo">
               {content.intro}
             </p>
             {/* dvouřádkový headline: základ regular (PageTitle weight="normal"),
@@ -87,7 +87,11 @@ function HeroModernView({
                 tečku kreslí handoff v lime jako součást kompozice, ne textu.
                 Sousedí přímo s textem: JSX by z odřádkování udělalo mezeru,
                 proto je výraz i span na jednom řádku. */}
-            <PageTitle className="text-white text-shadow-photo" size="hero-sm" weight="normal">
+            <PageTitle
+              className="text-on-contrast text-shadow-photo"
+              size="hero-sm"
+              weight="normal"
+            >
               <span className="block">{content.headlineLight}</span>
               <span className="block font-bold">
                 {content.headlineBold.replace(/\s*[.!]$/, '')}

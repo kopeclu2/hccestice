@@ -32,7 +32,7 @@ export function LogoStamp({
       className={cn(
         'flex flex-none items-center gap-2.75 rounded-full py-1.75 pr-4.5 pl-2',
         glass
-          ? 'border border-white/14 bg-white/6 text-white transition-colors hover:border-lime'
+          ? 'border border-on-contrast-glass bg-on-contrast-wash text-on-contrast transition-colors hover:border-lime'
           : 'bg-surface',
         !glass && bordered && 'border border-line-mid transition-colors hover:border-club',
       )}

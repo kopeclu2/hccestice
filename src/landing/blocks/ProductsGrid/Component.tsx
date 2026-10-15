@@ -31,7 +31,7 @@ export async function ProductsGridBlockComponent({ block }: { block: ProductsGri
         )}
 
         {block.orderInfo && (
-          <div className="mb-8 flex items-start gap-3.5 rounded-tile bg-club px-4.5 py-4 text-white md:px-5 lg:px-5.5 lg:py-4.5">
+          <div className="mb-8 flex items-start gap-3.5 rounded-tile bg-club px-4.5 py-4 text-on-contrast md:px-5 lg:px-5.5 lg:py-4.5">
             <Megaphone className="mt-0.5 size-5 flex-none" strokeWidth={2.25} />
             <p className="text-sm leading-relaxed font-semibold whitespace-pre-line">
               {block.orderInfo}

@@ -105,8 +105,8 @@ export function NavMobile({
        * takže 40px tap target byl pod hranicí 44px, kterou kvůli témuž
        * pravidlu drží všechny pilulky (`pill.ts`). Desktop zůstává na 40px.
        *
-       * Skleněná varianta má `bg-pine-deep/32` a `border-white/40`, ne
-       * `bg-white/16` s `border-white/28`. Bílá průsvitka na bílé bílou
+       * Skleněná varianta má `bg-pine-deep/32` a `border-on-contrast-ghost`, ne
+       * `bg-on-contrast-glass` s `border-on-contrast-line`. Bílá průsvitka na bílé bílou
        * ikonu ani hranu tlačítka od světlé části hero fotky (konstrukce
        * střechy) prakticky neodlišila; tmavá průsvitka charakter skla
        * zachová a ikonu podloží.
@@ -119,7 +119,7 @@ export function NavMobile({
           'grid size-11 flex-none place-items-center rounded-full transition-colors md:size-10 [&_svg]:size-5',
           !always && 'nav:hidden',
           tone === 'glass'
-            ? 'border border-white/40 bg-pine-deep/32 text-white backdrop-blur-lg hover:bg-white/30'
+            ? 'border border-on-contrast-ghost bg-pine-deep/32 text-on-contrast backdrop-blur-lg hover:bg-on-contrast-line'
             : 'border border-line bg-surface text-ink hover:bg-contrast hover:text-on-contrast',
         )}
         onClick={() => setOpen(true)}
@@ -145,7 +145,7 @@ export function NavMobile({
             <div className="mx-auto flex w-full max-w-160 items-center justify-end">
               <button
                 aria-label="Zavřít menu"
-                className="grid size-11 place-items-center rounded-full border border-white/28 bg-white/16 text-white transition-colors hover:bg-white/30 md:size-10 [&_svg]:size-5"
+                className="grid size-11 place-items-center rounded-full border border-on-contrast-line bg-on-contrast-glass text-on-contrast transition-colors hover:bg-on-contrast-line md:size-10 [&_svg]:size-5"
                 onClick={() => setOpen(false)}
                 ref={closeRef}
                 type="button"
@@ -165,8 +165,8 @@ export function NavMobile({
                   <Link
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'border-b border-white/10 py-3.5 text-2xl font-extrabold tracking-[-0.02em] transition-colors hover:text-lime',
-                      active ? 'text-lime' : 'text-white',
+                      'border-b border-on-contrast-wash py-3.5 text-2xl font-extrabold tracking-subheading transition-colors hover:text-lime',
+                      active ? 'text-lime' : 'text-on-contrast',
                     )}
                     href={navHref(item, context)}
                     key={item.label}

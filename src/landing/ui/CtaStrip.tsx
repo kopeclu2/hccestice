@@ -9,7 +9,7 @@ import { SectionShell, type SectionShellProps } from './SectionShell'
 import { Watermark } from './Watermark'
 
 const panelVariants = cva(
-  'relative flex flex-wrap items-center gap-6 overflow-hidden rounded-section px-4.5 py-6 text-white md:px-7 md:py-7 lg:px-11 lg:py-9',
+  'relative flex flex-wrap items-center gap-6 overflow-hidden rounded-section px-4.5 py-6 text-on-contrast md:px-7 md:py-7 lg:px-11 lg:py-9',
   {
     variants: {
       /** Tmavý pás (sítě, fotky, archiv) vs. klubová zelená (soupiska, zápasy). */
@@ -20,7 +20,7 @@ const panelVariants = cva(
 )
 
 /** Ztišení perexu se mezi tóny liší — na zelené musí být o stupeň světlejší. */
-const perexTone = { ink: 'text-white/65', club: 'text-white/85' } as const
+const perexTone = { ink: 'text-on-contrast-muted', club: 'text-on-contrast-strong' } as const
 
 export type CtaStripProps = {
   headline: React.ReactNode
@@ -60,7 +60,7 @@ export function CtaStrip({
     <SectionShell className={className} spacing={spacing}>
       <div className={panelVariants({ tone })}>
         {watermark && (
-          <Watermark className="-right-7.5 -bottom-12.5 text-watermark-md tracking-[-0.06em] text-white/14">
+          <Watermark className="-right-7.5 -bottom-12.5 text-watermark-md tracking-display text-on-contrast-glass">
             {watermark}
           </Watermark>
         )}

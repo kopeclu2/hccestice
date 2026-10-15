@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
  * datumy nad nadpisy karet. Jediný zdroj velikosti i trackingu; dřív se
  * psal ručně s pěti různými hodnotami `tracking-[...]`.
  */
-const eyebrowVariants = cva('text-eyebrow font-bold tracking-[0.16em] uppercase', {
+const eyebrowVariants = cva('text-eyebrow font-bold tracking-caps-lg uppercase', {
   variants: {
     tone: {
       lime: 'text-lime',
@@ -17,13 +17,13 @@ const eyebrowVariants = cva('text-eyebrow font-bold tracking-[0.16em] uppercase'
       faint: 'text-faint',
       /** Ztišený label na tmavém podkladu (hlavičky tabulek v panelech). */
       dark: 'text-faint-dark',
-      white: 'text-white/60',
+      white: 'text-on-contrast-subtle',
       /**
        * Nadpis sloupce na klubové zelené (patička). `white` tam nestačí:
-       * `text-white/60` na `bg-club` (#17703a) dává ~3,4:1, což je pod AA
+       * `text-on-contrast-subtle` na `bg-club` (#17703a) dává ~3,4:1, což je pod AA
        * i pro 11px uppercase — a jde o nadpis, ne o ztišený doplněk.
        */
-      'white-strong': 'text-white/80',
+      'white-strong': 'text-on-contrast-soft',
     },
     /** Volnější prostrkání pro samostatně stojící label přes fotku. */
     wide: {
@@ -37,7 +37,7 @@ const eyebrowVariants = cva('text-eyebrow font-bold tracking-[0.16em] uppercase'
      * a v pevném sloupci přetékalo do názvu zápasu.
      */
     tight: {
-      true: 'tracking-[0.08em]',
+      true: 'tracking-caps-sm',
       false: '',
     },
   },

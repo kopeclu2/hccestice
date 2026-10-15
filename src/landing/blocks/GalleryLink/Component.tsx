@@ -47,7 +47,7 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
           className="group relative flex flex-col overflow-hidden rounded-card border border-line-soft bg-surface transition-colors hover:border-club sm:flex-row sm:items-center sm:gap-4 sm:p-3 md:p-4"
           href={card.href!}
         >
-          {/* Pevná výška na `sm`+, ne `aspect-[4/3]`: karta je tam flex řádek
+          {/* Pevná výška na `sm`+, ne `aspect-4/3`: karta je tam flex řádek
               s `items-center` a v Chromu se v téhle kombinaci (flex item
               rozměrovaný přes `aspect-ratio` + `items-center` na rodiči +
               potomek `height:100%`) výška fotky spočítala špatně — obrázek
@@ -76,7 +76,7 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
             </div>
           </div>
 
-          <span className="absolute top-3 right-3 grid size-9 flex-none place-items-center rounded-full bg-lime text-ink transition-colors group-hover:bg-club group-hover:text-white sm:static [&_svg]:size-4">
+          <span className="absolute top-3 right-3 grid size-9 flex-none place-items-center rounded-full bg-lime text-ink transition-colors group-hover:bg-club group-hover:text-on-contrast sm:static [&_svg]:size-4">
             <ArrowUpRight strokeWidth={2.5} />
           </span>
         </Link>

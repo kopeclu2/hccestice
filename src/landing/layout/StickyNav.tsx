@@ -60,7 +60,7 @@ export function StickyNav({ items, cta }: { items: NavItem[]; cta: NavCta }) {
       // stromu úplně, dokud se lišta po scrollu nezjeví.
       inert={!visible}
     >
-      <nav className="mx-auto flex max-w-[97.5rem] items-center gap-2.5 px-[clamp(0.875rem,3vw,2.5rem)] py-2.5">
+      <nav className="mx-auto flex max-w-page items-center gap-2.5 px-gutter py-2.5">
         <LogoStamp bordered href={context === 'home' ? '#home' : '/'} />
 
         <NavPills items={items} />

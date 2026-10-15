@@ -41,7 +41,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
   return (
     <SectionShell id="kontakt">
       <Watermark
-        className="top-70 -right-10 text-watermark-lg tracking-[-0.05em] text-club/6"
+        className="top-70 -right-10 text-watermark-lg tracking-tighter text-club/6"
         outlined={false}
       >
         ZIMÁK
@@ -79,7 +79,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
                boxu, takže shrink-to-fit `inline-flex` vyšel o jeden znak kratší
                a adresa se lámala („hccestice@seznam.c / z") i tam, kde se
                vejde. Záchranná brzda pro dlouhou adresu z CMS zůstává. */
-            className="relative inline-flex items-center gap-2.5 text-[clamp(1.25rem,4vw,3.625rem)] font-extrabold tracking-[-0.03em] break-words text-ink transition-colors hover:text-club md:gap-4.5"
+            className="relative inline-flex items-center gap-2.5 text-contact-lg font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club md:gap-4.5"
             href={`mailto:${site.email}`}
           >
             {site.email}

@@ -87,7 +87,7 @@ function TrainingsView({
     <SectionShell id="treninky" spacing={spacing}>
       <TrainingsJsonLd rows={content.rows} />
       {!standalonePage && (
-        <Watermark className="bottom-0 left-40 text-watermark-lg tracking-[-0.06em] text-club/8">
+        <Watermark className="bottom-0 left-40 text-watermark-lg tracking-display text-club/8">
           LED
         </Watermark>
       )}
@@ -132,7 +132,7 @@ function TrainingsView({
  */
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <article className="w-full min-w-0 rounded-thumb border border-line-soft bg-surface px-5 py-5 min-[33rem]:w-auto min-[33rem]:max-w-75 min-[33rem]:min-w-60 min-[33rem]:px-6">
+    <article className="w-full min-w-0 rounded-thumb border border-line-soft bg-surface px-5 py-5 xs:w-auto xs:max-w-75 xs:min-w-60 xs:px-6">
       <CardTitle as="h3" size="sm">
         {title}
       </CardTitle>
@@ -197,7 +197,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
            v pohodě a stohovat je tam by byl krok zpátky.
            `min-w-0` je pojistka proti přetečení na 320px, kde je 240px + padding
            na hraně. */
-        'w-full min-w-0 rounded-thumb px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:px-6',
+        'w-full min-w-0 rounded-thumb px-5 py-5 xs:w-auto xs:min-w-60 xs:px-6',
         slot.accent ? 'bg-contrast text-on-contrast' : 'border border-line-soft bg-surface',
       )}
     >
@@ -224,7 +224,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
         </div>
       )}
       {slot.note && (
-        <div className={cn('mt-1 text-xs', slot.accent ? 'text-white/55' : 'text-dim')}>
+        <div className={cn('mt-1 text-xs', slot.accent ? 'text-on-contrast-subtle' : 'text-dim')}>
           {slot.note}
         </div>
       )}

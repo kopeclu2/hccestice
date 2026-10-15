@@ -75,7 +75,7 @@ export function EmptyState({
       </CardTitle>
 
       {children && (
-        <p className="mt-3 max-w-110 text-sm leading-[1.55] text-pretty text-ink-soft md:text-base">
+        <p className="mt-3 max-w-110 text-sm leading-copy text-pretty text-ink-soft md:text-base">
           {children}
         </p>
       )}

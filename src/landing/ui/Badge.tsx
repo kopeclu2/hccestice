@@ -29,7 +29,7 @@ const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowr
       loss: 'bg-loss font-bold text-loss-ink',
       split:
         'bg-[linear-gradient(90deg,var(--color-loss)_50%,var(--color-win)_50%)] font-bold text-loss-ink',
-      club: 'bg-club font-bold text-white',
+      club: 'bg-club font-bold text-on-contrast',
       outline: 'border border-line font-semibold text-ink-soft',
       /** Bílý štítek na tmavé ploše / v zelené kartě. */
       light: 'bg-surface font-bold text-ink',
@@ -37,9 +37,9 @@ const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowr
        * Průsvitný tmavý štítek přes fotku (počet fotek v galerii, třetiny
        * u výsledku). Musí být čitelný na libovolném snímku, proto blur.
        */
-      glass: 'bg-pine-deep/62 font-semibold text-white backdrop-blur-[0.5rem]',
+      glass: 'bg-pine-deep/62 font-semibold text-on-contrast backdrop-blur-[0.5rem]',
       /** Obrys na tmavé ploše — protipól `outline`. */
-      glassOutline: 'border border-white/40 font-semibold text-white',
+      glassOutline: 'border border-on-contrast-ghost font-semibold text-on-contrast',
     },
     size: {
       /** Drobný štítek v hustých výpisech (11px text). */

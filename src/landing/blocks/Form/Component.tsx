@@ -136,7 +136,7 @@ export const FormBlock: React.FC<
   )
 
   return (
-    <div className="container lg:max-w-[48rem]">
+    <div className="container lg:max-w-3xl">
       {enableIntro && intro && !hasSubmitted && intro}
       <div className="rounded-field border border-border p-4 lg:p-6">
         <FormProvider {...formMethods}>

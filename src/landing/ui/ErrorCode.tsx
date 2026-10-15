@@ -31,7 +31,7 @@ export function ErrorCode({
     <div
       aria-hidden
       className={cn(
-        'text-[clamp(8.75rem,22vw,21.25rem)] leading-[0.9] font-extrabold tracking-[-0.06em] select-none text-stroke',
+        'text-error-code leading-display font-extrabold tracking-display select-none text-stroke',
         tone === 'dark' ? 'text-lime/28' : 'text-club/22',
       )}
     >
@@ -66,7 +66,12 @@ export function ErrorMeta({
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
       <span className={cn('h-0.5 w-5.5 flex-none', tone === 'dark' ? 'bg-lime' : 'bg-club')} />
-      <span className={cn('text-xs font-medium', tone === 'dark' ? 'text-white/50' : 'text-faint')}>
+      <span
+        className={cn(
+          'text-xs font-medium',
+          tone === 'dark' ? 'text-on-contrast-faint' : 'text-faint',
+        )}
+      >
         {children}
       </span>
     </div>

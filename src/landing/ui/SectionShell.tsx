@@ -20,43 +20,40 @@ import { cn } from '@/lib/utils'
  * výšku `GlobalNav` (fixní lišta v root layoutu). Bez ní by kotva po kliku
  * z lišty přistála pod ní zakrytá.
  */
-const sectionShellVariants = cva(
-  'relative z-1 mx-auto w-full max-w-[97.5rem] scroll-mt-20 px-[clamp(0.875rem,3vw,2.5rem)]',
-  {
-    variants: {
-      spacing: {
-        /** Sekce home page — 72px mobil, 112px tablet, 160px desktop (rytmus handoffu, ztlumeno o ~20 %). */
-        landing: 'mt-18 md:mt-28 lg:mt-40',
-        /** Lišta hned pod herem (oznámení) — drží se nahoře. */
-        bar: 'mt-8 md:mt-10',
-        /**
-         * Hlavička podstránky (drobečky) pod navigací — 24px mobil, 40px
-         * tablet, 56px desktop. Plochých 56px nechávalo na mobilu pod lištou
-         * prázdný pruh vyšší než samotná navigace.
-         */
-        header: 'mt-6 md:mt-10 lg:mt-14',
-        /** První obsahový blok po hlavičce podstránky. */
-        content: 'mt-12',
-        /** Další sekce podstránky — 72px mobil, 96px tablet, 140px desktop. */
-        section: 'mt-18 md:mt-24 lg:mt-35',
-        /**
-         * Druhá polovina téže sekce (rozpis → výsledky v bloku Sezóna).
-         * Menší odstup záměrně drží obě části pohromadě.
-         */
-        split: 'mt-12 md:mt-15',
-        /**
-         * CTA pás na konci podstránky, nad patičkou — 72px mobil, 96px tablet,
-         * 120px desktop. Jediná hodnota ve škále, která mobilní stupeň neměla:
-         * pás se od výpisu odrážel 120px prázdna i na 320px displeji.
-         */
-        cta: 'mt-18 md:mt-24 lg:mt-30',
-        /** Bez odsazení — rytmus řeší vnořené sekce samy. */
-        none: '',
-      },
+const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-mt-20 px-gutter', {
+  variants: {
+    spacing: {
+      /** Sekce home page — 72px mobil, 112px tablet, 160px desktop (rytmus handoffu, ztlumeno o ~20 %). */
+      landing: 'mt-18 md:mt-28 lg:mt-40',
+      /** Lišta hned pod herem (oznámení) — drží se nahoře. */
+      bar: 'mt-8 md:mt-10',
+      /**
+       * Hlavička podstránky (drobečky) pod navigací — 24px mobil, 40px
+       * tablet, 56px desktop. Plochých 56px nechávalo na mobilu pod lištou
+       * prázdný pruh vyšší než samotná navigace.
+       */
+      header: 'mt-6 md:mt-10 lg:mt-14',
+      /** První obsahový blok po hlavičce podstránky. */
+      content: 'mt-12',
+      /** Další sekce podstránky — 72px mobil, 96px tablet, 140px desktop. */
+      section: 'mt-18 md:mt-24 lg:mt-35',
+      /**
+       * Druhá polovina téže sekce (rozpis → výsledky v bloku Sezóna).
+       * Menší odstup záměrně drží obě části pohromadě.
+       */
+      split: 'mt-12 md:mt-15',
+      /**
+       * CTA pás na konci podstránky, nad patičkou — 72px mobil, 96px tablet,
+       * 120px desktop. Jediná hodnota ve škále, která mobilní stupeň neměla:
+       * pás se od výpisu odrážel 120px prázdna i na 320px displeji.
+       */
+      cta: 'mt-18 md:mt-24 lg:mt-30',
+      /** Bez odsazení — rytmus řeší vnořené sekce samy. */
+      none: '',
     },
-    defaultVariants: { spacing: 'landing' },
   },
-)
+  defaultVariants: { spacing: 'landing' },
+})
 
 export type SectionShellProps = React.ComponentProps<'section'> &
   VariantProps<typeof sectionShellVariants>

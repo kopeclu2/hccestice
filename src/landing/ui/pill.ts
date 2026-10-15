@@ -28,15 +28,15 @@ export const pillVariants = cva(
       variant: {
         dark: 'bg-contrast text-on-contrast hover:bg-club',
         glass:
-          'border border-white/28 bg-white/16 font-semibold text-white backdrop-blur-lg hover:bg-white/30',
+          'border border-on-contrast-line bg-on-contrast-glass font-semibold text-on-contrast backdrop-blur-lg hover:bg-on-contrast-line',
         light: 'bg-surface text-ink hover:bg-lime',
         outline: 'border border-line text-ink hover:bg-contrast hover:text-on-contrast',
         /**
          * Protipól `outline` pro tmavé plochy (footer, CTA panely přes fotku) —
          * bílý obrys, průhledné pozadí, hover do jemné bílé.
          */
-        inverse: 'border border-white/40 text-white hover:bg-white/16',
-        club: 'border border-club text-club hover:bg-club hover:text-white',
+        inverse: 'border border-on-contrast-ghost text-on-contrast hover:bg-on-contrast-glass',
+        club: 'border border-club text-club hover:bg-club hover:text-on-contrast',
         lime: 'bg-lime text-ink hover:bg-surface',
       },
       /**
@@ -97,7 +97,7 @@ export const pillVariants = cva(
       {
         variant: 'club',
         selected: true,
-        className: 'bg-club text-white',
+        className: 'bg-club text-on-contrast',
       },
     ],
     defaultVariants: {
@@ -129,10 +129,10 @@ export const arrowVariants = cva(
       },
       variant: {
         dark: 'bg-lime text-ink',
-        glass: 'bg-white/90 text-ink',
+        glass: 'bg-on-contrast-strong text-ink',
         light: 'bg-lime text-ink',
         outline: 'bg-chip text-ink',
-        inverse: 'bg-white/90 text-ink',
+        inverse: 'bg-on-contrast-strong text-ink',
         club: 'bg-chip text-club',
         lime: 'bg-contrast text-lime',
       },

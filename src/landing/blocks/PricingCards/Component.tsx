@@ -33,20 +33,30 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
               <div
                 className={cn(
                   'flex h-full flex-col rounded-panel p-4.5 md:p-6 lg:p-7',
-                  highlighted ? 'bg-club text-white' : 'bg-surface',
+                  highlighted ? 'bg-club text-on-contrast' : 'bg-surface',
                 )}
               >
                 <Eyebrow tone={highlighted ? 'lime' : 'club'}>{card.name}</Eyebrow>
                 <div className="mt-2 flex items-baseline gap-2">
                   <Numeral size="xl">{card.price}</Numeral>
                   {card.period && (
-                    <span className={cn('text-sm', highlighted ? 'text-white/65' : 'text-faint')}>
+                    <span
+                      className={cn(
+                        'text-sm',
+                        highlighted ? 'text-on-contrast-muted' : 'text-faint',
+                      )}
+                    >
                       {card.period}
                     </span>
                   )}
                 </div>
                 {card.description && (
-                  <p className={cn('mt-2 text-sm', highlighted ? 'text-white/85' : 'text-dim')}>
+                  <p
+                    className={cn(
+                      'mt-2 text-sm',
+                      highlighted ? 'text-on-contrast-strong' : 'text-dim',
+                    )}
+                  >
                     {card.description}
                   </p>
                 )}
