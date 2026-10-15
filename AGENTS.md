@@ -912,9 +912,9 @@ zápasu" ve stylu Livesportu a karta reportáže.
 | route | `src/app/(landing)/zapasy/[slug]/page.tsx` (SSG + ISR 600 s, `generateStaticParams`, `notFound()`) |
 | výpis | `src/app/(landing)/zapasy/(vypis)/` (`page.tsx` + `loading.tsx`) |
 | fetchery | `src/landing/features/matches/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
-| view-model | `src/landing/features/matches/view/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
+| view-model | `src/landing/features/matches/view/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` (jediný zdroj pravidel zápasu: `orient` NAŠE:SOUPEŘ → domácí:hosté, `ScoreSuffix`, `SUFFIX_NOTE`, `outcomeNote`, `sideLabel`), `fixturesLayout.ts` (`pickLayout` pro `FixturesRail`) |
 | komponenty | `src/landing/features/matches/components/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/features/matches/components/MatchScoreboard.tsx` |
-| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts` |
+| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts`; soupeře pro slug i titulek načítá `src/hooks/resolveOpponent.ts` (jednou na uložení, paměť v `req.context`) |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
 ## Slug
@@ -1019,7 +1019,10 @@ s `report = post.id`.
   rozhodnutí uživatele 15. 10. 2026). Přepíná `MatchHeaderByVariant`
   (`landing/features/matches/header-variants/index.tsx`), katalog všech vedle sebe
   je `/vzory/hlavicka-zapasu` (noindex). Zrušený zápas má vždy `classic`
-  (`CanceledHeader`). Uložení nastavení invaliduje tag `site-config`, který
+  (`CanceledHeader`); varianty ho umět nemusí (typ `VariantMatch`, katalog
+  ho nezobrazuje). Sdílené drobnosti variant (`MetaItem`, `OutcomeBadge`,
+  `SideBadge`, `StatusBadge`) jsou v `header-variants/shared.tsx`, znak týmu
+  `TeamCrest` v `components/`. Uložení nastavení invaliduje tag `site-config`, který
   detail čte (i přes `SubpageShell`), takže se změna projeví hned i na
   prerenderovaných detailech. Varianty A a D dopočítávají sloupce P a SN
   ze skóre (ukládají se jen tři třetiny) a zkratky týmů (`POL`, `ČES`)
@@ -1063,7 +1066,7 @@ půlený úhlopříčkou s písmenem P. Mapa štítků je jedna,
 Výhra po prodloužení zůstává `win` (suffix `pp`/`sn` u skóre ji odliší).
 
 Řádky výpisu mají **znaky týmů a čitelné datum** (rozhodnutí uživatele
-15. 10. 2026): `MatchRowTitle` kreslí `Crest` u každého týmu, `MatchWhen`
+15. 10. 2026): `MatchRowTitle` kreslí `TeamCrest` u každého týmu, `MatchWhen`
 den v týdnu + datum `md:text-lg` + čas. Logo soupeře se načítá v
 `withOpponentLogos` (`features/matches/data/matches.ts`) jedním dotazem na `media` pro celou
 stránku — výpisy jedou na `depth: 1` (`depth: 2` by rozbalil i sezónu,
@@ -1121,7 +1124,7 @@ z ahl.cz a `JSON.stringify` samo `</script>` neescapuje (viz
 a `revalidate: 3600` jako záchranná síť. Platí tři pravidla z „Cache
 a renderovací režimy": tag i `revalidate`, `{ expire: 0 }` u redakčního
 obsahu a žádné `new Date()` uvnitř cache (naplánovaný zápas řeší odpočet
-na klientu: `Countdown` po uplynutí času buly místo nul ukáže „Zápas právě
+na klientu (`useCountdown`): `Countdown` po uplynutí času buly místo nul ukáže „Zápas právě
 probíhá nebo čeká na výsledek", server vždy kreslí „--", takže bez hydration
 mismatch; platí i v hero a ve widgetu Nejbližší zápas). Tag se propaguje do prerenderované stránky, takže
 `revalidatePath` na detail není potřeba.
