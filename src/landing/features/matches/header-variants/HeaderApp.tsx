@@ -2,19 +2,21 @@ import React from 'react'
 
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
 import type { MatchDetail } from '@/landing/features/matches/types'
+import {
+  competitionLabel,
+  outcomeNote,
+  SUFFIX_NOTE,
+} from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
 import {
-  competitionLabel,
   Crest,
   hasScore,
   type HeaderVariantProps,
-  outcomeNote,
   periodColumns,
   SrTitle,
-  SUFFIX_NOTE,
   weekday,
   winnerSide,
 } from './shared'

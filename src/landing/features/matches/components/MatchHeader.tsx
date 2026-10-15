@@ -2,7 +2,11 @@ import Image from 'next/image'
 import React from 'react'
 
 import type { MatchDetail } from '@/landing/features/matches/types'
-import { formatCompetition } from '@/landing/features/matches/view/matchFormat'
+import {
+  competitionLabel,
+  outcomeNote,
+  sideLabel,
+} from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
@@ -14,8 +18,6 @@ import { getMediaUrl } from '@/lib/getMediaUrl'
 import { MatchScoreboard } from './MatchScoreboard'
 import { NextMatchPanel } from './NextMatchPanel'
 import { OUTCOME_BADGE } from './outcome'
-
-const SUFFIX_NOTE = { pp: 'po prodloužení', sn: 'po nájezdech' } as const
 
 /**
  * Hlavička detailu zápasu — tři podoby podle stavu:
@@ -34,9 +36,6 @@ export function MatchHeader({ match }: { match: MatchDetail }) {
   if (match.status === 'canceled') return <CanceledHeader match={match} />
   return <PlayedHeader match={match} />
 }
-
-/** „VČHL 2. ročník · Základní část“, ne surový text z AHL („2.ročník - ZČ“). */
-const kicker = (match: MatchDetail): string => formatCompetition(match.competition) ?? 'VČHL'
 
 /** Řádek údajů pod skóre / názvem: kdy, kde, jak to dopadlo. */
 function Facts({ children }: { children: React.ReactNode }) {
@@ -62,14 +61,14 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
 
 function PlayedHeader({ match }: { match: MatchDetail }) {
   const outcome = match.outcome ? OUTCOME_BADGE[match.outcome] : null
-  const note = match.suffix ? SUFFIX_NOTE[match.suffix] : null
+  const note = outcomeNote(match.outcome, match.suffix)
   const hasScore = match.homeScore != null && match.awayScore != null
 
   return (
     <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
       <div className="absolute inset-0 hatch opacity-40" />
       <div className="relative">
-        <DotEyebrow>{kicker(match)}</DotEyebrow>
+        <DotEyebrow>{competitionLabel(match)}</DotEyebrow>
 
         {hasScore ? (
           <>
@@ -147,7 +146,7 @@ function LogoPair({ away, home }: { away: Photo | null; home: Photo | null }) {
 function ScheduledHeader({ match }: { match: MatchDetail }) {
   return (
     <NextMatchPanel
-      kicker={`Nadcházející zápas · ${match.weAreHome ? 'Doma' : 'Venku'}`}
+      kicker={`Nadcházející zápas · ${sideLabel(match.weAreHome)}`}
       kickoffISO={match.kickoffISO}
       layout="wide"
       meta={
@@ -162,7 +161,7 @@ function ScheduledHeader({ match }: { match: MatchDetail }) {
         </>
       }
       radius="section"
-      subtitle={[kicker(match), match.venue].filter(Boolean).join(' · ')}
+      subtitle={[competitionLabel(match), match.venue].filter(Boolean).join(' · ')}
       title={match.title}
       titleAs="h1"
     />
@@ -178,7 +177,7 @@ function CanceledHeader({ match }: { match: MatchDetail }) {
           <Badge size="sm" variant="loss">
             Zrušeno
           </Badge>
-          <Eyebrow tone="white">{kicker(match)}</Eyebrow>
+          <Eyebrow tone="white">{competitionLabel(match)}</Eyebrow>
         </div>
         <CardTitle as="h1" className="mt-3 leading-tight text-white" size="lg">
           {match.title}

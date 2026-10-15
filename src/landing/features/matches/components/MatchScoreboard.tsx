@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 
 import type { ArticleScoreboard } from '@/landing/features/matches/types'
+import { formatPair } from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { Numeral } from '@/landing/ui/Numeral'
@@ -113,7 +114,7 @@ export function MatchScoreboard({
                 size="sm"
                 variant="glassOutline"
               >
-                {third}
+                {formatPair(third)}
               </Badge>
             )
           })}

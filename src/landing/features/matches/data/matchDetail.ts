@@ -142,7 +142,7 @@ const loadMatchDetail = unstable_cache(
   // `v2` = view-model s časovou osou (`timeline`), `v3` = výsledek `otLoss`;
   // stará entry by stránku shodila nebo lhala, takže změna tvaru znamená
   // novou verzi klíče.
-  ['match-detail', 'v3'],
+  ['match-detail', 'v4'],
   { tags: [CACHE_TAGS.matches, CACHE_TAGS.posts], revalidate: 3600 },
 )
 

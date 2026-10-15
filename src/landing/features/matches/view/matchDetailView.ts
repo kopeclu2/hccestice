@@ -9,7 +9,6 @@ import type {
   MatchTimelinePeriod,
 } from '@/landing/features/matches/types'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
-import { CLUB_NAME } from '@/lib/club'
 import { formatLongDate, formatTime } from '@/lib/datetime'
 import { htmlPlainText, snippet } from '@/lib/plainText'
 import { linkOrNull, routes } from '@/lib/routes'
@@ -20,10 +19,13 @@ import {
   CLUB_LOGO,
   matchOutcome,
   matchTitle,
-  opponentName,
+  orient,
+  orientPair,
   phaseLabel,
+  type ScorePair,
   scorersLabel,
   scoreSuffix,
+  SUFFIX_NOTE,
 } from './matchFormat'
 
 /**
@@ -113,8 +115,8 @@ const goalEvent = (goal: ArticleGoal): MatchTimelineEvent => {
   return { type: 'goal', ours: true, ...rest }
 }
 
-/** Skóre úseku spočítané z branek („domácí:hosté"), když ho zápis nemá. */
-const countScore = (events: MatchTimelineEvent[], weAreHome: boolean): string => {
+/** Skóre úseku spočítané z branek (domácí : hosté), když ho zápis nemá. */
+const countScore = (events: MatchTimelineEvent[], weAreHome: boolean): ScorePair => {
   let ours = 0
   let opp = 0
   for (const event of events) {
@@ -122,7 +124,7 @@ const countScore = (events: MatchTimelineEvent[], weAreHome: boolean): string =>
     if (event.ours) ours++
     else opp++
   }
-  return weAreHome ? `${ours}:${opp}` : `${opp}:${ours}`
+  return orientPair(weAreHome, ours, opp)
 }
 
 /**
@@ -140,7 +142,7 @@ const countScore = (events: MatchTimelineEvent[], weAreHome: boolean): string =>
 export const buildTimeline = (
   goals: readonly ArticleGoal[],
   penalties: readonly MatchPenaltyRow[],
-  homeThirds: readonly string[],
+  homeThirds: readonly ScorePair[],
   weAreHome: boolean,
 ): MatchTimelinePeriod[] => {
   const items = [
@@ -245,20 +247,18 @@ const toReport = (post: Post | null): MatchDetailReport | null => {
  * (`pickReport`).
  */
 export const toMatchDetail = (match: Match, report: Post | null): MatchDetail => {
-  const weAreHome = Boolean(match.home)
+  const { weAreHome, homeName, awayName, homeScore, awayScore, thirds } = orient(match)
   const played = match.status === 'played'
   const opponent = typeof match.opponent === 'object' && match.opponent ? match.opponent : null
   const opponentLogo = uploadToPhoto(opponent?.logo)
   const season = typeof match.season === 'object' && match.season ? match.season : null
   const album = typeof match.gallery === 'object' ? match.gallery : null
 
-  const hasScore = played && match.scoreOurs != null && match.scoreOpp != null
+  const hasScore = played && homeScore != null && awayScore != null
   const goals = toGoals(match, weAreHome)
   const penalties = toPenalties(match)
   const stats = toStats(match)
-  const homeThirds = (match.thirds ?? []).map((third) =>
-    weAreHome ? `${third.ours}:${third.opp}` : `${third.opp}:${third.ours}`,
-  )
+  const logos = orientPair(weAreHome, CLUB_LOGO, opponentLogo)
 
   // Bezbrankové 0:0 se zápisem nemá chybět nic — poznámka by lhala.
   const scoreless = (match.scoreOurs ?? 0) + (match.scoreOpp ?? 0) === 0
@@ -280,19 +280,19 @@ export const toMatchDetail = (match: Match, report: Post | null): MatchDetail =>
     competition: match.competition || null,
     phase: phaseLabel(match),
     title: matchTitle(match),
-    homeName: weAreHome ? CLUB_NAME : opponentName(match),
-    awayName: weAreHome ? opponentName(match) : CLUB_NAME,
-    homeLogo: weAreHome ? CLUB_LOGO : opponentLogo,
-    awayLogo: weAreHome ? opponentLogo : CLUB_LOGO,
+    homeName,
+    awayName,
+    homeLogo: logos.home,
+    awayLogo: logos.away,
     weAreHome,
-    homeScore: hasScore ? (weAreHome ? match.scoreOurs! : match.scoreOpp!) : null,
-    awayScore: hasScore ? (weAreHome ? match.scoreOpp! : match.scoreOurs!) : null,
-    thirds: hasScore ? homeThirds : [],
+    homeScore: hasScore ? homeScore : null,
+    awayScore: hasScore ? awayScore : null,
+    thirds: hasScore ? thirds : [],
     suffix: hasScore ? scoreSuffix(match) : '',
     outcome: hasScore ? matchOutcome(match) : null,
     seasonSlug: season?.slug || null,
     seasonLabel: season ? seasonShortLabel(season) : null,
-    timeline: buildTimeline(goals, penalties, homeThirds, weAreHome),
+    timeline: buildTimeline(goals, penalties, thirds, weAreHome),
     goalsOurs: goals.filter((goal) => goal.ours).length,
     penalties,
     penaltyMinutes: penalties.reduce((sum, penalty) => sum + (penalty.minutes ?? 0), 0),
@@ -325,8 +325,7 @@ export const matchDescription = (detail: MatchDetail): string => {
   if (detail.homeScore == null) {
     return `Zápas ${detail.title} se hraje ${detail.dateLabel} v ${detail.timeLabel}${place}.`
   }
-  const suffix =
-    detail.suffix === 'sn' ? ' po nájezdech' : detail.suffix === 'pp' ? ' po prodloužení' : ''
+  const suffix = detail.suffix ? ` ${SUFFIX_NOTE[detail.suffix]}` : ''
   return [
     `Výsledek zápasu ${matchHeadline(detail)}${suffix} (${detail.dateLabel}${place}).`,
     detail.scorers ? `Střelci Čestic: ${detail.scorers}.` : null,

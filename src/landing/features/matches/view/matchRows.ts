@@ -10,7 +10,6 @@ import type {
   UpcomingMatch,
 } from '@/landing/features/matches/types'
 import { uploadToPhoto } from '@/landing/lib/media'
-import { CLUB_NAME } from '@/lib/club'
 import {
   formatDateTime,
   formatWeekday,
@@ -27,10 +26,12 @@ import {
   matchOutcome,
   matchScore,
   matchTitle,
-  opponentName,
+  orient,
+  orientPair,
   phaseLabel,
   scorersLabel,
   scoreSuffix,
+  sideLabel,
 } from './matchFormat'
 
 /**
@@ -46,11 +47,10 @@ import {
  * strany musí prohodit stejně jako v `matchTitle` — proto společný
  * helper a ne dvě místa, kde se dá pořadí splést.
  */
-export const schemaFields = (match: Match): MatchSchemaFields => ({
-  startDate: match.date,
-  homeName: match.home ? CLUB_NAME : opponentName(match),
-  awayName: match.home ? opponentName(match) : CLUB_NAME,
-})
+export const schemaFields = (match: Match): MatchSchemaFields => {
+  const { homeName, awayName } = orient(match)
+  return { startDate: match.date, homeName, awayName }
+}
 
 /**
  * Znaky v pořadí domácí / hosté. Logo soupeře je jen při populované relaci
@@ -60,10 +60,8 @@ export const schemaFields = (match: Match): MatchSchemaFields => ({
 export const teamLogos = (match: Match): TeamLogos => {
   const opponent = typeof match.opponent === 'object' ? match.opponent : null
   const opponentLogo = uploadToPhoto(opponent?.logo)
-  return {
-    homeLogo: match.home ? CLUB_LOGO : opponentLogo,
-    awayLogo: match.home ? opponentLogo : CLUB_LOGO,
-  }
+  const logos = orientPair(Boolean(match.home), CLUB_LOGO, opponentLogo)
+  return { homeLogo: logos.home, awayLogo: logos.away }
 }
 
 /** Odkaz na detail zápasu; zápas bez slugu (dokument z doby před slugy) detail nemá. */
@@ -102,7 +100,7 @@ export const toFixtureCard = (match: Match, isNext: boolean): FixtureCard => ({
   ...teamLogos(match),
   id: match.id,
   weekdayLabel: formatWeekday(match.date),
-  kind: match.home ? 'Doma' : 'Venku',
+  kind: sideLabel(Boolean(match.home)),
   stage: phaseLabel(match),
   dateLabel: formatDay(match.date),
   timeLabel: formatTime(match.date),

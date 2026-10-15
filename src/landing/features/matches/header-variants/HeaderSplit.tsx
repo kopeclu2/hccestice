@@ -3,17 +3,16 @@ import React from 'react'
 import { MatchMeta } from '@/landing/features/matches/components/MatchMeta'
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
 import type { MatchDetail } from '@/landing/features/matches/types'
+import { competitionLabel, outcomeNote } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
 import {
-  competitionLabel,
   Crest,
   hasScore,
   type HeaderVariantProps,
   ourSide,
-  outcomeNote,
   periodColumns,
   SrTitle,
   weekday,

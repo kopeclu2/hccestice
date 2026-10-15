@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import React from 'react'
 
-import type { MatchDetail, Outcome } from '@/landing/features/matches/types'
-import { formatCompetition } from '@/landing/features/matches/view/matchFormat'
+import type { MatchDetail } from '@/landing/features/matches/types'
+import { SUFFIX_NOTE } from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
@@ -23,12 +23,6 @@ export type HeaderVariantProps = {
    */
   titleAs?: 'h1' | 'h2' | 'h3'
 }
-
-export const SUFFIX_NOTE = { pp: 'po prodloužení', sn: 'po nájezdech' } as const
-
-/** „VČHL 2. ročník · Základní část“, ne surový text z AHL. */
-export const competitionLabel = (match: MatchDetail): string =>
-  formatCompetition(match.competition) ?? 'VČHL'
 
 export const hasScore = (
   match: MatchDetail,
@@ -86,11 +80,6 @@ export type PeriodColumn = {
   away: number | null
 }
 
-const parsePair = (value: string | null | undefined): [number, number] | null => {
-  const match = /^\s*(\d+)\s*:\s*(\d+)\s*$/.exec(value ?? '')
-  return match ? [Number(match[1]), Number(match[2])] : null
-}
-
 /**
  * Skóre po úsecích jako sloupce tabule: 1 | 2 | 3 | P | SN.
  *
@@ -102,25 +91,27 @@ const parsePair = (value: string | null | undefined): [number, number] | null =>
  * sloupců než tabule, která si odporuje.
  */
 export const periodColumns = (match: MatchDetail): PeriodColumn[] => {
-  const thirds = match.thirds.map(parsePair)
-  if (thirds.length === 0 || thirds.some((pair) => pair === null)) return []
+  if (match.thirds.length === 0) return []
 
-  const columns: PeriodColumn[] = (thirds as Array<[number, number]>).map(
-    ([home, away], index) => ({
-      label: String(index + 1),
-      title: `${index + 1}. třetina`,
-      home,
-      away,
-    }),
-  )
+  const columns: PeriodColumn[] = match.thirds.map(({ home, away }, index) => ({
+    label: String(index + 1),
+    title: `${index + 1}. třetina`,
+    home,
+    away,
+  }))
   if (!match.suffix || !hasScore(match)) return columns
 
   const homeWins = match.homeScore > match.awayScore
   const ot = match.timeline.find((period) => /prodl/i.test(period.label))
   const otPair =
-    parsePair(ot?.score) ?? (match.suffix === 'sn' ? [0, 0] : homeWins ? [1, 0] : [0, 1])
+    ot?.score ??
+    (match.suffix === 'sn'
+      ? { home: 0, away: 0 }
+      : homeWins
+        ? { home: 1, away: 0 }
+        : { home: 0, away: 1 })
   const extra: PeriodColumn[] = [
-    { label: 'P', title: 'Prodloužení', home: otPair[0], away: otPair[1] },
+    { label: 'P', title: 'Prodloužení', home: otPair.home, away: otPair.away },
   ]
   if (match.suffix === 'sn') {
     extra.push({
@@ -151,12 +142,6 @@ export const monogram = (name: string): string => keyWord(name).charAt(0).toUppe
 /** Třípísmenná zkratka jako na TV tabuli: „HC Polička B" → „POL". */
 export const teamCode = (name: string): string =>
   keyWord(name).slice(0, 3).toLocaleUpperCase('cs-CZ')
-
-export const outcomeNote = (
-  outcome: Outcome | null,
-  suffix: MatchDetail['suffix'],
-): string | null =>
-  suffix ? SUFFIX_NOTE[suffix] : outcome === 'otLoss' ? 'po prodloužení nebo nájezdech' : null
 
 /**
  * Znak týmu — dekorativní (`alt=""`), jméno stojí vždy vedle jako text.

@@ -102,7 +102,7 @@ export function MatchTimeline({
               {period.score && (
                 <span className="text-sm font-bold tabular-nums">
                   <span className="sr-only">skóre </span>
-                  {period.score.replace(':', ' : ')}
+                  {`${period.score.home} : ${period.score.away}`}
                 </span>
               )}
             </h3>

@@ -3,13 +3,13 @@ import React from 'react'
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
 import { TeamPair } from '@/landing/features/matches/components/TeamPair'
 import type { MatchDetail } from '@/landing/features/matches/types'
+import { competitionLabel, SUFFIX_NOTE } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PatternBackground } from '@/landing/ui/PatternBackground'
 import { cn } from '@/lib/utils'
 
 import {
-  competitionLabel,
   Crest,
   dayMonth,
   hasScore,
@@ -17,7 +17,6 @@ import {
   ourSide,
   periodColumns,
   SrTitle,
-  SUFFIX_NOTE,
   weekday,
   winnerSide,
 } from './shared'

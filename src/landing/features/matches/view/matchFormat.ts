@@ -22,19 +22,86 @@ export const CLUB_LOGO: Photo = {
   updatedAt: null,
 }
 
+/** Přípona skóre: nájezdy, prodloužení, jinak nic. */
+export type ScoreSuffix = '' | 'sn' | 'pp'
+
+/** Slovní popis přípony skóre — jediný zdroj textu pro hlavičky, popis stránky a čtečky. */
+export const SUFFIX_NOTE = { pp: 'po prodloužení', sn: 'po nájezdech' } as const
+
+export const scoreSuffix = (match: Pick<Match, 'shootout' | 'overtime'>): ScoreSuffix =>
+  match.shootout ? 'sn' : match.overtime ? 'pp' : ''
+
+/**
+ * Poznámka k výsledku: přípona skóre, jinak u prohry po prodloužení / nájezdech
+ * obecný popis. Druhá větev je pojistka pro `Outcome` bez `suffix` (ručně
+ * složený view-model) — z jednoho zápasu `matchOutcome` `otLoss` bez přípony nedá.
+ */
+export const outcomeNote = (outcome: Outcome | null, suffix: ScoreSuffix): string | null =>
+  suffix ? SUFFIX_NOTE[suffix] : outcome === 'otLoss' ? 'po prodloužení nebo nájezdech' : null
+
+/** Dvojice čísel v pořadí domácí : hosté (třetiny, skóre úseku). */
+export type ScorePair = { home: number; away: number }
+
+/** „3:1" — jediné místo, které dvojici skládá do textu. */
+export const formatPair = (pair: ScorePair): string => `${pair.home}:${pair.away}`
+
+/** „Doma" / „Venku" z pohledu Čestic. */
+export const sideLabel = (weAreHome: boolean): string => (weAreHome ? 'Doma' : 'Venku')
+
+/**
+ * Soutěž pro hlavičky: „VČHL 2. ročník · Základní část", bez vyplněné
+ * soutěže „VČHL". Přijímá `competition` z view-modelu i z dokumentu.
+ */
+export const competitionLabel = (source: { competition?: string | null }): string =>
+  formatCompetition(source.competition) ?? 'VČHL'
+
+/**
+ * Zápas z pohledu diváka: dokument ukládá všechno jako NAŠE:SOUPEŘ, kdežto
+ * tabule, titulky i JSON-LD čtou domácí : hosté. Prohazuje se tady a nikde
+ * jinde — dřív to měl opsané `matchEvents`, `matchDetailView`, `matchTitle`
+ * a `matchScore`.
+ *
+ * Skóre je `null`, dokud ho zápas nemá (naplánovaný, zrušený, ručně bez
+ * výsledku); třetiny, kterým chybí číslo, se nepočítají.
+ */
+export type OrientedMatch = {
+  weAreHome: boolean
+  homeName: string
+  awayName: string
+  homeScore: number | null
+  awayScore: number | null
+  thirds: ScorePair[]
+}
+
+/** NAŠE:SOUPEŘ → domácí:hosté. */
+export const orientPair = <T>(weAreHome: boolean, ours: T, theirs: T): { home: T; away: T } =>
+  weAreHome ? { home: ours, away: theirs } : { home: theirs, away: ours }
+
+export const orient = (match: Match): OrientedMatch => {
+  const weAreHome = Boolean(match.home)
+  const names = orientPair(weAreHome, CLUB_NAME, opponentName(match))
+  const scores = orientPair(weAreHome, match.scoreOurs ?? null, match.scoreOpp ?? null)
+  return {
+    weAreHome,
+    homeName: names.home,
+    awayName: names.away,
+    homeScore: scores.home,
+    awayScore: scores.away,
+    thirds: (match.thirds ?? []).map((third) => orientPair(weAreHome, third.ours, third.opp)),
+  }
+}
+
 /** „HC Čestice × Soupeř" v pořadí domácí × hosté. */
-export const matchTitle = (match: Match): string =>
-  match.home ? `${CLUB_NAME} × ${opponentName(match)}` : `${opponentName(match)} × ${CLUB_NAME}`
+export const matchTitle = (match: Match): string => {
+  const { homeName, awayName } = orient(match)
+  return `${homeName} × ${awayName}`
+}
 
 /** Skóre v pořadí domácí : hosté (zápas ukládá góly z našeho pohledu). */
 export const matchScore = (match: Match): string => {
-  const ours = match.scoreOurs ?? 0
-  const theirs = match.scoreOpp ?? 0
-  return match.home ? `${ours}:${theirs}` : `${theirs}:${ours}`
+  const { homeScore, awayScore } = orient(match)
+  return `${homeScore ?? 0}:${awayScore ?? 0}`
 }
-
-export const scoreSuffix = (match: Match): '' | 'sn' | 'pp' =>
-  match.shootout ? 'sn' : match.overtime ? 'pp' : ''
 
 /** Výsledek z pohledu Čestic (jen u odehraných zápasů). */
 export const matchOutcome = (match: Match): Outcome => {

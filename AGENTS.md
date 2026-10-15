@@ -1048,8 +1048,9 @@ nemá tabuli, takže `h1` s titulkem je viditelný (jinak je u tabule jen
 Události osy se před seskupením stabilně řadí podle času (nájezd `SN` na
 konec) — ručně zadané neseřazené branky by jinak daly dvě skupiny téhož
 názvu a duplicitní React `key`. Změna tvaru view-modelu znamená novou verzi
-klíče `unstable_cache` (teď `['match-detail', 'v3']`), jinak by stará
-entry stránku shodila.
+klíče `unstable_cache` (teď `['match-detail', 'v4']`; v4: třetiny a skóre
+úseku osy jsou `{ home, away }`, ne řetězec „3:1“), jinak by stará entry
+stránku shodila.
 
 ## Výsledek zápasu a výpisy na `/zapasy`
 
