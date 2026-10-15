@@ -1,6 +1,5 @@
 import type { Field, GroupField } from 'payload'
-
-import deepMerge from '@/lib/deepMerge'
+import { deepMergeWithSourceArrays } from 'payload/shared'
 
 export type LinkAppearances = 'default' | 'outline'
 
@@ -135,5 +134,5 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
     })
   }
 
-  return deepMerge(linkResult, overrides)
+  return deepMergeWithSourceArrays(linkResult, overrides)
 }

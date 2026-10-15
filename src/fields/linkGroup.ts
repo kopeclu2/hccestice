@@ -1,6 +1,5 @@
 import type { ArrayField, Field } from 'payload'
-
-import deepMerge from '@/lib/deepMerge'
+import { deepMergeWithSourceArrays } from 'payload/shared'
 
 import type { LinkAppearances } from './link'
 import { link } from './link'
@@ -24,5 +23,5 @@ export const linkGroup: LinkGroupType = ({ appearances, overrides = {} } = {}) =
     },
   }
 
-  return deepMerge(generatedLinkGroup, overrides)
+  return deepMergeWithSourceArrays(generatedLinkGroup, overrides)
 }
