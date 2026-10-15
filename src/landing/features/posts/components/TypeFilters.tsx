@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { POST_TYPE_LABEL } from '@/landing/data/posts'
+import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { PillLink } from '@/landing/ui/PillLink'
 
 /**

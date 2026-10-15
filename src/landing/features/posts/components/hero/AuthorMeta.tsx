@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ArticleAuthor } from '@/landing/types'
+import type { ArticleAuthor } from '@/landing/features/posts/types'
 import { cn } from '@/lib/utils'
 
 /** Barevné ladění meta řádku; `plain` = bez avataru (hero Zápas). */

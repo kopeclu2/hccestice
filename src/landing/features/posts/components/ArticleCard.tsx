@@ -2,7 +2,7 @@ import { Newspaper } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import type { PostCard } from '@/landing/types'
+import type { PostCard } from '@/landing/features/posts/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardCta, CardShell } from '@/landing/ui/CardGrid'
 import { CardTitle } from '@/landing/ui/Heading'

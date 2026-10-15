@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ArticleDetail, ArticleHeroVariant } from '@/landing/types'
+import type { ArticleDetail, ArticleHeroVariant } from '@/landing/features/posts/types'
 
 import { HeroFoto } from './HeroFoto'
 import { HeroMatch } from './HeroMatch'

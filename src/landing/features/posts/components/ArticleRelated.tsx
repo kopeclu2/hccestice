@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { ArticleCard } from '@/landing/components/ArticleCard'
-import type { PostCard } from '@/landing/types'
+import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
+import type { PostCard } from '@/landing/features/posts/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'

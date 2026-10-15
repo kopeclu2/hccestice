@@ -1,8 +1,10 @@
 import React from 'react'
 
-import { ArticleCard } from '@/landing/components/ArticleCard'
-import { fetchDefaultPostPhoto, fetchLatestPosts, toPostCard } from '@/landing/data/posts'
-import type { Photo, PostCard } from '@/landing/types'
+import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
+import { fetchDefaultPostPhoto, fetchLatestPosts } from '@/landing/features/posts/data/posts'
+import type { PostCard } from '@/landing/features/posts/types'
+import { toPostCard } from '@/landing/features/posts/view/posts'
+import type { Photo } from '@/landing/types'
 import { ArcLines, GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'

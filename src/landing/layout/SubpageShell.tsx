@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { ArticleNav } from '@/landing/article/ArticleNav'
 import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
+import { ArticleNav } from '@/landing/features/posts/components/ArticleNav'
 import { PageCanvas, type PageCanvasProps } from '@/landing/ui/PageCanvas'
 import {
   PatternBackground,

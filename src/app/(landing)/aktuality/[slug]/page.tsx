@@ -4,22 +4,22 @@ import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { ArticleBody } from '@/landing/article/ArticleBody'
-import { ArticleRelated } from '@/landing/article/ArticleRelated'
-import { AuthorCard } from '@/landing/article/AuthorCard'
-import { RenderArticleHero } from '@/landing/article/hero/RenderArticleHero'
-import { TagRow } from '@/landing/article/TagRow'
+import { fetchSiteConfig } from '@/landing/data/site'
+import { fetchMatchSlugForPost } from '@/landing/features/matches/data/matchDetail'
+import { ArticleBody } from '@/landing/features/posts/components/ArticleBody'
+import { ArticleRelated } from '@/landing/features/posts/components/ArticleRelated'
+import { AuthorCard } from '@/landing/features/posts/components/AuthorCard'
+import { RenderArticleHero } from '@/landing/features/posts/components/hero/RenderArticleHero'
+import { TagRow } from '@/landing/features/posts/components/TagRow'
 import {
   fetchDefaultPostPhoto,
   fetchPostBySlug,
   fetchPostSlugs,
   fetchRelatedPostCards,
-  toArticleDetail,
-} from '@/landing/data/posts'
-import { fetchSiteConfig } from '@/landing/data/site'
-import { fetchMatchSlugForPost } from '@/landing/features/matches/data/matchDetail'
+} from '@/landing/features/posts/data/posts'
+import type { ArticleDetail } from '@/landing/features/posts/types'
+import { toArticleDetail } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import type { ArticleDetail } from '@/landing/types'
 import { PillLink } from '@/landing/ui/PillLink'
 import { generateMeta } from '@/lib/generateMeta'
 import { getMediaUrl } from '@/lib/getMediaUrl'

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
-import type { ArticleAuthor } from '@/landing/types'
+import type { ArticleAuthor } from '@/landing/features/posts/types'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 

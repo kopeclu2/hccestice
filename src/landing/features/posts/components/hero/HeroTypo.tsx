@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { ArticleDetail } from '@/landing/types'
+import type { ArticleDetail } from '@/landing/features/posts/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Watermark } from '@/landing/ui/Watermark'
 

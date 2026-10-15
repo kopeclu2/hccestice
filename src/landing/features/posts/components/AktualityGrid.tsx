@@ -1,9 +1,9 @@
 import { X } from 'lucide-react'
 import React from 'react'
 
-import { ArticleCard } from '@/landing/components/ArticleCard'
-import { POST_TYPE_LABEL } from '@/landing/data/posts'
-import type { PostCard } from '@/landing/types'
+import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
+import type { PostCard } from '@/landing/features/posts/types'
+import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { CardGrid } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PillLink } from '@/landing/ui/PillLink'
