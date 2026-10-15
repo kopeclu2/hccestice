@@ -18,19 +18,19 @@ const numeralVariants = cva('font-extrabold tabular-nums', {
   variants: {
     size: {
       /** Skóre v řádku výsledků — 20px. */
-      xs: 'text-xl tracking-[-0.02em]',
+      xs: 'text-xl tracking-subheading',
       /** Den v měsíci u mini karty — 24px. */
-      sm: 'text-2xl leading-none tracking-[-0.02em]',
+      sm: 'text-2xl leading-none tracking-subheading',
       /** Datum v rozpisu zápasů — 24px. */
-      md: 'text-2xl tracking-[-0.03em]',
+      md: 'text-2xl tracking-heading',
       /** Číslo dresu, monogram sponzora — 30px. */
-      lg: 'text-3xl tracking-[-0.03em]',
+      lg: 'text-3xl tracking-heading',
       /** Hodnota ve statistické kartě — 36px. */
-      xl: 'text-4xl leading-tight tracking-[-0.03em]',
+      xl: 'text-4xl leading-tight tracking-heading',
       /** Skóre karty zápasu, velká statistika sekce — 48px. */
-      '2xl': 'text-5xl leading-none tracking-[-0.04em]',
+      '2xl': 'text-5xl leading-none tracking-title-tight',
       /** Skóre v hero zápasu — plynulé, jediný fluidní případ na webu. */
-      score: 'text-[clamp(3.5rem,7vw,6.75rem)] leading-none tracking-[-0.04em]',
+      score: 'text-score leading-none tracking-title-tight',
     },
   },
   defaultVariants: { size: 'md' },

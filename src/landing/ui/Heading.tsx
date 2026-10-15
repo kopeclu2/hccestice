@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 
 /* ── h1 ─────────────────────────────────────────────────────────────────── */
 
-const pageTitleVariants = cva('leading-none tracking-[-0.035em]', {
+const pageTitleVariants = cva('leading-none tracking-title', {
   variants: {
     /**
      * Hero na home page a `HeroTypo` stojí na normálním řezu s bold
@@ -29,27 +29,27 @@ const pageTitleVariants = cva('leading-none tracking-[-0.035em]', {
     },
     size: {
       /** Hero home page — největší nadpis na webu. */
-      hero: 'text-[clamp(2.75rem,5.4vw,5.75rem)] leading-[0.98] tracking-[-0.04em]',
+      hero: 'text-title-hero leading-title-tight tracking-title-tight',
       /** Typografické hero článku — o něco volnější než hero home page. */
-      xl: 'text-[clamp(2.5rem,6.2vw,6rem)] leading-[0.98] tracking-[-0.04em]',
+      xl: 'text-title-xl leading-title-tight tracking-title-tight',
       /** Hero podstránky (Zápasy, Aktuality, Historie…). */
-      lg: 'text-[clamp(2.375rem,4.6vw,4.5rem)]',
+      lg: 'text-title-lg',
       /**
        * Hero varianta 2 (`blocks/HeroModern`) — claim stojí ve stejném bloku
        * pod CTA a perexem, takže na velikost `hero` nemá nárok: přerostl by
        * je a rozpadl by se na tři řádky.
        */
-      'hero-sm': 'text-[clamp(1.875rem,3.4vw,3.375rem)] leading-[1.02] tracking-[-0.035em]',
+      'hero-sm': 'text-title-hero-sm leading-title tracking-title',
       /** Nadpis článku / detailu — kratší řádky, těsnější leading. */
-      md: 'text-[clamp(2.125rem,4.2vw,4.125rem)] leading-[1.02]',
+      md: 'text-title-md leading-title',
       /**
        * Systémové stránky (404, 500, údržba) — o stupeň méně než `md`.
        * Nadpis tam stojí pod obřím `ErrorCode`, takže si nemůže brát stejný
        * důraz jako titulek podstránky, jinak si obojí konkuruje.
        */
-      system: 'text-[clamp(1.875rem,3.6vw,3.5rem)] leading-[1.02] tracking-[-0.03em]',
+      system: 'text-title-system leading-title tracking-heading',
       /** Nadpis v úzkém panelu přes fotku. */
-      sm: 'text-[clamp(1.625rem,2.6vw,2.5rem)] leading-[1.1] tracking-[-0.03em]',
+      sm: 'text-title-sm leading-[1.1] tracking-heading',
     },
     balance: {
       balance: 'text-balance',
@@ -84,11 +84,11 @@ const sectionTitleVariants = cva('', {
   variants: {
     size: {
       /** Základní nadpis sekce — 30px mobil, 36px desktop. */
-      md: 'text-3xl leading-tight font-bold tracking-[-0.025em] md:text-4xl',
+      md: 'text-3xl leading-tight font-bold tracking-tight md:text-4xl',
       /** Zvýrazněná sekce (CTA banner, hero panel) — 30px → 36px. */
-      lg: 'text-3xl leading-tight font-extrabold tracking-[-0.03em] text-pretty md:text-4xl',
+      lg: 'text-3xl leading-tight font-extrabold tracking-heading text-pretty md:text-4xl',
       /** Claim ve footeru — největší nadpis mimo hero, 30px → 48px. */
-      xl: 'text-3xl leading-tight font-extrabold tracking-[-0.035em] text-pretty md:text-5xl',
+      xl: 'text-3xl leading-tight font-extrabold tracking-title text-pretty md:text-5xl',
     },
   },
   defaultVariants: { size: 'md' },
@@ -114,11 +114,11 @@ const cardTitleVariants = cva('', {
       /** Nadpis v hustém výpisu (řádek zápasu, milník, mini dlaždice) — 18px. */
       xs: 'text-lg leading-tight font-extrabold',
       /** Nadpis karty v gridu (článek, galerie, trénink) — 20px. */
-      sm: 'text-xl leading-[1.15] font-extrabold tracking-[-0.02em] text-pretty',
+      sm: 'text-xl leading-heading font-extrabold tracking-subheading text-pretty',
       /** Základní nadpis karty — 24px. */
-      md: 'text-2xl font-bold tracking-[-0.025em]',
+      md: 'text-2xl font-bold tracking-tight',
       /** Nadpis velkého panelu — 24px mobil, 30px desktop. */
-      lg: 'text-2xl font-extrabold tracking-[-0.025em] md:text-3xl',
+      lg: 'text-2xl font-extrabold tracking-tight md:text-3xl',
     },
   },
   defaultVariants: { size: 'md' },

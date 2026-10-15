@@ -56,7 +56,7 @@ export function FeatureGridBlockComponent({ block }: { block: FeatureGridBlock }
           return (
             <Reveal delay={index * 0.06} key={item.id ?? index}>
               <div className="h-full rounded-tile bg-surface p-4.5 md:p-6 lg:p-6.5">
-                <span className="grid size-11 place-items-center rounded-2xl bg-lime text-ink [&_svg]:size-5.5">
+                <span className="grid size-11 place-items-center rounded-icon bg-lime text-ink [&_svg]:size-5.5">
                   <Icon strokeWidth={2.25} />
                 </span>
                 <CardTitle className="mt-4" size="xs">

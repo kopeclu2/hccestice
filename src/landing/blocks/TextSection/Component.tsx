@@ -20,7 +20,7 @@ export function TextSectionBlockComponent({ block }: { block: TextSectionBlockTy
           )}
         >
           <RichText
-            className="mx-0 max-w-none md:prose-lg prose-headings:tracking-[-0.025em] prose-a:text-club"
+            className="mx-0 max-w-none md:prose-lg prose-headings:tracking-tight prose-a:text-club"
             data={block.content}
             enableGutter={false}
           />

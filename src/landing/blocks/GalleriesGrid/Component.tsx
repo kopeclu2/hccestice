@@ -47,7 +47,7 @@ function GalleriesGridView({
               <TileBadge className="top-3 right-3" tone="lime">
                 {gallery.photoCount} fotek
               </TileBadge>
-              <div className="absolute inset-x-4 bottom-4 text-white">
+              <div className="absolute inset-x-4 bottom-4 text-on-contrast">
                 <div className="text-sm leading-snug font-semibold md:text-base">
                   {gallery.title}
                 </div>

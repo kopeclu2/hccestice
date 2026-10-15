@@ -34,7 +34,7 @@ export function NavPills({ items }: { items: NavItem[] }) {
         return (
           <PillLink
             aria-current={active ? 'page' : undefined}
-            className={active ? undefined : 'bg-white/60'}
+            className={active ? undefined : 'bg-on-contrast-subtle'}
             href={navHref(item, 'subpage')}
             key={item.label}
             size="sm"

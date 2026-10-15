@@ -13,7 +13,7 @@ import { Watermark } from './Watermark'
  * Perex hlavičky. Šířka se v handoffu liší podle délky textu, proto varianta
  * místo `max-w-*` v každé hlavičce zvlášť.
  */
-const perexVariants = cva('mt-4.5 text-lg leading-[1.55] text-pretty text-ink-soft', {
+const perexVariants = cva('mt-4.5 text-lg leading-copy text-pretty text-ink-soft', {
   variants: {
     width: { sm: 'max-w-140', md: 'max-w-150', lg: 'max-w-155' },
   },

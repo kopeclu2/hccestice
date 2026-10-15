@@ -54,7 +54,7 @@ function ClubView({ content }: { content: ClubContent }) {
       id="klub"
     >
       <Watermark
-        className="bottom-7 -left-10 text-watermark-md tracking-[-0.06em] text-ink/4"
+        className="bottom-7 -left-10 text-watermark-md tracking-display text-ink/4"
         outlined={false}
       >
         ČESTICE
@@ -85,7 +85,7 @@ function ClubView({ content }: { content: ClubContent }) {
             sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
           >
             <TileBadge className="top-3.5 left-3.5">{content.stadium.tag}</TileBadge>
-            <div className="absolute right-15 bottom-4 left-4 text-sm leading-normal font-medium text-white md:text-base">
+            <div className="absolute right-15 bottom-4 left-4 text-sm leading-normal font-medium text-on-contrast md:text-base">
               {content.stadium.caption}
             </div>
           </PhotoTile>
@@ -97,7 +97,7 @@ function ClubView({ content }: { content: ClubContent }) {
               sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
             >
               <TileBadge className="top-3 left-3">{content.youth.tag}</TileBadge>
-              <div className="absolute bottom-3.5 left-3.5 text-sm font-medium text-white md:text-base">
+              <div className="absolute bottom-3.5 left-3.5 text-sm font-medium text-on-contrast md:text-base">
                 {content.youth.caption}
               </div>
             </PhotoTile>

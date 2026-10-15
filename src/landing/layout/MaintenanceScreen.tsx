@@ -41,7 +41,7 @@ export function MaintenanceScreen({
           monogram prořezával perex i trajektorii puku. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-[clamp(15rem,34vw,32.5rem)] leading-none font-extrabold tracking-[-0.06em] whitespace-nowrap text-club/9 select-none text-stroke lg:block"
+        className="pointer-events-none absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-watermark-maintenance leading-none font-extrabold tracking-display whitespace-nowrap text-club/9 select-none text-stroke lg:block"
       >
         HCČ
       </div>
@@ -60,7 +60,7 @@ export function MaintenanceScreen({
           <HeadlineWithAccent>{maintenance.headline}</HeadlineWithAccent>
         </PageTitle>
 
-        <p className="mt-4.5 max-w-115 text-lg leading-[1.55] text-pretty text-ink-soft">
+        <p className="mt-4.5 max-w-115 text-lg leading-copy text-pretty text-ink-soft">
           {maintenance.perex}
         </p>
 

@@ -33,8 +33,8 @@ const pageCanvasVariants = cva('relative overflow-x-clip text-ink', {
     },
     /** Vodorovné odsazení stránky. */
     gutter: {
-      tight: 'px-[clamp(0.625rem,1.4vw,1.25rem)]',
-      wide: 'px-[clamp(0.875rem,3vw,2.5rem)]',
+      tight: 'px-gutter-tight',
+      wide: 'px-gutter',
       none: '',
     },
   },

@@ -106,8 +106,8 @@ export function PatternDevSwitcher() {
         </div>
       )}
 
-      <div className="fixed bottom-4.5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/14 bg-contrast/92 p-1.5 shadow-overlay backdrop-blur-xl md:flex">
-        <span className="px-2 pl-3 text-eyebrow font-bold tracking-[0.14em] text-white/50 uppercase">
+      <div className="fixed bottom-4.5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-on-contrast-glass bg-contrast/92 p-1.5 shadow-overlay backdrop-blur-xl md:flex">
+        <span className="px-2 pl-3 text-eyebrow font-bold tracking-[0.14em] text-on-contrast-faint uppercase">
           Vzor
         </span>
 
@@ -117,7 +117,7 @@ export function PatternDevSwitcher() {
               'cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors',
               state.variant === item.id
                 ? 'bg-lime text-ink'
-                : 'text-white/80 hover:bg-white/10 hover:text-white',
+                : 'text-on-contrast-soft hover:bg-on-contrast-wash hover:text-on-contrast',
             )}
             key={item.label}
             onClick={() => update({ variant: item.id })}
@@ -127,10 +127,10 @@ export function PatternDevSwitcher() {
           </button>
         ))}
 
-        <span className="mx-1 h-5 w-px bg-white/15" />
+        <span className="mx-1 h-5 w-px bg-on-contrast-glass" />
 
         <button
-          className="cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          className="cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap text-on-contrast-soft transition-colors hover:bg-on-contrast-wash hover:text-on-contrast"
           onClick={() => update({ fade: cycle(FADES, state.fade) })}
           title="Přepnout fade masku"
           type="button"
@@ -139,7 +139,7 @@ export function PatternDevSwitcher() {
         </button>
 
         <button
-          className="cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          className="cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap text-on-contrast-soft transition-colors hover:bg-on-contrast-wash hover:text-on-contrast"
           onClick={() => update({ tone: cycle(TONES, state.tone) })}
           title="Přepnout barvu vzoru"
           type="button"

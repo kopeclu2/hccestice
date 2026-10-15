@@ -35,12 +35,12 @@ export function DownloadsBlockComponent({ block }: { block: DownloadsBlock }) {
           )}
           {items.map((item, index) => (
             <a
-              className="-mx-2 flex items-center gap-4 rounded-xl border-b border-line-soft px-2 py-3.5 transition-colors last:border-b-0 hover:bg-tint-hover"
+              className="-mx-2 flex items-center gap-4 rounded-item border-b border-line-soft px-2 py-3.5 transition-colors last:border-b-0 hover:bg-tint-hover"
               download
               href={getMediaUrl(item.file.url, item.file.updatedAt)}
               key={item.id ?? index}
             >
-              <span className="rounded-lg bg-chip px-2.5 py-1.5 text-eyebrow font-bold tracking-wide text-club-dark">
+              <span className="rounded-chip bg-chip px-2.5 py-1.5 text-eyebrow font-bold tracking-wide text-club-dark">
                 {fileExtension(item.file.filename)}
               </span>
               <span className="flex-1 text-sm font-semibold md:text-base">

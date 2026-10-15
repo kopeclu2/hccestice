@@ -86,7 +86,7 @@ export function TileArrow({ className, size = 'lg' }: { className?: string; size
     <span
       aria-hidden
       className={cn(
-        'absolute grid place-items-center rounded-full bg-white text-ink transition-colors group-hover:bg-lime',
+        'absolute grid place-items-center rounded-full bg-on-contrast text-ink transition-colors group-hover:bg-lime',
         size === 'lg' ? 'size-9.5 [&_svg]:size-4' : 'size-8 [&_svg]:size-3.5',
         className,
       )}
@@ -108,7 +108,11 @@ export function TileBadge({
 }) {
   return (
     <Badge
-      className={cn('absolute', tone === 'white' && 'bg-white/92 font-semibold', className)}
+      className={cn(
+        'absolute',
+        tone === 'white' && 'bg-on-contrast-strong font-semibold',
+        className,
+      )}
       size={tone === 'white' ? 'xs' : 'sm'}
       variant={tone === 'white' ? 'chip' : 'lime'}
     >

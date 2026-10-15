@@ -30,7 +30,7 @@ export function AnnouncementBar({
     <div
       className={cn(
         'flex items-center gap-3.5 rounded-tile px-5.5 py-3.5',
-        tone === 'warning' ? 'bg-lime text-ink' : 'bg-club text-white',
+        tone === 'warning' ? 'bg-lime text-ink' : 'bg-club text-on-contrast',
       )}
       role="status"
     >
@@ -46,7 +46,7 @@ export function AnnouncementBar({
       {dismissible && (
         <button
           aria-label="Zavřít oznámení"
-          className="grid size-7 flex-none cursor-pointer place-items-center rounded-full transition-colors hover:bg-black/10 [&_svg]:size-4"
+          className="grid size-7 flex-none cursor-pointer place-items-center rounded-full transition-colors hover:bg-scrim/10 [&_svg]:size-4"
           onClick={() => setDismissed(true)}
           type="button"
         >

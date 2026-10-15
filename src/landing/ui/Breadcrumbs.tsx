@@ -16,8 +16,8 @@ export type BreadcrumbTone = 'page' | 'photo' | 'panel' | 'light'
 const linkClass: Record<BreadcrumbTone, string> = {
   page: 'text-club-dark hover:text-club',
   light: 'text-club-dark hover:text-club',
-  photo: 'text-white/85 hover:text-lime',
-  panel: 'text-white/75 hover:text-lime',
+  photo: 'text-on-contrast-strong hover:text-lime',
+  panel: 'text-on-contrast-soft hover:text-lime',
 }
 
 const currentClass: Record<BreadcrumbTone, string> = {
@@ -30,8 +30,8 @@ const currentClass: Record<BreadcrumbTone, string> = {
 const separatorClass: Record<BreadcrumbTone, string> = {
   page: 'opacity-50',
   light: 'text-faint/50',
-  photo: 'text-white/50',
-  panel: 'text-white/50',
+  photo: 'text-on-contrast-faint',
+  panel: 'text-on-contrast-faint',
 }
 
 /**

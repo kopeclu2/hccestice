@@ -53,7 +53,7 @@ export function HistoryBlockComponent({ block }: { block: LandingHistoryBlock })
 function HistoryView({ content }: { content: HistoryContent }) {
   return (
     <SectionShell id="historie">
-      <Watermark className="-top-20 -right-7.5 text-watermark-2xl tracking-[-0.06em] text-club/10">
+      <Watermark className="-top-20 -right-7.5 text-watermark-2xl tracking-display text-club/10">
         {content.watermark}
       </Watermark>
 
@@ -75,10 +75,10 @@ function HistoryView({ content }: { content: HistoryContent }) {
         </div>
       </Reveal>
 
-      <div className="mt-14 grid grid-cols-1 items-center gap-[clamp(1.5rem,4vw,4rem)] md:grid-cols-[1.15fr_0.85fr]">
+      <div className="mt-14 grid grid-cols-1 items-center gap-panel md:grid-cols-[1.15fr_0.85fr]">
         <Reveal>
           {/* perex i doplňkový odstavec drží stejnou škálu jako hlavičky podstránek */}
-          <p className="text-lg leading-[1.55] text-pretty text-ink-soft">{content.lead}</p>
+          <p className="text-lg leading-copy text-pretty text-ink-soft">{content.lead}</p>
           <p className="mt-4 leading-relaxed text-pretty text-dim">{content.text}</p>
 
           <div className="mt-6.5 flex flex-wrap items-center gap-2">

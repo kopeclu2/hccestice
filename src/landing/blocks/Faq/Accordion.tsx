@@ -19,7 +19,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
 
   return (
     <SectionShell>
-      <Watermark className="top-10 -left-10 text-watermark-sm tracking-[-0.04em] text-ink/9">
+      <Watermark className="top-10 -left-10 text-watermark-sm tracking-title-tight text-ink/9">
         OTÁZKY?
       </Watermark>
 

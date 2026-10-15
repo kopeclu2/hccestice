@@ -115,7 +115,7 @@ function SponsorsView({
 
       {/* pás log přes celou šířku sekce (bez vnitřního odsazení) */}
       <Reveal delay={0.1}>
-        <div className="-mx-[clamp(0.875rem,3vw,2.5rem)] mt-11 flex flex-col gap-3.5 md:mt-13">
+        <div className="-mx-gutter mt-11 flex flex-col gap-3.5 md:mt-13">
           {rows.map((row, index) => (
             <MarqueeRow key={index} reverse={index % 2 === 1} sponsors={row} />
           ))}
