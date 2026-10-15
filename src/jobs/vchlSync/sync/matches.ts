@@ -227,21 +227,21 @@ type Item = {
   detail: AhlMatchDetail | null
 }
 
-export async function syncSeasonMatches(
+type SeasonDocs = {
+  /** zápasy mužů v sezóně v DB */
+  seasonDocs: Match[]
+  /** podle `ahl.matchId`, včetně zápasů přeřazených do jiné sezóny */
+  byMatchId: Map<number, Match>
+}
+
+/** Zápasy sezóny v DB a zápasy se známým `matchId` odkudkoli. */
+async function loadSeasonDocs(
   ctx: SyncContext,
   season: SeasonCtx,
-  lists: SeasonLists,
-  opponents: OpponentResolver,
-  players: PlayerResolver,
-  drafts: DraftCandidate[],
-): Promise<SeasonMatchState> {
-  const entries = mergeLists(lists)
-  const allListedIds = new Set(
-    [...(lists.rozpis ?? []), ...(lists.vysledky ?? [])].map((m) => m.matchId),
-  )
-
-  // Zápasy sezóny v DB (muži). `matchId` je unikátní napříč sezónami, takže
-  // se hledá i mimo sezónu — zápas přeřazený do jiné sezóny se nezduplikuje.
+  entries: ListEntry[],
+): Promise<SeasonDocs> {
+  // `matchId` je unikátní napříč sezónami, takže se hledá i mimo sezónu —
+  // zápas přeřazený do jiné sezóny se nezduplikuje.
   const seasonDocs = (
     await ctx.payload.find({
       collection: 'matches',
@@ -262,6 +262,19 @@ export async function syncSeasonMatches(
     })
     for (const d of found.docs) byMatchId.set(d.ahl!.matchId!, d)
   }
+  return { seasonDocs, byMatchId }
+}
+
+/**
+ * Spáruje zápasy z AHL s dokumenty v CMS a vyřeší soupeře (neznámý se tady
+ * zakládá). Zápas odpojený správcem se přeskočí s varováním.
+ */
+async function pairEntries(
+  ctx: SyncContext,
+  entries: ListEntry[],
+  { seasonDocs, byMatchId }: SeasonDocs,
+  opponents: OpponentResolver,
+): Promise<Item[]> {
   // Legacy párování jen pro zápasy, které job nikdy nezapsal (`syncedAt` se
   // nastavuje při každém zápisu, včetně prvního spárování, a pole je readOnly).
   // Zápas, kterému správce smazal `matchId`, má `syncedAt` — je ODPOJENÝ a
@@ -271,7 +284,6 @@ export async function syncSeasonMatches(
   const detachedPool = seasonDocs.filter((d) => d.ahl?.matchId == null && d.ahl?.syncedAt)
   const claimed = new Set<number>()
 
-  // --- 1. spárování + soupeři ---------------------------------------------
   const items: Item[] = []
   for (const entry of entries) {
     const base = entry.vysledky ?? entry.rozpis!
@@ -304,238 +316,385 @@ export async function syncSeasonMatches(
     const opponentId = await opponents.resolve(opponentName)
     items.push({ entry, weAreHome, opponentName, existing, legacy, opponentId, detail: null })
   }
+  return items
+}
 
-  // --- 2. detail ------------------------------------------------------------
-  if (ctx.settings.parts.matchDetail) {
-    await span('vchl.matchDetail', async () => {
-      for (const it of items) {
-        const played = Boolean(it.entry.vysledky?.score)
-        const date = it.existing
-          ? new Date(it.existing.date)
-          : resolveMatchDate(it.entry, null, null)
-        const recent = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
-        const hasReport = Boolean(it.existing?.ahl?.hasReport)
-        const outdated = isDetailOutdated(it.existing)
-        if (!shouldFetchDetail({ played, recent, hasReport, outdated, trigger: ctx.trigger }))
-          continue
-        const detail = await fetchMatchDetail(ctx, it.entry.matchId)
-        if (!detail) continue
-        const side = ourSide(detail)
-        if (!side || (side === 'home') !== it.weAreHome) {
-          ctx.warn({
-            type: 'other',
-            ref: String(it.entry.matchId),
-            message: `Detail zápasu ${it.entry.matchId} nepatří týmu Čestice (${detail.home.name} – ${detail.away.name}), ignoruji.`,
-          })
-          continue
-        }
-        it.detail = detail
-      }
-    })
-  }
-
-  // --- 3. hráči (před zápisem branek a sestav, aby šly vyplnit vazby) -------
-  if (ctx.settings.parts.matchDetail) {
-    await span('vchl.players', async () => {
-      for (const it of items) {
-        if (!it.detail) continue
-        await players.ensure(ourCandidates(it.detail, it.weAreHome ? 'home' : 'away'))
-      }
-    })
-  }
-
-  // --- 4. zápis zápasů ------------------------------------------------------
-  const details = new Map<number, AhlMatchDetail>()
-  const finalById = new Map<number, Match>(seasonDocs.map((d) => [d.id, d]))
-
-  await span('vchl.matches', async () => {
+/** Stáhne detail odehraných zápasů, které to v tomto běhu potřebují. */
+async function fetchDetails(ctx: SyncContext, items: Item[]): Promise<void> {
+  if (!ctx.settings.parts.matchDetail) return
+  await span('vchl.matchDetail', async () => {
     for (const it of items) {
-      const { entry, existing, detail } = it
-      const base = entry.vysledky ?? entry.rozpis!
-      const side = it.weAreHome ? 'home' : 'away'
-      const date = resolveMatchDate(entry, detail, existing)
-      const score = entry.vysledky?.score ?? null
-
-      // Soupeř: u spárovaného zápasu zůstává existující, pokud jde o tentýž
-      // tým pod jiným jménem (duplicity v CMS) — jinak by se zápasy přepínaly
-      // mezi „HC Skuteč" a „Skuteč".
-      let opponent = it.opponentId
-      const existingOpp = relId(existing?.opponent)
-      if (existingOpp != null && existingOpp !== opponent) {
-        const a = opponents.byId(existingOpp)
-        if (a && keysIntersect(ahlNameKeys(it.opponentName), opponentKeys(a)))
-          opponent = existingOpp
-      }
-
-      const desired: Record<string, unknown> = {
-        date: date.toISOString(),
-        competition: base.competition || undefined,
-        opponent,
-        home: it.weAreHome,
-        // Výpis místo nastaví jen u nového zápasu nebo prázdné hodnoty; jinak
-        // by přepsal přesnější místo z detailu stažené v dřívějším běhu.
-        venue: detail?.venue ?? (!existing?.venue ? (base.venue ?? undefined) : undefined),
-      }
-      const status = desiredStatus(
-        existing?.status,
-        Boolean(score),
-        Boolean(lists.rozpis && entry.rozpis),
-      )
-      if (status) desired.status = status
-      if (lists.vysledky) {
-        if (score) {
-          desired.scoreOurs = it.weAreHome ? score.home : score.away
-          desired.scoreOpp = it.weAreHome ? score.away : score.home
-          desired.overtime = score.suffix === 'pp'
-          desired.shootout = score.suffix === 'sn'
-        }
-      }
-      if (detail) {
-        desired.thirds = buildThirds(detail, side)
-        desired.goals = buildGoals(detail, side, players)
-        desired.lineup = buildLineup(detail, side, players)
-        desired.stats = buildMatchStats(detail, side)
-        if (detail.penalties === null) {
-          // Nečitelná tabulka Tresty neblokuje branky ani sestavu: uložené tresty
-          // zůstanou, jen vznikne varování.
-          ctx.warn({
-            type: 'other',
-            ref: `penalties:${entry.matchId}`,
-            message: `Zápas ${entry.matchId} (${it.opponentName}): tabulku trestů se nepodařilo přečíst (${detail.penaltiesError ?? 'neznámá chyba'}), tresty ponechány beze změny.`,
-          })
-        } else {
-          desired.penalties = buildPenalties(detail, side, players)
-          const mismatch = penaltyMinutesMismatch(detail, side)
-          if (mismatch) {
-            ctx.warn({
-              type: 'other',
-              ref: `pim:${entry.matchId}`,
-              message: `Zápas ${entry.matchId} (${it.opponentName}): tresty ze zápisu dávají ${mismatch.penalties} min, sestava ${mismatch.pim} TM.`,
-            })
-          }
-        }
-        details.set(entry.matchId, detail)
-      }
-
-      const hasReport = detail ? detail.hasReport : Boolean(existing?.ahl?.hasReport)
-      const { patch, fields, before, after } = buildPatch(
-        existing as unknown as Record<string, unknown>,
-        desired,
-      )
-      // Verze zpracování se zvedá jen po staženém detailu; bez něj zůstává stará
-      // (nikdy se nepřepisuje na null). Změna verze musí vyvolat zápis `ahl`
-      // i tehdy, když se `penalties`/`stats` neliší (zápas bez trestů).
-      const detailVersion = nextDetailVersion(existing, detail)
-      const ahlChanged = ahlNeedsWrite(existing, {
-        matchId: entry.matchId,
-        hasReport,
-        detailVersion,
-      })
-      const label = `${utcToPragueLocal(date).day} ${it.weAreHome ? 'doma' : 'venku'} ${it.opponentName}`
-
-      if (existing && fields.length === 0 && !ahlChanged) {
+      const played = Boolean(it.entry.vysledky?.score)
+      const date = it.existing ? new Date(it.existing.date) : resolveMatchDate(it.entry, null, null)
+      const recent = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
+      const hasReport = Boolean(it.existing?.ahl?.hasReport)
+      const outdated = isDetailOutdated(it.existing)
+      if (!shouldFetchDetail({ played, recent, hasReport, outdated, trigger: ctx.trigger }))
+        continue
+      const detail = await fetchMatchDetail(ctx, it.entry.matchId)
+      if (!detail) continue
+      const side = ourSide(detail)
+      if (!side || (side === 'home') !== it.weAreHome) {
+        ctx.warn({
+          type: 'other',
+          ref: String(it.entry.matchId),
+          message: `Detail zápasu ${it.entry.matchId} nepatří týmu Čestice (${detail.home.name} – ${detail.away.name}), ignoruji.`,
+        })
         continue
       }
+      it.detail = detail
+    }
+  })
+}
 
-      // Změna termínu u zápasu, který už byl s AHL spárovaný, je důvod
-      // k upozornění (hráči a diváci se musí dozvědět nový čas).
-      if (
-        existing?.ahl?.matchId != null &&
-        fields.includes('date') &&
-        isReschedule(existing.date, date)
-      ) {
+/** Hráči před zápisem branek a sestav, aby šly vyplnit vazby. */
+async function ensurePlayers(
+  ctx: SyncContext,
+  items: Item[],
+  players: PlayerResolver,
+): Promise<void> {
+  if (!ctx.settings.parts.matchDetail) return
+  await span('vchl.players', async () => {
+    for (const it of items) {
+      if (!it.detail) continue
+      await players.ensure(ourCandidates(it.detail, it.weAreHome ? 'home' : 'away'))
+    }
+  })
+}
+
+/**
+ * Soupeř zápasu: u spárovaného zápasu zůstává existující, pokud jde o tentýž
+ * tým pod jiným jménem (duplicity v CMS) — jinak by se zápasy přepínaly
+ * mezi „HC Skuteč" a „Skuteč".
+ */
+function pickOpponent(it: Item, opponents: OpponentResolver): number {
+  const existingOpp = relId(it.existing?.opponent)
+  if (existingOpp != null && existingOpp !== it.opponentId) {
+    const a = opponents.byId(existingOpp)
+    if (a && keysIntersect(ahlNameKeys(it.opponentName), opponentKeys(a))) return existingOpp
+  }
+  return it.opponentId
+}
+
+/**
+ * Pole zápasu, jak je chce AHL. Perspektiva se tady převrací: AHL má skóre
+ * domácí:hosté, CMS NAŠE:SOUPEŘ (`scoreOurs`/`scoreOpp`).
+ */
+function buildDesired(
+  ctx: SyncContext,
+  it: Item,
+  lists: SeasonLists,
+  opponent: number,
+  date: Date,
+  players: PlayerResolver,
+): Record<string, unknown> {
+  const { entry, existing, detail } = it
+  const base = entry.vysledky ?? entry.rozpis!
+  const side = it.weAreHome ? 'home' : 'away'
+  const score = entry.vysledky?.score ?? null
+
+  const desired: Record<string, unknown> = {
+    date: date.toISOString(),
+    competition: base.competition || undefined,
+    opponent,
+    home: it.weAreHome,
+    // Výpis místo nastaví jen u nového zápasu nebo prázdné hodnoty; jinak
+    // by přepsal přesnější místo z detailu stažené v dřívějším běhu.
+    venue: detail?.venue ?? (!existing?.venue ? (base.venue ?? undefined) : undefined),
+  }
+  const status = desiredStatus(
+    existing?.status,
+    Boolean(score),
+    Boolean(lists.rozpis && entry.rozpis),
+  )
+  if (status) desired.status = status
+  if (lists.vysledky) {
+    if (score) {
+      desired.scoreOurs = it.weAreHome ? score.home : score.away
+      desired.scoreOpp = it.weAreHome ? score.away : score.home
+      desired.overtime = score.suffix === 'pp'
+      desired.shootout = score.suffix === 'sn'
+    }
+  }
+  if (detail) {
+    desired.thirds = buildThirds(detail, side)
+    desired.goals = buildGoals(detail, side, players)
+    desired.lineup = buildLineup(detail, side, players)
+    desired.stats = buildMatchStats(detail, side)
+    if (detail.penalties === null) {
+      // Nečitelná tabulka Tresty neblokuje branky ani sestavu: uložené tresty
+      // zůstanou, jen vznikne varování.
+      ctx.warn({
+        type: 'other',
+        ref: `penalties:${entry.matchId}`,
+        message: `Zápas ${entry.matchId} (${it.opponentName}): tabulku trestů se nepodařilo přečíst (${detail.penaltiesError ?? 'neznámá chyba'}), tresty ponechány beze změny.`,
+      })
+    } else {
+      desired.penalties = buildPenalties(detail, side, players)
+      const mismatch = penaltyMinutesMismatch(detail, side)
+      if (mismatch) {
         ctx.warn({
-          type: 'rescheduled',
-          ref: String(entry.matchId),
-          message: `Zápas s ${it.opponentName} přeložen: ${utcToPragueLocal(existing.date).day} ${
-            utcToPragueLocal(existing.date).time
-          } → ${utcToPragueLocal(date).day} ${utcToPragueLocal(date).time}.`,
+          type: 'other',
+          ref: `pim:${entry.matchId}`,
+          message: `Zápas ${entry.matchId} (${it.opponentName}): tresty ze zápisu dávají ${mismatch.penalties} min, sestava ${mismatch.pim} TM.`,
         })
-      }
-
-      const ahl = {
-        matchId: entry.matchId,
-        hasReport,
-        draftPostCreated: Boolean(existing?.ahl?.draftPostCreated),
-        ...(detailVersion != null ? { detailVersion } : {}),
-        syncedAt: ctx.now.toISOString(),
-      }
-
-      let finalDoc: Match
-      if (existing) {
-        const full = { ...patch, ahl }
-        // Hook `displayTitle` skládá titulek z `opponent` a `home`; bez nich
-        // v datech by přepsal titulek zápasu na „soupeř x HC Čestice".
-        if (fields.length > 0) Object.assign(full, { opponent, home: it.weAreHome })
-        const changedFields = ahlChanged ? [...fields, 'ahl'] : fields
-        ctx.recordDiff({
-          entity: 'matches',
-          key: `ahl:${entry.matchId}`,
-          label: it.legacy ? `${label} (spárováno podle dne a soupeře)` : label,
-          action: 'update',
-          fields: changedFields,
-          before: ahlChanged ? { ...before, ahl: existing.ahl ?? null } : before,
-          after: ahlChanged
-            ? { ...after, ahl: { matchId: ahl.matchId, hasReport, detailVersion } }
-            : after,
-        })
-        await ctx.update('matches', existing.id, full)
-        ctx.changes.matchesUpdated += 1
-        finalDoc = { ...existing, ...full } as unknown as Match
-        finalById.set(existing.id, finalDoc)
-      } else {
-        const data: Record<string, unknown> = {
-          status: 'scheduled',
-          ...Object.fromEntries(Object.entries(desired).filter(([, v]) => v !== undefined)),
-          season: season.id,
-          team: ctx.teamId,
-          ahl,
-        }
-        ctx.recordDiff({
-          entity: 'matches',
-          key: `ahl:${entry.matchId}`,
-          label,
-          action: 'create',
-          fields: Object.keys(data),
-          after: data,
-        })
-        const created = await ctx.create('matches', data)
-        ctx.changes.matchesCreated += 1
-        finalDoc = { ...created, ...data } as unknown as Match
-        // V nanečisto nemá nový zápas id; záporný klíč ho jen odliší od ostatních.
-        finalById.set(Number.isNaN(created.id) ? -entry.matchId : created.id, finalDoc)
-      }
-
-      // Koncept reportáže: jen u zápasu, který se v tomto běhu poprvé
-      // dostal do stavu „odehráno se zápisem" a je čerstvý. Bez limitu stáří
-      // by backfill historie založil koncept ke každému zápasu minulé sezóny.
-      const wasDone = existing?.status === 'played' && Boolean(existing.ahl?.hasReport)
-      const fresh = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
-      if (
-        detail &&
-        detail.hasReport &&
-        finalDoc.status === 'played' &&
-        !wasDone &&
-        fresh &&
-        !ahl.draftPostCreated
-      ) {
-        drafts.push({ doc: finalDoc, detail })
       }
     }
+  }
+  return desired
+}
 
-    // --- 5. zápasy, které z AHL zmizely (nemažou se) -------------------------
-    if (lists.rozpis && lists.vysledky) {
-      for (const d of seasonDocs) {
-        const id = d.ahl?.matchId
-        if (id != null && !allListedIds.has(id)) {
-          ctx.warn({
-            type: 'missing-on-ahl',
-            ref: String(id),
-            message: `Zápas ${id} (${utcToPragueLocal(d.date).day}) už na AHL není v rozpisu ani ve výsledcích. Nemazáno.`,
-          })
+/**
+ * Změna termínu u zápasu, který už byl s AHL spárovaný, je důvod
+ * k upozornění (hráči a diváci se musí dozvědět nový čas).
+ */
+function warnIfRescheduled(ctx: SyncContext, it: Item, date: Date, fields: string[]): void {
+  const { entry, existing } = it
+  if (
+    existing?.ahl?.matchId != null &&
+    fields.includes('date') &&
+    isReschedule(existing.date, date)
+  ) {
+    ctx.warn({
+      type: 'rescheduled',
+      ref: String(entry.matchId),
+      message: `Zápas s ${it.opponentName} přeložen: ${utcToPragueLocal(existing.date).day} ${
+        utcToPragueLocal(existing.date).time
+      } → ${utcToPragueLocal(date).day} ${utcToPragueLocal(date).time}.`,
+    })
+  }
+}
+
+type MatchAhl = {
+  matchId: number
+  hasReport: boolean
+  draftPostCreated: boolean
+  detailVersion?: number
+  syncedAt: string
+}
+
+/** Co se zapíše do zápasu a jak se to ohlásí v diffu; výsledek `buildPatch` + `ahl`. */
+type WritePlan = {
+  it: Item
+  label: string
+  desired: Record<string, unknown>
+  opponent: number
+  patch: Record<string, unknown>
+  fields: string[]
+  before: Record<string, unknown>
+  after: Record<string, unknown>
+  ahl: MatchAhl
+  ahlChanged: boolean
+}
+
+async function updateMatch(
+  ctx: SyncContext,
+  existing: Match,
+  plan: WritePlan,
+  finalById: Map<number, Match>,
+): Promise<Match> {
+  const { it, label, patch, fields, before, after, ahl, ahlChanged, opponent } = plan
+  const full = { ...patch, ahl }
+  // Hook `displayTitle` skládá titulek z `opponent` a `home`; bez nich
+  // v datech by přepsal titulek zápasu na „soupeř x HC Čestice".
+  if (fields.length > 0) Object.assign(full, { opponent, home: it.weAreHome })
+  const changedFields = ahlChanged ? [...fields, 'ahl'] : fields
+  ctx.recordDiff({
+    entity: 'matches',
+    key: `ahl:${it.entry.matchId}`,
+    label: it.legacy ? `${label} (spárováno podle dne a soupeře)` : label,
+    action: 'update',
+    fields: changedFields,
+    before: ahlChanged ? { ...before, ahl: existing.ahl ?? null } : before,
+    after: ahlChanged
+      ? {
+          ...after,
+          ahl: {
+            matchId: ahl.matchId,
+            hasReport: ahl.hasReport,
+            detailVersion: ahl.detailVersion ?? null,
+          },
         }
-      }
+      : after,
+  })
+  await ctx.update('matches', existing.id, full)
+  ctx.changes.matchesUpdated += 1
+  const finalDoc = { ...existing, ...full } as Match
+  finalById.set(existing.id, finalDoc)
+  return finalDoc
+}
+
+async function createMatch(
+  ctx: SyncContext,
+  season: SeasonCtx,
+  plan: WritePlan,
+  finalById: Map<number, Match>,
+): Promise<Match> {
+  const { it, label, desired, ahl } = plan
+  const data: Record<string, unknown> = {
+    status: 'scheduled',
+    ...Object.fromEntries(Object.entries(desired).filter(([, v]) => v !== undefined)),
+    season: season.id,
+    team: ctx.teamId,
+    ahl,
+  }
+  ctx.recordDiff({
+    entity: 'matches',
+    key: `ahl:${it.entry.matchId}`,
+    label,
+    action: 'create',
+    fields: Object.keys(data),
+    after: data,
+  })
+  const created = await ctx.create('matches', data)
+  ctx.changes.matchesCreated += 1
+  const finalDoc = { ...created, ...data } as unknown as Match
+  // V nanečisto nemá nový zápas id; záporný klíč ho jen odliší od ostatních.
+  finalById.set(Number.isNaN(created.id) ? -it.entry.matchId : created.id, finalDoc)
+  return finalDoc
+}
+
+/**
+ * Koncept reportáže: jen u zápasu, který se v tomto běhu poprvé dostal do
+ * stavu „odehráno se zápisem" a je čerstvý. Bez limitu stáří by backfill
+ * historie založil koncept ke každému zápasu minulé sezóny.
+ */
+function collectDraft(
+  ctx: SyncContext,
+  it: Item,
+  date: Date,
+  finalDoc: Match,
+  ahl: MatchAhl,
+  drafts: DraftCandidate[],
+): void {
+  const { existing, detail } = it
+  const wasDone = existing?.status === 'played' && Boolean(existing.ahl?.hasReport)
+  const fresh = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
+  if (
+    detail &&
+    detail.hasReport &&
+    finalDoc.status === 'played' &&
+    !wasDone &&
+    fresh &&
+    !ahl.draftPostCreated
+  ) {
+    drafts.push({ doc: finalDoc, detail })
+  }
+}
+
+type WriteEnv = {
+  ctx: SyncContext
+  season: SeasonCtx
+  lists: SeasonLists
+  opponents: OpponentResolver
+  players: PlayerResolver
+  drafts: DraftCandidate[]
+  details: Map<number, AhlMatchDetail>
+  finalById: Map<number, Match>
+}
+
+/** Zapíše (nebo založí) jeden zápas; beze změny dat nezapíše nic. */
+async function writeMatch(env: WriteEnv, it: Item): Promise<void> {
+  const { ctx, lists, opponents, players, details, finalById } = env
+  const { entry, existing, detail } = it
+  const date = resolveMatchDate(entry, detail, existing)
+
+  const opponent = pickOpponent(it, opponents)
+  const desired = buildDesired(ctx, it, lists, opponent, date, players)
+  if (detail) details.set(entry.matchId, detail)
+
+  const hasReport = detail ? detail.hasReport : Boolean(existing?.ahl?.hasReport)
+  const { patch, fields, before, after } = buildPatch(existing ? { ...existing } : null, desired)
+  // Verze zpracování se zvedá jen po staženém detailu; bez něj zůstává stará
+  // (nikdy se nepřepisuje na null). Změna verze musí vyvolat zápis `ahl`
+  // i tehdy, když se `penalties`/`stats` neliší (zápas bez trestů).
+  const detailVersion = nextDetailVersion(existing, detail)
+  const ahlChanged = ahlNeedsWrite(existing, { matchId: entry.matchId, hasReport, detailVersion })
+  const label = `${utcToPragueLocal(date).day} ${it.weAreHome ? 'doma' : 'venku'} ${it.opponentName}`
+
+  if (existing && fields.length === 0 && !ahlChanged) return
+
+  warnIfRescheduled(ctx, it, date, fields)
+
+  const ahl: MatchAhl = {
+    matchId: entry.matchId,
+    hasReport,
+    draftPostCreated: Boolean(existing?.ahl?.draftPostCreated),
+    ...(detailVersion != null ? { detailVersion } : {}),
+    syncedAt: ctx.now.toISOString(),
+  }
+  const plan: WritePlan = {
+    it,
+    label,
+    desired,
+    opponent,
+    patch,
+    fields,
+    before,
+    after,
+    ahl,
+    ahlChanged,
+  }
+  const finalDoc = existing
+    ? await updateMatch(ctx, existing, plan, finalById)
+    : await createMatch(ctx, env.season, plan, finalById)
+  collectDraft(ctx, it, date, finalDoc, ahl, env.drafts)
+}
+
+/** Zápasy, které z AHL zmizely, se nemažou — jen se ohlásí. */
+function warnMissingOnAhl(
+  ctx: SyncContext,
+  seasonDocs: Match[],
+  allListedIds: Set<number>,
+  lists: SeasonLists,
+): void {
+  if (!lists.rozpis || !lists.vysledky) return
+  for (const d of seasonDocs) {
+    const id = d.ahl?.matchId
+    if (id != null && !allListedIds.has(id)) {
+      ctx.warn({
+        type: 'missing-on-ahl',
+        ref: String(id),
+        message: `Zápas ${id} (${utcToPragueLocal(d.date).day}) už na AHL není v rozpisu ani ve výsledcích. Nemazáno.`,
+      })
     }
+  }
+}
+
+export async function syncSeasonMatches(
+  ctx: SyncContext,
+  season: SeasonCtx,
+  lists: SeasonLists,
+  opponents: OpponentResolver,
+  players: PlayerResolver,
+  drafts: DraftCandidate[],
+): Promise<SeasonMatchState> {
+  const entries = mergeLists(lists)
+  const allListedIds = new Set(
+    [...(lists.rozpis ?? []), ...(lists.vysledky ?? [])].map((m) => m.matchId),
+  )
+
+  const docs = await loadSeasonDocs(ctx, season, entries)
+  const items = await pairEntries(ctx, entries, docs, opponents)
+  await fetchDetails(ctx, items)
+  await ensurePlayers(ctx, items, players)
+
+  const details = new Map<number, AhlMatchDetail>()
+  const finalById = new Map<number, Match>(docs.seasonDocs.map((d) => [d.id, d]))
+  const env: WriteEnv = {
+    ctx,
+    season,
+    lists,
+    opponents,
+    players,
+    drafts,
+    details,
+    finalById,
+  }
+
+  await span('vchl.matches', async () => {
+    for (const it of items) await writeMatch(env, it)
+    warnMissingOnAhl(ctx, docs.seasonDocs, allListedIds, lists)
   })
 
   return { docs: [...finalById.values()], details }
