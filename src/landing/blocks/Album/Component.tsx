@@ -100,31 +100,28 @@ export async function AlbumBlockComponent({ block }: { block: LandingAlbumBlock 
   return <AlbumView tiles={mapGalleryTiles(cards)} />
 }
 
-/** Rozměr dlaždice pro ruční mozaiku (bez pevné pozice — auto-placement). */
-const SPAN_GRID: Record<AlbumSpan, string> = {
-  big: 'md:col-span-2 md:row-span-2',
-  wide: 'md:col-span-2',
-  tile: '',
-}
-
-/** Radius drží fotka, ne obal odkazu — obal je průhledný a nemá co zaoblovat. */
-const SPAN_RADIUS: Record<AlbumSpan, string> = {
-  big: 'rounded-block',
-  wide: 'rounded-thumb',
-  tile: 'rounded-thumb',
-}
+/* Zlomy `sizes` kopírují mřížku: do 48rem pás, mezi 48 a 64rem dvousloupcový
+   mezistupeň (velká dlaždice na celou šířku, malá na polovinu) a až od
+   64rem čtyři sloupce. */
+const SIZES_LARGE =
+  '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem'
 
 /**
- * `sizes` podle skutečné šířky dlaždice. Jednotná hodnota velkou dlaždici
- * (polovina 97,5rem kontejneru) poddimenzovala a byla rozmazaná.
+ * Vzhled dlaždice podle velikosti.
+ *
+ * - `grid` — rozměr dlaždice pro ruční mozaiku (bez pevné pozice, auto-placement).
+ * - `radius` — drží ho fotka, ne obal odkazu: obal je průhledný a nemá co zaoblovat.
+ * - `sizes` — podle skutečné šířky dlaždice; jednotná hodnota velkou dlaždici
+ *   (polovina 97,5rem kontejneru) poddimenzovala a byla rozmazaná.
  */
-const SPAN_SIZES: Record<AlbumSpan, string> = {
-  /* Zlomy kopírují mřížku: do 48rem pás, mezi 48 a 64rem dvousloupcový
-     mezistupeň (velká dlaždice na celou šířku, malá na polovinu) a až od
-     64rem čtyři sloupce. */
-  big: '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem',
-  wide: '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem',
-  tile: '(max-width: 48rem) 66vw, (max-width: 64rem) 50vw, 25vw',
+const SPAN_STYLE: Record<AlbumSpan, { grid: string; radius: string; sizes: string }> = {
+  big: { grid: 'md:col-span-2 md:row-span-2', radius: 'rounded-block', sizes: SIZES_LARGE },
+  wide: { grid: 'md:col-span-2', radius: 'rounded-thumb', sizes: SIZES_LARGE },
+  tile: {
+    grid: '',
+    radius: 'rounded-thumb',
+    sizes: '(max-width: 48rem) 66vw, (max-width: 64rem) 50vw, 25vw',
+  },
 }
 
 /**
@@ -205,16 +202,16 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
            dlaždice pořád vykukuje, takže signál „dá se scrollovat" zůstává —
            stejný podíl používá i pás rozlosování. */
         'group h-57.5 flex-[0_0_78%] snap-center md:h-auto md:flex-none',
-        tile.place ?? SPAN_GRID[tile.span],
+        tile.place ?? SPAN_STYLE[tile.span].grid,
       )}
       href={tile.href ?? undefined}
       label={tile.title ?? tile.chip ?? undefined}
     >
       <PhotoTile
-        className={cn('h-full', SPAN_RADIUS[tile.span])}
+        className={cn('h-full', SPAN_STYLE[tile.span].radius)}
         gradient={tile.span === 'big' ? 'bottom' : 'bottom-soft'}
         photo={tile.photo}
-        sizes={SPAN_SIZES[tile.span]}
+        sizes={SPAN_STYLE[tile.span].sizes}
       >
         {tile.badge && (
           <Badge className="absolute top-3.5 left-3.5" size="xs" variant="lime">
