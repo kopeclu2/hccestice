@@ -13,9 +13,9 @@ import { Badge } from './Badge'
  * Fotokarta — zaoblený kontejner s fotkou přes celou plochu,
  * tmavým gradientem odspodu a libovolnými overlay prvky (children).
  *
- * `photo` je view-model `Photo` (viz `queries.ts`); když chybí
- * (v adminu není vybraná fotka), vykreslí se jen tmavě zelený
- * podklad, aby layout držel tvar.
+ * `photo` je view-model `Photo` (viz `types.ts`, skládá ho `toPhoto`
+ * v `data/format.ts`); když chybí (v adminu není vybraná fotka),
+ * vykreslí se jen tmavě zelený podklad, aby layout držel tvar.
  */
 export function PhotoTile({
   photo,

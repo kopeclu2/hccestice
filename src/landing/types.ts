@@ -2,7 +2,8 @@
  * View-modely landing page.
  *
  * Sekce nikdy nesahají přímo na Payload dokumenty — dostávají tyto úzké,
- * již připravené tvary dat (viz `queries.ts`). Díky tomu jsou komponenty
+ * již připravené tvary dat (skládají je fetchery a mapovače v `data/*`,
+ * viz `data/format.ts`). Díky tomu jsou komponenty
  * čitelné, snadno testovatelné a nezávislé na tvaru CMS.
  */
 
@@ -11,7 +12,7 @@
  *
  * Rozpojuje tři role, které dřív plnil jediný string `href` v `NAV_LINKS`
  * (cíl odkazu, `id` sekce v DOM, klíč aktivního stavu). Výsledný href se
- * odvozuje podle kontextu renderu — viz `navHref()` v `data/navigation.ts`.
+ * odvozuje podle kontextu renderu — viz `navHref()` v `data/navHref.ts`.
  */
 export type NavItem = {
   label: string
@@ -603,31 +604,4 @@ export type FooterContent = {
   perex: string
   columns: Array<{ title: string; links: Array<{ label: string; href: string }> }>
   league: string
-}
-
-/** Kompletní redakční obsah stránky (global `landingPage`). */
-export type LandingContent = {
-  hero: HeroContent
-  reportPhotos: Array<Photo | null>
-  standings: StandingsContent
-  stats: StatsContent
-  trainings: TrainingsContent
-  club: ClubContent
-  mosaic: AlbumTile[]
-  history: HistoryContent
-  people: { intro: string; cards: PersonCard[] }
-  faq: FaqItem[]
-  contact: ContactContent
-  footer: FooterContent
-}
-
-/** Souhrn všech CMS dat, která landing page potřebuje. */
-export type LandingData = {
-  content: LandingContent
-  site: SiteLinks
-  upcoming: UpcomingMatch | null
-  lastResult: LastResult | null
-  sponsors: Sponsor[]
-  /** Počet hráčů aktuální sezóny (hero „24 hráčů"). */
-  playerCount: number
 }

@@ -1,13 +1,12 @@
 /**
  * Výchozí redakční obsah landing page.
  *
- * ⚠️ Obsah se nyní spravuje v Payload adminu — global „Landing page"
- * (+ kolekce „Lidé v klubu"). Tento soubor slouží jako:
- *  1. zdroj pro prvotní seed (`migration/seed-landing.ts`),
- *  2. fallback v `queries.ts` — pole nevyplněné v adminu se vrátí
- *     k výchozímu znění, stránka se nikdy nerozbije.
- *
- * Fotky se odkazují názvem souboru; na media je převádí seed.
+ * Obsah spravuje správce v Payload adminu (bloky landing page, globaly
+ * a kolekce). Tento soubor je **fallback**: komponenty bloků
+ * (`blocks/<blok>/Component.tsx`) a datové moduly (`data/history.ts`,
+ * `data/navigation.ts`, `data/seasons.ts`, `data/site.ts`) z něj berou
+ * výchozí znění pro pole, která v adminu nejsou vyplněná, takže se stránka
+ * nikdy nerozbije.
  *
  * Navigace se spravuje v adminu (Nastavení → Menu); `FALLBACK_NAV` je
  * fallback pro prázdné CMS a zdroj pro `migration/seed-navigation.ts`.
@@ -53,14 +52,6 @@ export const HERO = {
   cta: { href: '#sezona', label: 'Přidej se k nám' },
   navCta: { href: '/kontakt', label: 'Kontakt' },
 } as const
-
-/** Fotky ke kartám reportů (pořadí = pořadí zápasů od nejnovějšího). */
-export const REPORT_PHOTOS = [
-  'p3081726.jpg',
-  'p3081434.jpg',
-  'p3080742.jpg',
-  'p3080507.jpg',
-] as const
 
 /** Tabulka VČHL — základní část 2025/26 (top 5, spravuje ahl.cz). */
 export const STANDINGS = {
@@ -248,50 +239,6 @@ export const HISTORY_PAGE = {
     },
   ],
 } as const
-
-/** Lidé v klubu — portréty jsou media z importu (soupiska 2025). */
-export const PEOPLE = [
-  {
-    name: 'Ing. Lukáš Beránek',
-    role: 'Předseda oddílu',
-    note: 'Vedení oddílu, mužstvo mužů',
-    mail: 'lukas.beranek84@seznam.cz',
-    phone: '+420 732 713 435',
-    portrait: 'beranek-lukas.jpg',
-  },
-  {
-    name: 'Jaroslav Macháček',
-    role: 'Trenér mužů',
-    note: 'Tréninky a sestava A-týmu',
-    mail: null,
-    phone: '+420 737 731 747',
-    portrait: 'machacek-jaroslav.jpg',
-  },
-  {
-    name: 'Jaroslav Bárta st.',
-    role: 'Asistent trenéra mužů',
-    note: 'Mužstvo mužů',
-    mail: null,
-    phone: '+420 777 018 123',
-    portrait: 'barta-jaroslav.jpg',
-  },
-  {
-    name: 'Michal Javůrek',
-    role: 'Trenér žáků a přípravky',
-    note: 'Mládež a přípravka',
-    mail: 'michal.javurek@centrum.cz',
-    phone: '+420 603 868 616',
-    portrait: 'javurek-michal.jpg',
-  },
-  {
-    name: 'Lukáš Sajdl',
-    role: 'PR manager',
-    note: 'Web, Facebook, Instagram',
-    mail: 'lukas.sajdll@seznam.cz',
-    phone: '+420 603 992 752',
-    portrait: 'sajdl-lukas.jpg',
-  },
-] as const
 
 export const FAQ = [
   {
