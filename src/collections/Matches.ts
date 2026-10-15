@@ -1,11 +1,32 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { notSyncedFromAhl } from '../access/notSyncedFromAhl'
+import { matchDisplayTitle } from '../hooks/matchDisplayTitle'
 import { generateMatchSlug } from '../hooks/matchSlug'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
 import { revalidateMatchFeeds, revalidateMatchFeedsDelete } from '../hooks/revalidateMatchFeeds'
+import { CLUB_NAME } from '../lib/club'
+
+/**
+ * Dvojice polí NAŠE / SOUPEŘ vedle sebe: `<base>Ours` a `<base>Opp`. Názvy
+ * i popisky jsou součást schématu (sloupce v DB, `payload-types`), takže se
+ * tu nesmí měnit bez migrace.
+ */
+const pairRow = (base: string, label: string, kind: 'number' | 'text' = 'number'): Field => {
+  const field = (name: string, text: string): Field =>
+    kind === 'number'
+      ? { name, type: 'number', label: text, min: 0 }
+      : { name, type: 'text', label: text }
+  return {
+    type: 'row',
+    fields: [
+      field(`${base}Ours`, `${label} — ${CLUB_NAME}`),
+      field(`${base}Opp`, `${label} — soupeř`),
+    ],
+  }
+}
 
 export const Matches: CollectionConfig = {
   slug: 'matches',
@@ -35,29 +56,7 @@ export const Matches: CollectionConfig = {
         hidden: true,
       },
       hooks: {
-        beforeChange: [
-          async ({ data, originalDoc, req }) => {
-            // Update jen s části polí (např. `{ ahl: … }` z synchronizace) nenese
-            // `opponent` ani `home` — chybějící hodnoty se berou z uloženého
-            // dokumentu, jinak by se titulek přepsal na „soupeř x HC Čestice".
-            const opponentId = data?.opponent ?? originalDoc?.opponent
-            let opponentName = 'soupeř'
-            if (opponentId) {
-              try {
-                const opp = await req.payload.findByID({
-                  collection: 'opponents',
-                  id: typeof opponentId === 'object' ? opponentId.id : opponentId,
-                  depth: 0,
-                })
-                opponentName = opp?.name ?? opponentName
-              } catch {
-                /* ponechat výchozí */
-              }
-            }
-            const home = data?.home ?? originalDoc?.home
-            return home ? `HC Čestice x ${opponentName}` : `${opponentName} x HC Čestice`
-          },
-        ],
+        beforeChange: [matchDisplayTitle],
       },
     },
     {
@@ -363,39 +362,10 @@ export const Matches: CollectionConfig = {
       access: { update: notSyncedFromAhl },
       admin: { description: 'Ze zápisu o utkání na AHL.cz, pořadí HC Čestice : soupeř.' },
       fields: [
-        {
-          type: 'row',
-          fields: [
-            { name: 'penaltiesOurs', type: 'number', label: 'Vyloučení — HC Čestice', min: 0 },
-            { name: 'penaltiesOpp', type: 'number', label: 'Vyloučení — soupeř', min: 0 },
-          ],
-        },
-        {
-          type: 'row',
-          fields: [
-            { name: 'majorsOurs', type: 'number', label: 'Vyšší tresty — HC Čestice', min: 0 },
-            { name: 'majorsOpp', type: 'number', label: 'Vyšší tresty — soupeř', min: 0 },
-          ],
-        },
-        {
-          type: 'row',
-          fields: [
-            {
-              name: 'ppGoalsOurs',
-              type: 'number',
-              label: 'Branky v přesilovce — HC Čestice',
-              min: 0,
-            },
-            { name: 'ppGoalsOpp', type: 'number', label: 'Branky v přesilovce — soupeř', min: 0 },
-          ],
-        },
-        {
-          type: 'row',
-          fields: [
-            { name: 'ppTimeOurs', type: 'text', label: 'Čas v přesilovce — HC Čestice' },
-            { name: 'ppTimeOpp', type: 'text', label: 'Čas v přesilovce — soupeř' },
-          ],
-        },
+        pairRow('penalties', 'Vyloučení'),
+        pairRow('majors', 'Vyšší tresty'),
+        pairRow('ppGoals', 'Branky v přesilovce'),
+        pairRow('ppTime', 'Čas v přesilovce', 'text'),
       ],
     },
     {

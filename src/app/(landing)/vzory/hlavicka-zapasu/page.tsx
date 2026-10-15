@@ -7,12 +7,16 @@ import { HeaderApp } from '@/landing/features/matches/header-variants/HeaderApp'
 import { HeaderArena } from '@/landing/features/matches/header-variants/HeaderArena'
 import { HeaderEditorial } from '@/landing/features/matches/header-variants/HeaderEditorial'
 import { HeaderSplit } from '@/landing/features/matches/header-variants/HeaderSplit'
-import type { HeaderVariantProps } from '@/landing/features/matches/header-variants/shared'
+import {
+  type HeaderVariantProps,
+  isVariantMatch,
+} from '@/landing/features/matches/header-variants/shared'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { SITE_NAME } from '@/lib/club'
 
 /**
  * Interní náhled variant hlavičky detailu zápasu (`/zapasy/[slug]`).
@@ -101,7 +105,9 @@ const loadSamples = async () => {
             homeLogo: match.weAreHome ? match.homeLogo : null,
           }
         : match
-      return { ...sample, match: prepared }
+      // Zrušený zápas varianty neumí (v produkci ho dostane `MatchHeader`),
+      // takže by tu byl k ničemu; ukázky navíc žádný zrušený zápas nemají.
+      return isVariantMatch(prepared) ? { ...sample, match: prepared } : null
     }),
   )
   return loaded.filter((item): item is NonNullable<typeof item> => item !== null)
@@ -162,7 +168,7 @@ export default async function MatchHeaderVariantsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Hlavička zápasu — interní náhled | HC Čestice',
-  description: 'Interní přehled variant hlavičky detailu zápasu pro web HC Čestice.',
+  title: `Hlavička zápasu — interní náhled | ${SITE_NAME}`,
+  description: `Interní přehled variant hlavičky detailu zápasu pro web ${SITE_NAME}.`,
   robots: { index: false, follow: false },
 }

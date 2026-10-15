@@ -1,6 +1,7 @@
 import React from 'react'
 
 import type { MatchRow } from '@/landing/features/matches/types'
+import { sideLabel } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle } from '@/landing/ui/Heading'
@@ -78,7 +79,7 @@ export function MatchesWidgetView({
                     size="xs"
                     variant={row.home ? 'club' : 'chip'}
                   >
-                    {row.home ? 'Doma' : 'Venku'}
+                    {sideLabel(row.home)}
                   </Badge>
                 )}
               </div>

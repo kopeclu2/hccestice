@@ -1,22 +1,22 @@
 import React from 'react'
 
 import { MatchMeta } from '@/landing/features/matches/components/MatchMeta'
-import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
-import type { MatchDetail } from '@/landing/features/matches/types'
+import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
+import { competitionLabel } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
 import {
-  competitionLabel,
-  Crest,
   hasScore,
   type HeaderVariantProps,
   ourSide,
-  outcomeNote,
+  OutcomeBadge,
   periodColumns,
+  SideBadge,
   SrTitle,
-  weekday,
+  type VariantMatch,
+  weekdayLabel,
   winnerSide,
 } from './shared'
 import { VariantCountdown } from './VariantCountdown'
@@ -42,7 +42,7 @@ const FILL_VAR: Record<Fill, string> = {
   paper: 'var(--color-paper-mid)',
 }
 
-const fills = (match: MatchDetail): { home: Fill; away: Fill } => {
+const fills = (match: VariantMatch): { home: Fill; away: Fill } => {
   const winner = winnerSide(match)
   const ours = ourSide(match)
   if (match.status !== 'played' || winner === null) {
@@ -120,7 +120,7 @@ function Half({
 }: {
   side: 'home' | 'away'
   name: string
-  logo: MatchDetail['homeLogo']
+  logo: VariantMatch['homeLogo']
   score: number | null
   fill: Fill
   won: boolean
@@ -142,7 +142,7 @@ function Half({
         'lg:py-12',
       )}
     >
-      <Crest
+      <TeamCrest
         className={cn(
           'size-12 text-lg min-[25rem]:size-14 md:size-20 md:p-1.5 md:text-3xl lg:size-24 lg:p-2',
           'md:col-start-1 md:row-start-1 md:mb-4 md:self-start',
@@ -205,11 +205,9 @@ function Seal({ label }: { label: string | null }) {
   )
 }
 
-function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
-  const outcome = played && match.outcome ? OUTCOME_BADGE[match.outcome] : null
-  const note = outcomeNote(match.outcome, match.suffix)
+function Footer({ match, played }: { match: VariantMatch; played: boolean }) {
   const columns = played ? periodColumns(match) : []
-  const day = weekday(match.kickoffISO)
+  const day = weekdayLabel(match.kickoffISO)
 
   return (
     <div className="flex flex-col gap-4 px-4.5 py-5 md:px-8 md:py-6 lg:flex-row lg:items-center lg:justify-between lg:px-12">
@@ -220,9 +218,7 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
         <MatchMeta
           className="mt-1.5 text-sm font-semibold text-ink md:text-base"
           items={[
-            day
-              ? `${day.charAt(0).toUpperCase()}${day.slice(1)} ${match.dateLabel}`
-              : match.dateLabel,
+            day ? `${day} ${match.dateLabel}` : match.dateLabel,
             match.timeLabel,
             match.venue,
           ]}
@@ -236,27 +232,18 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
             {column.home}:{column.away}
           </Badge>
         ))}
-        {outcome && (
-          <Badge size="sm" title={note ?? undefined} variant={outcome.variant}>
-            {outcome.label}
-          </Badge>
+        {played && match.outcome && (
+          <OutcomeBadge noteAsTitle outcome={match.outcome} suffix={match.suffix} />
         )}
         {match.status === 'scheduled' && (
           <>
-            <Badge size="sm" variant={match.weAreHome ? 'club' : 'chip'}>
-              {match.weAreHome ? 'Doma' : 'Venku'}
-            </Badge>
+            <SideBadge look="light" weAreHome={match.weAreHome} />
             <VariantCountdown
               className="ml-1 text-ink"
               look="inline"
               targetISO={match.kickoffISO}
             />
           </>
-        )}
-        {match.status === 'canceled' && (
-          <Badge size="sm" variant="loss">
-            Zrušeno
-          </Badge>
         )}
       </div>
     </div>

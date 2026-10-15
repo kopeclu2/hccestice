@@ -7,6 +7,7 @@ import type {
 } from '@/landing/features/matches/types'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
+import { CLUB_NAME } from '@/lib/club'
 import { countLabel } from '@/lib/plural'
 import { cn } from '@/lib/utils'
 
@@ -102,7 +103,7 @@ export function MatchTimeline({
               {period.score && (
                 <span className="text-sm font-bold tabular-nums">
                   <span className="sr-only">skóre </span>
-                  {period.score.replace(':', ' : ')}
+                  {`${period.score.home} : ${period.score.away}`}
                 </span>
               )}
             </h3>
@@ -228,7 +229,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="min-w-0 text-sm font-bold text-pretty break-words md:text-base">
               <span className="sr-only">
-                {event.score ? `Gól HC Čestice, stav ${event.score}: ` : 'Gól HC Čestice: '}
+                {event.score ? `Gól ${CLUB_NAME}, stav ${event.score}: ` : `Gól ${CLUB_NAME}: `}
               </span>
               {event.scorer}
             </span>

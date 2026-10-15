@@ -2,7 +2,7 @@ import type { ArticleGoal, ArticleScoreboard } from '@/landing/features/matches/
 import { formatLongDate } from '@/lib/datetime'
 import type { Match } from '@/payload-types'
 
-import { formatCompetition } from './matchFormat'
+import { formatCompetition, orient, orientPair, scoreSuffix } from './matchFormat'
 
 /**
  * Mapování událostí zápasu (branky, výsledková tabule) z kolekce `matches`
@@ -17,9 +17,7 @@ import { formatCompetition } from './matchFormat'
 /** Jméno hráče z branky: text ze zápisu, jinak jméno z populované relace. */
 export const goalName = (name: string | null | undefined, rel: unknown): string | null => {
   if (name) return name
-  return typeof rel === 'object' && rel && 'name' in rel
-    ? String((rel as { name: unknown }).name)
-    : null
+  return typeof rel === 'object' && rel && 'name' in rel ? String(rel.name) : null
 }
 
 /**
@@ -46,6 +44,7 @@ export const toGoals = (match: Match, weAreHome: boolean): ArticleGoal[] =>
     const scorer = goalName(goal.scorerName, goal.scorer)
     if (!goal.time || !scorer) return []
     const [ours, theirs] = (goal.scoreAfter ?? '').split(':')
+    const after = orientPair(weAreHome, ours, theirs)
     return [
       {
         time: goal.time,
@@ -55,7 +54,7 @@ export const toGoals = (match: Match, weAreHome: boolean): ArticleGoal[] =>
           goalName(goal.assist1Name, goal.assist1),
           goalName(goal.assist2Name, goal.assist2),
         ].filter((name): name is string => Boolean(name)),
-        score: ours && theirs ? (weAreHome ? `${ours}:${theirs}` : `${theirs}:${ours}`) : '',
+        score: ours && theirs ? `${after.home}:${after.away}` : '',
         special: goalSpecial(goal.strength),
       },
     ]
@@ -64,24 +63,21 @@ export const toGoals = (match: Match, weAreHome: boolean): ArticleGoal[] =>
 /** Výsledková tabule z odehraného zápasu; null = nelze sestavit. */
 export const toScoreboard = (match: Match): ArticleScoreboard | null => {
   if (match.status !== 'played' || match.scoreOurs == null || match.scoreOpp == null) return null
-  const opponent =
-    typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
-  const weAreHome = Boolean(match.home)
+  const { weAreHome, homeName, awayName, thirds } = orient(match)
+  const score = orientPair(weAreHome, match.scoreOurs, match.scoreOpp)
   return {
     kicker: ['Zápasové zpravodajství', formatCompetition(match.competition)]
       .filter(Boolean)
       .join(' · '),
     metaLine: [match.venue, formatLongDate(match.date)].filter(Boolean).join(' · '),
-    homeName: weAreHome ? 'HC Čestice' : opponent,
-    awayName: weAreHome ? opponent : 'HC Čestice',
-    homeScore: weAreHome ? match.scoreOurs : match.scoreOpp,
-    awayScore: weAreHome ? match.scoreOpp : match.scoreOurs,
+    homeName,
+    awayName,
+    homeScore: score.home,
+    awayScore: score.away,
     weAreHome,
     weWon: match.scoreOurs > match.scoreOpp,
-    thirds: (match.thirds ?? []).map((third) =>
-      weAreHome ? `${third.ours}:${third.opp}` : `${third.opp}:${third.ours}`,
-    ),
-    suffix: match.shootout ? 'sn' : match.overtime ? 'pp' : '',
+    thirds,
+    suffix: scoreSuffix(match),
     goals: toGoals(match, weAreHome),
   }
 }

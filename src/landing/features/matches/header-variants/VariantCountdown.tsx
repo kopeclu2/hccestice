@@ -1,51 +1,19 @@
 'use client'
 
-import React from 'react'
-
+import {
+  COUNTDOWN_LIVE_TEXT,
+  useCountdown,
+} from '@/landing/features/matches/components/useCountdown'
 import { cn } from '@/lib/utils'
 
 /**
- * Odpočet do buly pro varianty hlavičky. Logika je tatáž jako
- * v `features/matches/components/Countdown` (hodnoty až po mountu, server kreslí „--",
- * po uplynutí věta místo nul), jen vzhled si volí varianta:
+ * Odpočet do buly pro varianty hlavičky. Logiku drží `useCountdown` (tatáž
+ * jako v `components/Countdown`), vzhled si volí varianta:
  *
  * - `tiles`  — čtyři „LED" dlaždice (Aréna),
  * - `plain`  — čísla oddělená vlasovou linkou na světlé ploše (Editorial),
  * - `inline` — jeden řádek „58 d 06:12:33" (Kompaktní aplikace).
  */
-type Unit = { label: string; value: string }
-
-const useRemaining = (targetISO: string): number | null => {
-  const [remainingMs, setRemainingMs] = React.useState<number | null>(null)
-  React.useEffect(() => {
-    const target = new Date(targetISO).getTime()
-    const tick = () => setRemainingMs(Math.max(0, target - Date.now()))
-    tick()
-    const interval = setInterval(tick, 1_000)
-    return () => clearInterval(interval)
-  }, [targetISO])
-  return remainingMs
-}
-
-const pad = (value: number) => String(value).padStart(2, '0')
-
-const toUnits = (remainingMs: number | null): Unit[] =>
-  remainingMs === null
-    ? [
-        { label: 'dní', value: '--' },
-        { label: 'hod', value: '--' },
-        { label: 'min', value: '--' },
-        { label: 'sek', value: '--' },
-      ]
-    : [
-        { label: 'dní', value: pad(Math.floor(remainingMs / 86_400_000)) },
-        { label: 'hod', value: pad(Math.floor(remainingMs / 3_600_000) % 24) },
-        { label: 'min', value: pad(Math.floor(remainingMs / 60_000) % 60) },
-        { label: 'sek', value: pad(Math.floor(remainingMs / 1_000) % 60) },
-      ]
-
-const LIVE_TEXT = 'Zápas právě probíhá nebo čeká na výsledek'
-
 export function VariantCountdown({
   targetISO,
   look,
@@ -55,10 +23,9 @@ export function VariantCountdown({
   look: 'tiles' | 'plain' | 'inline'
   className?: string
 }) {
-  const remainingMs = useRemaining(targetISO)
-  const units = toUnits(remainingMs)
+  const { units, live } = useCountdown(targetISO)
 
-  if (remainingMs === 0) {
+  if (live) {
     return (
       <p
         className={cn(
@@ -69,7 +36,7 @@ export function VariantCountdown({
         role="status"
       >
         <span className="size-2 flex-none rounded-full bg-lime shadow-ring-lime" />
-        {LIVE_TEXT}
+        {COUNTDOWN_LIVE_TEXT}
       </p>
     )
   }
@@ -79,7 +46,7 @@ export function VariantCountdown({
     return (
       <p className={cn('font-mono text-sm font-medium tabular-nums', className)}>
         <span className="sr-only">Do začátku zbývá </span>
-        {days!.value}
+        {days?.value}
         <span className="text-faint"> d </span>
         {clock.map((unit) => unit.value).join(':')}
       </p>

@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { Crest } from '@/landing/features/matches/header-variants/shared'
 import type { Photo } from '@/landing/types'
 import { StretchedLink } from '@/landing/ui/StretchedLink'
 
+import { TeamCrest } from './TeamCrest'
 import { TeamPair } from './TeamPair'
 
 /**
@@ -72,7 +72,7 @@ export function MatchWhen({
 function TeamWithCrest({ name, logo }: { name: string; logo: Photo | null }) {
   return (
     <span className="inline-flex max-w-full items-center gap-2 align-middle">
-      <Crest
+      <TeamCrest
         className="size-6 md:size-7"
         logo={logo}
         monogramClassName="text-xs"

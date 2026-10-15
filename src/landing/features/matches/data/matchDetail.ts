@@ -141,10 +141,10 @@ export const fetchMatchDetail = cachedQuery(
 
     return toMatchDetail(match, await resolveReport(match))
   },
-  // `v2` = view-model s časovou osou (`timeline`), `v3` = výsledek `otLoss`;
+  // `v2` = view-model s časovou osou (`timeline`), `v3` = výsledek `otLoss`, `v4` = třetiny jako čísla;
   // stará entry by stránku shodila nebo lhala, takže změna tvaru znamená
   // novou verzi klíče.
-  { key: 'match-detail', version: 'v3', tags: [CACHE_TAGS.matches, CACHE_TAGS.posts] },
+  { key: 'match-detail', version: 'v4', tags: [CACHE_TAGS.matches, CACHE_TAGS.posts] },
 )
 
 /**

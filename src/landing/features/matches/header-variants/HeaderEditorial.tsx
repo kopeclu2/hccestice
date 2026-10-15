@@ -1,24 +1,28 @@
 import React from 'react'
 
-import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
+import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
 import { TeamPair } from '@/landing/features/matches/components/TeamPair'
-import type { MatchDetail } from '@/landing/features/matches/types'
-import { Badge } from '@/landing/ui/Badge'
+import {
+  competitionLabel,
+  sideLabel,
+  SUFFIX_NOTE,
+} from '@/landing/features/matches/view/matchFormat'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PatternBackground } from '@/landing/ui/PatternBackground'
+import { CLUB_NAME } from '@/lib/club'
+import { dayMonthParts } from '@/lib/datetime'
 import { cn } from '@/lib/utils'
 
 import {
-  competitionLabel,
-  Crest,
-  dayMonth,
   hasScore,
   type HeaderVariantProps,
+  MetaItem,
   ourSide,
+  OutcomeBadge,
   periodColumns,
   SrTitle,
-  SUFFIX_NOTE,
-  weekday,
+  type VariantMatch,
+  weekdayLabel,
   winnerSide,
 } from './shared'
 import { VariantCountdown } from './VariantCountdown'
@@ -54,26 +58,20 @@ export function HeaderEditorial({ match, titleAs = 'h1' }: HeaderVariantProps) {
 }
 
 /** Tiráž: silná linka, pod ní vlasová — jako hlavička novinové strany. */
-function Masthead({ match }: { match: MatchDetail }) {
-  const day = weekday(match.kickoffISO)
+function Masthead({ match }: { match: VariantMatch }) {
+  const day = weekdayLabel(match.kickoffISO)
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1 border-b-2 border-ink pb-2">
         <Eyebrow tone="club">{competitionLabel(match)}</Eyebrow>
         <span className="text-xs font-medium">
-          {day && <span className="capitalize">{day} </span>}
+          {day && `${day} `}
           {match.dateLabel}
         </span>
       </div>
       <div className="flex flex-wrap justify-between gap-x-6 border-b border-line py-1.5 text-xs font-medium text-faint">
-        <span>{match.seasonLabel ? `Sezóna ${match.seasonLabel}` : 'HC Čestice'}</span>
-        <span>
-          {match.status === 'played'
-            ? 'Výsledek zápasu'
-            : match.status === 'canceled'
-              ? 'Zrušený zápas'
-              : 'Pozvánka na zápas'}
-        </span>
+        <span>{match.seasonLabel ? `Sezóna ${match.seasonLabel}` : CLUB_NAME}</span>
+        <span>{match.status === 'played' ? 'Výsledek zápasu' : 'Pozvánka na zápas'}</span>
       </div>
     </div>
   )
@@ -84,7 +82,7 @@ function Masthead({ match }: { match: MatchDetail }) {
  * jména týmů po stranách. Od `lg` trojice jméno | skóre | jméno, zarovnaná
  * na účaří číslic.
  */
-function PlayedSpread({ match }: { match: MatchDetail }) {
+function PlayedSpread({ match }: { match: VariantMatch }) {
   const winner = winnerSide(match)
   return (
     <div
@@ -138,7 +136,7 @@ function TeamBlock({
 }: {
   name: string
   side: string
-  logo: MatchDetail['homeLogo']
+  logo: VariantMatch['homeLogo']
   won: boolean
   align: 'start' | 'end'
   className?: string
@@ -154,7 +152,7 @@ function TeamBlock({
       <span
         className={cn('flex items-center gap-2', align === 'end' && 'flex-row-reverse lg:flex-row')}
       >
-        <Crest
+        <TeamCrest
           className="size-8 text-xs md:size-10 md:text-sm"
           logo={logo}
           name={name}
@@ -176,11 +174,11 @@ function TeamBlock({
 }
 
 /**
- * Naplánovaný (a zrušený) zápas: místo skóre obří obrysové datum, jméno
+ * Naplánovaný zápas: místo skóre obří obrysové datum, jméno
  * soupeře jako titulek „HC Čestice × …" a pod tím odpočet.
  */
-function UpcomingSpread({ match }: { match: MatchDetail }) {
-  const date = dayMonth(match.kickoffISO)
+function UpcomingSpread({ match }: { match: VariantMatch }) {
+  const date = dayMonthParts(match.kickoffISO)
   return (
     <div className="mt-6 flex flex-col items-center md:mt-8 lg:mt-10">
       {date && (
@@ -195,7 +193,7 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
         </div>
       )}
       <div aria-hidden className="mt-4 flex items-center gap-2.5 md:mt-6">
-        <Crest
+        <TeamCrest
           className="size-9 text-sm md:size-11"
           logo={match.homeLogo}
           name={match.homeName}
@@ -203,7 +201,7 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
           tone="light"
         />
         <span className="text-sm font-semibold text-faint">×</span>
-        <Crest
+        <TeamCrest
           className="size-9 text-sm md:size-11"
           logo={match.awayLogo}
           name={match.awayName}
@@ -226,11 +224,6 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
           <VariantCountdown look="plain" targetISO={match.kickoffISO} />
         </div>
       )}
-      {match.status === 'canceled' && (
-        <Badge className="mt-5" size="sm" variant="loss">
-          Zrušeno
-        </Badge>
-      )}
     </div>
   )
 }
@@ -239,15 +232,14 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
  * Perex jednou větou z pohledu Čestic. Jméno soupeře se neskloňuje
  * („týmu HC Polička B"), ať věta sedí na libovolný název z AHL.
  */
-const standfirst = (match: MatchDetail): string => {
+const standfirst = (match: VariantMatch): string => {
   const opponent = match.weAreHome ? match.awayName : match.homeName
-  const place = match.weAreHome ? 'Doma' : 'Venku'
+  const place = sideLabel(match.weAreHome)
 
-  if (match.status === 'canceled') return `Zápas HC Čestice s týmem ${opponent} se nehraje.`
   if (match.status === 'scheduled' || !hasScore(match)) {
     return match.weAreHome
-      ? `HC Čestice přivítá na domácím ledě tým ${opponent}.`
-      : `HC Čestice zajíždí na led týmu ${opponent}.`
+      ? `${CLUB_NAME} přivítá na domácím ledě tým ${opponent}.`
+      : `${CLUB_NAME} zajíždí na led týmu ${opponent}.`
   }
 
   const ours = ourSide(match) === 'home' ? match.homeScore : match.awayScore
@@ -256,27 +248,36 @@ const standfirst = (match: MatchDetail): string => {
 
   switch (match.outcome) {
     case 'win':
-      return `${place} HC Čestice porazil tým ${opponent} ${score}.`
+      return `${place} ${CLUB_NAME} porazil tým ${opponent} ${score}.`
     case 'draw':
-      return `${place} HC Čestice remizoval s týmem ${opponent} ${score}.`
+      return `${place} ${CLUB_NAME} remizoval s týmem ${opponent} ${score}.`
     case 'otLoss':
-      return `${place} HC Čestice podlehl týmu ${opponent} ${score} — bod do tabulky ale zůstává.`
+      return `${place} ${CLUB_NAME} podlehl týmu ${opponent} ${score} — bod do tabulky ale zůstává.`
     default:
-      return `${place} HC Čestice podlehl týmu ${opponent} ${score}.`
+      return `${place} ${CLUB_NAME} podlehl týmu ${opponent} ${score}.`
   }
 }
 
 /** Jemný řádek údajů pod linkou: kdy, kde, třetiny a výsledek. */
-function Dateline({ match, played }: { match: MatchDetail; played: boolean }) {
-  const outcome = played && match.outcome ? OUTCOME_BADGE[match.outcome] : null
+function Dateline({ match, played }: { match: VariantMatch; played: boolean }) {
   const columns = played ? periodColumns(match) : []
 
   return (
     <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-5 md:mt-9 md:grid-cols-[repeat(auto-fit,minmax(min(8.5rem,100%),1fr))] lg:mt-10">
-      <Item label="Buly">{match.timeLabel}</Item>
-      {match.venue && <Item label="Místo">{match.venue}</Item>}
+      <MetaItem label="Buly" look="light">
+        {match.timeLabel}
+      </MetaItem>
+      {match.venue && (
+        <MetaItem label="Místo" look="light">
+          {match.venue}
+        </MetaItem>
+      )}
       {columns.length > 0 && (
-        <Item className="max-md:col-span-2 max-md:row-start-2" label="Po třetinách">
+        <MetaItem
+          className="max-md:col-span-2 max-md:row-start-2"
+          label="Po třetinách"
+          look="light"
+        >
           <span className="flex flex-wrap gap-x-2.5 gap-y-0.5 tabular-nums">
             {columns.map((column) => (
               <span className="whitespace-nowrap" key={column.label}>
@@ -289,40 +290,19 @@ function Dateline({ match, played }: { match: MatchDetail; played: boolean }) {
               </span>
             ))}
           </span>
-        </Item>
+        </MetaItem>
       )}
-      {outcome ? (
-        <Item label="Výsledek">
-          <Badge size="sm" variant={outcome.variant}>
-            {outcome.label}
-          </Badge>
-        </Item>
+      {played && match.outcome ? (
+        <MetaItem label="Výsledek" look="light">
+          <OutcomeBadge outcome={match.outcome} suffix={match.suffix} />
+        </MetaItem>
       ) : (
         match.status === 'scheduled' && (
-          <Item label="Strana">{match.weAreHome ? 'Doma' : 'Venku'}</Item>
+          <MetaItem label="Strana" look="light">
+            {sideLabel(match.weAreHome)}
+          </MetaItem>
         )
       )}
     </dl>
-  )
-}
-
-function Item({
-  label,
-  children,
-  className,
-}: {
-  label: string
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <div className={cn('min-w-0', className)}>
-      <dt>
-        <Eyebrow>{label}</Eyebrow>
-      </dt>
-      <dd className="mt-1 text-sm font-semibold [overflow-wrap:anywhere] md:text-base">
-        {children}
-      </dd>
-    </div>
   )
 }

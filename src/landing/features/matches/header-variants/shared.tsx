@@ -1,34 +1,45 @@
-import Image from 'next/image'
 import React from 'react'
 
+import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
 import type { MatchDetail, Outcome } from '@/landing/features/matches/types'
-import { formatCompetition } from '@/landing/features/matches/view/matchFormat'
-import type { Photo } from '@/landing/types'
-import { getMediaUrl } from '@/lib/getMediaUrl'
+import {
+  outcomeNote,
+  type ScorePair,
+  type ScoreSuffix,
+  sideLabel,
+  SUFFIX_NOTE,
+} from '@/landing/features/matches/view/matchFormat'
+import { Badge } from '@/landing/ui/Badge'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { weekdayLong } from '@/lib/datetime'
 import { cn } from '@/lib/utils'
 
 /**
- * Sdílená logika variant hlavičky detailu zápasu. Kterou variantu detail
- * vykreslí, volí správce v Nastavení webu (`matchHeaderVariant`, přepínač
- * `MatchHeaderByVariant` v `index.tsx`); katalog všech je na
- * `/vzory/hlavicka-zapasu`. Původní `MatchHeader` / `MatchScoreboard`
- * (`classic`) se s variantami záměrně nesdílí.
+ * Sdílená logika a drobné díly variant hlavičky detailu zápasu. Kterou
+ * variantu detail vykreslí, volí správce v Nastavení webu
+ * (`matchHeaderVariant`, přepínač `MatchHeaderByVariant` v `index.tsx`);
+ * katalog všech je na `/vzory/hlavicka-zapasu`. Údaje (`MetaItem`) a štítek
+ * výsledku (`OutcomeBadge`) používá i původní `MatchHeader` (`classic`),
+ * jeho tabule (`MatchScoreboard`) se s variantami nesdílí.
  */
 
+/**
+ * Zápas, který varianty umí vykreslit. Zrušený má vždy původní `MatchHeader`
+ * (`CanceledHeader`), varianty ho umět nemusí a katalog ho nezobrazuje.
+ */
+export type VariantMatch = MatchDetail & { status: 'scheduled' | 'played' }
+
+export const isVariantMatch = (match: MatchDetail): match is VariantMatch =>
+  match.status !== 'canceled'
+
 export type HeaderVariantProps = {
-  match: MatchDetail
+  match: VariantMatch
   /**
    * Úroveň neviditelného titulku. Na detailu zápasu je hlavička celou
    * hlavičkou stránky (`h1`); v katalogu variant je `h1` nadpis katalogu.
    */
   titleAs?: 'h1' | 'h2' | 'h3'
 }
-
-export const SUFFIX_NOTE = { pp: 'po prodloužení', sn: 'po nájezdech' } as const
-
-/** „VČHL 2. ročník · Základní část“, ne surový text z AHL. */
-export const competitionLabel = (match: MatchDetail): string =>
-  formatCompetition(match.competition) ?? 'VČHL'
 
 export const hasScore = (
   match: MatchDetail,
@@ -54,41 +65,21 @@ export const scoreSentence = (match: MatchDetail): string => {
   return `${match.homeName} ${match.homeScore}, ${match.awayName} ${match.awayScore}${note}`
 }
 
-/** Den v týdnu („sobota") — data v CMS ho nenesou, odvozuje se z ISO v Europe/Prague. */
-export const weekday = (iso: string): string | null => {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return null
-  return new Intl.DateTimeFormat('cs-CZ', { weekday: 'long', timeZone: 'Europe/Prague' }).format(
-    date,
-  )
+/**
+ * Den v týdnu s velkým písmenem („Sobota") — data v CMS ho nenesou, odvozuje
+ * se z ISO v Europe/Prague. Velké písmeno je v textu, ne ve třídě `capitalize`,
+ * aby ho šlo použít i v řetězci (`MatchMeta`).
+ */
+export const weekdayLabel = (iso: string): string | null => {
+  const day = weekdayLong(iso)
+  return day ? `${day.charAt(0).toLocaleUpperCase('cs-CZ')}${day.slice(1)}` : null
 }
 
-/** Den a měsíc číslem („13", „12") pro velké číslicové kompozice. */
-export const dayMonth = (iso: string): { day: string; month: string } | null => {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return null
-  const parts = new Intl.DateTimeFormat('cs-CZ', {
-    day: 'numeric',
-    month: 'numeric',
-    timeZone: 'Europe/Prague',
-  }).formatToParts(date)
-  const day = parts.find((part) => part.type === 'day')?.value
-  const month = parts.find((part) => part.type === 'month')?.value
-  return day && month ? { day, month } : null
-}
-
-export type PeriodColumn = {
+export type PeriodColumn = ScorePair & {
   /** Krátký popisek sloupce: „1", „2", „3", „P", „SN". */
   label: string
   /** Dlouhý popisek pro čtečky. */
   title: string
-  home: number | null
-  away: number | null
-}
-
-const parsePair = (value: string | null | undefined): [number, number] | null => {
-  const match = /^\s*(\d+)\s*:\s*(\d+)\s*$/.exec(value ?? '')
-  return match ? [Number(match[1]), Number(match[2])] : null
 }
 
 /**
@@ -102,25 +93,27 @@ const parsePair = (value: string | null | undefined): [number, number] | null =>
  * sloupců než tabule, která si odporuje.
  */
 export const periodColumns = (match: MatchDetail): PeriodColumn[] => {
-  const thirds = match.thirds.map(parsePair)
-  if (thirds.length === 0 || thirds.some((pair) => pair === null)) return []
+  if (match.thirds.length === 0) return []
 
-  const columns: PeriodColumn[] = (thirds as Array<[number, number]>).map(
-    ([home, away], index) => ({
-      label: String(index + 1),
-      title: `${index + 1}. třetina`,
-      home,
-      away,
-    }),
-  )
+  const columns: PeriodColumn[] = match.thirds.map(({ home, away }, index) => ({
+    label: String(index + 1),
+    title: `${index + 1}. třetina`,
+    home,
+    away,
+  }))
   if (!match.suffix || !hasScore(match)) return columns
 
   const homeWins = match.homeScore > match.awayScore
   const ot = match.timeline.find((period) => /prodl/i.test(period.label))
   const otPair =
-    parsePair(ot?.score) ?? (match.suffix === 'sn' ? [0, 0] : homeWins ? [1, 0] : [0, 1])
+    ot?.score ??
+    (match.suffix === 'sn'
+      ? { home: 0, away: 0 }
+      : homeWins
+        ? { home: 1, away: 0 }
+        : { home: 0, away: 1 })
   const extra: PeriodColumn[] = [
-    { label: 'P', title: 'Prodloužení', home: otPair[0], away: otPair[1] },
+    { label: 'P', title: 'Prodloužení', home: otPair.home, away: otPair.away },
   ]
   if (match.suffix === 'sn') {
     extra.push({
@@ -132,88 +125,8 @@ export const periodColumns = (match: MatchDetail): PeriodColumn[] => {
   }
 
   const all = [...columns, ...extra]
-  const sum = (side: 'home' | 'away') =>
-    all.reduce((total, column) => total + (column[side] ?? 0), 0)
+  const sum = (side: 'home' | 'away') => all.reduce((total, column) => total + column[side], 0)
   return sum('home') === match.homeScore && sum('away') === match.awayScore ? all : columns
-}
-
-/** Klubové předpony, které v monogramu ani zkratce nic neříkají. */
-const PREFIXES = new Set(['HC', 'HK', 'SK', 'TJ', 'HHK', 'ZH', 'HCM', 'SKP'])
-
-const keyWord = (name: string): string => {
-  const words = name.split(/\s+/).filter(Boolean)
-  return words.find((word) => !PREFIXES.has(word.toUpperCase())) ?? words[0] ?? '?'
-}
-
-/** „HC Zdar" → „Z". */
-export const monogram = (name: string): string => keyWord(name).charAt(0).toUpperCase()
-
-/** Třípísmenná zkratka jako na TV tabuli: „HC Polička B" → „POL". */
-export const teamCode = (name: string): string =>
-  keyWord(name).slice(0, 3).toLocaleUpperCase('cs-CZ')
-
-export const outcomeNote = (
-  outcome: Outcome | null,
-  suffix: MatchDetail['suffix'],
-): string | null =>
-  suffix ? SUFFIX_NOTE[suffix] : outcome === 'otLoss' ? 'po prodloužení nebo nájezdech' : null
-
-/**
- * Znak týmu — dekorativní (`alt=""`), jméno stojí vždy vedle jako text.
- * Soupeř bez znaku dostane kroužek s monogramem, aby kompozice zůstala
- * souměrná. Velikost a tón (obrys) řídí volající přes `className`
- * a `tone`. Vnitřní okraj loga je pevný (`p-*`), ne v procentech —
- * procentní padding se počítá ze šířky rodiče, takže v buňce tabulky
- * logo zmizelo.
- */
-export function Crest({
-  logo,
-  name,
-  className,
-  tone = 'dark',
-  sizes = '96px',
-  monogramClassName,
-}: {
-  logo: Photo | null
-  name: string
-  className?: string
-  /** `dark` = na tmavé ploše (bílý podklad loga), `light` = na světlé (rámeček). */
-  tone?: 'dark' | 'light' | 'club'
-  sizes?: string
-  monogramClassName?: string
-}) {
-  if (!logo) {
-    return (
-      <span
-        aria-hidden
-        className={cn(
-          'grid flex-none place-items-center rounded-full border font-bold',
-          tone === 'dark' && 'border-white/24 text-white/75',
-          tone === 'light' && 'border-line bg-chip text-ink-soft',
-          tone === 'club' && 'border-white/40 bg-white/10 text-white',
-          className,
-          monogramClassName,
-        )}
-      >
-        {monogram(name)}
-      </span>
-    )
-  }
-  return (
-    <Image
-      alt=""
-      aria-hidden
-      className={cn(
-        'flex-none rounded-full object-contain',
-        tone === 'light' ? 'border border-line-soft bg-surface p-0.5' : 'bg-white/92 p-1',
-        className,
-      )}
-      height={128}
-      sizes={sizes}
-      src={getMediaUrl(logo.url, logo.updatedAt)}
-      width={128}
-    />
-  )
 }
 
 /** Neviditelný titulek varianty — nese skóre celou větou. */
@@ -225,4 +138,119 @@ export function SrTitle({
   match: MatchDetail
 }) {
   return <Tag className="sr-only">{scoreSentence(match)}</Tag>
+}
+
+/**
+ * Položka řádku údajů (`<dl>`): popisek a hodnota. Vzhled volí varianta:
+ * `dark` = na tmavé ploše, `light` = na světlé, `compact` = husté postranní
+ * sloupce (menší odsazení, těsný popisek).
+ */
+const META_ITEM_VALUE = {
+  dark: 'mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-white md:text-base',
+  light: 'mt-1 text-sm font-semibold [overflow-wrap:anywhere] md:text-base',
+  compact: 'mt-0.5 text-sm font-semibold [overflow-wrap:anywhere]',
+} as const
+
+export function MetaItem({
+  label,
+  children,
+  className,
+  look = 'dark',
+}: {
+  label: string
+  children: React.ReactNode
+  className?: string
+  look?: keyof typeof META_ITEM_VALUE
+}) {
+  return (
+    <div className={cn('min-w-0', className)}>
+      <dt>
+        <Eyebrow tight={look === 'compact'} tone={look === 'dark' ? 'white' : undefined}>
+          {label}
+        </Eyebrow>
+      </dt>
+      <dd className={META_ITEM_VALUE[look]}>{children}</dd>
+    </div>
+  )
+}
+
+/**
+ * Štítek výsledku z pohledu Čestic. Poznámku („po nájezdech") ukáže jako
+ * text vedle štítku, když dostane `noteClassName`; `noteAsTitle` ji dá do
+ * `title` štítku (tooltip) a bez obojího se nezobrazí. Vrací fragment —
+ * rozložení (řádek / blok) určuje volající.
+ */
+export function OutcomeBadge({
+  outcome,
+  suffix,
+  size = 'sm',
+  noteClassName,
+  noteAsTitle = false,
+}: {
+  outcome: Outcome
+  suffix: ScoreSuffix
+  size?: 'xs' | 'sm'
+  noteClassName?: string
+  noteAsTitle?: boolean
+}) {
+  const badge = OUTCOME_BADGE[outcome]
+  const note = outcomeNote(outcome, suffix)
+  return (
+    <>
+      <Badge
+        size={size}
+        title={noteAsTitle ? (note ?? undefined) : undefined}
+        variant={badge.variant}
+      >
+        {badge.label}
+      </Badge>
+      {note && noteClassName && <span className={noteClassName}>{note}</span>}
+    </>
+  )
+}
+
+/** Strana, na které hrajeme: „Doma" / „Venku" jako štítek. */
+export function SideBadge({
+  weAreHome,
+  size = 'sm',
+  look,
+}: {
+  weAreHome: boolean
+  size?: 'xs' | 'sm'
+  look: 'dark' | 'light'
+}) {
+  const label = sideLabel(weAreHome)
+  return look === 'dark' ? (
+    <Badge caps size={size} variant={weAreHome ? 'lime' : 'glassOutline'}>
+      {label}
+    </Badge>
+  ) : (
+    <Badge size={size} variant={weAreHome ? 'club' : 'chip'}>
+      {label}
+    </Badge>
+  )
+}
+
+/** „Konec" nebo „Konec · po nájezdech" — stav odehraného zápasu. */
+export function EndBadge({ suffix, look }: { suffix: ScoreSuffix; look: 'dark' | 'light' }) {
+  const text = `Konec${suffix ? ` · ${SUFFIX_NOTE[suffix]}` : ''}`
+  return look === 'dark' ? (
+    <Badge caps className="gap-2 text-white/80" size="xs" variant="glassOutline">
+      <span aria-hidden className="size-1.5 rounded-full bg-white/60" />
+      {text}
+    </Badge>
+  ) : (
+    <Badge size="xs" variant="chip">
+      {text}
+    </Badge>
+  )
+}
+
+/** Stavový štítek: naplánovaný zápas ukáže stranu, odehraný „Konec". */
+export function StatusBadge({ match, look }: { match: VariantMatch; look: 'dark' | 'light' }) {
+  return match.status === 'scheduled' ? (
+    <SideBadge look={look} size="xs" weAreHome={match.weAreHome} />
+  ) : (
+    <EndBadge look={look} suffix={match.suffix} />
+  )
 }

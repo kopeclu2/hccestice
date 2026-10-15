@@ -1,3 +1,4 @@
+import type { ScorePair, ScoreSuffix } from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
 
 /** View-modely zápasů, sezón a tabulky — skládají je mapovače ve `view/` a fetchery v `data/`. */
@@ -22,7 +23,7 @@ export type LastResult = {
   /** Skóre z pohledu pořadí v `title` (domácí : hosté). */
   score: string
   /** Přípona skóre — „sn" / „pp", jinak prázdné. */
-  suffix: '' | 'sn' | 'pp'
+  suffix: ScoreSuffix
   dateLabel: string
   won: boolean
   /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
@@ -38,12 +39,11 @@ export type MatchRow = {
   home: boolean
   /** Vyplněné jen u odehraných zápasů. */
   score: string | null
-  suffix: '' | 'sn' | 'pp'
+  suffix: ScoreSuffix
   /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
   href: string | null
 }
 
-/** Výsledek zápasu z pohledu HC Čestice. */
 /**
  * Výsledek z pohledu Čestic. `otLoss` = prohra po prodloužení nebo
  * nájezdech — v tabulce VČHL za ni je bod (sloupec R), proto má vlastní
@@ -66,13 +66,13 @@ export type MatchSchemaFields = {
   awayName: string
 }
 
-/** Karta rozlosování na /zapasy. */
 /** Znaky týmů v pořadí domácí / hosté; null = soupeř bez loga (monogram). */
 export type TeamLogos = {
   homeLogo: Photo | null
   awayLogo: Photo | null
 }
 
+/** Karta rozlosování na /zapasy. */
 export type FixtureCard = MatchSchemaFields &
   TeamLogos & {
     id: number
@@ -106,7 +106,7 @@ export type ResultRow = MatchSchemaFields &
     venue: string | null
     /** Skóre v pořadí domácí : hosté. */
     score: string
-    suffix: '' | 'sn' | 'pp'
+    suffix: ScoreSuffix
     outcome: Outcome
     /** Naši střelci bez nájezdů, „Sajdl 2, Vacek"; null = zápis chybí. */
     scorers: string | null
@@ -121,7 +121,7 @@ export type FormSquare = {
   letter: string
   outcome: Outcome
   score: string
-  suffix: '' | 'sn' | 'pp'
+  suffix: ScoreSuffix
   stage: string
   title: string
   dateLabel: string
@@ -149,7 +149,7 @@ export type MatchCardData = {
   opponentLogo: Photo | null
   /** Skóre v pořadí domácí : hosté; null = ještě se nehrálo. */
   score: string | null
-  suffix: '' | 'sn' | 'pp'
+  suffix: ScoreSuffix
   won: boolean | null
   /** Odkaz na reportáž (`/aktuality/{slug}`), pokud je nalinkovaná. */
   reportHref: string | null
@@ -170,9 +170,9 @@ export type ArticleScoreboard = {
   awayScore: number
   weAreHome: boolean
   weWon: boolean
-  /** Třetiny „1:1" v pořadí domácí : hosté; prázdné = nezobrazovat. */
-  thirds: string[]
-  suffix: '' | 'sn' | 'pp'
+  /** Třetiny v pořadí domácí : hosté; prázdné = nezobrazovat. */
+  thirds: ScorePair[]
+  suffix: ScoreSuffix
   /** Průběh branek ze zápisu; prázdné = timeline se nevykreslí. */
   goals: ArticleGoal[]
 }
@@ -205,8 +205,8 @@ export type MatchTimelineEvent =
 /** Úsek časové osy: třetina, prodloužení, nájezdy. */
 export type MatchTimelinePeriod = {
   label: string
-  /** Skóre úseku „1:1" v pořadí domácí : hosté; null = neznámé (nájezdy). */
-  score: string | null
+  /** Skóre úseku v pořadí domácí : hosté; null = neznámé (nájezdy). */
+  score: ScorePair | null
   events: MatchTimelineEvent[]
 }
 
@@ -265,9 +265,9 @@ export type MatchDetail = {
   /** Skóre v pořadí domácí : hosté; null = zápas není odehraný. */
   homeScore: number | null
   awayScore: number | null
-  /** Třetiny „1:1" v pořadí domácí : hosté. */
-  thirds: string[]
-  suffix: '' | 'sn' | 'pp'
+  /** Třetiny v pořadí domácí : hosté. */
+  thirds: ScorePair[]
+  suffix: ScoreSuffix
   /** Výsledek z pohledu Čestic; null = zápas není odehraný. */
   outcome: Outcome | null
   /** Slug sezóny pro odkaz zpět na `/zapasy?sezona=…`; null = sezóna bez slugu. */
