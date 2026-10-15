@@ -1,5 +1,7 @@
 import 'server-only'
 
+import { CLUB_NAME } from '@/lib/club'
+
 import { cachedQuery, getPayloadClient } from './query'
 import { CACHE_TAGS } from './tags'
 
@@ -12,8 +14,7 @@ export type MaintenanceState = {
 
 const DEFAULTS = {
   headline: 'Rolba právě upravuje led',
-  perex:
-    'Web HC Čestice prochází krátkou údržbou. Za chvíli jsme zpátky — mezitím nás najdete na sociálních sítích.',
+  perex: `Web ${CLUB_NAME} prochází krátkou údržbou. Za chvíli jsme zpátky — mezitím nás najdete na sociálních sítích.`,
 } as const
 
 /**

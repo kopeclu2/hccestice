@@ -1,12 +1,10 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
-
-import configPromise from '@payload-config'
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
 export async function getRedirects(depth = 1) {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
 
   const { docs: redirects } = await payload.find({
     collection: 'redirects',
@@ -19,13 +17,12 @@ export async function getRedirects(depth = 1) {
 }
 
 /**
- * Returns a unstable_cache function mapped with the cache tag for 'redirects'.
- *
- * Cache all redirects together to avoid multiple fetches.
+ * Přesměrování se cachují všechna dohromady (jeden dotaz místo opakovaných)
+ * pod tagem `redirects`, který invaliduje hook `revalidateRedirects`.
  */
-export const getCachedRedirects = () =>
-  unstable_cache(async () => getRedirects(), ['redirects'], {
-    tags: ['redirects'],
-    // Pojistka pod tagem — bez ní má `unstable_cache` TTL jeden rok.
-    revalidate: 3600,
-  })
+const cachedRedirects = cachedQuery(async () => getRedirects(), {
+  key: 'redirects',
+  tags: [CACHE_TAGS.redirects],
+})
+
+export const getCachedRedirects = () => cachedRedirects
