@@ -21,7 +21,7 @@ export async function ArticleNav() {
   const href = ctaHref(cta.href, 'subpage')
 
   return (
-    <nav className="relative z-2 mx-auto flex max-w-[97.5rem] items-center gap-2.5 px-[clamp(0.5rem,2vw,1.5rem)] py-2">
+    <nav className="relative z-2 mx-auto flex max-w-page items-center gap-2.5 px-gutter-nav py-2">
       <LogoStamp bordered href="/" />
 
       <NavPills items={items} />

@@ -49,7 +49,7 @@ export function ProductInfo({ product, email }: { product: Product; email: strin
           <div className="flex flex-wrap gap-2">
             {(product.sizes ?? []).map((size) => (
               <span
-                className="rounded-xl border border-line bg-surface px-4 py-2 text-sm font-semibold"
+                className="rounded-item border border-line bg-surface px-4 py-2 text-sm font-semibold"
                 key={size.id}
               >
                 {size.label}

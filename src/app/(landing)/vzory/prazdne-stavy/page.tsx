@@ -26,14 +26,15 @@ import { brandTitle } from '@/lib/brandTitle'
 export default function EmptyStatesPage() {
   return (
     <SubpageShell hatch={false} surface="paper">
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Prázdné stavy
         </PageTitle>
         <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
-          Komponenta <code className="rounded bg-chip px-1.5 font-mono text-sm">EmptyState</code> —
-          vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
+          Komponenta{' '}
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">EmptyState</code> — vkládá
+          se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
         </p>
       </header>
 
@@ -144,7 +145,7 @@ function Demo({ caption, children }: { caption: string; children: React.ReactNod
   return (
     <figure className="m-0">
       {children}
-      <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] text-faint uppercase">
+      <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-widest text-faint uppercase">
         {caption}
       </figcaption>
     </figure>

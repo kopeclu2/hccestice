@@ -20,12 +20,12 @@ import { cn } from '@/lib/utils'
 
 /** Vzhled polí podle tónu karty (přepis shadcn defaultů). */
 const fieldClasses = {
-  dark: 'rounded-field border-white/18 bg-white/8 text-white placeholder:text-white/40 focus-visible:ring-lime/60 min-h-11.5 px-4',
+  dark: 'rounded-field border-on-contrast-glass bg-on-contrast-wash text-on-contrast placeholder:text-on-contrast-ghost focus-visible:ring-lime/60 min-h-11.5 px-4',
   light:
     'rounded-field border-line bg-chip text-ink placeholder:text-faint focus-visible:ring-lime/60 min-h-11.5 px-4',
 } as const
 
-const labelClasses = { dark: 'text-white/55', light: 'text-ink-soft' } as const
+const labelClasses = { dark: 'text-on-contrast-subtle', light: 'text-ink-soft' } as const
 
 /**
  * Kontaktní formulář — „Poslat zprávu". `tone="dark"` (výchozí) je tmavá
@@ -113,7 +113,10 @@ export function ContactForm({
             Díky za zprávu!
           </CardTitle>
           <p
-            className={cn('relative mt-2 text-sm', tone === 'dark' ? 'text-white/70' : 'text-dim')}
+            className={cn(
+              'relative mt-2 text-sm',
+              tone === 'dark' ? 'text-on-contrast-muted' : 'text-dim',
+            )}
           >
             Ozveme se co nejdřív — obvykle do pár dní. Když to spěchá, zavolejte komukoli ze sekce
             Lidé v klubu.

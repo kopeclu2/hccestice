@@ -67,7 +67,7 @@ export function PlayerTile({ card }: { card: RosterCard }) {
           <div className="absolute inset-0 hatch [mask-image:linear-gradient(180deg,#000,transparent_70%)]" />
           <div
             aria-hidden
-            className="absolute inset-x-0 top-[30%] -translate-y-1/2 text-center text-[clamp(2.75rem,18vw,6.75rem)] leading-none font-extrabold tracking-[-0.05em] text-club/35 select-none text-stroke md:top-[38%] md:text-[clamp(5rem,8vw,6.75rem)]"
+            className="absolute inset-x-0 top-[30%] -translate-y-1/2 text-center text-jersey leading-none font-extrabold tracking-tighter text-club/35 select-none text-stroke md:top-[38%] md:text-jersey-md"
           >
             {initials(card.name, { skipAbbreviations: true, upper: false })}
           </div>
@@ -83,11 +83,7 @@ export function PlayerTile({ card }: { card: RosterCard }) {
       )}
 
       <div className="absolute inset-x-3.5 bottom-4 min-h-[3.25rem] md:inset-x-5 md:bottom-4.5 md:min-h-[3.5rem]">
-        <Eyebrow
-          className="text-club max-md:line-clamp-2 max-md:tracking-[0.08em]"
-          tone="club"
-          wide
-        >
+        <Eyebrow className="text-club max-md:line-clamp-2 max-md:tracking-caps-sm" tone="club" wide>
           {card.kicker}
         </Eyebrow>
         {/* `truncate` (whitespace-nowrap) na jméně nezabíralo — `text-pretty`
@@ -140,7 +136,7 @@ function SeasonStats({ stats }: { stats: NonNullable<RosterCard['stats']> }) {
           (změřeno na 320 a 360px). Čtečka ji má v `aria-label` vždy. */}
       {items.map(([key, value]) => (
         <span aria-hidden className={key === 'TM' ? 'hidden md:inline' : undefined} key={key}>
-          <span className="text-white/60">{key}</span> {value}
+          <span className="text-on-contrast-subtle">{key}</span> {value}
         </span>
       ))}
     </Badge>

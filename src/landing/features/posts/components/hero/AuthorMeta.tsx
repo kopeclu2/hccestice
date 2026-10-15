@@ -7,17 +7,17 @@ import { cn } from '@/lib/utils'
 export type AuthorMetaTone = 'photo' | 'panel' | 'light' | 'plain'
 
 const rowClass: Record<AuthorMetaTone, string> = {
-  photo: 'text-white/80',
-  panel: 'text-white/75',
+  photo: 'text-on-contrast-soft',
+  panel: 'text-on-contrast-soft',
   light: 'text-faint',
-  plain: 'text-white/65',
+  plain: 'text-on-contrast-muted',
 }
 
 const dotClass: Record<AuthorMetaTone, string> = {
-  photo: 'bg-white/40',
-  panel: 'bg-white/35',
+  photo: 'bg-on-contrast-ghost',
+  panel: 'bg-on-contrast-line',
   light: 'bg-inactive',
-  plain: 'bg-white/30',
+  plain: 'bg-on-contrast-line',
 }
 
 function Dot({ tone }: { tone: AuthorMetaTone }) {
@@ -58,7 +58,7 @@ export function AuthorMeta({
           >
             {author.initials}
           </span>
-          <span className={tone === 'light' ? 'text-ink' : 'text-white'}>{author.name}</span>
+          <span className={tone === 'light' ? 'text-ink' : 'text-on-contrast'}>{author.name}</span>
         </span>
       )}
       {dateLabel && (

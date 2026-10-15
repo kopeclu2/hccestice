@@ -59,7 +59,7 @@ export default async function GalleryDetailPage({ params }: Args) {
         title={gallery.title}
       />
 
-      <div className="relative z-1 mx-auto mt-9 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)]">
+      <div className="relative z-1 mx-auto mt-9 max-w-page px-gutter">
         <PhotoMasonry photos={photos} />
       </div>
 

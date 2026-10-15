@@ -22,7 +22,7 @@ import { TitleParts } from './HeroTitle'
  */
 export function HeroSplit({ article }: { article: ArticleDetail }) {
   return (
-    <div className="relative z-1 mx-auto mt-6 grid max-w-[97.5rem] items-center gap-[clamp(1.75rem,4vw,4rem)] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-13 lg:mt-16 lg:grid-cols-[1.05fr_.95fr]">
+    <div className="relative z-1 mx-auto mt-6 grid max-w-page items-center gap-hero-gap px-gutter md:mt-13 lg:mt-16 lg:grid-cols-[1.05fr_.95fr]">
       <div>
         <Breadcrumbs className="mb-5" tone="light" trail={articleTrail(article.badge)} />
         <Kicker>{article.badge}</Kicker>
@@ -55,7 +55,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
           />
         )}
         {article.photoCaption && (
-          <span className="absolute bottom-4 left-4 rounded-full bg-pine-deep/72 px-4 py-2 text-xs font-medium text-white backdrop-blur-md">
+          <span className="absolute bottom-4 left-4 rounded-full bg-pine-deep/72 px-4 py-2 text-xs font-medium text-on-contrast backdrop-blur-md">
             {article.photoCaption}
           </span>
         )}

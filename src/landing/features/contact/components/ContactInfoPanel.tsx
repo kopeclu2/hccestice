@@ -41,7 +41,7 @@ export function ContactInfoPanel({ site }: { site: SiteLinks }) {
            hranice clampu 20px a `break-words` místo `overflow-wrap:anywhere`
            (to by shrink-to-fit `inline-flex` zkrátilo o znak a adresa by se
            lámala i tam, kde se vejde). */
-        className="relative mt-3 inline-flex items-center gap-2.5 text-[clamp(1.25rem,2.6vw,2rem)] font-extrabold tracking-[-0.03em] break-words text-ink transition-colors hover:text-club"
+        className="relative mt-3 inline-flex items-center gap-2.5 text-contact-md font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club"
         href={`mailto:${site.email}`}
       >
         {site.email}

@@ -39,7 +39,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
         obdoby je pořád lepší než 58 % článků bez drobečkových dat.
       */}
       <BreadcrumbsJsonLd trail={articleTrail(article.badge)} />
-      <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
+      <div className="relative overflow-hidden rounded-section bg-contrast px-panel py-panel-y text-on-contrast max-md:px-4.5 max-md:py-6">
         {article.photo && (
           <div className="absolute inset-0 opacity-16">
             <Image
@@ -61,7 +61,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
             {/* Kicker je od zformátované soutěže delší („… · VČHL 2. ročník ·
                 Základní část"), tečka proto drží první řádek (`DotEyebrow`). */}
             <DotEyebrow className="min-w-0 flex-1">{scoreboard.kicker}</DotEyebrow>
-            <span className="hidden flex-none text-xs font-medium text-white/60 md:block">
+            <span className="hidden flex-none text-xs font-medium text-on-contrast-subtle md:block">
               {scoreboard.metaLine}
             </span>
           </div>
@@ -82,9 +82,9 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
             </div>
           )}
 
-          <div className="my-[clamp(1.625rem,3vw,2.5rem)] h-px bg-white/16" />
+          <div className="my-[clamp(1.625rem,3vw,2.5rem)] h-px bg-on-contrast-glass" />
 
-          <PageTitle balance="pretty" className="max-w-225 text-white" size="sm">
+          <PageTitle balance="pretty" className="max-w-225 text-on-contrast" size="sm">
             <TitleParts
               accent="lime-text"
               highlight={article.titleHighlight}
@@ -131,25 +131,30 @@ function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
       <Eyebrow as="div" tone="lime">
         Průběh zápasu
       </Eyebrow>
-      <ol aria-label="Průběh branek" className="mt-3 divide-y divide-white/10">
+      <ol aria-label="Průběh branek" className="mt-3 divide-y divide-on-contrast-wash">
         {goals.map((goal, index) => (
           <li
             className="grid grid-cols-[3rem_1fr_auto] items-baseline gap-x-3 py-2.5 md:grid-cols-[3.5rem_1fr_auto] md:gap-x-4"
             key={index}
           >
-            <span className="text-xs font-semibold text-white/60 tabular-nums">{goal.time}</span>
+            <span className="text-xs font-semibold text-on-contrast-subtle tabular-nums">
+              {goal.time}
+            </span>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span
                   aria-hidden
                   className={cn(
                     'size-2 flex-none rounded-full',
-                    goal.ours ? 'bg-lime' : 'border border-white/40',
+                    goal.ours ? 'bg-lime' : 'border border-on-contrast-ghost',
                   )}
                 />
                 <span className="sr-only">{goal.ours ? 'Gól Čestic: ' : 'Gól soupeře: '}</span>
                 <span
-                  className={cn('text-sm font-bold', goal.ours ? 'text-white' : 'text-white/65')}
+                  className={cn(
+                    'text-sm font-bold',
+                    goal.ours ? 'text-on-contrast' : 'text-on-contrast-muted',
+                  )}
                 >
                   {goal.scorer}
                 </span>
@@ -165,14 +170,14 @@ function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
                 )}
               </div>
               {goal.assists.length > 0 && (
-                <div className="mt-0.5 pl-4 text-xs font-medium text-pretty text-white/55">
+                <div className="mt-0.5 pl-4 text-xs font-medium text-pretty text-on-contrast-subtle">
                   <span className="sr-only">Asistence: </span>
                   {goal.assists.join(', ')}
                 </div>
               )}
             </div>
             {goal.score && (
-              <span className="text-sm font-bold text-white/80 tabular-nums">
+              <span className="text-sm font-bold text-on-contrast-soft tabular-nums">
                 <span className="sr-only">Stav </span>
                 {goal.score}
               </span>

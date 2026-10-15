@@ -40,7 +40,7 @@ export function GalleriesHeader({
        * prázdna stejnou maskou jako pás rozpisu — bez ní pilulky na 390px
        * lícovaly s okrajem a nic nenapovídalo, že jich je dvacet.
        */
-      rowClassName="max-md:no-scrollbar max-md:-mx-[clamp(0.875rem,3vw,2.5rem)] max-md:snap-x max-md:flex-nowrap max-md:overflow-x-auto max-md:px-[clamp(0.875rem,3vw,2.5rem)] max-md:pb-1.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] max-md:[&>*>*]:flex-none max-md:[&>*>*]:snap-start"
+      rowClassName="max-md:no-scrollbar max-md:-mx-gutter max-md:snap-x max-md:flex-nowrap max-md:overflow-x-auto max-md:px-gutter max-md:pb-1.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] max-md:[&>*>*]:flex-none max-md:[&>*>*]:snap-start"
       id="seznam"
       meta={countLabel(totalDocs, ['galerie', 'galerie', 'galerií'])}
       perex="Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase."

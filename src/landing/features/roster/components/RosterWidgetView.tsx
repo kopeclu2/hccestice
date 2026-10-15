@@ -29,7 +29,7 @@ export function RosterWidgetView({
           {players.map((player) => (
             <div className="text-center" key={player.id}>
               <PhotoTile
-                className="aspect-[3/4] rounded-thumb"
+                className="aspect-3/4 rounded-thumb"
                 photo={player.photo}
                 sizes="(max-width: 40rem) 50vw, (max-width: 48rem) 33vw, (max-width: 64rem) 25vw, 20vw"
               >

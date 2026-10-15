@@ -73,7 +73,7 @@ export function ArticleCard({
         <div
           className={cn(
             'relative aspect-video overflow-hidden rounded-badge bg-pine',
-            featured ? 'lg:w-[55%] lg:shrink-0' : 'aspect-[2/1]',
+            featured ? 'lg:w-[55%] lg:shrink-0' : 'aspect-2/1',
           )}
         >
           {photo ? (
@@ -133,7 +133,7 @@ export function ArticleCard({
         {(hasMedia || card.excerpt) && (
           <p
             className={cn(
-              'mt-2.5 text-sm leading-[1.5] text-pretty text-faint md:text-base',
+              'mt-2.5 text-sm leading-normal text-pretty text-faint md:text-base',
               /* Featured karta stojí ve svém řádku sama, takže se nemá k čemu
                  zarovnávat — `min-h` by pod krátkým perexem udělalo prázdno. */
               featured
