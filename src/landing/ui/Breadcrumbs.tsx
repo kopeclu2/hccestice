@@ -1,6 +1,14 @@
 import Link from 'next/link'
 import React from 'react'
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { BreadcrumbsJsonLd, type Crumb } from '@/landing/layout/BreadcrumbsJsonLd'
 import { cn } from '@/lib/utils'
 
@@ -23,8 +31,8 @@ const linkClass: Record<BreadcrumbTone, string> = {
 const currentClass: Record<BreadcrumbTone, string> = {
   page: 'line-clamp-1 font-semibold text-club-dark',
   light: 'font-semibold text-club-dark',
-  photo: 'text-lime',
-  panel: 'text-lime',
+  photo: 'font-medium text-lime',
+  panel: 'font-medium text-lime',
 }
 
 const separatorClass: Record<BreadcrumbTone, string> = {
@@ -35,12 +43,18 @@ const separatorClass: Record<BreadcrumbTone, string> = {
 }
 
 /**
- * Drobečková navigace — sémanticky vždy `nav` + `ol`, vzhled podle `tone`.
+ * Drobečková navigace — sémanticky vždy `nav` + `ol` + `li` (shadcn
+ * `Breadcrumb`), vzhled podle `tone`.
  *
  * „Domů" se doplňuje automaticky, volající předává jen zbytek cesty —
  * tím se nedá zapomenout ani napsat jinak. Strukturovaná data
  * (`BreadcrumbList`) vykresluje komponenta sama ze stejného `trail`, takže
  * se viditelné a strojové drobečky nemohou rozejít.
+ *
+ * Výchozí třídy shadcn primitiv (`text-sm`, `text-muted-foreground`, `gap-2.5`
+ * od `sm`, zalamování) se tu přebíjejí, aby drobečky vypadaly jako dřív: jeden
+ * řádek, `text-xs`, barva z podkladu (`tone`). Poslední drobek je
+ * `BreadcrumbPage` (`aria-current="page"`).
  */
 export function Breadcrumbs({
   className,
@@ -54,36 +68,37 @@ export function Breadcrumbs({
   const onLight = tone === 'page' || tone === 'light'
 
   return (
-    <nav aria-label="Drobečková navigace" className={cn(tone === 'page' && 'mb-5', className)}>
+    <Breadcrumb
+      aria-label="Drobečková navigace"
+      className={cn(tone === 'page' && 'mb-5', className)}
+    >
       <BreadcrumbsJsonLd trail={trail} />
-      <ol
+      <BreadcrumbList
         className={cn(
-          'm-0 flex list-none items-center gap-2 p-0 text-xs font-medium',
-          onLight && 'text-faint',
+          'flex-nowrap gap-2 text-xs font-medium sm:gap-2',
+          onLight ? 'text-faint' : 'text-inherit',
         )}
       >
-        <li>
-          <Link className={cn('transition-colors', linkClass[tone])} href="/">
-            Domů
-          </Link>
-        </li>
+        <BreadcrumbItem className="flex gap-2">
+          <BreadcrumbLink asChild className={cn('transition-colors', linkClass[tone])}>
+            <Link href="/">Domů</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
         {trail.map((crumb, index) => (
-          <li className="flex items-center gap-2" key={`${crumb.label}-${index}`}>
-            <span aria-hidden className={separatorClass[tone]}>
-              /
-            </span>
-            {crumb.href ? (
-              <Link className={cn('transition-colors', linkClass[tone])} href={crumb.href}>
-                {crumb.label}
-              </Link>
-            ) : (
-              <span aria-current="page" className={currentClass[tone]}>
-                {crumb.label}
-              </span>
-            )}
-          </li>
+          <React.Fragment key={`${crumb.label}-${index}`}>
+            <BreadcrumbSeparator className={separatorClass[tone]}>/</BreadcrumbSeparator>
+            <BreadcrumbItem className="flex gap-2">
+              {crumb.href ? (
+                <BreadcrumbLink asChild className={cn('transition-colors', linkClass[tone])}>
+                  <Link href={crumb.href}>{crumb.label}</Link>
+                </BreadcrumbLink>
+              ) : (
+                <BreadcrumbPage className={currentClass[tone]}>{crumb.label}</BreadcrumbPage>
+              )}
+            </BreadcrumbItem>
+          </React.Fragment>
         ))}
-      </ol>
-    </nav>
+      </BreadcrumbList>
+    </Breadcrumb>
   )
 }
