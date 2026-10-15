@@ -231,28 +231,11 @@
   /* Typografie — Archivo se načítá přes next/font (var --font-archivo) */
   --font-display: var(--font-archivo), system-ui, sans-serif;
 
-  /* Velikosti textu — role, ne čísla. Nadpisy řeší komponenty
-   * `PageTitle`/`SectionTitle`/`CardTitle` (viz landing/ui/Heading.tsx),
-   * tyhle tokeny pokrývají všechno ostatní. Nové arbitrární `text-[Xrem]`
-   * v landing komponentách nepřidávat — vždy sáhnout po tokenu.
+  /* Velikosti textu. Běžný text jede na standardní škále Tailwindu
+   * (`text-xs` … `text-5xl`, viz AGENTS.md → Typografie); tokeny níž pokrývají
+   * jen to, co škála nemá. Nové arbitrární `text-[Xrem]` nepřidávat.
    */
   --text-eyebrow: 0.6875rem; /* 11px — uppercase mikro-label nad nadpisem */
-  --text-caption: 0.75rem; /* 12px — badge, chip, tabulkové popisky */
-  --text-meta: 0.8125rem; /* 13px — meta text, datumy, malé pilulky */
-  --text-body: 0.9375rem; /* 15px — běžný text karet a odstavců */
-  --text-lead: 1.0625rem; /* 17px — perex, název karty, zvýrazněný řádek */
-
-  /* Nadpisová škála — jediný zdroj pro landing/ui/Heading.tsx.
-   * Dřív to bylo 9 arbitrárních `text-[Xrem]` uvnitř souboru, který má být
-   * právě tím jediným zdrojem. */
-  --text-card-title: 1.3125rem; /* 21px — CardTitle sm */
-  --text-panel-title: 1.625rem; /* 26px — CardTitle lg (mobil) */
-  --text-panel-title-lg: 1.875rem; /* 30px — CardTitle lg (desktop), h2 článku */
-  --text-section-title: 1.75rem; /* 28px — SectionTitle md/lg (mobil) */
-  --text-section-title-md: 2.125rem; /* 34px — SectionTitle md (desktop) */
-  --text-section-title-lg: 2.375rem; /* 38px — SectionTitle lg (desktop) */
-  --text-claim: 2rem; /* 32px — SectionTitle xl (mobil) */
-  --text-claim-lg: 3.25rem; /* 52px — SectionTitle xl (desktop) */
 
   /* Obrysové watermarky za hlavičkami (dekorativní, viz utility `text-stroke`).
    * Škála vznikla z 18 arbitrárních hodnot; dvě nejbližší dvojice se slily. */
@@ -264,18 +247,6 @@
   --text-watermark-2xl: 12.5rem; /* 200px */
   --text-watermark-3xl: 13.75rem; /* 220px */
   --text-watermark-4xl: 16.25rem; /* 260px */
-
-  /* Číselné displaye — skóre, čísla dresů, statistiky, letopočty. Nejsou to
-   * nadpisy (nemají sémantiku ani text-wrap), ale mají vlastní škálu.
-   * Používej přes komponentu `Numeral` (landing/ui/Numeral.tsx),
-   * která k velikosti přidá `tabular-nums` a správný tracking.
-   */
-  --text-numeral-xs: 1.1875rem; /* 19px — skóre v řádku výsledků */
-  --text-numeral-sm: 1.375rem; /* 22px — den v měsíci u mini karty */
-  --text-numeral-md: 1.625rem; /* 26px — datum v rozpisu zápasů */
-  --text-numeral-lg: 1.875rem; /* 30px — číslo dresu, monogram sponzora */
-  --text-numeral-xl: 2.25rem; /* 36px — hodnota ve statistické kartě */
-  --text-numeral-2xl: 3rem; /* 48px — skóre karty zápasu, velká statistika */
 
   /* Fluidní display velikosti — plynulé `clamp()` pro nadpisy, skóre a obří
    * číslice. Hodnoty jsou přesně ty, které bývaly arbitrární `text-[clamp(…)]`

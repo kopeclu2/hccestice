@@ -85,11 +85,11 @@ const RULES = [
     name: 'no-legacy-font-token',
     // Web jede od 15. 10. 2026 na standardní škále písma Tailwindu
     // (`text-xs/sm/base/lg/xl/2xl…`, rozhodnutí uživatele). Výjimky jsou
-    // `text-eyebrow` (11px mikro-label, Tailwind ho nemá) a `text-watermark-*`.
+    // `text-eyebrow` (11px mikro-label, Tailwind ho nemá), `text-watermark-*`
+    // a fluidní display škála (`text-title-*`, `text-score-*`…). Staré tokeny
+    // z `@theme` zmizely, takže třída by se tiše nevygenerovala.
     re: /(?<![\w-])text-(?:caption|meta|body|lead|card-title|panel-title(?:-lg)?|section-title(?:-md|-lg)?|claim(?:-lg)?|numeral-(?:xs|sm|md|lg|xl|2xl))(?![\w-])/g,
     hint: 'použij standardní velikost Tailwindu (text-xs/sm/base/lg/xl/2xl…), viz AGENTS.md → Typografie',
-    // Rozpracovaný soubor, převede se při jeho dokončení.
-    exceptIn: ['src/landing/layout/LandingFooter.tsx'],
   },
   {
     name: 'no-shadcn-in-landing',

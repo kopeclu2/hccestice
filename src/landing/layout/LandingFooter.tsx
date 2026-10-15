@@ -35,7 +35,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
      * obsahu nese (`spacing="cta"`); patička teď svírá stejný rytmus
      * z druhé strany, takže je pás vizuálně symetricky odsazený z obou stran.
      */
-    <footer className="relative z-1 mx-auto mt-18 w-full max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pb-12 md:mt-24 lg:mt-30">
+    <footer className="relative z-1 mx-auto mt-18 w-full max-w-page px-gutter pb-12 md:mt-24 lg:mt-30">
       {/*
        * Odsazení má tři stupně, ne dva — stejná logika jako u rytmu sekcí
        * v `SectionShell`. Hodnota z handoffu (44/56px) je kreslená pro
@@ -45,8 +45,8 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
        * skok z 18px na mobilu bez jakéhokoli mezistupně. Ten je teď
        * 28/32px, desktopová hodnota začíná na `lg`.
        */}
-      <div className="relative overflow-hidden rounded-card bg-club px-4.5 py-6 text-white md:px-7 md:py-8 lg:px-11 lg:py-14">
-        <Watermark className="-right-10 -bottom-15 text-watermark-3xl tracking-[-0.06em] text-white/12">
+      <div className="relative overflow-hidden rounded-card bg-club px-4.5 py-6 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
+        <Watermark className="-right-10 -bottom-15 text-watermark-3xl tracking-display text-on-contrast-wash">
           HCČ
         </Watermark>
         {content.photo && (
@@ -84,15 +84,15 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          */}
         <div className="relative grid grid-cols-[repeat(auto-fit,minmax(min(20rem,100%),1fr))] items-end gap-9 lg:gap-12">
           <div>
-            <SectionTitle className="text-white" size="xl">
+            <SectionTitle className="text-on-contrast" size="xl">
               {content.headline}
             </SectionTitle>
-            <p className="mt-4 mb-6.5 max-w-115 text-white/85">{content.perex}</p>
+            <p className="mt-4 mb-6.5 max-w-115 text-on-contrast-strong">{content.perex}</p>
             {/* Pod 360 px je řádek široký 236 px: „Napiš nám" (141) + dvě ikony
                 (2 × 44) + mezery 2 × 10 se nevejdou, proto užší mezera a levý
                 okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
-            <div className="flex flex-wrap gap-2.5 max-[22.5rem]:gap-2">
-              <PillLink className="max-[22.5rem]:pl-3.5" href="#kontakt" variant="light" withArrow>
+            <div className="flex flex-wrap gap-2.5 max-3xs:gap-2">
+              <PillLink className="max-3xs:pl-3.5" href="#kontakt" variant="light" withArrow>
                 Napiš nám
               </PillLink>
               {site.facebook && (
@@ -126,9 +126,9 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
 
           {/*
            * Sloupce odkazů: `gap-1` + `py-1.5` na odkazu, ne `gap-2` bez
-           * paddingu. Řádek `text-meta` je vysoký ~16px, takže tap target
+           * paddingu. Řádek `text-sm` je vysoký 20px, takže tap target
            * byl proti zbytku webu (44px, viz `pill.ts`) poloviční. Padding
-           * plochu zvětší na ~28px, aniž by se řádkování rozjelo — mezera
+           * plochu zvětší na ~32px, aniž by se řádkování rozjelo — mezera
            * mezi odkazy zůstává 8px jako dřív. Na desktopu, kde se klika
            * myší, se padding ruší a rozestupy jsou přesně jako v handoffu.
            *
@@ -140,17 +140,17 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * plocha. Slova jako „Fotoalbum"/„Aktuality" se do 104px vejdou
            * s rezervou, takže sloupce zůstávají vedle sebe i na 320px displeji.
            */}
-          <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(6.5rem,100%),1fr))] gap-7 text-meta">
+          <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(6.5rem,100%),1fr))] gap-7 text-sm">
             {content.columns.map((column) => (
               <div className="flex flex-col gap-1" key={column.title}>
                 {/*
-                 * `white-strong` (`text-white/80`), ne `white` (`/60`):
+                 * `white-strong` (80 %), ne `white` (60 %):
                  * nadpis sloupce na `bg-club` měl ~3,4:1, tedy pod AA.
                  */}
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
-                    className="py-1.5 text-white transition-colors hover:text-lime md:py-0.5"
+                    className="py-1.5 text-on-contrast transition-colors hover:text-lime md:py-0.5"
                     href={link.href}
                     key={link.href}
                   >
@@ -169,10 +169,10 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * udělá totéž zarovnání bez fantomové položky a logo s copyrightem
          * drží pohromadě ve vlastním flexu, takže se od sebe neodtrhnou.
          *
-         * `text-white/85`, ne `/70`: 12px text na `bg-club` měl ~4,1:1, což
+         * `text-on-contrast-strong` (90 %), ne 70 %: 12px text na `bg-club` měl ~4,1:1, což
          * je pod AA pro malé písmo.
          */}
-        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-white/25 pt-5 text-caption text-white/85 md:mt-10 lg:mt-11">
+        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-on-contrast-line pt-5 text-xs text-on-contrast-strong md:mt-10 lg:mt-11">
           <span className="flex items-center gap-3.5">
             {/* `rounded-full`: logo má neprůhledné bílé pozadí, takže by se
                 na zelené ploše kreslilo jako bílý čtverec kolem kruhového
@@ -221,7 +221,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
       {/* Autorský odkaz je záměrně mimo zelený panel — na rozdíl od
           klubových odkazů výš nejde o obsah webu, ale o kredit tvůrce, ať
           se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
-      <p className="mt-4 text-center text-caption text-faint">
+      <p className="mt-4 text-center text-xs text-faint">
         <Link
           className="inline-block py-1.5 transition-colors hover:text-club-dark"
           href="https://lukaskopecky.cz"
