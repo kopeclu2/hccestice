@@ -11,11 +11,13 @@ import { SectionShell } from '@/landing/components/SectionShell'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchMatchDetail, fetchMatchSlugs } from '@/landing/data/matchDetail'
 import { matchDescription, matchHeadline } from '@/landing/data/matchDetailView'
+import { buildMatchSummary } from '@/landing/data/matchSummary'
 import { formatFullDate } from '@/landing/data/format'
 import type { MatchDetail } from '@/landing/types'
 import { MatchHeader } from '@/landing/zapas/MatchHeader'
 import { MatchJsonLd } from '@/landing/zapas/MatchJsonLd'
 import { MatchReportCard } from '@/landing/zapas/MatchReportCard'
+import { MatchSummary } from '@/landing/zapas/MatchSummary'
 import { MatchTimeline } from '@/landing/zapas/MatchTimeline'
 import { brandTitle } from '@/utilities/brandTitle'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
@@ -53,10 +55,10 @@ const readSlug = async ({ params }: Args): Promise<string | null> => {
 
 /**
  * `sizes` fotky reportáže kopírují layout stránky: s časovou osou je karta
- * v pravém sloupci mřížky (0.85fr z ~1320 px); bez ní je karta přes celou
+ * v pravém sloupci mřížky (1fr z 2,5fr ~1320 px); bez ní je karta přes celou
  * šířku hlavičky a fotka v ní od `md` zabírá polovinu (`wide`).
  */
-const REPORT_SIZES_SPLIT = '(max-width: 1023px) 100vw, 40vw'
+const REPORT_SIZES_SPLIT = '(max-width: 1023px) 100vw, 38vw'
 const REPORT_SIZES_WIDE = '(max-width: 767px) 100vw, 50vw'
 
 /** Cesta zpět do výpisu na sezónu zápasu (a jeho sekci). */
@@ -82,9 +84,14 @@ export default async function MatchDetailPage(args: Args) {
   if (!match) notFound()
 
   const hasTimeline = match.timeline.length > 0
-  // Statistika na detailu není (rozhodnutí uživatele 14. 10. 2026), takže
-  // vedle osy zbývá jen reportáž a galerie.
-  const hasAside = Boolean(match.report || match.gallery)
+  // Statistika na detailu není (rozhodnutí uživatele 14. 10. 2026). Vedle
+  // osy stojí reportáž s galerií a souhrn (kanadské body, tresty), který
+  // drží osu v užším sloupci — přes celých 1320 px byl stav po gólu daleko
+  // od jména (rozhodnutí uživatele 15. 10. 2026).
+  const summary = buildMatchSummary(match.timeline)
+  const hasSummary = summary.points.length > 0 || summary.penalties.length > 0
+  const hasReport = Boolean(match.report || match.gallery)
+  const hasAside = hasReport || hasSummary
   const split = hasTimeline && hasAside
   const opponentName = match.weAreHome ? match.awayName : match.homeName
 
@@ -120,14 +127,14 @@ export default async function MatchDetailPage(args: Args) {
         <SectionShell
           className={cn(
             'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)]',
-            split && 'lg:grid-cols-[1.15fr_0.85fr]',
+            split && 'lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]',
           )}
           spacing="split"
         >
-          {/* Levý sloupec je průběh zápasu, pravý reportáž a galerie.
+          {/* Levý sloupec je průběh zápasu, pravý reportáž a souhrn.
               Prázdný sloupec se nevykreslí vůbec, aby mřížka nenechala díru;
-              samotný blok jde přes celou šířku hlavičky nad ním (strop šířky
-              tu dřív nechával polovinu stránky prázdnou). */}
+              samotná reportáž (archiv bez zápisu) jde přes celou šířku
+              hlavičky jako vodorovná karta. */}
           {hasTimeline && (
             <div className="min-w-0">
               <MatchTimeline
@@ -139,13 +146,14 @@ export default async function MatchDetailPage(args: Args) {
             </div>
           )}
           {hasAside && (
-            <div className="min-w-0">
+            <div className="flex min-w-0 flex-col gap-[clamp(1.25rem,3vw,2.5rem)]">
               <MatchReportCard
                 gallery={match.gallery}
                 report={match.report}
                 sizes={split ? REPORT_SIZES_SPLIT : REPORT_SIZES_WIDE}
                 wide={!split}
               />
+              <MatchSummary summary={summary} />
             </div>
           )}
         </SectionShell>
