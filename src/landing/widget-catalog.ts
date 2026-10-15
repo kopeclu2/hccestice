@@ -15,6 +15,22 @@ import configPromise from '@payload-config'
 
 type LayoutBlock = Page['layout'][number]
 
+/**
+ * Ukázka bloku pro živý render. Nese jen pole, která widget předvádí —
+ * zbytek povinných polí schématu (`id`…) nechává prázdný —, proto `Partial`.
+ * Klíče a hodnoty se přesto kontrolují podle schématu daného `blockType`.
+ */
+const example = <T extends LayoutBlock['blockType']>(
+  blockType: T,
+  data: Partial<Omit<Extract<LayoutBlock, { blockType: T }>, 'blockType'>>,
+): LayoutBlock => ({ blockType, ...data }) as LayoutBlock
+
+/**
+ * Soubor z knihovny médií, který ukázky používají jako vzorovou fotku.
+ * Bez něj v médiích (jiná databáze) mají fotokarty a banner jen prázdný podklad.
+ */
+const EXAMPLE_PHOTO_FILENAME = 'p3080654.jpg'
+
 export type WidgetDoc = {
   /** Název pro nadpis karty. */
   name: string
@@ -97,7 +113,7 @@ export const resolveExampleIds = cache(async () => {
       }),
       payload.find({
         collection: 'media',
-        where: { filename: { equals: 'p3080654.jpg' } },
+        where: { filename: { equals: EXAMPLE_PHOTO_FILENAME } },
         limit: 1,
         depth: 0,
       }),
@@ -143,15 +159,14 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Vše z polí bloku.',
           usage:
             'Vyplň nadpis; „Zvýrazněná část" se podbarví lime. Tlačítko se zobrazí jen s textem i cílem zároveň.',
-          example: {
-            blockType: 'sectionHeading',
+          example: example('sectionHeading', {
             kicker: 'Štítek',
             title: 'Nadpis sekce se',
             titleHighlight: 'zvýrazněním',
             perex: 'Perex pod nadpisem — krátké uvedení do sekce.',
             ctaLabel: 'Tlačítko',
             ctaHref: '#',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Textová sekce',
@@ -161,8 +176,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Rich text editor v bloku.',
           usage:
             'Napiš obsah v editoru; přepínačem „Vzhled" zvolíš bílou kartu, nebo text bez karty.',
-          example: {
-            blockType: 'textSection',
+          example: example('textSection', {
             appearance: 'card',
             content: {
               root: {
@@ -192,7 +206,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
                 ],
               },
             },
-          } as unknown as LayoutBlock,
+          }),
         },
         {
           name: 'Fotokarty',
@@ -200,8 +214,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Mřížka 1–3 fotokaret se štítky, popiskem a volitelným odkazem.',
           dataSource: 'Fotky z knihovny médií, texty z polí bloku.',
           usage: 'Přidej karty (fotka + štítky + popisek), zvol počet sloupců a výšku karet.',
-          example: {
-            blockType: 'photoCards',
+          example: example('photoCards', {
             columns: '2',
             height: 'sm',
             cards: [
@@ -213,7 +226,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
                 caption: 'Karta s oběma štítky',
               },
             ],
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Tabulka (data)',
@@ -224,15 +237,14 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             'Text v bloku — vlož data přímo z Excelu (buňky oddělené tabulátorem/středníkem).',
           usage:
             'Zkopíruj tabulku z Excelu do pole Data; zaškrtni „První řádek je záhlaví"; volitelně zadej text pro zvýraznění řádků (např. „Čestice").',
-          example: {
-            blockType: 'dataTable',
+          example: example('dataTable', {
             title: 'Tabulka (ukázka)',
             data: 'Kolo; Datum; Soupeř; Skóre\n1.; 12. 10.; HC Skuteč; 3:2\n2.; 19. 10.; Rebels Polička; 5:1\n3.; 26. 10.; HC Čestice B; 2:4',
             firstRowHeader: true,
             numericRight: true,
             highlight: 'Čestice',
             caption: 'Ukázková data — vložená přímo z tabulkového editoru.',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'CTA banner',
@@ -242,8 +254,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Vše z polí bloku; volitelná fotka na pozadí (ztmavená).',
           usage:
             'Vyplň titulek a tlačítko; „Barva" přepíná zelenou/tmavou; fotka na pozadí je volitelná.',
-          example: {
-            blockType: 'ctaBanner',
+          example: example('ctaBanner', {
             kicker: 'Výzva k akci',
             title: 'Tohle je CTA banner',
             text: 'Doplňkový text pod titulkem. Tlačítko vede kamkoli — na kotvu i podstránku.',
@@ -251,7 +262,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             ctaHref: '#',
             tone: 'green',
             photo: ids.photoId,
-          } as LayoutBlock,
+          }),
         },
       ],
     },
@@ -267,12 +278,11 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             'Seznam zápasů — výsledky (lime skóre vč. sn/pp) nebo rozpis (štítky Doma/Venku).',
           dataSource: 'Kolekce Zápasy.',
           usage: 'Zvol režim Výsledky/Rozpis, případně sezónu, tým a počet.',
-          example: {
-            blockType: 'matchesWidget',
+          example: example('matchesWidget', {
             title: 'Poslední výsledky',
             mode: 'results',
             limit: 3,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Nejbližší zápas (countdown)',
@@ -281,7 +291,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             'Tmavá karta s živým odpočtem do úvodního buly nejbližšího naplánovaného zápasu.',
           dataSource: 'Kolekce Zápasy (nejbližší se stavem Naplánován).',
           usage: 'Bez nastavení; text pro stav „žádný zápas" je volitelný.',
-          example: { blockType: 'nextMatchWidget' } as LayoutBlock,
+          example: example('nextMatchWidget', {}),
         },
         {
           name: 'Články',
@@ -289,12 +299,11 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Mřížka klikacích karet nejnovějších článků (štítek, datum, titulek).',
           dataSource: 'Kolekce Články (publikované).',
           usage: 'Volitelně omez typ (novinky/reportáže), sezónu a počet.',
-          example: {
-            blockType: 'postsGrid',
+          example: example('postsGrid', {
             title: 'Nejnovější články',
             postType: 'all',
             limit: 2,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Galerie',
@@ -302,11 +311,10 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Fotokarty nejnovějších alb — cover, název, datum a počet fotek.',
           dataSource: 'Kolekce Galerie.',
           usage: 'Volitelně sezóna a počet.',
-          example: {
-            blockType: 'galleriesGrid',
+          example: example('galleriesGrid', {
             title: 'Nejnovější galerie',
             limit: 3,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Soupiska hráčů',
@@ -314,7 +322,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Mřížka všech hráčů sezóny s portrétem, číslem dresu a postem.',
           dataSource: 'Kolekce Hráči (podle působení v sezóně).',
           usage: 'Volitelně sezóna a tým; čísla a posty se berou z působení hráče.',
-          example: { blockType: 'rosterWidget', title: 'Soupiska (ukázka)' } as LayoutBlock,
+          example: example('rosterWidget', { title: 'Soupiska (ukázka)' }),
         },
         {
           name: 'Produkty (merch)',
@@ -324,13 +332,12 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Kolekce Produkty (jen „V nabídce"); e-mail z Nastavení webu.',
           usage:
             'Produkty spravuj v kolekci Hokej → Produkty. V bloku vyplň objednací instrukce aktuální kampaně (termín, co uvést).',
-          example: {
-            blockType: 'productsGrid',
+          example: example('productsGrid', {
             title: 'Reklamní předměty',
             orderInfo:
               'Objednávejte do 5. 1. e-mailem — uveďte název předmětu, velikost a počet kusů. Výroba trvá cca 3 týdny, o vyzvednutí dáme vědět.',
             ctaLabel: 'Objednat e-mailem',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Tabulka ligy',
@@ -338,7 +345,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Tabulka soutěže s automaticky zvýrazněným řádkem HC Čestice.',
           dataSource: 'Dokument sezóny (Sezóny → Tabulka ligy).',
           usage: 'Tabulku edituj na sezóně, widget ji jen zobrazuje. Volitelně zvol jinou sezónu.',
-          example: { blockType: 'standingsWidget' } as LayoutBlock,
+          example: example('standingsWidget', {}),
         },
       ],
     },
@@ -354,11 +361,10 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Kolekce Hráči (vybraný dokument).',
           usage:
             'Vyber hráče; sezóna určuje číslo dresu a post; poznámka je volitelná („Kapitán týmu").',
-          example: {
-            blockType: 'playerCard',
+          example: example('playerCard', {
             player: ids.playerId,
             note: 'Ukázková poznámka na kartě hráče.',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Vybraní hráči',
@@ -366,11 +372,10 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Mřížka konkrétních hráčů v pořadí výběru (např. „Brankářská dvojice").',
           dataSource: 'Kolekce Hráči (vybrané dokumenty).',
           usage: 'Vyber hráče a seřaď je tažením; pořadí na webu odpovídá pořadí výběru.',
-          example: {
-            blockType: 'playersPicker',
+          example: example('playersPicker', {
             title: 'Vybraní hráči (ukázka)',
             players: ids.playerIds,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Karta zápasu',
@@ -379,11 +384,10 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             'Velká výsledková karta — loga obou týmů, skóre (lime = výhra), datum, soutěž, odkaz na reportáž.',
           dataSource: 'Kolekce Zápasy (vybraný dokument); logo z kolekce Soupeři.',
           usage: 'Vyber zápas; štítek nahoře je volitelný („Historický bronz").',
-          example: {
-            blockType: 'matchCard',
+          example: example('matchCard', {
             match: ids.matchId,
             kicker: 'Ukázkový zápas',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Vybrané zápasy',
@@ -391,11 +395,10 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Seznam konkrétních zápasů v pořadí výběru — např. celá série play-off.',
           dataSource: 'Kolekce Zápasy (vybrané dokumenty).',
           usage: 'Vyber zápasy a seřaď je; nadpis karty je volitelný.',
-          example: {
-            blockType: 'matchesPicker',
+          example: example('matchesPicker', {
             title: 'Vybrané zápasy (ukázka)',
             matches: ids.matchIds,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Karta osoby (kontakt)',
@@ -403,7 +406,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Kontaktní karta — portrét, role a klikací telefon/e-mail.',
           dataSource: 'Kolekce Lidé v klubu (vybraný dokument).',
           usage: 'Jen vyber osobu; kontakty se berou z jejího záznamu.',
-          example: { blockType: 'personCard', person: ids.personId } as LayoutBlock,
+          example: example('personCard', { person: ids.personId }),
         },
         {
           name: 'Vložená galerie',
@@ -411,12 +414,11 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Mřížka prvních N fotek konkrétního alba.',
           dataSource: 'Kolekce Galerie (vybraný dokument).',
           usage: 'Vyber galerii a počet fotek; nadpis je volitelný (jinak název galerie).',
-          example: {
-            blockType: 'galleryEmbed',
+          example: example('galleryEmbed', {
             gallery: ids.galleryId,
             title: 'Vložená galerie (ukázka)',
             limit: 4,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Vypíchnutý článek',
@@ -425,12 +427,11 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             'Velká fotokarta jednoho článku — štítek, datum, titulek, perex; klikací na detail.',
           dataSource: 'Kolekce Články (vybraný dokument).',
           usage: 'Vyber článek; náhradní fotka se použije, když článek nemá vlastní obrázek.',
-          example: {
-            blockType: 'postFeature',
+          example: example('postFeature', {
             post: ids.postId,
             fallbackPhoto: ids.photoId,
             tag: 'Ukázka',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Karta produktu',
@@ -438,11 +439,10 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Vypíchne jeden reklamní předmět — např. novinku v nabídce.',
           dataSource: 'Kolekce Produkty (vybraný dokument).',
           usage: 'Vyber produkt; štítek nahoře je volitelný („Novinka v nabídce").',
-          example: {
-            blockType: 'productCard',
+          example: example('productCard', {
             product: ids.productId,
             kicker: 'Z klubové nabídky',
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Karta sponzora',
@@ -450,12 +450,11 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Spotlight partnera — logo, jméno, poděkování a odkaz na web.',
           dataSource: 'Kolekce Sponzoři (vybraný dokument).',
           usage: 'Vyber sponzora; štítek a text poděkování jsou volitelné.',
-          example: {
-            blockType: 'sponsorCard',
+          example: example('sponsorCard', {
             sponsor: ids.sponsorId,
             kicker: 'Partner klubu',
             note: 'Ukázkový text poděkování partnerovi.',
-          } as LayoutBlock,
+          }),
         },
       ],
     },
@@ -470,8 +469,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Dlaždice s ikonou, titulkem a textem — benefity klubu.',
           dataSource: 'Vše z polí bloku; ikony z připraveného výběru (12 ikon).',
           usage: 'Přidej dlaždice, ke každé zvol ikonu z nabídky.',
-          example: {
-            blockType: 'featureGrid',
+          example: example('featureGrid', {
             title: 'Feature grid (ukázka)',
             items: [
               {
@@ -482,7 +480,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
               { icon: 'clock', title: 'Trénink 2× týdně', text: 'Úterý a pátek v Rychnově.' },
               { icon: 'trophy', title: 'Hrajeme o poháry', text: 'Bronz v play-off 2025/26.' },
             ],
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Ohlasy',
@@ -490,8 +488,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Citátové karty hráčů, rodičů a fanoušků — sociální důkaz pro nábor.',
           dataSource: 'Vše z polí bloku (citát, jméno, role, volitelná fotka).',
           usage: 'Přidej ohlasy; bez fotky se zobrazí kroužek s iniciálou.',
-          example: {
-            blockType: 'testimonials',
+          example: example('testimonials', {
             title: 'Ohlasy (ukázka)',
             items: [
               {
@@ -505,7 +502,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
                 role: 'maminka',
               },
             ],
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Členské příspěvky',
@@ -514,8 +511,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
             'Cenové karty s výčtem, co příspěvek zahrnuje; zvýrazněná karta je klubově zelená.',
           dataSource: 'Vše z polí bloku.',
           usage: 'Přidej karty (název, cena, položky ✓); „Zvýraznit" udělá kartu zelenou.',
-          example: {
-            blockType: 'pricingCards',
+          example: example('pricingCards', {
             title: 'Příspěvky (ukázka)',
             cards: [
               {
@@ -535,7 +531,7 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
                 highlighted: false,
               },
             ],
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Dokumenty ke stažení',
@@ -543,14 +539,13 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Seznam souborů se štítkem typu (PDF…), velikostí a download tlačítkem.',
           dataSource: 'Knihovna médií (vybrané soubory).',
           usage: 'Přidej soubory z médií; popisek je volitelný (jinak název souboru).',
-          example: {
-            blockType: 'downloads',
+          example: example('downloads', {
             title: 'Dokumenty (ukázka)',
             items: ids.pdfIds.map((id, index) => ({
               file: id,
               label: index === 0 ? 'Ukázkový dokument' : undefined,
             })),
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Mapa (Kde nás najdete)',
@@ -558,13 +553,12 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           description: 'Vložená mapa v zaoblené kartě + adresní pilulky pod ní.',
           dataSource: 'Embed URL z Mapy.cz / Google Maps.',
           usage: 'Vlož URL mapy (návod přímo u pole v adminu) a přidej adresní pilulky.',
-          example: {
-            blockType: 'mapEmbed',
+          example: example('mapEmbed', {
             title: 'Mapa (ukázka)',
             embedUrl:
               'https://maps.google.com/maps?q=Zimn%C3%AD%20stadion%20Rychnov%20nad%20Kn%C4%9B%C5%BEnou&output=embed',
             pills: [{ text: 'ZS Rychnov nad Kněžnou' }],
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Oznámení',
@@ -574,14 +568,13 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Vše z polí bloku.',
           usage:
             'Napiš text, zvol typ (zelená informace / lime upozornění), volitelně přidej odkaz.',
-          example: {
-            blockType: 'announcement',
+          example: example('announcement', {
             tone: 'warning',
             text: 'Ukázkové oznámení — tady bývá zrušený trénink nebo změna času.',
             linkLabel: 'Více',
             linkHref: '#',
             dismissible: true,
-          } as LayoutBlock,
+          }),
         },
         {
           name: 'Externí obsah (iframe)',
@@ -590,12 +583,11 @@ export function buildWidgetCatalog(ids: ExampleIds): WidgetCategory[] {
           dataSource: 'Externí URL.',
           usage:
             'Vlož URL a nastav výšku. Pozor: některé weby vkládání zakazují (zobrazí se prázdno).',
-          example: {
-            blockType: 'externalEmbed',
+          example: example('externalEmbed', {
             title: 'Externí obsah (ukázka — tabulka ahl.cz)',
             url: 'https://www.ahl.cz/soutez/vychodoceska_hokejova_liga/tabulky/',
             height: 400,
-          } as LayoutBlock,
+          }),
         },
       ],
     },
