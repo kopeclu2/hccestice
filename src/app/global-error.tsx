@@ -41,7 +41,7 @@ export default function GlobalError({
           placeItems: 'center',
           padding: '1.5rem',
           background: LANDING_COLORS.ink,
-          color: '#fff',
+          color: LANDING_COLORS['on-contrast'],
           fontFamily: 'system-ui, sans-serif',
           textAlign: 'center',
         }}
