@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { RECAPTCHA_SCORE_THRESHOLD, type RecaptchaAction } from './config'
 
 /**

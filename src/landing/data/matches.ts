@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { unstable_cache } from 'next/cache'
 import { getPayload, type Payload } from 'payload'
 import { cache } from 'react'

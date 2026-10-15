@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
