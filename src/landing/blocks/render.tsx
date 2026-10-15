@@ -47,11 +47,22 @@ import type { Page } from '@/payload-types'
 
 type LayoutBlock = Page['layout'][number]
 
+/** Bloky mimo klubový design systém, které vykresluje `renderPlainBlock`. */
+type PlainBlockType = 'formBlock' | 'rawHtml'
+type LandingBlockType = Exclude<LayoutBlock['blockType'], PlainBlockType>
+type BlockOfType<K extends LandingBlockType> = Extract<LayoutBlock, { blockType: K }>
+type LandingLayoutBlock = BlockOfType<LandingBlockType>
+
+/** Nový blok v layoutu stránky bez komponenty v mapě je chyba překladu. */
+type BlockComponentMap = {
+  [K in LandingBlockType]: React.ComponentType<{ block: BlockOfType<K> }>
+}
+
 /**
  * Mapa `blockType → komponenta bloku` (každý blok = složka v `blocks/`
  * s configem a komponentou; komponenta si vlastní data načítá sama).
  */
-const blockComponents: Record<string, React.FC<{ block: never }>> = {
+const blockComponents: BlockComponentMap = {
   landingHero: HeroBlockComponent,
   landingHeroModern: HeroModernBlockComponent,
   landingNews: NewsBlockComponent,
@@ -96,12 +107,26 @@ const blockComponents: Record<string, React.FC<{ block: never }>> = {
 }
 
 /** True pro bloky, které umí vykreslit `renderLandingBlock`. */
-export const isLandingBlock = (blockType: string): boolean => blockType in blockComponents
+export const isLandingBlock = (block: LayoutBlock): block is LandingLayoutBlock =>
+  block.blockType in blockComponents
+
+/**
+ * Komponenta je vybraná podle `K`, takže TypeScript ví, že dostane právě
+ * blok svého typu — s `block.blockType` jako běžným klíčem by z mapy vyšla
+ * unie komponent, kterou nejde zavolat unií bloků.
+ */
+function renderBlockOfType<K extends LandingBlockType>(
+  type: K,
+  block: BlockOfType<K>,
+  key: React.Key,
+): React.ReactNode {
+  const BlockComponent: React.ComponentType<{ block: BlockOfType<K> }> = blockComponents[type]
+  return <BlockComponent block={block} key={key} />
+}
 
 /** Vykreslí jeden landing blok, nebo `null` pro neznámý typ. */
 export function renderLandingBlock(block: LayoutBlock, key: React.Key): React.ReactNode {
-  const BlockComponent = blockComponents[block.blockType]
-  return BlockComponent ? <BlockComponent block={block as never} key={key} /> : null
+  return isLandingBlock(block) ? renderBlockOfType(block.blockType, block, key) : null
 }
 
 /** Render layoutu landing stránky (home): jen klubové bloky, bez obalů. */
@@ -158,7 +183,7 @@ export const RenderBlocks: React.FC<{
         // Stupně jsou tři jako v `SectionShell` — s dvěma (`mt-10! md:mt-16!`)
         // dostal tablet rovnou desktopovou hodnotu, tedy přesně to, co škála
         // sekcí odjinud odstranila.
-        if (blockType && isLandingBlock(blockType)) {
+        if (blockType && isLandingBlock(block)) {
           return (
             <div
               className="overflow-x-clip font-display text-ink [&_section]:mt-10! md:[&_section]:mt-13! lg:[&_section]:mt-16!"

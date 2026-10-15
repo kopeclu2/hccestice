@@ -70,10 +70,10 @@ async function RelationshipConverter({ node }: { node: { relationTo: string; val
 }
 
 const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
-  const base = baseJSXConverters(args as never)
+  const base = baseJSXConverters(args)
   return {
     ...base,
-    relationship: RelationshipConverter as never,
+    relationship: RelationshipConverter,
     blocks: {
       ...base.blocks,
       ctaBanner: ({ node }) => (

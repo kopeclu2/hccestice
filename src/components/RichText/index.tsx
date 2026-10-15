@@ -72,9 +72,7 @@ export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({ defaul
   // v `$` ignoruje (funguje jen v adminu), proto ho tu aplikujeme sami.
   text: (args) => {
     const rendered =
-      typeof defaultConverters.text === 'function'
-        ? defaultConverters.text(args as never)
-        : args.node.text
+      typeof defaultConverters.text === 'function' ? defaultConverters.text(args) : args.node.text
     const state = (args.node as { $?: Record<string, string> }).$
     if (!state) return rendered
 
