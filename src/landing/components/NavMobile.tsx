@@ -15,9 +15,9 @@ import { PillLink } from './PillLink'
 
 /**
  * Mobilní navigace — burger tlačítko a přes celou obrazovku rozbalený
- * seznam odkazů. Do `xl` je jediná navigace, kterou uživatel má
- * (desktopové pilulky jsou `hidden xl:flex` — devět položek se vedle loga
- * a CTA vejde až od 1280px, viz `NavPills`).
+ * seznam odkazů. Do `nav` (1440px) je jediná navigace, kterou uživatel má
+ * (desktopové pilulky jsou `hidden nav:flex` — deset položek se vedle loga
+ * a CTA vejde až od 1440px, viz `NavPills`).
  *
  * Overlay se renderuje portálem do `document.body`. Nutnost, ne volba:
  * navigace na homepage sedí uvnitř `<main class="overflow-x-clip">`
@@ -103,7 +103,7 @@ export function NavMobile({
   return (
     <>
       {/*
-       * `size-11 md:size-10`: burger je do `xl` jediná cesta k navigaci,
+       * `size-11 md:size-10`: burger je do `nav` jediná cesta k navigaci,
        * takže 40px tap target byl pod hranicí 44px, kterou kvůli témuž
        * pravidlu drží všechny pilulky (`pill.ts`). Desktop zůstává na 40px.
        *
@@ -119,7 +119,7 @@ export function NavMobile({
         aria-label="Otevřít menu"
         className={cn(
           'grid size-11 flex-none place-items-center rounded-full transition-colors md:size-10 [&_svg]:size-5',
-          !always && 'xl:hidden',
+          !always && 'nav:hidden',
           tone === 'glass'
             ? 'bg-pine-deep/32 border border-white/40 text-white backdrop-blur-lg hover:bg-white/30'
             : 'border-line text-ink hover:bg-contrast border bg-surface hover:text-on-contrast',
@@ -137,12 +137,12 @@ export function NavMobile({
           <div
             className={cn(
               'bg-pine-deep/97 fixed inset-0 z-50 flex flex-col overflow-y-auto p-5 backdrop-blur-lg',
-              !always && 'xl:hidden',
+              !always && 'nav:hidden',
             )}
             id="nav-mobile"
           >
             {/* Menu drží šířku i na 1024px, kde je od změny hranice pilulek
-                na `xl` pořád jedinou navigací — odkazy přes celou šířku
+                na `nav` pořád jedinou navigací — odkazy přes celou šířku
                 obrazovky by měly zbytečně dlouhou aktivní plochu. */}
             <div className="mx-auto flex w-full max-w-160 items-center justify-end">
               <button
@@ -159,7 +159,7 @@ export function NavMobile({
             {/* Aktivní odkaz se značí lime barvou a `aria-current` — stejným
                 predikátem jako pilulky (`isNavItemActive`). Bez toho nebylo
                 do 1280px v navigaci vůbec vidět, na které stránce uživatel
-                stojí: pilulky, které aktivní stav řeší, jsou `hidden xl:flex`. */}
+                stojí: pilulky, které aktivní stav řeší, jsou `hidden nav:flex`. */}
             <nav className="mx-auto mt-6 flex w-full max-w-160 flex-col gap-1">
               {items.map((item) => {
                 const active = isNavItemActive(item, pathname)

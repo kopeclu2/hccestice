@@ -151,7 +151,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
-                    className="hover:text-lime py-1.5 text-white transition-colors md:py-0"
+                    className="hover:text-lime py-1.5 text-white transition-colors md:py-0.5"
                     href={link.href}
                     key={link.href}
                   >
@@ -224,7 +224,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
       <p className="text-faint mt-4 text-center text-caption">
         <Link
-          className="hover:text-club-dark transition-colors"
+          className="hover:text-club-dark inline-block py-1.5 transition-colors"
           href="https://lukaskopecky.cz"
           rel="noreferrer"
           target="_blank"

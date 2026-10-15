@@ -15,6 +15,7 @@
 @custom-variant lg (@media (width >= theme(--breakpoint-lg)));
 @custom-variant xl (@media (width >= theme(--breakpoint-xl)));
 @custom-variant 2xl (@media (width >= theme(--breakpoint-2xl)));
+@custom-variant nav (@media (width >= theme(--breakpoint-nav)));
 
 @layer base {
   h1,
@@ -49,6 +50,7 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
+  --breakpoint-nav: 90rem;
   /* Geist se načítá jen v (frontend)/layout.tsx — na (landing) routách se
    * `--font-geist-*` nikam neresolvuje. Bez fallbacku bylo `font-mono`
    * na /vzory a /widgety mrtvé (dědilo se sans-serif). */

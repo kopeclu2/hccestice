@@ -17,18 +17,19 @@ import { PillLink } from './PillLink'
  * v `navHref.ts`, sdílený s `NavMobile`) zajistí, že detail článku zvýrazní
  * „Aktuality".
  *
- * Pilulky se zapínají až na `xl` (1280px), ne na `md`. Devět položek
- * navigace potřebuje vedle loga a CTA ~1240px; na 768px i na 1024px se
+ * Pilulky se zapínají až na `nav` (1440px, vlastní breakpoint v
+ * `globals.css`), ne na `md`. Deset položek navigace potřebuje vedle loga
+ * a CTA ~1330px (s `gap-1.5`); na 768px i na 1024px se
  * poslední pilulky (včetně té aktivní) schovaly za CTA a zbytek byl
  * dosažitelný jen vodorovným scrollem, o kterém nic nenapovídalo, že
- * existuje. Do `xl` je proto jedinou navigací burger (`NavMobile`) —
+ * existuje. Do `nav` je proto jedinou navigací burger (`NavMobile`) —
  * ustřižený odkaz je horší než odkaz v menu.
  */
 export function NavPills({ items }: { items: NavItem[] }) {
   const pathname = usePathname()
 
   return (
-    <div className="no-scrollbar hidden min-w-0 gap-2 overflow-x-auto xl:flex">
+    <div className="no-scrollbar hidden min-w-0 gap-1.5 overflow-x-auto nav:flex">
       {items.map((item) => {
         const active = isNavItemActive(item, pathname)
         return (
