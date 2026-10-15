@@ -46,7 +46,7 @@ export function VariantCountdown({
     return (
       <p className={cn('font-mono text-sm font-medium tabular-nums', className)}>
         <span className="sr-only">Do začátku zbývá </span>
-        {days!.value}
+        {days?.value}
         <span className="text-faint"> d </span>
         {clock.map((unit) => unit.value).join(':')}
       </p>

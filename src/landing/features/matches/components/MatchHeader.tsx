@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { MetaItem, OutcomeBadge } from '@/landing/features/matches/header-variants/shared'
+import { hasScore, MetaItem, OutcomeBadge } from '@/landing/features/matches/header-variants/shared'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { competitionLabel, sideLabel } from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
@@ -43,15 +43,13 @@ function Facts({ children }: { children: React.ReactNode }) {
 }
 
 function PlayedHeader({ match }: { match: MatchDetail }) {
-  const hasScore = match.homeScore != null && match.awayScore != null
-
   return (
     <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
       <div className="absolute inset-0 hatch opacity-40" />
       <div className="relative">
         <DotEyebrow>{competitionLabel(match)}</DotEyebrow>
 
-        {hasScore ? (
+        {hasScore(match) ? (
           <>
             {/* Titulek je tabule sama; `h1` je tu pro čtečky a vyhledávače. */}
             <h1 className="sr-only">
@@ -62,8 +60,8 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
               scoreboard={{
                 homeName: match.homeName,
                 awayName: match.awayName,
-                homeScore: match.homeScore!,
-                awayScore: match.awayScore!,
+                homeScore: match.homeScore,
+                awayScore: match.awayScore,
                 weAreHome: match.weAreHome,
                 weWon: match.outcome === 'win',
                 thirds: match.thirds,

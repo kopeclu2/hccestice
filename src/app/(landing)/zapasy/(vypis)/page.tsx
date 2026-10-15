@@ -104,9 +104,9 @@ export default async function ZapasyPage({ searchParams }: Args) {
       <MatchesHeader
         activeSlug={activeSeason?.slug ?? null}
         fullTableUrl={standings.fullTableUrl}
-        seasons={seasons
-          .filter((season) => season.slug)
-          .map((season) => ({ slug: season.slug!, label: seasonShortLabel(season) }))}
+        seasons={seasons.flatMap((season) =>
+          season.slug ? [{ slug: season.slug, label: seasonShortLabel(season) }] : [],
+        )}
       />
 
       {/* Prázdný stav dostane jen aktuální sezóna na /zapasy — u starší

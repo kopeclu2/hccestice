@@ -36,8 +36,7 @@ import {
 
 /* ── Reportáž ────────────────────────────────────────────────────────────── */
 
-const isPublished = (post: Post | null | undefined): post is Post =>
-  Boolean(post) && post!._status === 'published'
+const isPublished = (post: Post | null | undefined): post is Post => post?._status === 'published'
 
 /**
  * Rozhodnutí, která reportáž k zápasu patří. Vazba je v datech dvojí

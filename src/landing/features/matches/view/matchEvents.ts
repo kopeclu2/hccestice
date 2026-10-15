@@ -17,9 +17,7 @@ import { formatCompetition, orient, orientPair, scoreSuffix } from './matchForma
 /** Jméno hráče z branky: text ze zápisu, jinak jméno z populované relace. */
 export const goalName = (name: string | null | undefined, rel: unknown): string | null => {
   if (name) return name
-  return typeof rel === 'object' && rel && 'name' in rel
-    ? String((rel as { name: unknown }).name)
-    : null
+  return typeof rel === 'object' && rel && 'name' in rel ? String(rel.name) : null
 }
 
 /**
