@@ -48,6 +48,26 @@ export const SiteConfig: GlobalConfig = {
       },
     },
     {
+      // Varianty jsou v `landing/zapas/header-variants/`; náhled všech vedle
+      // sebe na `/vzory/hlavicka-zapasu`. Hodnoty drží `MATCH_HEADER_VARIANTS`.
+      name: 'matchHeaderVariant',
+      type: 'select',
+      label: 'Vzhled hlavičky detailu zápasu',
+      defaultValue: 'classic',
+      required: true,
+      options: [
+        { label: 'Současná', value: 'classic' },
+        { label: 'A — Aréna (světelná tabule)', value: 'arena' },
+        { label: 'B — Editorial (světlá, obří číslice)', value: 'editorial' },
+        { label: 'C — Půlené pole', value: 'split' },
+        { label: 'D — Kompaktní aplikace', value: 'app' },
+      ],
+      admin: {
+        description:
+          'Hlavička na stránce každého zápasu (/zapasy/…). Všechny varianty vedle sebe ukazuje náhled /vzory/hlavicka-zapasu. Zrušený zápas má vždy současnou hlavičku.',
+      },
+    },
+    {
       name: 'contactEmail',
       type: 'email',
       label: 'Kontaktní e-mail',

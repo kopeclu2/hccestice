@@ -10,11 +10,12 @@ import { PillLink } from '@/landing/components/PillLink'
 import { SectionShell } from '@/landing/components/SectionShell'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchMatchDetail, fetchMatchSlugs } from '@/landing/data/matchDetail'
+import { fetchSiteConfig } from '@/landing/data/site'
 import { matchDescription, matchHeadline } from '@/landing/data/matchDetailView'
 import { buildMatchSummary } from '@/landing/data/matchSummary'
 import { formatFullDate } from '@/landing/data/format'
 import type { MatchDetail } from '@/landing/types'
-import { MatchHeader } from '@/landing/zapas/MatchHeader'
+import { MatchHeaderByVariant } from '@/landing/zapas/header-variants'
 import { MatchJsonLd } from '@/landing/zapas/MatchJsonLd'
 import { MatchReportCard } from '@/landing/zapas/MatchReportCard'
 import { MatchSummary } from '@/landing/zapas/MatchSummary'
@@ -82,6 +83,10 @@ export default async function MatchDetailPage(args: Args) {
   const slug = await readSlug(args)
   const match = slug ? await fetchMatchDetail(slug) : null
   if (!match) notFound()
+  // Vzhled hlavičky volí správce v Nastavení webu. `siteConfig` je tagovaná
+  // cache (`site-config`) a čte ji i `SubpageShell`, takže uložení v adminu
+  // přegeneruje i prerenderované detaily (tag se propaguje do stránky).
+  const site = await fetchSiteConfig()
 
   const hasTimeline = match.timeline.length > 0
   // Statistika na detailu není (rozhodnutí uživatele 14. 10. 2026). Vedle
@@ -112,7 +117,7 @@ export default async function MatchDetailPage(args: Args) {
       </SectionShell>
 
       <SectionShell spacing="bar">
-        <MatchHeader match={match} />
+        <MatchHeaderByVariant match={match} variant={site.matchHeaderVariant} />
       </SectionShell>
 
       {match.missingProtocol && (

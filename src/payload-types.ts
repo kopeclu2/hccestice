@@ -4182,6 +4182,10 @@ export interface SiteConfig {
    * Náhled má karta ve výpisu Aktuality vždy — článek bez vlastní fotky dostane vzorovou plochu. S touhle volbou se místo ní použije Výchozí obrázek článků. Widget Aktuality na úvodní stránce má vlastní přepínač na svém bloku v layoutu stránky.
    */
   postsListShowPhoto?: boolean | null;
+  /**
+   * Hlavička na stránce každého zápasu (/zapasy/…). Všechny varianty vedle sebe ukazuje náhled /vzory/hlavicka-zapasu. Zrušený zápas má vždy současnou hlavičku.
+   */
+  matchHeaderVariant: 'classic' | 'arena' | 'editorial' | 'split' | 'app';
   contactEmail?: string | null;
   facebook?: string | null;
   instagram?: string | null;
@@ -4478,6 +4482,7 @@ export interface SiteConfigSelect<T extends boolean = true> {
   logo?: T;
   defaultPostImage?: T;
   postsListShowPhoto?: T;
+  matchHeaderVariant?: T;
   contactEmail?: T;
   facebook?: T;
   instagram?: T;

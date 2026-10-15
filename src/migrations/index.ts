@@ -1,15 +1,16 @@
-import * as migration_20260820_161810_baseline from './20260820_161810_baseline';
-import * as migration_20260820_161820_add_audit_log from './20260820_161820_add_audit_log';
-import * as migration_20260821_053907_add_maintenance_mode from './20260821_053907_add_maintenance_mode';
-import * as migration_20260821_085520_hero_modern_album_tiles from './20260821_085520_hero_modern_album_tiles';
-import * as migration_20260821_090730_posts_grid_show_photo from './20260821_090730_posts_grid_show_photo';
-import * as migration_20260821_091316_news_show_photo from './20260821_091316_news_show_photo';
-import * as migration_20260821_093332_posts_list_show_photo from './20260821_093332_posts_list_show_photo';
-import * as migration_20260821_093653_trainings_cards from './20260821_093653_trainings_cards';
-import * as migration_20260821_095556_trainings_drop_extras from './20260821_095556_trainings_drop_extras';
-import * as migration_20261014_114308_vchl_sync from './20261014_114308_vchl_sync';
-import * as migration_20261014_134131_vchl_penalties from './20261014_134131_vchl_penalties';
-import * as migration_20261014_150444_match_slug from './20261014_150444_match_slug';
+import * as migration_20260820_161810_baseline from './20260820_161810_baseline'
+import * as migration_20260820_161820_add_audit_log from './20260820_161820_add_audit_log'
+import * as migration_20260821_053907_add_maintenance_mode from './20260821_053907_add_maintenance_mode'
+import * as migration_20260821_085520_hero_modern_album_tiles from './20260821_085520_hero_modern_album_tiles'
+import * as migration_20260821_090730_posts_grid_show_photo from './20260821_090730_posts_grid_show_photo'
+import * as migration_20260821_091316_news_show_photo from './20260821_091316_news_show_photo'
+import * as migration_20260821_093332_posts_list_show_photo from './20260821_093332_posts_list_show_photo'
+import * as migration_20260821_093653_trainings_cards from './20260821_093653_trainings_cards'
+import * as migration_20260821_095556_trainings_drop_extras from './20260821_095556_trainings_drop_extras'
+import * as migration_20261014_114308_vchl_sync from './20261014_114308_vchl_sync'
+import * as migration_20261014_134131_vchl_penalties from './20261014_134131_vchl_penalties'
+import * as migration_20261014_150444_match_slug from './20261014_150444_match_slug'
+import * as migration_20261015_085423_match_header_variant from './20261015_085423_match_header_variant'
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20261014_150444_match_slug.up,
     down: migration_20261014_150444_match_slug.down,
-    name: '20261014_150444_match_slug'
+    name: '20261014_150444_match_slug',
   },
-];
+  {
+    up: migration_20261015_085423_match_header_variant.up,
+    down: migration_20261015_085423_match_header_variant.down,
+    name: '20261015_085423_match_header_variant',
+  },
+]
