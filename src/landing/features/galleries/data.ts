@@ -1,6 +1,6 @@
 import 'server-only'
 
-import type { Payload } from 'payload'
+import type { Payload, Where } from 'payload'
 import { cache } from 'react'
 
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
@@ -59,9 +59,8 @@ export const toGalleryCard = (gallery: GalleryCardDoc): GalleryCard => {
     dateLabel: gallery.date ? formatFullDate(gallery.date) : '',
     photoCount: gallery.photos?.length ?? 0,
     cover:
-      typeof gallery.cover === 'object' && gallery.cover
-        ? toPhoto(gallery.cover)
-        : uploadToPhoto(firstPhoto as Parameters<typeof uploadToPhoto>[0]),
+      uploadToPhoto(gallery.cover) ??
+      uploadToPhoto(firstPhoto as Parameters<typeof uploadToPhoto>[0]),
     href: gallery.slug ? `/fotogalerie/${gallery.slug}` : null,
     seasonLabel:
       typeof gallery.season === 'object' && gallery.season
@@ -74,12 +73,12 @@ export const toGalleryCard = (gallery: GalleryCardDoc): GalleryCard => {
 export const fetchGalleryCards = cache(
   async (options: { seasonId?: number | null; limit: number }): Promise<GalleryCard[]> => {
     const payload = await getPayloadClient()
-    const and: Array<Record<string, unknown>> = [{ date: { exists: true } }]
+    const and: Where[] = [{ date: { exists: true } }]
     if (options.seasonId) and.push({ season: { equals: options.seasonId } })
 
     const { docs } = await payload.find({
       collection: 'galleries',
-      where: { and } as never,
+      where: { and },
       sort: '-date',
       limit: options.limit,
       depth: 1,
@@ -212,12 +211,12 @@ export const fetchGalleriesPage = cachedQuery(
   }): Promise<GalleriesPage> => {
     const payload = await getPayloadClient()
     const perPage = options.perPage ?? 9
-    const seasonAnd = options.seasonId ? [{ season: { equals: options.seasonId } }] : []
+    const seasonAnd: Where[] = options.seasonId ? [{ season: { equals: options.seasonId } }] : []
 
     const datedQuery = (page: number) =>
       payload.find({
         collection: 'galleries',
-        where: { and: [...seasonAnd, { date: { exists: true } }] } as never,
+        where: { and: [...seasonAnd, { date: { exists: true } }] },
         sort: '-date',
         limit: perPage,
         page,
@@ -230,7 +229,7 @@ export const fetchGalleriesPage = cachedQuery(
       datedQuery(requestedPage),
       payload.find({
         collection: 'galleries',
-        where: { and: [...seasonAnd, { date: { exists: false } }] } as never,
+        where: { and: [...seasonAnd, { date: { exists: false } }] },
         sort: '-createdAt',
         limit: 0,
         depth: 1,

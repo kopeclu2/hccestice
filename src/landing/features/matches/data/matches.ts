@@ -1,6 +1,6 @@
 import 'server-only'
 
-import type { Payload } from 'payload'
+import type { Payload, Where } from 'payload'
 import { cache } from 'react'
 
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
@@ -32,7 +32,7 @@ import {
   toResultRow,
   toUpcoming,
 } from '@/landing/features/matches/view/matchRows'
-import { toPhoto } from '@/landing/lib/media'
+import { uploadToPhoto } from '@/landing/lib/media'
 import { formatDateTime } from '@/lib/datetime'
 import { linkOrNull, routes } from '@/lib/routes'
 import type { Match, Media } from '@/payload-types'
@@ -109,7 +109,7 @@ export const fetchMatchRows = cache(
     limit: number
   }): Promise<MatchRow[]> => {
     const payload = await getPayloadClient()
-    const and: Array<Record<string, unknown>> = [
+    const and: Where[] = [
       { status: { equals: options.mode === 'results' ? 'played' : 'scheduled' } },
     ]
     if (options.mode === 'schedule') {
@@ -120,7 +120,7 @@ export const fetchMatchRows = cache(
 
     const { docs } = await payload.find({
       collection: 'matches',
-      where: { and } as never,
+      where: { and },
       sort: options.mode === 'results' ? '-date' : 'date',
       limit: options.limit,
       depth: 1,
@@ -316,10 +316,7 @@ export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardDa
     venue: match.venue ?? null,
     home: Boolean(match.home),
     opponentName: opponent?.name ?? 'Soupeř',
-    opponentLogo:
-      opponent && typeof opponent.logo === 'object' && opponent.logo
-        ? toPhoto(opponent.logo)
-        : null,
+    opponentLogo: uploadToPhoto(opponent?.logo),
     score: match.status === 'played' ? matchScore(match) : null,
     suffix: scoreSuffix(match),
     won: match.status === 'played' ? (match.scoreOurs ?? 0) > (match.scoreOpp ?? 0) : null,

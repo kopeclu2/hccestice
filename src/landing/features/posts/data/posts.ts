@@ -1,5 +1,6 @@
 import 'server-only'
 
+import type { Where } from 'payload'
 import { cache } from 'react'
 
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
@@ -20,14 +21,22 @@ export const fetchDefaultPostPhoto = cache(async (): Promise<Photo | null> => {
   return uploadToPhoto(site.defaultPostImage)
 })
 
+const PUBLISHED: Where = { _status: { equals: 'published' } }
+
+/**
+ * Publikované články, které patří do výpisů webu (novinky + reportáže).
+ * Typ `other` (stránkové texty, archiv) se do karet nedostává.
+ */
+export const PUBLISHED_ARTICLES: Where = {
+  and: [PUBLISHED, { type: { in: ['news', 'report'] } }],
+}
+
 /** Nejnovější publikované články (novinky + reportáže). */
 export const fetchLatestPosts = cache(async (limit: number): Promise<Post[]> => {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'posts',
-    where: {
-      and: [{ _status: { equals: 'published' } }, { type: { in: ['news', 'report'] } }],
-    },
+    where: PUBLISHED_ARTICLES,
     sort: '-publishedAt',
     limit,
     depth: 1,
@@ -43,15 +52,14 @@ export const fetchPostCards = cache(
     limit: number
   }): Promise<PostCard[]> => {
     const payload = await getPayloadClient()
-    const and: Array<Record<string, unknown>> = [{ _status: { equals: 'published' } }]
-    and.push(
-      options.type ? { type: { equals: options.type } } : { type: { in: ['news', 'report'] } },
-    )
+    const and: Where[] = [
+      options.type ? { and: [PUBLISHED, { type: { equals: options.type } }] } : PUBLISHED_ARTICLES,
+    ]
     if (options.seasonId) and.push({ season: { equals: options.seasonId } })
 
     const { docs } = await payload.find({
       collection: 'posts',
-      where: { and } as never,
+      where: { and },
       sort: '-publishedAt',
       limit: options.limit,
       depth: 1,
@@ -109,9 +117,9 @@ export const fetchPostsPage = cachedQuery(
     withPhotos?: boolean
   }): Promise<PostsPage> => {
     const payload = await getPayloadClient()
-    const and: Array<Record<string, unknown>> = [{ _status: { equals: 'published' } }]
+    const and: Where[] = [PUBLISHED]
     if (options.type) and.push({ type: { equals: options.type } })
-    const where = { and } as never
+    const where: Where = { and }
 
     const { totalDocs } = await payload.count({ collection: 'posts', where })
     const totalPages =
@@ -169,7 +177,7 @@ export const fetchPostSlugs = cache(async (): Promise<string[]> => {
   const { docs } = await payload.find({
     collection: 'posts',
     draft: false,
-    where: { _status: { equals: 'published' } },
+    where: PUBLISHED,
     limit: 0,
     depth: 0,
     select: { slug: true },
@@ -204,9 +212,7 @@ export const fetchRelatedPostCards = cache(async (post: Post, limit = 3): Promis
     ? (
         await payload.find({
           collection: 'posts',
-          where: {
-            and: [{ id: { in: pickedIds } }, { _status: { equals: 'published' } }],
-          },
+          where: { and: [{ id: { in: pickedIds } }, PUBLISHED] },
           limit: pickedIds.length,
           depth: 1,
         })
@@ -221,16 +227,12 @@ export const fetchRelatedPostCards = cache(async (post: Post, limit = 3): Promis
   const categoryIds = (post.categories ?? []).map(relId).filter((id): id is number => Boolean(id))
   const excludeIds = [post.id, ...picked.map((doc) => doc.id)]
 
-  const and: Array<Record<string, unknown>> = [
-    { _status: { equals: 'published' } },
-    { type: { in: ['news', 'report'] } },
-    { id: { not_in: excludeIds } },
-  ]
+  const and: Where[] = [PUBLISHED_ARTICLES, { id: { not_in: excludeIds } }]
   if (categoryIds.length) and.push({ categories: { in: categoryIds } })
 
   let { docs: fill } = await payload.find({
     collection: 'posts',
-    where: { and } as never,
+    where: { and },
     sort: '-publishedAt',
     limit: missing,
     depth: 1,
@@ -242,11 +244,10 @@ export const fetchRelatedPostCards = cache(async (post: Post, limit = 3): Promis
       collection: 'posts',
       where: {
         and: [
-          { _status: { equals: 'published' } },
-          { type: { in: ['news', 'report'] } },
+          PUBLISHED_ARTICLES,
           { id: { not_in: [...excludeIds, ...fill.map((doc) => doc.id)] } },
         ],
-      } as never,
+      },
       sort: '-publishedAt',
       limit: missing - fill.length,
       depth: 1,
