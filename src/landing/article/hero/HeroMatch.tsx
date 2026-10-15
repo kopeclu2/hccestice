@@ -7,6 +7,7 @@ import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { Badge } from '../../components/Badge'
 import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
 import { PageTitle } from '../../components/Heading'
+import { DotEyebrow } from '../../components/DotEyebrow'
 import { Eyebrow } from '../../components/Kicker'
 import { MatchScoreboard } from '../../components/MatchScoreboard'
 import { PillLink } from '../../components/PillLink'
@@ -57,11 +58,11 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
         <div className="from-pine-deep/55 to-pine-deep/92 pointer-events-none absolute inset-0 bg-linear-to-b" />
 
         <div className="relative">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="bg-lime size-2 flex-none rounded-full shadow-ring-lime" />
-            <Eyebrow tone="lime">{scoreboard.kicker}</Eyebrow>
-            <div className="flex-1" />
-            <span className="hidden text-caption font-semibold text-white/60 md:block">
+          <div className="flex items-start gap-x-2.5 gap-y-2">
+            {/* Kicker je od zformátované soutěže delší („… · VČHL 2. ročník ·
+                Základní část"), tečka proto drží první řádek (`DotEyebrow`). */}
+            <DotEyebrow className="min-w-0 flex-1">{scoreboard.kicker}</DotEyebrow>
+            <span className="hidden flex-none text-caption font-semibold text-white/60 md:block">
               {scoreboard.metaLine}
             </span>
           </div>

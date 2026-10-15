@@ -20,6 +20,7 @@ import {
 } from './format'
 import {
   CLUB_NAME,
+  formatCompetition,
   matchOutcome,
   matchScore,
   matchTitle,
@@ -66,7 +67,7 @@ export const toUpcoming = (match: Match): UpcomingMatch => ({
   title: matchTitle(match),
   kickoffISO: match.date,
   subtitle: [formatDateTime(match.date), match.venue].filter(Boolean).join(' · '),
-  label: match.competition ?? 'VČHL',
+  label: formatCompetition(match.competition) ?? 'VČHL',
   href: hrefOf(match),
 })
 

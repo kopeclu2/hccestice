@@ -11,6 +11,7 @@ import { STANDINGS } from '../content'
 import type { StandingsContent, StatsContent } from '../types'
 
 import { pluralForm } from './format'
+import { formatCompetition } from './matchFormat'
 import { seasonShortLabel } from './seasonLabel'
 import { CACHE_TAGS } from './tags'
 
@@ -98,7 +99,7 @@ export const fetchSeason = cache(async (seasonId?: number | null): Promise<Seaso
 export function mapStandingsFromSeason(season: Season | null): StandingsContent {
   return {
     seasonLabel:
-      season?.standings?.label ??
+      formatCompetition(season?.standings?.label) ??
       (season ? `základní část ${seasonShortLabel(season)}` : STANDINGS.seasonLabel),
     fullTableUrl: season?.standings?.fullTableUrl ?? STANDINGS.fullTableUrl,
     rows: (season?.standings?.rows ?? []).map((row) => ({

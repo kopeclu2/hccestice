@@ -3,6 +3,7 @@ import type { Match } from '@/payload-types'
 import type { ArticleGoal, ArticleScoreboard } from '../types'
 
 import { formatLongDate } from './format'
+import { formatCompetition } from './matchFormat'
 
 /**
  * Mapování událostí zápasu (branky, výsledková tabule) z kolekce `matches`
@@ -65,7 +66,7 @@ export const toScoreboard = (match: Match): ArticleScoreboard | null => {
   const opponent = typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
   const weAreHome = Boolean(match.home)
   return {
-    kicker: ['Zápasové zpravodajství', match.competition].filter(Boolean).join(' · '),
+    kicker: ['Zápasové zpravodajství', formatCompetition(match.competition)].filter(Boolean).join(' · '),
     metaLine: [match.venue, formatLongDate(match.date)].filter(Boolean).join(' · '),
     homeName: weAreHome ? 'HC Čestice' : opponent,
     awayName: weAreHome ? opponent : 'HC Čestice',

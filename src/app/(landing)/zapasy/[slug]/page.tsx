@@ -152,11 +152,16 @@ export default async function MatchDetailPage(args: Args) {
         </SectionShell>
       )}
 
-      <SectionShell spacing="cta">
-        <PillLink href={listHref(match)} size="md" variant="outline">
-          ← Všechny zápasy
-        </PillLink>
-      </SectionShell>
+      {/* Druhý odkaz zpět jen pod delším obsahem. Naplánovaný zápas končí
+          hlavičkou, takže by stál osamocený pod velkou mezerou a zdvojoval
+          tlačítko o kus výš. */}
+      {(hasTimeline || hasAside || match.missingProtocol) && (
+        <SectionShell spacing="cta">
+          <PillLink href={listHref(match)} size="md" variant="outline">
+            ← Všechny zápasy
+          </PillLink>
+        </SectionShell>
+      )}
     </SubpageShell>
   )
 }

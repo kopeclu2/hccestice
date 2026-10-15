@@ -10,9 +10,12 @@ import { NextMatchPanel } from '../components/NextMatchPanel'
 import { Numeral } from '../components/Numeral'
 import { PillLink } from '../components/PillLink'
 import { StretchedLink, stretchHost } from '../components/StretchedLink'
+import { TeamPair } from '../components/TeamPair'
 import { SectionShell, type SectionShellProps } from '../components/SectionShell'
 import type { FixtureCard } from '../types'
 
+import { MatchMeta } from '../components/MatchMeta'
+import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen } from './MatchRow'
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 
 const RAIL_ID = 'rozlosovani-pas'
@@ -160,7 +163,9 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
       </div>
 
       <CardTitle className="mt-3.5 text-pretty" size="sm">
-        <StretchedLink href={fixture.href}>{fixture.title}</StretchedLink>
+        <StretchedLink href={fixture.href}>
+          <TeamPair away={fixture.awayName} home={fixture.homeName} />
+        </StretchedLink>
       </CardTitle>
 
       <div className="mt-3 flex items-baseline gap-2.5">
@@ -178,45 +183,51 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
 /**
  * Rozlosování jako tabulka — jedna karta, řádky oddělené linkou.
  *
- * Sloupce kopírují `ResultsList` (96 px datum + čas, název, štítek vpravo),
- * takže rozlosování a výsledky pod ním lícují. Na mobilu jde datum a čas
- * na vlastní řádek nad název, stejně jako u výsledků.
+ * Sloupce sdílí s `ResultsList` (`MATCH_ROW` v `MatchRow.tsx`): 96 px datum
+ * a čas, název zápasu, vpravo štítek. Na mobilu jde datum a čas na vlastní
+ * řádek nad název a týmy pod sebe (`TeamPair layout="stack"`), stejně jako
+ * u výsledků.
+ *
+ * Od `lg` má rozlosování navíc vlastní sloupec s místem a fází. Výpis je přes
+ * celou šířku sekce (~1320 px) a s údaji pod názvem zůstávalo mezi názvem
+ * a štítkem „Doma" přes 800 px prázdna; výsledky sedí v užším sloupci
+ * vedle tabulky, takže tam údaje zůstávají pod názvem.
  */
 function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
   return (
-    <ol className="border-line-soft divide-line-soft divide-y overflow-hidden rounded-tile border bg-surface">
-      {fixtures.map((fixture) => {
-        const meta = [fixture.stage, fixture.venue].filter(Boolean).join(' · ')
-        return (
-          <li
-            className={cn(
-              'hover:bg-chip/40 flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4.5 py-3.5 transition-colors md:flex-nowrap md:px-6 md:py-4 lg:px-7 lg:py-4.5',
-              // Tabulka má `overflow-hidden`, takže obrys uvnitř, ne vně řádku.
-              stretchHost,
-              'has-[[data-stretched]:focus-visible]:-outline-offset-2',
-            )}
-            key={fixture.id}
+    <ol className={MATCH_LIST}>
+      {fixtures.map((fixture) => (
+        <li
+          className={cn(
+            MATCH_ROW,
+            'lg:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)_4.5rem]',
+            stretchHost,
+            'has-[[data-stretched]:focus-visible]:-outline-offset-2',
+          )}
+          key={fixture.id}
+        >
+          <MatchWhen date={fixture.dateLabel} dateTime={fixture.startDate} time={fixture.timeLabel} />
+
+          <div className="min-w-0">
+            <MatchRowTitle away={fixture.awayName} home={fixture.homeName} href={fixture.href} />
+            <MatchMeta className="mt-1 lg:hidden" items={[fixture.stage, fixture.venue]} />
+          </div>
+
+          <div className="hidden min-w-0 lg:block">
+            <div className="text-ink-soft text-meta font-semibold text-pretty">
+              {fixture.venue ?? '—'}
+            </div>
+            <div className="text-faint mt-0.5 text-caption font-semibold">{fixture.stage}</div>
+          </div>
+
+          <Badge
+            className="justify-self-end"
+            variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}
           >
-            <div className="flex w-full items-baseline gap-2.5 md:block md:w-24 md:flex-none">
-              <div className="text-meta font-extrabold tabular-nums">{fixture.dateLabel}</div>
-              <div className="text-faint text-caption font-bold tabular-nums md:mt-0.5">
-                {fixture.timeLabel}
-              </div>
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <div className="text-body font-bold tracking-[-0.01em] text-pretty">
-                <StretchedLink href={fixture.href}>{fixture.title}</StretchedLink>
-              </div>
-              {meta && <div className="text-faint mt-0.5 text-eyebrow font-semibold">{meta}</div>}
-            </div>
-
-            <Badge className="flex-none" variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}>
-              {fixture.kind}
-            </Badge>
-          </li>
-        )
-      })}
+            {fixture.kind}
+          </Badge>
+        </li>
+      ))}
     </ol>
   )
 }

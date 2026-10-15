@@ -22,9 +22,9 @@ const isUs = isOurTeam
  * se vrací základní čtveřice a plné sloupce naskočí až na `2xl`.
  */
 const GRID_BASE =
-  'grid-cols-[1.75rem_1fr_2rem_2.25rem] md:grid-cols-[2.25rem_1fr_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5'
+  'grid-cols-[1.75rem_minmax(0,1fr)_2rem_2.25rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_minmax(0,1fr)_3.25rem_3.25rem] lg:px-3.5'
 const GRID_EXTENDED =
-  'grid-cols-[1.75rem_1fr_2rem_2.25rem] md:grid-cols-[2.25rem_1fr_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_1fr_3.25rem_3.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_1fr_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
+  'grid-cols-[1.75rem_minmax(0,1fr)_2rem_2.25rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_minmax(0,1fr)_3.25rem_3.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
 /** Extra sloupce: skryté na mobilu i na `lg`–`xl`, kde je panel úzký. */
 const EXTRA = 'hidden text-center md:block lg:hidden 2xl:block'
 
@@ -155,7 +155,10 @@ export function StandingsPanel({
                 </span>
                 <span
                   className={cn(
-                    'truncate text-meta tracking-[-0.01em]',
+                    // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
+                    // neříkalo, kdo to je. Delší název udělá řádek o kus
+                    // vyšší, čísla zůstanou na středu (`items-center`).
+                    'min-w-0 text-meta leading-snug tracking-[-0.01em] text-pretty break-words',
                     ours ? 'font-extrabold' : 'font-semibold',
                   )}
                 >
