@@ -31,10 +31,11 @@ const TEAM = 'inline-block max-w-full [text-decoration:inherit]'
  * Dvojice týmů „domácí × hosté" s lámáním v místě oddělovače.
  *
  * - `inline` — na jednom řádku, zalomí se za „×" (nadpisy panelů).
- * - `stack` — pod `md` každý tým na vlastním řádku bez „×" (řádky výpisů
- *   na mobilu, jako ve sportovních aplikacích), od `md` jako `inline`.
- *   Oddělovač zůstává pro čtečku (`sr-only`), takže název odkazu se
- *   nemění: „HC Čestice × HC Zdar".
+ * - `stack` — každý tým na vlastním řádku bez „×" (řádky výpisů, jako ve
+ *   sportovních aplikacích). Na všech šířkách, ne jen na mobilu (rozhodnutí
+ *   uživatele 15. 10. 2026): názvy mají různou délku, takže dvojice za sebou
+ *   nelícovala a znak hostů pokaždé stál jinde. Oddělovač zůstává pro čtečku
+ *   (`sr-only`), takže název odkazu se nemění: „HC Čestice × HC Zdar".
  */
 export function TeamPair({
   home,
@@ -51,11 +52,11 @@ export function TeamPair({
       {/* „×“ je uvnitř bloku domácích: kolem inline-blocku smí prohlížeč
           zalomit vždy (NBSP ho nepřilepí), takže by řádek s hosty jinak
           začínal mezerou a oddělovačem. */}
-      <span className={cn(TEAM, stack && 'max-md:block')}>
+      <span className={cn(TEAM, stack && 'block')}>
         {home}
-        <span className={cn(stack && 'max-md:sr-only')}>{'\u00a0×'}</span>
+        <span className={cn(stack && 'sr-only')}>{'\u00a0×'}</span>
       </span>{' '}
-      <span className={cn(TEAM, stack && 'max-md:block')}>{away}</span>
+      <span className={cn(TEAM, stack && 'block')}>{away}</span>
     </>
   )
 }

@@ -182,9 +182,9 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
  * Rozlosování jako tabulka — jedna karta, řádky oddělené linkou.
  *
  * Sloupce sdílí s `ResultsList` (`MATCH_ROW` v `MatchRow.tsx`): 96 px datum
- * a čas, název zápasu, vpravo štítek. Na mobilu jde datum a čas na vlastní
- * řádek nad název a týmy pod sebe (`TeamPair layout="stack"`), stejně jako
- * u výsledků.
+ * a čas, název zápasu, vpravo štítek. Týmy jsou pod sebou
+ * (`TeamPair layout="stack"`), na mobilu jde navíc datum a čas na vlastní
+ * řádek nad název; stejně jako u výsledků.
  *
  * Od `lg` má rozlosování navíc vlastní sloupec s místem a fází. Výpis je přes
  * celou šířku sekce (~1320 px) a s údaji pod názvem zůstávalo mezi názvem
