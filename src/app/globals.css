@@ -182,6 +182,31 @@
   --color-pine-deep: #081a10; /* základ tmavých gradientů přes fotky */
 
   --color-on-contrast: #ffffff; /* text a ikony na ploše `contrast` */
+  /* Bílá s průhledností na tmavých a zelených plochách a přes fotky. Nahrazuje
+   * 37 různých `white/N` (rozptyl 4–94 %) jedním žebříkem; sousední stupně
+   * se slily s odchylkou nejvýš ~5 procentních bodů. `on-contrast` je v obou
+   * režimech bílá, takže se žebřík s tématem nemění. Použitelný pro `text-`,
+   * `bg-`, `border-`, `divide-` i `placeholder:`.
+   *   strong 90 % — nejsilnější text a skleněné plochy (dřív 85, 90, 92, 94)
+   *   soft   80 % — hlavní text na tmavém (75, 80)
+   *   muted  70 % — meta text (65, 70, 72)
+   *   subtle 60 % — popisky (55, 60)
+   *   faint  50 % — velmi tlumený text (45, 50)
+   *   ghost  40 % — obrys tlačítka, placeholder, tečky (40)
+   *   line   30 % — linky a rámečky skla, hover skla (24, 25, 28, 30, 35)
+   *   glass  16 % — výplň skleněného tlačítka (14, 15, 16, 18)
+   *   wash   10 % — nejjemnější výplň, dělicí linka, watermark (4, 6, 8, 10, 12) */
+  --color-on-contrast-strong: --alpha(var(--color-on-contrast) / 90%);
+  --color-on-contrast-soft: --alpha(var(--color-on-contrast) / 80%);
+  --color-on-contrast-muted: --alpha(var(--color-on-contrast) / 70%);
+  --color-on-contrast-subtle: --alpha(var(--color-on-contrast) / 60%);
+  --color-on-contrast-faint: --alpha(var(--color-on-contrast) / 50%);
+  --color-on-contrast-ghost: --alpha(var(--color-on-contrast) / 40%);
+  --color-on-contrast-line: --alpha(var(--color-on-contrast) / 30%);
+  --color-on-contrast-glass: --alpha(var(--color-on-contrast) / 16%);
+  --color-on-contrast-wash: --alpha(var(--color-on-contrast) / 10%);
+  /* Čistá černá: překryvy (`bg-scrim/10`), kód a lišta admina. */
+  --color-scrim: #000000;
   --color-faint-dark: #a9b4ad; /* ztišený text na tmavém podkladu */
 
   /* Výsledky zápasů (V / R / P). Bez téhle rodiny si `Badge` a `FormStrip`
@@ -290,11 +315,7 @@
    * rozměrové třídy (`px-gutter`, `-mx-gutter`, `gap-split-gap`, `inset-x-hero-inset`…).
    * `gutter` je nejčastější arbitrární hodnota v repu (23×). */
   --spacing-gutter: clamp(0.875rem, 3vw, 2.5rem); /* vodorovné odsazení stránky/sekce */
-  --spacing-gutter-tight: clamp(
-    0.625rem,
-    1.4vw,
-    1.25rem
-  ); /* PageCanvas gutter="tight", chybová stránka */
+  --spacing-gutter-tight: clamp(0.625rem, 1.4vw, 1.25rem); /* PageCanvas tight, chyba 500 */
   --spacing-gutter-nav: clamp(0.5rem, 2vw, 1.5rem); /* vnitřní odsazení horní lišty článku */
   --spacing-split-gap: clamp(1.25rem, 3vw, 2.5rem); /* mezera mezi sloupci dvousloupcového bloku */
   --spacing-hero-gap: clamp(1.75rem, 4vw, 4rem); /* mezera uvnitř hero panelu */
@@ -400,6 +421,20 @@
       stroke-dashoffset: -120;
     }
   }
+}
+
+/*
+ * Půlený podklad pro prohru po prodloužení/nájezdech: cihlová (prohra)
+ * | zelená (bod). `bg-split` dělí svisle (štítek `Badge split`),
+ * `bg-split-diagonal` úhlopříčkou (čtvereček formy). Dřív oba přepsané
+ * ručně jako arbitrární `bg-[linear-gradient(…)]`.
+ */
+@utility bg-split {
+  background-image: linear-gradient(90deg, var(--color-loss) 50%, var(--color-win) 50%);
+}
+
+@utility bg-split-diagonal {
+  background-image: linear-gradient(135deg, var(--color-loss) 50%, var(--color-win) 50%);
 }
 
 /* Landing utility — diagonální šrafování (podpis designu, viz handoff). */
