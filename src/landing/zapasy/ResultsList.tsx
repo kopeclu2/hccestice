@@ -1,16 +1,16 @@
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { MoreLink } from '@/landing/ui/MoreLink'
+import { Numeral } from '@/landing/ui/Numeral'
+import { Pagination } from '@/landing/ui/Pagination'
+import { PillLink } from '@/landing/ui/PillLink'
+import { stretchHost } from '@/landing/ui/StretchedLink'
 import { cn } from '@/lib/utils'
 
-import { Badge } from '../components/Badge'
-import { EmptyState } from '../components/EmptyState'
 import { MatchMeta } from '../components/MatchMeta'
-import { MoreLink } from '../components/MoreLink'
-import { Numeral } from '../components/Numeral'
 import { OUTCOME_BADGE } from '../components/outcome'
-import { Pagination } from '../components/Pagination'
-import { PillLink } from '../components/PillLink'
-import { stretchHost } from '../components/StretchedLink'
 import type { ResultRow } from '../types'
 
 import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen } from './MatchRow'

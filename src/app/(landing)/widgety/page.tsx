@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { Badge } from '@/landing/components/Badge'
-import { CardTitle, PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Eyebrow, Kicker } from '@/landing/components/Kicker'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { renderLandingBlock } from '@/landing/render'
+import { Badge } from '@/landing/ui/Badge'
+import { CardTitle, PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow, Kicker } from '@/landing/ui/Kicker'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { buildWidgetCatalog, resolveExampleIds, type WidgetDoc } from '@/landing/widget-catalog'
 
 export const revalidate = 600

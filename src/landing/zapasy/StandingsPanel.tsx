@@ -1,12 +1,12 @@
 import React from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { MoreLink } from '@/landing/ui/MoreLink'
+import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
-import { EmptyState } from '../components/EmptyState'
-import { Eyebrow } from '../components/Kicker'
-import { MoreLink } from '../components/MoreLink'
-import { PillLink } from '../components/PillLink'
 import type { StandingsContent, StandingsRow } from '../types'
 
 import { SectionHead, type SectionHeadVariant } from './SectionHead'

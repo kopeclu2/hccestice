@@ -1,12 +1,12 @@
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { DotEyebrow } from '@/landing/ui/DotEyebrow'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PatternBackground } from '@/landing/ui/PatternBackground'
 import { cn } from '@/lib/utils'
 
-import { Badge } from '../../components/Badge'
-import { DotEyebrow } from '../../components/DotEyebrow'
-import { Eyebrow } from '../../components/Kicker'
 import { OUTCOME_BADGE } from '../../components/outcome'
-import { PatternBackground } from '../../components/PatternBackground'
 import type { MatchDetail } from '../../types'
 
 import {

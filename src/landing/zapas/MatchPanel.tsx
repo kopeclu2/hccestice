@@ -1,8 +1,7 @@
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
 import { cn } from '@/lib/utils'
-
-import { CardTitle } from '../components/Heading'
 
 /**
  * Světlá karta jednoho bloku detailu zápasu (Branky, Tresty, Statistika,

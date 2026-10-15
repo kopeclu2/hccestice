@@ -9,13 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { DataTableBlockType } from '@/payload-types'
-
-import { CardTitle } from '../../components/Heading'
-import { Eyebrow, Highlight } from '../../components/Kicker'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 /**
  * Obecná datová tabulka (shadcn/ui Table v klubovém stylu).

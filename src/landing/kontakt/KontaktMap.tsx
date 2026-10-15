@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { MapPanel } from '../components/MapPanel'
+import { MapPanel } from '@/landing/ui/MapPanel'
+
 import { CONTACT_MAP } from '../content'
 
 /**

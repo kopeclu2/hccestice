@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { MaintenanceScreen } from '@/landing/components/MaintenanceScreen'
 import { fetchMaintenance } from '@/landing/data/maintenance'
 import { fetchSite } from '@/landing/data/site'
+import { MaintenanceScreen } from '@/landing/layout/MaintenanceScreen'
 
 /**
  * Náhled údržbové stránky s texty z adminu — aby si správce mohl ověřit,

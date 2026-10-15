@@ -3,10 +3,9 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { isNavItemActive, navHref } from '../data/navHref'
-import type { NavItem } from '../types'
-
-import { PillLink } from './PillLink'
+import { isNavItemActive, navHref } from '@/landing/data/navHref'
+import type { NavItem } from '@/landing/types'
+import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Pill odkazy navigace podstránek s aktivním stavem podle aktuální cesty.

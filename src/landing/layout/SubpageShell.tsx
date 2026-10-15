@@ -1,16 +1,16 @@
 import React from 'react'
 
-import { ArticleNav } from '../article/ArticleNav'
-import { fetchSite, fetchSiteConfig, mapFooter } from '../data/site'
-
-import { LandingFooter } from './LandingFooter'
-import { PageCanvas, type PageCanvasProps } from './PageCanvas'
+import { ArticleNav } from '@/landing/article/ArticleNav'
+import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
+import { PageCanvas, type PageCanvasProps } from '@/landing/ui/PageCanvas'
 import {
   PatternBackground,
   type PatternFade,
   type PatternTone,
   type PatternVariant,
-} from './PatternBackground'
+} from '@/landing/ui/PatternBackground'
+
+import { LandingFooter } from './LandingFooter'
 
 export type SubpagePattern = {
   variant: PatternVariant

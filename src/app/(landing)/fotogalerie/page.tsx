@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { Pagination } from '@/landing/components/Pagination'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchGalleriesPage } from '@/landing/data/galleries'
 import { fetchGallerySeasons, seasonShortLabel } from '@/landing/data/seasons'
 import { GalerieHeader } from '@/landing/fotogalerie/GalerieHeader'
 import { GalleryGrid } from '@/landing/fotogalerie/GalleryGrid'
 import { PhotosCta } from '@/landing/fotogalerie/PhotosCta'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { Pagination } from '@/landing/ui/Pagination'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
 

@@ -2,14 +2,13 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { cn } from '@/lib/utils'
-
 import {
   PatternBackground,
   type PatternFade,
   type PatternTone,
   type PatternVariant,
-} from './PatternBackground'
+} from '@/landing/ui/PatternBackground'
+import { cn } from '@/lib/utils'
 
 /**
  * DEV přepínač vzorů pozadí — plovoucí lišta dole (vzor: přepínač hero

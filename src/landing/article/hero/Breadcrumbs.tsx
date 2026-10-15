@@ -1,9 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
 import { cn } from '@/lib/utils'
-
-import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
 
 /** Barevné ladění drobečků podle podkladu hero varianty. */
 export type BreadcrumbTone = 'photo' | 'panel' | 'light'

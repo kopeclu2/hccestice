@@ -2,10 +2,10 @@ import { Globe, Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
+import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
-import { CardTitle } from '../components/Heading'
-import { Numeral } from '../components/Numeral'
 import { telHref, webLabel } from '../data/format'
 import type { Sponsor } from '../types'
 

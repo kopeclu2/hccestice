@@ -1,9 +1,8 @@
 import React from 'react'
 
+import { pillVariants } from '@/landing/ui/pill'
+import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
-
-import { pillVariants } from './pill'
-import { PillLink } from './PillLink'
 
 /** Pilulka filtru sezón (slug + krátký label „2025/26"). */
 export type SeasonPill = { slug: string; label: string }

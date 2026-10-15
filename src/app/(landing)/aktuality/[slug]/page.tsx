@@ -9,8 +9,6 @@ import { ArticleRelated } from '@/landing/article/ArticleRelated'
 import { AuthorCard } from '@/landing/article/AuthorCard'
 import { RenderArticleHero } from '@/landing/article/hero/RenderArticleHero'
 import { TagRow } from '@/landing/article/TagRow'
-import { PillLink } from '@/landing/components/PillLink'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchMatchSlugForPost } from '@/landing/data/matchDetail'
 import {
   fetchDefaultPostPhoto,
@@ -20,7 +18,9 @@ import {
   toArticleDetail,
 } from '@/landing/data/posts'
 import { fetchSiteConfig } from '@/landing/data/site'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
 import type { ArticleDetail } from '@/landing/types'
+import { PillLink } from '@/landing/ui/PillLink'
 import { generateMeta } from '@/lib/generateMeta'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'

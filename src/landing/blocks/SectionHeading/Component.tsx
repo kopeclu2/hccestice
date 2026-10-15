@@ -1,12 +1,11 @@
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { SectionHeadingBlockType } from '@/payload-types'
-
-import { SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 /** Nadpis sekce — kicker + H2 s lime zvýrazněním + volitelné CTA vpravo. */
 export function SectionHeadingBlockComponent({ block }: { block: SectionHeadingBlockType }) {

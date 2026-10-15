@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { GlowCircle } from '@/landing/components/Decorations'
-import { Reveal } from '@/landing/components/Reveal'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { countLabel } from '@/landing/data/format'
 import { fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
 import { fetchSponsors } from '@/landing/data/sponsors'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PartnerCard } from '@/landing/sponzori/PartnerCard'
 import { PartnerSlotCta } from '@/landing/sponzori/PartnerSlotCta'
 import { SponzoriHeader } from '@/landing/sponzori/SponzoriHeader'
+import { GlowCircle } from '@/landing/ui/Decorations'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 export const revalidate = 600
 

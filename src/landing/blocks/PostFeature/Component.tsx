@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { PostFeatureBlock } from '@/payload-types'
 
-import { CardTitle } from '../../components/Heading'
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { formatFullDate, relId, toPhoto } from '../../data/format'
 import { fetchDefaultPostPhoto, fetchPost, POST_TYPE_LABEL, postHref } from '../../data/posts'
 import type { Photo } from '../../types'

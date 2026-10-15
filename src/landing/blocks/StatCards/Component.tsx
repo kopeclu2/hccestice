@@ -1,9 +1,8 @@
 import React from 'react'
 
+import { Numeral } from '@/landing/ui/Numeral'
 import { cn } from '@/lib/utils'
 import type { StatCardsBlockType } from '@/payload-types'
-
-import { Numeral } from '../../components/Numeral'
 
 /**
  * Statistické karty v těle článku — bílé/tmavé karty s velkým číslem

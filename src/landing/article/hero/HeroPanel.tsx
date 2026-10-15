@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { PageTitle } from '@/landing/ui/Heading'
+import { Watermark } from '@/landing/ui/Watermark'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
-import { PageTitle } from '../../components/Heading'
-import { Watermark } from '../../components/Watermark'
 import type { ArticleDetail } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'

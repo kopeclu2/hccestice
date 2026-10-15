@@ -1,9 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
 import { cn } from '@/lib/utils'
-
-import { BreadcrumbsJsonLd } from './BreadcrumbsJsonLd'
 
 export type Crumb = {
   label: string

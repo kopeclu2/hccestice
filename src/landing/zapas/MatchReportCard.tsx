@@ -1,12 +1,12 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 
-import { CardTitle } from '../components/Heading'
-import { Eyebrow } from '../components/Kicker'
-import { PillLink } from '../components/PillLink'
 import type { MatchDetail } from '../types'
 
 /**

@@ -1,10 +1,10 @@
 import React from 'react'
 
+import { PageTitle } from '@/landing/ui/Heading'
+import { PhotoTile } from '@/landing/ui/PhotoTile'
+import { PillLink } from '@/landing/ui/PillLink'
 import type { LandingHeroModernBlock } from '@/payload-types'
 
-import { PageTitle } from '../../components/Heading'
-import { PhotoTile } from '../../components/PhotoTile'
-import { PillLink } from '../../components/PillLink'
 import { HERO } from '../../content'
 import { uploadToPhoto } from '../../data/format'
 import { fetchNavCta, fetchNavigation } from '../../data/navigation'

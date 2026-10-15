@@ -1,16 +1,16 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
+import { Badge } from '@/landing/ui/Badge'
+import { DotEyebrow } from '@/landing/ui/DotEyebrow'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 
-import { Badge } from '../../components/Badge'
-import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
-import { DotEyebrow } from '../../components/DotEyebrow'
-import { PageTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
 import { MatchScoreboard } from '../../components/MatchScoreboard'
-import { PillLink } from '../../components/PillLink'
 import type { ArticleDetail, ArticleGoal } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'

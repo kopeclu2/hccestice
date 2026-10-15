@@ -15,12 +15,11 @@ import {
 } from 'lucide-react'
 import React from 'react'
 
+import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { FeatureGridBlock } from '@/payload-types'
-
-import { CardTitle, SectionTitle } from '../../components/Heading'
-import { Highlight } from '../../components/Kicker'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 const FEATURE_ICONS: Record<string, LucideIcon> = {
   snowflake: Snowflake,

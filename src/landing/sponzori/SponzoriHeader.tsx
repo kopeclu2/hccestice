@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { Highlight } from '../components/Kicker'
-import { PageHeader } from '../components/PageHeader'
-import { PillLink } from '../components/PillLink'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PageHeader } from '@/landing/ui/PageHeader'
+import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Hlavička stránky partnerů: watermark „DÍKY", drobečky, titulek s lime

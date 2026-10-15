@@ -1,15 +1,14 @@
 import { Check } from 'lucide-react'
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { Numeral } from '@/landing/ui/Numeral'
+import { PillLink } from '@/landing/ui/PillLink'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { PricingCardsBlock } from '@/payload-types'
-
-import { SectionTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 /** Členské příspěvky — pricing karty, zvýrazněná je klubově zelená. */
 export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock }) {

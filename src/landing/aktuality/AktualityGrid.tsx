@@ -1,10 +1,11 @@
 import { X } from 'lucide-react'
 import React from 'react'
 
+import { CardGrid } from '@/landing/ui/CardGrid'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { PillLink } from '@/landing/ui/PillLink'
+
 import { ArticleCard } from '../components/ArticleCard'
-import { CardGrid } from '../components/CardGrid'
-import { EmptyState } from '../components/EmptyState'
-import { PillLink } from '../components/PillLink'
 import { POST_TYPE_LABEL } from '../data/posts'
 import type { PostCard } from '../types'
 

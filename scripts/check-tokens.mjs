@@ -89,7 +89,7 @@ const RULES = [
     re: /(?<![\w-])text-(?:caption|meta|body|lead|card-title|panel-title(?:-lg)?|section-title(?:-md|-lg)?|claim(?:-lg)?|numeral-(?:xs|sm|md|lg|xl|2xl))(?![\w-])/g,
     hint: 'použij standardní velikost Tailwindu (text-xs/sm/base/lg/xl/2xl…), viz AGENTS.md → Typografie',
     // Rozpracovaný soubor, převede se při jeho dokončení.
-    exceptIn: ['src/landing/components/LandingFooter.tsx'],
+    exceptIn: ['src/landing/layout/LandingFooter.tsx'],
   },
   {
     name: 'no-shadcn-in-landing',

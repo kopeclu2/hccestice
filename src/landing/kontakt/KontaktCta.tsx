@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { CtaStrip } from '../components/CtaStrip'
-import { PillLink } from '../components/PillLink'
+import { CtaStrip } from '@/landing/ui/CtaStrip'
+import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Zelený CTA pás na konci `/kontakt`, stejný vzor jako mají ostatní

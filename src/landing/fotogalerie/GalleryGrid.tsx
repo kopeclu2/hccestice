@@ -2,13 +2,13 @@ import { Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { CardCta, CardGrid, CardShell } from '@/landing/ui/CardGrid'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { CardTitle } from '@/landing/ui/Heading'
+import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
-import { Badge } from '../components/Badge'
-import { CardCta, CardGrid, CardShell } from '../components/CardGrid'
-import { EmptyState } from '../components/EmptyState'
-import { CardTitle } from '../components/Heading'
-import { PillLink } from '../components/PillLink'
 import { countLabel } from '../data/format'
 import type { GalleryCard } from '../types'
 

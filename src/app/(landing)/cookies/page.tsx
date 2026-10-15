@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { PageTitle } from '@/landing/components/Heading'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchSite } from '@/landing/data/site'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { PageTitle } from '@/landing/ui/Heading'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 export const revalidate = 600
 

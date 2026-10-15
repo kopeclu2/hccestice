@@ -1,9 +1,9 @@
 import React from 'react'
 
+import { NavMobile } from '@/landing/layout/NavMobile'
+import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
-import { NavMobile } from '../../components/NavMobile'
-import { PillLink } from '../../components/PillLink'
 import { ctaHref, navHref } from '../../data/navigation'
 import type { NavCta, NavItem } from '../../types'
 

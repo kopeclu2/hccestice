@@ -1,13 +1,13 @@
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Numeral } from '@/landing/ui/Numeral'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { LandingStatsBlock } from '@/payload-types'
 
-import { SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { SEASON_STATS } from '../../content'
 import { relId } from '../../data/format'
 import { fetchAutoStats } from '../../data/seasons'

@@ -1,7 +1,8 @@
 import React from 'react'
 
+import { SectionShell } from '@/landing/ui/SectionShell'
+
 import { ContactFormLazy } from '../blocks/Contact/ContactFormLazy'
-import { SectionShell } from '../components/SectionShell'
 import { CONTACT } from '../content'
 import type { PersonCard, SiteLinks } from '../types'
 

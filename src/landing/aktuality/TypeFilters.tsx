@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { PillLink } from '../components/PillLink'
+import { PillLink } from '@/landing/ui/PillLink'
+
 import { POST_TYPE_LABEL } from '../data/posts'
 
 /**

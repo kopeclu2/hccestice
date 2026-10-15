@@ -2,10 +2,9 @@ import { ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import type { Photo } from '@/landing/types'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
-
-import type { Photo } from '../types'
 
 import { Badge } from './Badge'
 

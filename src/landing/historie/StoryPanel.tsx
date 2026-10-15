@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { CardTitle } from '../components/Heading'
-import { Eyebrow } from '../components/Kicker'
-import { Watermark } from '../components/Watermark'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { Watermark } from '@/landing/ui/Watermark'
+
 import { HISTORY_PAGE } from '../content'
 
 /**

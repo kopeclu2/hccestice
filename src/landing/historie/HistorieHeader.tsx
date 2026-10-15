@@ -1,10 +1,10 @@
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PageHeader } from '@/landing/ui/PageHeader'
 import { cn } from '@/lib/utils'
 
-import { SectionTitle } from '../components/Heading'
-import { Highlight } from '../components/Kicker'
-import { PageHeader } from '../components/PageHeader'
 import { HISTORY_PAGE } from '../content'
 
 /**

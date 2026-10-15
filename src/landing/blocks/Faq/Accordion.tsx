@@ -3,9 +3,10 @@
 import { Minus, Plus } from 'lucide-react'
 import React from 'react'
 
-import { SectionTitle } from '../../components/Heading'
-import { SectionShell } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
+
 import type { FaqItem } from '../../types'
 
 /**

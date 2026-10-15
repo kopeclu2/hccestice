@@ -1,10 +1,10 @@
 import React from 'react'
 
+import { Kicker } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { ProductCardBlock } from '@/payload-types'
 
-import { Kicker } from '../../components/Kicker'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { relId } from '../../data/format'
 import { fetchProduct } from '../../data/products'
 import { fetchSite } from '../../data/site'

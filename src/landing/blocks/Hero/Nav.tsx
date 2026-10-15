@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { LogoStamp } from '../../components/LogoStamp'
-import { NavMobile } from '../../components/NavMobile'
-import { PillLink } from '../../components/PillLink'
+import { NavMobile } from '@/landing/layout/NavMobile'
+import { LogoStamp } from '@/landing/ui/LogoStamp'
+import { PillLink } from '@/landing/ui/PillLink'
+
 import { ctaHref, navHref } from '../../data/navigation'
 import type { NavCta, NavItem } from '../../types'
 

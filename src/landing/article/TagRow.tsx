@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { Badge } from '../components/Badge'
-import { PillLink } from '../components/PillLink'
+import { Badge } from '@/landing/ui/Badge'
+import { PillLink } from '@/landing/ui/PillLink'
 
 /** Štítky článku (kategorie) + návrat na výpis aktualit. */
 export function TagRow({ tags }: { tags: string[] }) {

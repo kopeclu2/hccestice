@@ -1,9 +1,9 @@
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
-import { Badge } from '../components/Badge'
-import { Eyebrow } from '../components/Kicker'
 import { MatchMeta } from '../components/MatchMeta'
 import { countLabel } from '../data/format'
 import type { ArticleGoal, MatchTimelineEvent, MatchTimelinePeriod } from '../types'

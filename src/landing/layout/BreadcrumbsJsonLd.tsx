@@ -1,9 +1,8 @@
 import React from 'react'
 
+import type { Crumb } from '@/landing/ui/Breadcrumbs'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
-
-import type { Crumb } from './Breadcrumbs'
 
 /**
  * JSON-LD (schema.org BreadcrumbList) k viditelným drobečkům.

@@ -1,11 +1,10 @@
 import React from 'react'
 
 import RichText from '@/components/RichText/Server'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { TextSectionBlockType } from '@/payload-types'
-
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 /** Textová sekce — Lexical obsah, volitelně v bílé kartě. */
 export function TextSectionBlockComponent({ block }: { block: TextSectionBlockType }) {

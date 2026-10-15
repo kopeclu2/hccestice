@@ -6,12 +6,10 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 import { createPortal } from 'react-dom'
 
+import { isNavItemActive, navHref } from '@/landing/data/navHref'
+import type { NavItem } from '@/landing/types'
+import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
-
-import { isNavItemActive, navHref } from '../data/navHref'
-import type { NavItem } from '../types'
-
-import { PillLink } from './PillLink'
 
 /**
  * Mobilní navigace — burger tlačítko a přes celou obrazovku rozbalený

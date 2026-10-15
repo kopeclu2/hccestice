@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Badge } from '../../components/Badge'
+import { Badge } from '@/landing/ui/Badge'
 
 /** Lime štítek kategorie nad titulkem hero („Sezóna", „Zápasy"…). */
 export function CategoryBadge({

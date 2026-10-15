@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { PageTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PhotoTile } from '@/landing/ui/PhotoTile'
+import { PillLink } from '@/landing/ui/PillLink'
 import type { LandingHeroBlock } from '@/payload-types'
 
-import { PageTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
-import { PhotoTile } from '../../components/PhotoTile'
-import { PillLink } from '../../components/PillLink'
 import { HERO } from '../../content'
 import { uploadToPhoto } from '../../data/format'
 import { fetchPlayed, fetchUpcoming } from '../../data/matches'

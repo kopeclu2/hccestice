@@ -4,12 +4,12 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow, Highlight, Kicker } from '@/landing/ui/Kicker'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
-import { SectionTitle } from '../../components/Heading'
-import { Eyebrow, Highlight, Kicker } from '../../components/Kicker'
-import { SectionShell } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
 import type { PersonCard } from '../../types'
 
 /**

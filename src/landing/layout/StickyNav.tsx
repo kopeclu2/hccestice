@@ -3,15 +3,14 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import { ctaHref } from '@/landing/data/navHref'
+import type { NavCta, NavItem } from '@/landing/types'
+import { LogoStamp } from '@/landing/ui/LogoStamp'
+import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
-import { ctaHref } from '../data/navHref'
-import type { NavCta, NavItem } from '../types'
-
-import { LogoStamp } from './LogoStamp'
 import { NavMobile } from './NavMobile'
 import { NavPills } from './NavPills'
-import { PillLink } from './PillLink'
 
 /** Po kolika pixelech scrollu se lišta zjeví — zhruba půl obrazovky. */
 const SCROLL_THRESHOLD = 480

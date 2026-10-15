@@ -1,13 +1,12 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 
 import type { ArticleScoreboard, Photo } from '../types'
-
-import { Badge } from './Badge'
-import { Numeral } from './Numeral'
 
 /**
  * Tabule se skóre, týmy a třetinami na tmavé ploše — sdílí ji hero

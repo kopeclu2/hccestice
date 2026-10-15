@@ -1,10 +1,11 @@
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 
-import { Badge } from '../components/Badge'
-import { GlowCircle } from '../components/Decorations'
-import { Eyebrow } from '../components/Kicker'
-import { PillLink } from '../components/PillLink'
+import { Badge } from '@/landing/ui/Badge'
+import { GlowCircle } from '@/landing/ui/Decorations'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+
 import { CONTACT } from '../content'
 import type { SiteLinks } from '../types'
 

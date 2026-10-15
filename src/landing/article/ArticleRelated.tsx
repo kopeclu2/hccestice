@@ -1,11 +1,12 @@
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+
 import { ArticleCard } from '../components/ArticleCard'
-import { SectionTitle } from '../components/Heading'
-import { Highlight, Kicker } from '../components/Kicker'
-import { PillLink } from '../components/PillLink'
-import { Reveal } from '../components/Reveal'
-import { SectionShell } from '../components/SectionShell'
 import type { PostCard } from '../types'
 
 /**

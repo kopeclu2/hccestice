@@ -2,15 +2,14 @@ import { Newspaper } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { CardCta, CardShell } from '@/landing/ui/CardGrid'
+import { CardTitle } from '@/landing/ui/Heading'
+import { PatternBackground } from '@/landing/ui/PatternBackground'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 
 import type { PostCard } from '../types'
-
-import { Badge } from './Badge'
-import { CardCta, CardShell } from './CardGrid'
-import { CardTitle } from './Heading'
-import { PatternBackground } from './PatternBackground'
 
 /**
  * Karta článku — náhled, štítek, datum, titulek a úryvek textu.

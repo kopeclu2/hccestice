@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { PageTitle } from '../../components/Heading'
-import { Watermark } from '../../components/Watermark'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Watermark } from '@/landing/ui/Watermark'
+
 import type { ArticleDetail } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'

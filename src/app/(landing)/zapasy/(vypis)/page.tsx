@@ -1,10 +1,6 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { EmptyState } from '@/landing/components/EmptyState'
-import { PillLink } from '@/landing/components/PillLink'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchSeasonFixtures, fetchSeasonForm, fetchSeasonResults } from '@/landing/data/matches'
 import {
   fetchMatchSeasons,
@@ -12,7 +8,11 @@ import {
   mapStandingsFromSeason,
   seasonShortLabel,
 } from '@/landing/data/seasons'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
 import type { StandingsContent } from '@/landing/types'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { PillLink } from '@/landing/ui/PillLink'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { FixturesRail } from '@/landing/zapasy/FixturesRail'
 import { FormStrip } from '@/landing/zapasy/FormStrip'
 import { MatchesCta } from '@/landing/zapasy/MatchesCta'

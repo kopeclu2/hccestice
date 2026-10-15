@@ -1,10 +1,10 @@
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { CardTitle } from '@/landing/ui/Heading'
+import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { cn } from '@/lib/utils'
 
-import { Badge } from '../components/Badge'
-import { CardTitle } from '../components/Heading'
-import { PhotoTile } from '../components/PhotoTile'
 import type { Milestone } from '../types'
 
 /**

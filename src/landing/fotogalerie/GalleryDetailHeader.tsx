@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { Badge } from '../components/Badge'
-import { PageHeader } from '../components/PageHeader'
+import { Badge } from '@/landing/ui/Badge'
+import { PageHeader } from '@/landing/ui/PageHeader'
+
 import { countLabel } from '../data/format'
 
 /**

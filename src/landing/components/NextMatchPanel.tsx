@@ -1,13 +1,13 @@
 import React from 'react'
 
+import { DotEyebrow } from '@/landing/ui/DotEyebrow'
+import { CardTitle } from '@/landing/ui/Heading'
+import { StretchedLink, stretchHost } from '@/landing/ui/StretchedLink'
 import { cn } from '@/lib/utils'
 
 import { Countdown } from '../blocks/Hero/Countdown'
 
-import { DotEyebrow } from './DotEyebrow'
-import { CardTitle } from './Heading'
 import { MatchMeta } from './MatchMeta'
-import { StretchedLink, stretchHost } from './StretchedLink'
 import { splitMatchTitle, TeamPair } from './TeamPair'
 
 /**

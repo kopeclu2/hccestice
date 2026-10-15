@@ -404,8 +404,8 @@ Handoff `design_maintance/HC Cestice Systemove Stranky.dc.html` — 404, 500,
 | chyba v root layoutu | `src/app/global-error.tsx` |
 | údržba | brána v `src/app/(landing)/layout.tsx` + náhled `/udrzba` |
 
-Společné díly: `components/ErrorCode.tsx` (obří obrysový kód + `ErrorMeta`),
-`components/PuckTrail.tsx`, utility `text-stroke-none`, `hatch-lime` a
+Společné díly: `landing/ui/ErrorCode.tsx` (obří obrysový kód + `ErrorMeta`),
+`landing/ui/PuckTrail.tsx`, utility `text-stroke-none`, `hatch-lime` a
 animace `--animate-puck-trail(-fast)` v `globals.css`.
 
 ## 500 nesmí stát na `SubpageShell`
@@ -468,7 +468,7 @@ Co brána **neumí** a je potřeba o tom vědět:
 
 ## Prázdné stavy
 
-`components/EmptyState.tsx` — jedna komponenta místo pěti různých
+`landing/ui/EmptyState.tsx` — jedna komponenta místo pěti různých
 jednořádkových odstavců, které měl každý výpis vlastní. `actions` je
 **povinné**: slepá ulička („Zatím tu žádné články nejsou.") je nejhorší
 možná odpověď na aktivní filtr.
@@ -1067,7 +1067,7 @@ výpis zápasu by je měl použít místo vlastního řetězce:
 |---|---|
 | `components/TeamPair.tsx` | „domácí × hosté": tým je nedělitelný celek, láme se za „×"; `stack` dá na mobilu každý tým na vlastní řádek. `splitMatchTitle` rozdělí titulek zápasu |
 | `components/MatchMeta.tsx` | ztišený řádek údajů oddělených „·" — láme se mezi údaji, tečka nikdy nevisí na kraji řádku |
-| `components/DotEyebrow.tsx` | popisek s lime tečkou (nejbližší zápas, hlavička detailu, hero reportáže) |
+| `landing/ui/DotEyebrow.tsx` | popisek s lime tečkou (nejbližší zápas, hlavička detailu, hero reportáže) |
 | `zapasy/MatchRow.tsx` | společná karta, mřížka, datum a titulek řádků `ResultsList` i `FixtureList` |
 
 Fáze soutěže z AHL („VČHL 2.ročník - ZČ") se pro web formátuje jen

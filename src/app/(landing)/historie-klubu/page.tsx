@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchHistoryEras } from '@/landing/data/history'
 import { ArchiveCta } from '@/landing/historie/ArchiveCta'
 import { EraSection } from '@/landing/historie/EraSection'
 import { HistorieHeader } from '@/landing/historie/HistorieHeader'
 import { StoryPanel } from '@/landing/historie/StoryPanel'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 export const revalidate = 600
 

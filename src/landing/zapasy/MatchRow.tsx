@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { StretchedLink } from '../components/StretchedLink'
+import { StretchedLink } from '@/landing/ui/StretchedLink'
+
 import { TeamPair } from '../components/TeamPair'
 import type { Photo } from '../types'
 import { Crest } from '../zapas/header-variants/shared'

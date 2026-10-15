@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { HeroModernBlockComponent } from '@/landing/blocks/HeroModern/Component'
-import { PageCanvas } from '@/landing/components/PageCanvas'
 import { HERO } from '@/landing/content'
+import { PageCanvas } from '@/landing/ui/PageCanvas'
 import type { Media } from '@/payload-types'
 
 /**

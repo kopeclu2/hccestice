@@ -1,11 +1,11 @@
 import React from 'react'
 
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { PhotoCardsBlockType } from '@/payload-types'
 
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { uploadToPhoto } from '../../data/format'
 
 const CARD_HEIGHTS: Record<string, string> = {

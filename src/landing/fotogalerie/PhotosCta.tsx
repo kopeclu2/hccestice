@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { CtaStrip } from '../components/CtaStrip'
-import { PillLink } from '../components/PillLink'
+import { CtaStrip } from '@/landing/ui/CtaStrip'
+import { PillLink } from '@/landing/ui/PillLink'
 
 /** Tmavý CTA pás „Máš fotky ze zápasu?" pod výpisem galerií. */
 export function PhotosCta() {

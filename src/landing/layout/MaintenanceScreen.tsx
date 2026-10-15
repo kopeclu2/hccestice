@@ -1,15 +1,14 @@
 import Image from 'next/image'
 import React from 'react'
 
-import type { MaintenanceState } from '../data/maintenance'
-import type { SiteLinks } from '../types'
-
-import { Badge } from './Badge'
-import { ErrorMeta } from './ErrorCode'
-import { PageTitle } from './Heading'
-import { Highlight } from './Kicker'
-import { PillLink } from './PillLink'
-import { PuckTrailLine } from './PuckTrail'
+import type { MaintenanceState } from '@/landing/data/maintenance'
+import type { SiteLinks } from '@/landing/types'
+import { Badge } from '@/landing/ui/Badge'
+import { ErrorMeta } from '@/landing/ui/ErrorCode'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+import { PuckTrailLine } from '@/landing/ui/PuckTrail'
 
 /**
  * Údržbová stránka podle handoffu „HC Cestice Systemove Stranky".

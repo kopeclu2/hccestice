@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { ErrorCode, ErrorMeta } from '@/landing/components/ErrorCode'
-import { PageTitle } from '@/landing/components/Heading'
-import { Highlight } from '@/landing/components/Kicker'
-import { PillLink } from '@/landing/components/PillLink'
-import { PuckTrailArc } from '@/landing/components/PuckTrail'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { ErrorCode, ErrorMeta } from '@/landing/ui/ErrorCode'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+import { PuckTrailArc } from '@/landing/ui/PuckTrail'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 /**
  * 404 podle handoffu „HC Cestice Systemove Stranky" — obří obrysový kód

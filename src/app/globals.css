@@ -199,7 +199,7 @@
   --font-display: var(--font-archivo), system-ui, sans-serif;
 
   /* Velikosti textu — role, ne čísla. Nadpisy řeší komponenty
-   * `PageTitle`/`SectionTitle`/`CardTitle` (viz landing/components/Heading.tsx),
+   * `PageTitle`/`SectionTitle`/`CardTitle` (viz landing/ui/Heading.tsx),
    * tyhle tokeny pokrývají všechno ostatní. Nové arbitrární `text-[Xrem]`
    * v landing komponentách nepřidávat — vždy sáhnout po tokenu.
    */
@@ -209,7 +209,7 @@
   --text-body: 0.9375rem; /* 15px — běžný text karet a odstavců */
   --text-lead: 1.0625rem; /* 17px — perex, název karty, zvýrazněný řádek */
 
-  /* Nadpisová škála — jediný zdroj pro landing/components/Heading.tsx.
+  /* Nadpisová škála — jediný zdroj pro landing/ui/Heading.tsx.
    * Dřív to bylo 9 arbitrárních `text-[Xrem]` uvnitř souboru, který má být
    * právě tím jediným zdrojem. */
   --text-card-title: 1.3125rem; /* 21px — CardTitle sm */
@@ -234,7 +234,7 @@
 
   /* Číselné displaye — skóre, čísla dresů, statistiky, letopočty. Nejsou to
    * nadpisy (nemají sémantiku ani text-wrap), ale mají vlastní škálu.
-   * Používej přes komponentu `Numeral` (landing/components/Numeral.tsx),
+   * Používej přes komponentu `Numeral` (landing/ui/Numeral.tsx),
    * která k velikosti přidá `tabular-nums` a správný tracking.
    */
   --text-numeral-xs: 1.1875rem; /* 19px — skóre v řádku výsledků */

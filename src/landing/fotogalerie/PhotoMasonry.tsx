@@ -11,9 +11,9 @@ import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
 import 'yet-another-react-lightbox/plugins/counter.css'
 
+import { PillButton } from '@/landing/ui/PillButton'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
-import { PillButton } from '../components/PillButton'
 import type { Photo } from '../types'
 
 import { LightboxImage } from './LightboxImage'

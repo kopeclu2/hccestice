@@ -1,8 +1,7 @@
 import React from 'react'
 
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { AnnouncementBlock } from '@/payload-types'
-
-import { SectionShell } from '../../components/SectionShell'
 
 import { AnnouncementBar } from './AnnouncementBar'
 

@@ -1,9 +1,9 @@
 import React from 'react'
 
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { StandingsWidgetBlock } from '@/payload-types'
 
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { relId } from '../../data/format'
 import { fetchSeason, mapStandingsFromSeason } from '../../data/seasons'
 import type { StandingsContent } from '../../types'

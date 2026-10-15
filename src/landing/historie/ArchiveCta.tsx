@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { CtaStrip } from '../components/CtaStrip'
-import { PillLink } from '../components/PillLink'
+import { CtaStrip } from '@/landing/ui/CtaStrip'
+import { PillLink } from '@/landing/ui/PillLink'
+
 import { HISTORY_PAGE } from '../content'
 
 /**

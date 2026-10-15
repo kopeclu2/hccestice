@@ -2,13 +2,12 @@ import { Quote } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { Media, TestimonialsBlock } from '@/payload-types'
-
-import { SectionTitle } from '../../components/Heading'
-import { Highlight } from '../../components/Kicker'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 /** Ohlasy — citátové karty se jménem, rolí a fotkou. */
 export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock }) {

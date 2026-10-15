@@ -4,11 +4,11 @@ import React from 'react'
 import { AktualityGrid } from '@/landing/aktuality/AktualityGrid'
 import { AktualityHeader } from '@/landing/aktuality/AktualityHeader'
 import { SocialCta } from '@/landing/aktuality/SocialCta'
-import { Pagination } from '@/landing/components/Pagination'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { POST_TYPE_LABEL, fetchPostsPage } from '@/landing/data/posts'
 import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { Pagination } from '@/landing/ui/Pagination'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
 

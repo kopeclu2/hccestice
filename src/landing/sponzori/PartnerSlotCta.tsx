@@ -2,9 +2,9 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-import { CardTitle } from '../components/Heading'
-import { Eyebrow } from '../components/Kicker'
-import { arrowVariants, pillVariants } from '../components/pill'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { arrowVariants, pillVariants } from '@/landing/ui/pill'
 
 /**
  * Tmavá karta „Volné místo" na konci výpisu partnerů — celá je odkazem

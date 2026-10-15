@@ -1,10 +1,10 @@
 import React from 'react'
 
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { NextMatchWidgetBlock } from '@/payload-types'
 
 import { NextMatchPanel } from '../../components/NextMatchPanel'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { fetchUpcoming } from '../../data/matches'
 import type { UpcomingMatch } from '../../types'
 

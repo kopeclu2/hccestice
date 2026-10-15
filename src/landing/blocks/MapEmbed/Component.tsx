@@ -1,8 +1,7 @@
 import React from 'react'
 
+import { MapPanel } from '@/landing/ui/MapPanel'
 import type { MapEmbedBlock } from '@/payload-types'
-
-import { MapPanel } from '../../components/MapPanel'
 
 /**
  * Mapa — vložená mapa v zaoblené kartě + adresní pilulky.

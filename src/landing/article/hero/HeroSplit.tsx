@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { PageTitle } from '@/landing/ui/Heading'
+import { Kicker } from '@/landing/ui/Kicker'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
-import { PageTitle } from '../../components/Heading'
-import { Kicker } from '../../components/Kicker'
 import type { ArticleDetail } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'

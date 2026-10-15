@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Kicker } from '@/landing/components/Kicker'
-import { PageCanvas } from '@/landing/components/PageCanvas'
+import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Kicker } from '@/landing/ui/Kicker'
+import { PageCanvas } from '@/landing/ui/PageCanvas'
 import {
   PatternBackground,
   type PatternFade,
   type PatternTone,
   type PatternVariant,
-} from '@/landing/components/PatternBackground'
-import { SectionShell } from '@/landing/components/SectionShell'
+} from '@/landing/ui/PatternBackground'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 
 export const revalidate = 600
@@ -18,7 +18,7 @@ export const revalidate = 600
 /**
  * Galerie vzorů pozadí — interní stránka pro výběr vzoru do sekcí
  * (obdoba shadcnblocks „background pattern" v klubových barvách).
- * Neindexuje se; komponenta: `@/landing/components/PatternBackground`.
+ * Neindexuje se; komponenta: `@/landing/ui/PatternBackground`.
  */
 
 const VARIANTS: Array<{ variant: PatternVariant; label: string; note: string; fade: PatternFade }> =

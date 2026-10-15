@@ -3,14 +3,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import type { FooterContent, SiteLinks } from '@/landing/types'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+import { Watermark } from '@/landing/ui/Watermark'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import type { FooterContent, SiteLinks } from '../types'
-
-import { SectionTitle } from './Heading'
-import { Eyebrow } from './Kicker'
-import { PillLink } from './PillLink'
-import { Watermark } from './Watermark'
 
 /**
  * Footer — zelená plocha s fotkou stadionu v overlay, headline

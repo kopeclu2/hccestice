@@ -1,12 +1,12 @@
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import type { GalleriesGridBlock } from '@/payload-types'
 
-import { CardTitle } from '../../components/Heading'
-import { Highlight } from '../../components/Kicker'
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 import { relId } from '../../data/format'
 import { fetchGalleryCards } from '../../data/galleries'
 import type { GalleryCard } from '../../types'

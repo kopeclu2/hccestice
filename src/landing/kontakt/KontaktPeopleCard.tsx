@@ -1,9 +1,10 @@
 import { Mail, Phone } from 'lucide-react'
 import React from 'react'
 
-import { CardTitle } from '../components/Heading'
-import { Eyebrow } from '../components/Kicker'
-import { PhotoTile } from '../components/PhotoTile'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PhotoTile } from '@/landing/ui/PhotoTile'
+
 import type { PersonCard } from '../types'
 
 /**

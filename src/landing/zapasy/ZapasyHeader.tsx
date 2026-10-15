@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { Eyebrow, Highlight } from '../components/Kicker'
-import { PageHeader } from '../components/PageHeader'
-import { PillLink } from '../components/PillLink'
+import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
+import { PageHeader } from '@/landing/ui/PageHeader'
+import { PillLink } from '@/landing/ui/PillLink'
+
 import { SeasonFilters, type SeasonPill } from '../components/SeasonFilters'
 
 /**

@@ -2,12 +2,12 @@ import { X } from 'lucide-react'
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { EmptyState } from '@/landing/components/EmptyState'
-import { PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Kicker } from '@/landing/components/Kicker'
-import { PillLink } from '@/landing/components/PillLink'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Kicker } from '@/landing/ui/Kicker'
+import { PillLink } from '@/landing/ui/PillLink'
+import { SectionShell } from '@/landing/ui/SectionShell'
 
 /**
  * Interní náhled prázdných stavů — tři varianty z handoffu „HC Cestice

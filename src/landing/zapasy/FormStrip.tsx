@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 
-import { CardTitle } from '../components/Heading'
-import { Eyebrow } from '../components/Kicker'
-import { SectionShell } from '../components/SectionShell'
 import type { Outcome, TeamForm } from '../types'
 
 /**

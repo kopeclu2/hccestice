@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { Badge } from '../components/Badge'
-import { Eyebrow } from '../components/Kicker'
+import { Badge } from '@/landing/ui/Badge'
+import { Eyebrow } from '@/landing/ui/Kicker'
+
 import { countLabel } from '../data/format'
 import type { MatchSummary as MatchSummaryData } from '../data/matchSummary'
 

@@ -4,11 +4,11 @@ import * as Sentry from '@sentry/nextjs'
 import { RotateCcw } from 'lucide-react'
 import React, { useEffect } from 'react'
 
-import { ErrorCode, ErrorMeta } from '@/landing/components/ErrorCode'
-import { PageTitle } from '@/landing/components/Heading'
-import { LogoStamp } from '@/landing/components/LogoStamp'
-import { PillButton } from '@/landing/components/PillButton'
-import { PillLink } from '@/landing/components/PillLink'
+import { ErrorCode, ErrorMeta } from '@/landing/ui/ErrorCode'
+import { PageTitle } from '@/landing/ui/Heading'
+import { LogoStamp } from '@/landing/ui/LogoStamp'
+import { PillButton } from '@/landing/ui/PillButton'
+import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Stránka 500 podle handoffu „HC Cestice Systemove Stranky" — tmavá plocha,

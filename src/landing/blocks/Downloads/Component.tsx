@@ -1,12 +1,11 @@
 import { Download } from 'lucide-react'
 import React from 'react'
 
+import { CardTitle } from '@/landing/ui/Heading'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { DownloadsBlock, Media } from '@/payload-types'
-
-import { CardTitle } from '../../components/Heading'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
 
 const formatFileSize = (bytes: number | null | undefined): string => {
   if (!bytes) return ''

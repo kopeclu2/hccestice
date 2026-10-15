@@ -1,16 +1,16 @@
 import React from 'react'
 
+import { Badge } from '@/landing/ui/Badge'
+import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Numeral } from '@/landing/ui/Numeral'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
 import { serializeJsonLd } from '@/lib/jsonLd'
 import { cn } from '@/lib/utils'
 import type { LandingTrainingsBlock } from '@/payload-types'
 
-import { Badge } from '../../components/Badge'
-import { CardTitle, SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell, type SectionShellProps } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
 import { TRAININGS } from '../../content'
 import type { TrainingSlot, TrainingsContent } from '../../types'
 

@@ -1,9 +1,8 @@
 import React from 'react'
 
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker, Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
-
-import { SectionTitle } from '../components/Heading'
-import { Highlight, Kicker, Eyebrow } from '../components/Kicker'
 
 /** Varianta hlavičky: linka (stránka /zapasy) nebo landing nadpis (home). */
 export type SectionHeadVariant = 'rule' | 'landing'
