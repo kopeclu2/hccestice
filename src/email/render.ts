@@ -55,8 +55,8 @@ const HTML_ENTITIES: Record<string, string> = {
 export const escapeHtml = (value: string): string =>
   value.replace(/[&<>"']/g, (char) => HTML_ENTITIES[char] as string)
 
-/** Písmo: webfont v e-mailu nespoléhavý, Geist tedy jen jako první volba. */
-const FONT = "Geist, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+/** Písmo: webfont v e-mailu nespoléhavý, značkové Archivo tedy jen jako první volba. */
+const FONT = "Archivo, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
 
 const WRAPPER = `margin:0;padding:0;background-color:${C.paper};`
 

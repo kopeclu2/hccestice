@@ -44,24 +44,6 @@ const TONE_VAR: Record<PatternTone, string> = {
   white: 'var(--color-surface)',
 }
 
-/**
- * Totéž co `TONE_VAR`, ale rozepsané na RGB složky — výhradně pro `dashedTile`.
- *
- * `data:image/svg+xml` je samostatný dokument: nevidí custom properties
- * hostitelské stránky, takže `var(--color-club)` ani `currentColor` se v něm
- * neresolvuje. Jediné alternativy by byly přepsat čárkovanou mřížku na
- * `repeating-linear-gradient` (CSS neumí čárkovat 1px linku ve dvou osách)
- * nebo použít SVG jako `mask-image` — a maska je tu už zabraná propem `fade`.
- *
- * token-check-ignore: data-URI SVG nemá přístup k CSS proměnným
- */
-const TONE_RGB: Record<PatternTone, string> = {
-  club: '23, 112, 58',
-  lime: '201, 242, 77',
-  ink: '15, 21, 18',
-  white: '255, 255, 255',
-}
-
 const FADE_MASK: Record<PatternFade, string | undefined> = {
   none: undefined,
   center: 'radial-gradient(ellipse 70% 60% at 50% 45%, #000 25%, transparent 78%)',
@@ -77,12 +59,18 @@ const FADE_MASK: Record<PatternFade, string | undefined> = {
 
 const svgUrl = (svg: string) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 
-/** Čárkovaná mřížka jako SVG dlaždice (CSS neumí čárkované gradienty). */
-const dashedTile = (rgb: string, alpha: number) =>
-  svgUrl(
-    // token-check-ignore: data-URI SVG nevidí CSS proměnné, viz TONE_RGB výš
-    `<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56'><path d='M56 .5H.5V56' fill='none' stroke='rgba(${rgb}, ${alpha})' stroke-dasharray='6 10'/></svg>`,
-  )
+/**
+ * Čárkovaná mřížka jako SVG dlaždice (CSS neumí čárkované gradienty).
+ *
+ * `data:image/svg+xml` je samostatný dokument a nevidí custom properties
+ * hostitelské stránky, takže barvu do něj nejde dát. Dlaždice proto slouží
+ * jen jako **maska** (`mask-image`, tvar čáry) a barvu dodá `background-color`
+ * z tokenu — vzor tak sleduje paletu (`--color-club` apod.) a nenese vlastní
+ * kopii RGB hodnot.
+ */
+const dashedTile = svgUrl(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56'><path d='M56 .5H.5V56' fill='none' stroke='#000' stroke-dasharray='6 10'/></svg>`,
+)
 
 /** Zrno (feTurbulence) — jemný filmový šum, síla daná opacity v SVG. */
 const noiseTile = svgUrl(
@@ -102,8 +90,11 @@ function buildLayer(variant: PatternVariant, tone: PatternTone): React.CSSProper
       }
     case 'grid-dashed':
       return {
-        backgroundImage: dashedTile(TONE_RGB[tone], 0.16),
-        backgroundSize: '3.5rem 3.5rem',
+        backgroundColor: line(0.16),
+        maskImage: dashedTile,
+        WebkitMaskImage: dashedTile,
+        maskSize: '3.5rem 3.5rem',
+        WebkitMaskSize: '3.5rem 3.5rem',
       }
     case 'cross':
       return {
@@ -153,11 +144,18 @@ export function PatternBackground({
   className?: string
 }) {
   const mask = FADE_MASK[fade]
+  const fadeStyle = { maskImage: mask, WebkitMaskImage: mask }
+  const layer = buildLayer(variant, tone)
+  // Čárkovaná mřížka už používá `mask-image` pro tvar čáry, takže fade maska
+  // jde na vnější prvek a vzor na vnitřní — jinak by se přepisovaly.
+  const nested = variant === 'grid-dashed'
   return (
     <div
       aria-hidden
       className={cn('pointer-events-none absolute inset-0', className)}
-      style={{ ...buildLayer(variant, tone), maskImage: mask, WebkitMaskImage: mask }}
-    />
+      style={nested ? fadeStyle : { ...layer, ...fadeStyle }}
+    >
+      {nested ? <div className="absolute inset-0" style={layer} /> : null}
+    </div>
   )
 }

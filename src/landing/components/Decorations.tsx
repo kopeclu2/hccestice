@@ -39,7 +39,7 @@ export function GlowCircle({
   )
 }
 
-/** Tečkovaná mřížka s kruhovou maskou. */
+/** Tečkovaná mřížka s kruhovou maskou (vzor je v `@utility dot-grid`). */
 export function DotGrid({
   className,
   maskPosition = '20% 30%',
@@ -50,13 +50,8 @@ export function DotGrid({
   return (
     <div
       aria-hidden
-      className={cn(base, className)}
-      style={{
-        backgroundImage:
-          'radial-gradient(--alpha(var(--color-club)/20%) 0.09375rem, transparent 0.1rem)',
-        backgroundSize: '1.375rem 1.375rem',
-        maskImage: `radial-gradient(circle at ${maskPosition}, #000, transparent 72%)`,
-      }}
+      className={cn(base, 'dot-grid', className)}
+      style={{ maskImage: `radial-gradient(circle at ${maskPosition}, #000, transparent 72%)` }}
     />
   )
 }
