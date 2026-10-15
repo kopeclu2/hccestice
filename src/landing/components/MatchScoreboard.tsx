@@ -167,10 +167,10 @@ function Team({
       >
         {/* `break-words`: jediné slovo širší než sloupec (320 px) se radši
             zlomí, než aby přeteklo pod skóre. */}
-        <div className="text-body leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-lead md:text-[clamp(1.25rem,2vw,1.875rem)]">
+        <div className="text-base leading-tight font-extrabold tracking-[-0.02em] text-balance break-words md:text-xl lg:text-2xl">
           {name}
         </div>
-        <div className="mt-1 text-caption font-semibold text-white/55 lg:text-meta">{label}</div>
+        <div className="mt-1 text-xs font-semibold text-white/55">{label}</div>
       </div>
     </div>
   )

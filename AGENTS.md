@@ -962,13 +962,15 @@ s `report = post.id`.
   migrace `20261015_085423_match_header_variant` (aditivní, default
   `classic`), **před buildem**.
 
-- **Typografie detailu** (15. 10. 2026) má čtyři role, které od `lg`
-  o stupeň rostou: nadpis panelu 21 → 26 px (`md:`), hlavní text
-  (jména, hodnoty, perex) `text-body` → `text-lead`, vedlejší text (časy,
-  asistence, popisky, čísla tabulek) `text-caption` → `text-meta`,
-  `Eyebrow` 11 px beze změny. Tabulka rolí je v komentáři `MatchPanel`;
-  nový blok detailu ji má dodržet. Varianty hlavičky A–D mají vlastní
-  typografii a tahle škála se jich netýká.
+- **Typografie detailu** jede na **standardní škále Tailwindu**, ne na
+  vlastních px tokenech (rozhodnutí uživatele 15. 10. 2026 — tokeny
+  15/17/13 px se k sobě nehodily a desktop působil přerostle): nadpis
+  panelu `text-xl md:text-2xl`, hlavní text (jména, hodnoty, perex)
+  `text-sm md:text-base`, vedlejší text (časy, asistence, popisky)
+  `text-xs`, týmy v hlavičce `text-base md:text-xl lg:text-2xl`. Tabulka
+  rolí je v komentáři `MatchPanel`; nový blok detailu ji má dodržet.
+  `Eyebrow` a `Badge` mají vlastní velikosti. Varianty hlavičky A–D mají
+  vlastní typografii a tahle škála se jich netýká.
 
 Blok bez dat se nevykreslí. Odehraný zápas bez branek, trestů i statistiky
 ukáže pod hlavičkou poznámku „Podrobný zápis z utkání není k dispozici"

@@ -52,7 +52,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tone="white">{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-body font-bold text-white [overflow-wrap:anywhere] lg:text-lead">
+      <dd className="mt-1 text-sm font-bold text-white [overflow-wrap:anywhere] md:text-base">
         {children}
       </dd>
     </div>
@@ -111,11 +111,7 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
                 <Badge size="sm" variant={outcome.variant}>
                   {outcome.label}
                 </Badge>
-                {note && (
-                  <span className="text-caption font-semibold text-white/65 lg:text-meta">
-                    {note}
-                  </span>
-                )}
+                {note && <span className="text-xs font-semibold text-white/65">{note}</span>}
               </span>
             </Fact>
           )}
@@ -160,7 +156,7 @@ function ScheduledHeader({ match }: { match: MatchDetail }) {
             <Numeral className="text-white" size="md">
               {match.dateLabel}
             </Numeral>
-            <span className="text-meta font-bold text-white/70">{match.timeLabel}</span>
+            <span className="text-sm font-bold text-white/70">{match.timeLabel}</span>
           </div>
         </>
       }
@@ -186,7 +182,7 @@ function CanceledHeader({ match }: { match: MatchDetail }) {
         <CardTitle as="h1" className="mt-3 leading-tight text-white" size="lg">
           {match.title}
         </CardTitle>
-        <div className="mt-2 text-meta text-white/65">
+        <div className="mt-2 text-sm text-white/65">
           Plánovaný termín: {match.dateLabel} · {match.timeLabel}
           {match.venue ? ` · ${match.venue}` : ''}
         </div>

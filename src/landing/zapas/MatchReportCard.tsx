@@ -58,11 +58,15 @@ export function MatchReportCard({
           )}
           <div className="p-4.5 md:p-7 lg:p-9">
             <Eyebrow tone="club">Reportáž ze zápasu</Eyebrow>
-            <CardTitle as="h2" className="mt-2 text-pretty [overflow-wrap:anywhere]" size="sm">
+            <CardTitle
+              as="h2"
+              className="mt-2 text-lg text-pretty [overflow-wrap:anywhere] md:text-xl"
+              size="sm"
+            >
               {report.title}
             </CardTitle>
             {report.excerpt && (
-              <p className="text-ink-soft mt-3 text-body leading-[1.55] text-pretty lg:text-lead">
+              <p className="text-ink-soft mt-3 text-sm leading-relaxed text-pretty md:text-base">
                 {report.excerpt}
               </p>
             )}
@@ -82,7 +86,11 @@ export function MatchReportCard({
       {!report && gallery && (
         <div className="p-4.5 md:p-7 lg:p-9">
           <Eyebrow tone="club">Fotky ze zápasu</Eyebrow>
-          <CardTitle as="h2" className="mt-2 text-pretty [overflow-wrap:anywhere]" size="sm">
+          <CardTitle
+            as="h2"
+            className="mt-2 text-lg text-pretty [overflow-wrap:anywhere] md:text-xl"
+            size="sm"
+          >
             {gallery.title}
           </CardTitle>
           <div className="mt-5">
