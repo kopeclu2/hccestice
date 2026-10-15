@@ -1,5 +1,9 @@
 import React from 'react'
 
+import { SEASON_STATS } from '@/landing/content'
+import { relId } from '@/landing/data/format'
+import { fetchAutoStats } from '@/landing/features/matches/data/seasons'
+import type { StatsContent } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
@@ -7,11 +11,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { LandingStatsBlock } from '@/payload-types'
-
-import { SEASON_STATS } from '../../content'
-import { relId } from '../../data/format'
-import { fetchAutoStats } from '../../data/seasons'
-import type { StatsContent } from '../../types'
 
 /**
  * Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah —

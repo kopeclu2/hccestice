@@ -1,10 +1,9 @@
 import Image from 'next/image'
 import React from 'react'
 
+import type { ArticleAuthor } from '@/landing/types'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import type { ArticleAuthor } from '../types'
 
 /**
  * Vizitka autora pod článkem — portrét z kolekce People (nebo

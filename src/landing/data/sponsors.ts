@@ -3,10 +3,9 @@ import 'server-only'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import type { Sponsor } from '@/landing/types'
 import type { Sponsor as SponsorDoc } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import type { Sponsor } from '../types'
 
 import { toPhoto } from './format'
 

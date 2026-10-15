@@ -4,10 +4,10 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { toScoreboard } from '@/landing/features/matches/view/matchEvents'
+import type { ArticleAuthor, ArticleDetail, Photo, PostCard } from '@/landing/types'
 import type { Post } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import type { ArticleAuthor, ArticleDetail, Photo, PostCard } from '../types'
 
 import {
   formatFullDate,
@@ -27,7 +27,6 @@ import {
   toPhoto,
   uploadToPhoto,
 } from './format'
-import { toScoreboard } from './matchEvents'
 import { fetchSiteConfig } from './site'
 
 /** Články — fetchery pro Aktuality, widget Články, Vypíchnutý článek a detail. */

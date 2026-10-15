@@ -1,8 +1,7 @@
 import React from 'react'
 
+import { POST_TYPE_LABEL } from '@/landing/data/posts'
 import { PillLink } from '@/landing/ui/PillLink'
-
-import { POST_TYPE_LABEL } from '../data/posts'
 
 /**
  * Filtr typů článků — pilulkové odkazy, stav filtru žije v URL (`?typ=`).

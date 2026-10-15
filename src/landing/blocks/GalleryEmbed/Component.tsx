@@ -1,14 +1,13 @@
 import React from 'react'
 
+import { relId, toPhoto } from '@/landing/data/format'
+import { fetchGallery } from '@/landing/data/galleries'
+import type { Photo } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { GalleryEmbedBlock } from '@/payload-types'
-
-import { relId, toPhoto } from '../../data/format'
-import { fetchGallery } from '../../data/galleries'
-import type { Photo } from '../../types'
 
 /** Vložená galerie — nadpis + mřížka prvních N fotek. */
 export async function GalleryEmbedBlockComponent({ block }: { block: GalleryEmbedBlock }) {

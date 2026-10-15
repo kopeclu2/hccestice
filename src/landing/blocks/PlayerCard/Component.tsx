@@ -1,15 +1,14 @@
 import React from 'react'
 
+import { relId } from '@/landing/data/format'
+import { fetchPickedPlayers, POSITION_LABEL } from '@/landing/data/players'
+import type { RosterPlayer } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { PlayerCardBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchPickedPlayers, POSITION_LABEL } from '../../data/players'
-import type { RosterPlayer } from '../../types'
 
 /** Karta jednoho hráče — velký portrét, číslo, post, poznámka. */
 export async function PlayerCardBlockComponent({ block }: { block: PlayerCardBlock }) {

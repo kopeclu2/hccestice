@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatCompetition, phaseLabel } from '../../src/landing/data/matchFormat'
+import { formatCompetition, phaseLabel } from '@/landing/features/matches/view/matchFormat'
+
 import type { Match } from '../../src/payload-types'
 
 const withCompetition = (competition: string | null): Match =>

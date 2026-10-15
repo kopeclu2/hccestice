@@ -4,10 +4,9 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import type { PlayerSeasonStat, RosterPlayer } from '@/landing/types'
 import type { Player } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import type { PlayerSeasonStat, RosterPlayer } from '../types'
 
 import { toPhoto } from './format'
 import { CACHE_TAGS } from './tags'

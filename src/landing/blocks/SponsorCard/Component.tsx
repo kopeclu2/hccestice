@@ -2,16 +2,15 @@ import { ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { relId, toPhoto } from '@/landing/data/format'
+import { fetchSponsor } from '@/landing/data/sponsors'
+import type { Photo } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { SponsorCardBlock } from '@/payload-types'
-
-import { relId, toPhoto } from '../../data/format'
-import { fetchSponsor } from '../../data/sponsors'
-import type { Photo } from '../../types'
 
 /** Karta sponzora — logo, jméno, poděkování a odkaz na web. */
 export async function SponsorCardBlockComponent({ block }: { block: SponsorCardBlock }) {

@@ -891,9 +891,9 @@ zápasu" ve stylu Livesportu a karta reportáže.
 |---|---|
 | route | `src/app/(landing)/zapasy/[slug]/page.tsx` (SSG + ISR 600 s, `generateStaticParams`, `notFound()`) |
 | výpis | `src/app/(landing)/zapasy/(vypis)/` (`page.tsx` + `loading.tsx`) |
-| fetchery | `src/landing/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
-| view-model | `src/landing/data/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
-| komponenty | `src/landing/zapas/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
+| fetchery | `src/landing/features/matches/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
+| view-model | `src/landing/features/matches/view/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
+| komponenty | `src/landing/features/matches/components/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/features/matches/components/MatchScoreboard.tsx` |
 | slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts` |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
@@ -978,7 +978,7 @@ s `report = post.id`.
     skóre nemají.
   - Řazení je stabilní podle času, při shodném čase branka před trestem.
 - **Souhrn** (`MatchSummary`, `buildMatchSummary` v
-  `data/matchSummary.ts`) — pravý sloupec vedle osy, pod případnou
+  `features/matches/view/matchSummary.ts`) — pravý sloupec vedle osy, pod případnou
   reportáží: kanadské body (G / A / B), počet gólů v PP / OS a tresty po
   hráčích. Rozhodnutí uživatele 15. 10. 2026: osa přes celou šířku 1320 px
   měla stav po gólu daleko od jména, takže zůstává ve sloupci
@@ -997,7 +997,7 @@ s `report = post.id`.
   webu → Vzhled hlavičky detailu zápasu** (`siteConfig.matchHeaderVariant`:
   `classic` = původní `MatchHeader`, `arena`, `editorial`, `split`, `app`;
   rozhodnutí uživatele 15. 10. 2026). Přepíná `MatchHeaderByVariant`
-  (`landing/zapas/header-variants/index.tsx`), katalog všech vedle sebe
+  (`landing/features/matches/header-variants/index.tsx`), katalog všech vedle sebe
   je `/vzory/hlavicka-zapasu` (noindex). Zrušený zápas má vždy `classic`
   (`CanceledHeader`). Uložení nastavení invaliduje tag `site-config`, který
   detail čte (i přes `SubpageShell`), takže se změna projeví hned i na
@@ -1038,13 +1038,13 @@ je prohra po prodloužení nebo nájezdech (`matchOutcome` v
 `matchFormat.ts`): v tabulce VČHL za ni je bod, proto má „půlený" štítek
 — varianta `split` v `Badge` (cihlová | světle zelená), ve formě čtvereček
 půlený úhlopříčkou s písmenem P. Mapa štítků je jedna,
-`landing/components/outcome.ts`, sdílí ji `ResultsList` i `MatchHeader`.
+`landing/features/matches/components/outcome.ts`, sdílí ji `ResultsList` i `MatchHeader`.
 Výhra po prodloužení zůstává `win` (suffix `pp`/`sn` u skóre ji odliší).
 
 Řádky výpisu mají **znaky týmů a čitelné datum** (rozhodnutí uživatele
 15. 10. 2026): `MatchRowTitle` kreslí `Crest` u každého týmu, `MatchWhen`
 den v týdnu + datum `md:text-lg` + čas. Logo soupeře se načítá v
-`withOpponentLogos` (`data/matches.ts`) jedním dotazem na `media` pro celou
+`withOpponentLogos` (`features/matches/data/matches.ts`) jedním dotazem na `media` pro celou
 stránku — výpisy jedou na `depth: 1` (`depth: 2` by rozbalil i sezónu,
 reportáž a sestavu). V `select` musí být `filename`: `url` je virtuální pole
 z něj složené, bez něj vyjde prázdné. Fetchery bez loga (`depth: 1`)
@@ -1065,10 +1065,10 @@ výpis zápasu by je měl použít místo vlastního řetězce:
 
 | díl | co řeší |
 |---|---|
-| `components/TeamPair.tsx` | „domácí × hosté": tým je nedělitelný celek, láme se za „×"; `stack` dá na mobilu každý tým na vlastní řádek. `splitMatchTitle` rozdělí titulek zápasu |
-| `components/MatchMeta.tsx` | ztišený řádek údajů oddělených „·" — láme se mezi údaji, tečka nikdy nevisí na kraji řádku |
+| `features/matches/components/TeamPair.tsx` | „domácí × hosté": tým je nedělitelný celek, láme se za „×"; `stack` dá na mobilu každý tým na vlastní řádek. `splitMatchTitle` rozdělí titulek zápasu |
+| `features/matches/components/MatchMeta.tsx` | ztišený řádek údajů oddělených „·" — láme se mezi údaji, tečka nikdy nevisí na kraji řádku |
 | `landing/ui/DotEyebrow.tsx` | popisek s lime tečkou (nejbližší zápas, hlavička detailu, hero reportáže) |
-| `zapasy/MatchRow.tsx` | společná karta, mřížka, datum a titulek řádků `ResultsList` i `FixtureList` |
+| `features/matches/components/MatchRow.tsx` | společná karta, mřížka, datum a titulek řádků `ResultsList` i `FixtureList` |
 
 Fáze soutěže z AHL („VČHL 2.ročník - ZČ") se pro web formátuje jen
 v `matchFormat.ts`: `formatCompetition()` → „VČHL 2. ročník · Základní

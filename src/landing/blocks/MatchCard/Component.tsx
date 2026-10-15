@@ -3,6 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { relId } from '@/landing/data/format'
+import { fetchMatchCard } from '@/landing/features/matches/data/matches'
+import type { MatchCardData } from '@/landing/features/matches/types'
+import type { Photo } from '@/landing/types'
 import { Kicker } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
 import { Reveal } from '@/landing/ui/Reveal'
@@ -10,10 +14,6 @@ import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 import type { MatchCardBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchMatchCard } from '../../data/matches'
-import type { MatchCardData, Photo } from '../../types'
 
 /** Velká karta zápasu — loga, skóre / termín, odkaz na reportáž. */
 export async function MatchCardBlockComponent({ block }: { block: MatchCardBlock }) {

@@ -1,10 +1,9 @@
 import React from 'react'
 
+import { relId } from '@/landing/data/format'
+import { MatchesWidgetView } from '@/landing/features/matches/components/MatchesWidgetView'
+import { fetchPickedMatchRows } from '@/landing/features/matches/data/matches'
 import type { MatchesPickerBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchPickedMatchRows } from '../../data/matches'
-import { MatchesWidgetView } from '../MatchesWidget/Component'
 
 /** Vybrané zápasy (v tomto pořadí) — render přes kartu widgetu zápasů. */
 export async function MatchesPickerBlockComponent({ block }: { block: MatchesPickerBlock }) {

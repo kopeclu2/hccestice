@@ -1,15 +1,14 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { formatFullDate, relId, toPhoto } from '@/landing/data/format'
+import { fetchDefaultPostPhoto, fetchPost, POST_TYPE_LABEL, postHref } from '@/landing/data/posts'
+import type { Photo } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { PostFeatureBlock } from '@/payload-types'
-
-import { formatFullDate, relId, toPhoto } from '../../data/format'
-import { fetchDefaultPostPhoto, fetchPost, POST_TYPE_LABEL, postHref } from '../../data/posts'
-import type { Photo } from '../../types'
 
 /** Vypíchnutý článek — velká fotokarta se štítkem, datem a titulkem. */
 export async function PostFeatureBlockComponent({ block }: { block: PostFeatureBlock }) {

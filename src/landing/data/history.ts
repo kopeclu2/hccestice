@@ -3,10 +3,9 @@ import 'server-only'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { HISTORY_PAGE } from '@/landing/content'
+import type { HistoryEra, Milestone } from '@/landing/types'
 import configPromise from '@payload-config'
-
-import { HISTORY_PAGE } from '../content'
-import type { HistoryEra, Milestone } from '../types'
 
 import { uploadToPhoto } from './format'
 

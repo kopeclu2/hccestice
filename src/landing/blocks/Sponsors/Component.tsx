@@ -1,6 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { countLabel } from '@/landing/data/format'
+import { fetchSponsors } from '@/landing/data/sponsors'
+import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import type { Sponsor } from '@/landing/types'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -10,11 +14,6 @@ import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 import type { LandingSponsorsBlock } from '@/payload-types'
-
-import { countLabel } from '../../data/format'
-import { fetchSeason, seasonShortLabel } from '../../data/seasons'
-import { fetchSponsors } from '../../data/sponsors'
-import type { Sponsor } from '../../types'
 
 const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partnerů']
 

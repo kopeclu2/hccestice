@@ -4,13 +4,12 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import type { GalleryCard } from '@/landing/types'
 import type { Gallery, Season } from '@/payload-types'
 import configPromise from '@payload-config'
 
-import type { GalleryCard } from '../types'
-
 import { formatFullDate, toPhoto, uploadToPhoto } from './format'
-import { seasonShortLabel } from './seasons'
 import { CACHE_TAGS } from './tags'
 
 /** Galerie — fetchery pro mozaiku Fotoalba a widgety Galerie. */

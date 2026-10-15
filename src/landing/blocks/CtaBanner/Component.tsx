@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { uploadToPhoto } from '@/landing/data/format'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
@@ -9,8 +10,6 @@ import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 import type { CtaBannerBlockType } from '@/payload-types'
-
-import { uploadToPhoto } from '../../data/format'
 
 /** CTA banner — zelená/tmavá karta s titulkem a tlačítkem (vzor brigáda). */
 export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }) {

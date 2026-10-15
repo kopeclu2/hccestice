@@ -1,11 +1,10 @@
 import { Mail, Phone } from 'lucide-react'
 import React from 'react'
 
+import type { PersonCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
-
-import type { PersonCard } from '../types'
 
 /**
  * „Nebo pište/volejte přímo" — kontaktní osoby s fotkou, telefonem

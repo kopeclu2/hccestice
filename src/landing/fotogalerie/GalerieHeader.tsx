@@ -1,10 +1,9 @@
 import React from 'react'
 
+import { countLabel } from '@/landing/data/format'
+import { SeasonFilters, type SeasonPill } from '@/landing/features/matches/components/SeasonFilters'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
-
-import { SeasonFilters, type SeasonPill } from '../components/SeasonFilters'
-import { countLabel } from '../data/format'
 
 /**
  * Hlavička výpisu fotogalerií: drobečky, titulek s lime zvýrazněním, perex,

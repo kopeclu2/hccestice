@@ -2,16 +2,15 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
+import { relId } from '@/landing/data/format'
+import { fetchPostCards } from '@/landing/data/posts'
+import type { PostCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { PostsGridBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchPostCards } from '../../data/posts'
-import type { PostCard } from '../../types'
 
 /** Widget článků — načte karty článků z kolekce dle filtrů bloku. */
 export async function PostsGridBlockComponent({ block }: { block: PostsGridBlock }) {

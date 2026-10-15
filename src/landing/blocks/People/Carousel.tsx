@@ -4,13 +4,12 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import type { PersonCard } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight, Kicker } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import type { PersonCard } from '../../types'
 
 /**
  * Lidé v klubu — horizontální carousel karet se šipkami ← →.

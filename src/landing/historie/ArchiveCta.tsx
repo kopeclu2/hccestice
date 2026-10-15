@@ -1,9 +1,8 @@
 import React from 'react'
 
+import { HISTORY_PAGE } from '@/landing/content'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
 import { PillLink } from '@/landing/ui/PillLink'
-
-import { HISTORY_PAGE } from '../content'
 
 /**
  * Tmavý CTA pás pod timeline — odkaz na fotoalbum s archivními fotkami.

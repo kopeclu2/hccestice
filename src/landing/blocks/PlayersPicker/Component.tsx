@@ -1,10 +1,9 @@
 import React from 'react'
 
+import { RosterWidgetView } from '@/landing/blocks/RosterWidget/Component'
+import { relId } from '@/landing/data/format'
+import { fetchPickedPlayers } from '@/landing/data/players'
 import type { PlayersPickerBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchPickedPlayers } from '../../data/players'
-import { RosterWidgetView } from '../RosterWidget/Component'
 
 /** Vybraní hráči (v tomto pořadí) — render přes mřížku soupisky. */
 export async function PlayersPickerBlockComponent({ block }: { block: PlayersPickerBlock }) {

@@ -2,12 +2,11 @@ import { Globe, Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { telHref, webLabel } from '@/landing/data/format'
+import type { Sponsor } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import { telHref, webLabel } from '../data/format'
-import type { Sponsor } from '../types'
 
 /**
  * Monogram partnera bez loga — iniciály prvních dvou slov názvu

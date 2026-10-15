@@ -1,10 +1,9 @@
 import React from 'react'
 
+import { HISTORY_PAGE } from '@/landing/content'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Watermark } from '@/landing/ui/Watermark'
-
-import { HISTORY_PAGE } from '../content'
 
 /**
  * Vypíchnutý příběh „dresy na dluh" — zelená karta s watermarkem HCČ,

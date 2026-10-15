@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { HERO } from '@/landing/content'
+import { uploadToPhoto } from '@/landing/data/format'
+import { fetchNavCta, fetchNavigation } from '@/landing/data/navigation'
+import { Countdown } from '@/landing/features/matches/components/Countdown'
+import { fetchPlayed, fetchUpcoming } from '@/landing/features/matches/data/matches'
+import type { LastResult, UpcomingMatch } from '@/landing/features/matches/types'
+import type { HeroContent, NavCta, NavItem } from '@/landing/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { PillLink } from '@/landing/ui/PillLink'
 import type { LandingHeroBlock } from '@/payload-types'
 
-import { HERO } from '../../content'
-import { uploadToPhoto } from '../../data/format'
-import { fetchPlayed, fetchUpcoming } from '../../data/matches'
-import { fetchNavCta, fetchNavigation } from '../../data/navigation'
-import type { HeroContent, LastResult, NavCta, NavItem, UpcomingMatch } from '../../types'
-
-import { Countdown } from './Countdown'
 import { LandingNav } from './Nav'
 
 /** Block data → view-model (fallbacky na content.ts). */

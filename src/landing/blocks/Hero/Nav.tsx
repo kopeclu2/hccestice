@@ -1,11 +1,10 @@
 import React from 'react'
 
+import { ctaHref, navHref } from '@/landing/data/navigation'
 import { NavMobile } from '@/landing/layout/NavMobile'
+import type { NavCta, NavItem } from '@/landing/types'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
 import { PillLink } from '@/landing/ui/PillLink'
-
-import { ctaHref, navHref } from '../../data/navigation'
-import type { NavCta, NavItem } from '../../types'
 
 /**
  * Navigace plovoucí přes hero fotku: bílá „známka" s logem vlevo,

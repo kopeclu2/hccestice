@@ -1,6 +1,10 @@
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 
+import { CONTACT } from '@/landing/content'
+import { arrayOr } from '@/landing/data/format'
+import { fetchSite } from '@/landing/data/site'
+import type { ContactContent, SiteLinks } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -9,11 +13,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import type { LandingContactBlock } from '@/payload-types'
-
-import { CONTACT } from '../../content'
-import { arrayOr } from '../../data/format'
-import { fetchSite } from '../../data/site'
-import type { ContactContent, SiteLinks } from '../../types'
 
 import { ContactFormLazy } from './ContactFormLazy'
 

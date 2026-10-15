@@ -3,6 +3,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { uploadToPhoto } from '@/landing/data/format'
+import { fetchProducts } from '@/landing/data/products'
+import { fetchSite } from '@/landing/data/site'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
@@ -11,10 +14,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { Product, ProductsGridBlock } from '@/payload-types'
-
-import { uploadToPhoto } from '../../data/format'
-import { fetchProducts } from '../../data/products'
-import { fetchSite } from '../../data/site'
 
 /**
  * Produkty (merch) — mřížka zboží v nabídce + objednací instrukce.

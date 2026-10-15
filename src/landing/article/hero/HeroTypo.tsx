@@ -1,9 +1,8 @@
 import React from 'react'
 
+import type { ArticleDetail } from '@/landing/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Watermark } from '@/landing/ui/Watermark'
-
-import type { ArticleDetail } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'
 import { Breadcrumbs } from './Breadcrumbs'

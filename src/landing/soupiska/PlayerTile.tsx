@@ -1,13 +1,12 @@
 import Image from 'next/image'
 import React from 'react'
 
+import type { Photo } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import type { Photo } from '../types'
 
 /** Karta na soupisce — hráč (kicker = post, číslo) i člen realizačního týmu (kicker = role). */
 export type SoupiskaCard = {

@@ -1,12 +1,11 @@
 import React from 'react'
 
+import { NextMatchPanel } from '@/landing/features/matches/components/NextMatchPanel'
+import { fetchUpcoming } from '@/landing/features/matches/data/matches'
+import type { UpcomingMatch } from '@/landing/features/matches/types'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { NextMatchWidgetBlock } from '@/payload-types'
-
-import { NextMatchPanel } from '../../components/NextMatchPanel'
-import { fetchUpcoming } from '../../data/matches'
-import type { UpcomingMatch } from '../../types'
 
 /** Widget nejbližšího zápasu — načte nadcházející zápas z kolekce. */
 export async function NextMatchWidgetBlockComponent({ block }: { block: NextMatchWidgetBlock }) {

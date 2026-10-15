@@ -1,8 +1,7 @@
 import React from 'react'
 
+import type { ArticleAuthor } from '@/landing/types'
 import { cn } from '@/lib/utils'
-
-import type { ArticleAuthor } from '../../types'
 
 /** Barevné ladění meta řádku; `plain` = bez avataru (hero Zápas). */
 export type AuthorMetaTone = 'photo' | 'panel' | 'light' | 'plain'

@@ -1,8 +1,7 @@
 import React from 'react'
 
+import { TRAININGS_PAGE } from '@/landing/content'
 import { PageHeader } from '@/landing/ui/PageHeader'
-
-import { TRAININGS_PAGE } from '../content'
 
 /**
  * Hlavička `/treninky`: jen drobečky, watermark a obecný titulek. Perex

@@ -3,11 +3,10 @@
 import { Minus, Plus } from 'lucide-react'
 import React from 'react'
 
+import type { FaqItem } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
-
-import type { FaqItem } from '../../types'
 
 /**
  * Časté otázky — accordion ve dvou sloupcích (CSS columns),

@@ -1,10 +1,9 @@
 import React from 'react'
 
+import { FAQ } from '@/landing/content'
+import { arrayOr } from '@/landing/data/format'
+import type { FaqItem } from '@/landing/types'
 import type { LandingFaqBlock } from '@/payload-types'
-
-import { FAQ } from '../../content'
-import { arrayOr } from '../../data/format'
-import type { FaqItem } from '../../types'
 
 import { FaqAccordion } from './Accordion'
 

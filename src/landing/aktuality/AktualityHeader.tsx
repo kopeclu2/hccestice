@@ -1,9 +1,8 @@
 import React from 'react'
 
+import { countLabel } from '@/landing/data/format'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
-
-import { countLabel } from '../data/format'
 
 import { TypeFilters } from './TypeFilters'
 

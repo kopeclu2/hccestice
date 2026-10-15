@@ -1,6 +1,9 @@
 import { Mail, Phone } from 'lucide-react'
 import React from 'react'
 
+import { relId, toPersonCard } from '@/landing/data/format'
+import { fetchPerson } from '@/landing/data/site'
+import type { PersonCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
@@ -8,10 +11,6 @@ import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { PersonCardBlock } from '@/payload-types'
-
-import { relId, toPersonCard } from '../../data/format'
-import { fetchPerson } from '../../data/site'
-import type { PersonCard } from '../../types'
 
 /** Kontaktní karta osoby — portrét, role, telefon a e-mail. */
 export async function PersonCardBlockComponent({ block }: { block: PersonCardBlock }) {

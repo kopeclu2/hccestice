@@ -4,12 +4,11 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { CLUB_EMAIL, FOOTER } from '@/landing/content'
+import type { FooterContent, PersonCard, SiteLinks } from '@/landing/types'
 import { stripTracking } from '@/lib/stripTracking'
 import type { Person, SiteConfig } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import { CLUB_EMAIL, FOOTER } from '../content'
-import type { FooterContent, PersonCard, SiteLinks } from '../types'
 
 import { arrayOr, toPersonCard, uploadToPhoto } from './format'
 

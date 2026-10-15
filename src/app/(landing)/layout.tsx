@@ -16,7 +16,7 @@ import { LANDING_COLORS } from '@/landing/tokens'
 import { getServerSideURL } from '@/lib/getURL'
 import { defaultTwitter, mergeOpenGraph } from '@/lib/mergeOpenGraph'
 
-import '../globals.css'
+import '@/app/globals.css'
 
 /**
  * Jediný font landing page (viz design handoff — Typografie).

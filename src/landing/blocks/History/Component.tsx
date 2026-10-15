@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { HISTORY } from '@/landing/content'
+import { arrayOr } from '@/landing/data/format'
+import type { HistoryContent } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -8,10 +11,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import type { LandingHistoryBlock } from '@/payload-types'
-
-import { HISTORY } from '../../content'
-import { arrayOr } from '../../data/format'
-import type { HistoryContent } from '../../types'
 
 /** Interní routy, na které sekce odkazuje (v CMS se edituje jen text tlačítek). */
 const HISTORY_HREF = '/historie-klubu'

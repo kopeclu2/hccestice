@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
+import type {
+  ArticleGoal,
+  MatchPenaltyRow,
+  MatchTimelineEvent,
+} from '@/landing/features/matches/types'
 import {
   buildTimeline,
   matchDescription,
@@ -7,8 +12,8 @@ import {
   periodLabel,
   pickReport,
   toMatchDetail,
-} from '../../src/landing/data/matchDetailView'
-import type { ArticleGoal, MatchPenaltyRow, MatchTimelineEvent } from '../../src/landing/types'
+} from '@/landing/features/matches/view/matchDetailView'
+
 import type { Match, Post } from '../../src/payload-types'
 
 type Goals = NonNullable<Match['goals']>

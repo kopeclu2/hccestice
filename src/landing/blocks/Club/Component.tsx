@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { CLUB } from '@/landing/content'
+import { uploadToPhoto } from '@/landing/data/format'
+import type { ClubContent } from '@/landing/types'
 import { DotGrid, PlusMark } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -9,10 +12,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import type { LandingClubBlock } from '@/payload-types'
-
-import { CLUB } from '../../content'
-import { uploadToPhoto } from '../../data/format'
-import type { ClubContent } from '../../types'
 
 /** Block data → view-model (fallbacky na content.ts). */
 function mapClub(block: LandingClubBlock): ClubContent {

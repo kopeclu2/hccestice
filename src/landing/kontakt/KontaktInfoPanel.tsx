@@ -1,13 +1,12 @@
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 
+import { CONTACT } from '@/landing/content'
+import type { SiteLinks } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
-
-import { CONTACT } from '../content'
-import type { SiteLinks } from '../types'
 
 /**
  * Levý panel stránky `/kontakt`: rychlé údaje vedle tmavé karty s formulářem

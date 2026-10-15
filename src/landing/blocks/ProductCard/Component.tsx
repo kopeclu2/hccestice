@@ -1,14 +1,13 @@
 import React from 'react'
 
+import { ProductTile } from '@/landing/blocks/ProductsGrid/Component'
+import { relId } from '@/landing/data/format'
+import { fetchProduct } from '@/landing/data/products'
+import { fetchSite } from '@/landing/data/site'
 import { Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { ProductCardBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchProduct } from '../../data/products'
-import { fetchSite } from '../../data/site'
-import { ProductTile } from '../ProductsGrid/Component'
 
 /** Karta jednoho produktu — vypíchnutí konkrétního merche. */
 export async function ProductCardBlockComponent({ block }: { block: ProductCardBlock }) {

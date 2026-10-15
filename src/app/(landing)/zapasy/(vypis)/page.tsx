@@ -1,25 +1,29 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { fetchSeasonFixtures, fetchSeasonForm, fetchSeasonResults } from '@/landing/data/matches'
+import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
+import { FormStrip } from '@/landing/features/matches/components/FormStrip'
+import { MatchesCta } from '@/landing/features/matches/components/MatchesCta'
+import { MatchesJsonLd } from '@/landing/features/matches/components/MatchesJsonLd'
+import { ResultsList } from '@/landing/features/matches/components/ResultsList'
+import { StandingsPanel } from '@/landing/features/matches/components/StandingsPanel'
+import { ZapasyHeader } from '@/landing/features/matches/components/ZapasyHeader'
+import {
+  fetchSeasonFixtures,
+  fetchSeasonForm,
+  fetchSeasonResults,
+} from '@/landing/features/matches/data/matches'
 import {
   fetchMatchSeasons,
   fetchSeason,
   mapStandingsFromSeason,
   seasonShortLabel,
-} from '@/landing/data/seasons'
+} from '@/landing/features/matches/data/seasons'
+import type { StandingsContent } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import type { StandingsContent } from '@/landing/types'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { FixturesRail } from '@/landing/zapasy/FixturesRail'
-import { FormStrip } from '@/landing/zapasy/FormStrip'
-import { MatchesCta } from '@/landing/zapasy/MatchesCta'
-import { MatchesJsonLd } from '@/landing/zapasy/MatchesJsonLd'
-import { ResultsList } from '@/landing/zapasy/ResultsList'
-import { StandingsPanel } from '@/landing/zapasy/StandingsPanel'
-import { ZapasyHeader } from '@/landing/zapasy/ZapasyHeader'
 import { cn } from '@/lib/utils'
 
 type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { TRAININGS } from '@/landing/content'
+import type { TrainingSlot, TrainingsContent } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -10,9 +12,6 @@ import { Watermark } from '@/landing/ui/Watermark'
 import { serializeJsonLd } from '@/lib/jsonLd'
 import { cn } from '@/lib/utils'
 import type { LandingTrainingsBlock } from '@/payload-types'
-
-import { TRAININGS } from '../../content'
-import type { TrainingSlot, TrainingsContent } from '../../types'
 
 import { parseTrainingSchedule } from './openingHours'
 

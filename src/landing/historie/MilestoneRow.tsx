@@ -1,11 +1,10 @@
 import React from 'react'
 
+import type { Milestone } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { cn } from '@/lib/utils'
-
-import type { Milestone } from '../types'
 
 /**
  * Polaroid natočení fotek se střídá v rámci éry (handoff: +1.6° / −1.4° / +1.2°).

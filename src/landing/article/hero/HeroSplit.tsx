@@ -1,11 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 
+import type { ArticleDetail } from '@/landing/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import type { ArticleDetail } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'
 import { Breadcrumbs } from './Breadcrumbs'

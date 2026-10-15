@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { relId, uploadToPhoto } from '@/landing/data/format'
+import { fetchAlbumGalleries } from '@/landing/data/galleries'
+import type { AlbumSpan, AlbumTile, GalleryCard } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { MaybeLink } from '@/landing/ui/CardGrid'
 import { GlowCircle } from '@/landing/ui/Decorations'
@@ -13,10 +16,6 @@ import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import { cn } from '@/lib/utils'
 import type { LandingAlbumBlock } from '@/payload-types'
-
-import { relId, uploadToPhoto } from '../../data/format'
-import { fetchAlbumGalleries } from '../../data/galleries'
-import type { AlbumSpan, AlbumTile, GalleryCard } from '../../types'
 
 /**
  * Rozmístění dlaždic mozaiky — 6 alb ve třech řádcích a čtyřech sloupcích:

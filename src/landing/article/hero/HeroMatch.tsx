@@ -1,7 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { MatchScoreboard } from '@/landing/features/matches/components/MatchScoreboard'
+import type { ArticleGoal } from '@/landing/features/matches/types'
 import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
+import type { ArticleDetail } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
 import { PageTitle } from '@/landing/ui/Heading'
@@ -9,9 +12,6 @@ import { Eyebrow } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
-
-import { MatchScoreboard } from '../../components/MatchScoreboard'
-import type { ArticleDetail, ArticleGoal } from '../../types'
 
 import { AuthorMeta } from './AuthorMeta'
 import { TitleParts } from './HeroTitle'

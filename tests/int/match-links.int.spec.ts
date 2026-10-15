@@ -7,8 +7,9 @@ import {
   toMatchRow,
   toResultRow,
   toUpcoming,
-} from '../../src/landing/data/matchRows'
-import { eventDescription, toSportsEvent } from '../../src/landing/data/matchSchema'
+} from '@/landing/features/matches/view/matchRows'
+import { eventDescription, toSportsEvent } from '@/landing/features/matches/view/matchSchema'
+
 import type { Match } from '../../src/payload-types'
 
 const opponent = {

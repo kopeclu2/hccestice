@@ -1,11 +1,10 @@
 import React from 'react'
 
+import { HISTORY_PAGE } from '@/landing/content'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
 import { cn } from '@/lib/utils'
-
-import { HISTORY_PAGE } from '../content'
 
 /**
  * Hlavička historie klubu: obrysový watermark „1954", drobečky, titulek

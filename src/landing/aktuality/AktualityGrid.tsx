@@ -1,13 +1,12 @@
 import { X } from 'lucide-react'
 import React from 'react'
 
+import { ArticleCard } from '@/landing/components/ArticleCard'
+import { POST_TYPE_LABEL } from '@/landing/data/posts'
+import type { PostCard } from '@/landing/types'
 import { CardGrid } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PillLink } from '@/landing/ui/PillLink'
-
-import { ArticleCard } from '../components/ArticleCard'
-import { POST_TYPE_LABEL } from '../data/posts'
-import type { PostCard } from '../types'
 
 /**
  * Výpis článků — pravidelná mřížka, na mobilu jeden sloupec.

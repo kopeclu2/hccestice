@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { ArticleCard } from '@/landing/components/ArticleCard'
+import { fetchDefaultPostPhoto, fetchLatestPosts, toPostCard } from '@/landing/data/posts'
+import type { Photo, PostCard } from '@/landing/types'
 import { ArcLines, GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -8,10 +11,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
 import type { LandingNewsBlock, Post } from '@/payload-types'
-
-import { ArticleCard } from '../../components/ArticleCard'
-import { fetchDefaultPostPhoto, fetchLatestPosts, toPostCard } from '../../data/posts'
-import type { Photo, PostCard } from '../../types'
 
 /** Kolik karet sekce ukáže, když blok počet nemá. */
 const DEFAULT_COUNT = 5

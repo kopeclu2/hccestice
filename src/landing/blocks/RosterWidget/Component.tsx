@@ -1,14 +1,13 @@
 import React from 'react'
 
+import { fetchRoster, POSITION_LABEL } from '@/landing/data/players'
+import type { RosterPlayer } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { RosterWidgetBlock } from '@/payload-types'
-
-import { fetchRoster, POSITION_LABEL } from '../../data/players'
-import type { RosterPlayer } from '../../types'
 
 /** Widget soupisky — zobrazí všechny aktivní hráče. */
 export async function RosterWidgetBlockComponent({ block }: { block: RosterWidgetBlock }) {

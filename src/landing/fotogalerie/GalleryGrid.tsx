@@ -2,15 +2,14 @@ import { Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { countLabel } from '@/landing/data/format'
+import type { GalleryCard } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardCta, CardGrid, CardShell } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-import { countLabel } from '../data/format'
-import type { GalleryCard } from '../types'
 
 /**
  * Výpis galerií — pravidelná mřížka, na mobilu jeden sloupec.

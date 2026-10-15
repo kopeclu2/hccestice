@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { fetchGalleriesPage } from '@/landing/data/galleries'
-import { fetchGallerySeasons, seasonShortLabel } from '@/landing/data/seasons'
+import { fetchGallerySeasons, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { GalerieHeader } from '@/landing/fotogalerie/GalerieHeader'
 import { GalleryGrid } from '@/landing/fotogalerie/GalleryGrid'
 import { PhotosCta } from '@/landing/fotogalerie/PhotosCta'

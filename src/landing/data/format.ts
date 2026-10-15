@@ -1,6 +1,5 @@
+import type { PersonCard, Photo } from '@/landing/types'
 import type { Media, Person } from '@/payload-types'
-
-import type { PersonCard, Photo } from '../types'
 
 /**
  * Sdílené formátovací helpery datové vrstvy landing bloků:

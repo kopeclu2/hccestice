@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildMatchSummary } from '../../src/landing/data/matchSummary'
-import type { MatchTimelineEvent, MatchTimelinePeriod } from '../../src/landing/types'
+import type { MatchTimelineEvent, MatchTimelinePeriod } from '@/landing/features/matches/types'
+import { buildMatchSummary } from '@/landing/features/matches/view/matchSummary'
 
 const ours = (
   time: string,

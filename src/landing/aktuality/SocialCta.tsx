@@ -1,9 +1,8 @@
 import React from 'react'
 
+import type { SiteLinks } from '@/landing/types'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
 import { PillLink } from '@/landing/ui/PillLink'
-
-import type { SiteLinks } from '../types'
 
 /**
  * Tmavý CTA pás „Nechceš nic propásnout?" pod výpisem — odkazy na sítě

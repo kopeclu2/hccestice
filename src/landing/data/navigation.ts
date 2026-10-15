@@ -4,11 +4,10 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { FALLBACK_NAV, HERO } from '@/landing/content'
+import type { NavCta, NavItem } from '@/landing/types'
 import type { NavigationItem } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import { FALLBACK_NAV, HERO } from '../content'
-import type { NavCta, NavItem } from '../types'
 
 import { fetchSiteConfig } from './site'
 

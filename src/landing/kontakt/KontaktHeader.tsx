@@ -1,9 +1,8 @@
 import React from 'react'
 
+import { CONTACT, CONTACT_PAGE } from '@/landing/content'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
-
-import { CONTACT, CONTACT_PAGE } from '../content'
 
 /**
  * Hlavička `/kontakt`: drobečky, watermark, titulek a perex — na rozdíl od

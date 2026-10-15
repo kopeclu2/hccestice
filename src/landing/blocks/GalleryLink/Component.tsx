@@ -3,15 +3,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { countLabel, relId } from '@/landing/data/format'
+import { fetchGallery, toGalleryCard } from '@/landing/data/galleries'
+import type { GalleryCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { GalleryLinkBlock } from '@/payload-types'
-
-import { countLabel, relId } from '../../data/format'
-import { fetchGallery, toGalleryCard } from '../../data/galleries'
-import type { GalleryCard } from '../../types'
 
 /**
  * Odkaz na galerii v rich textu — přes celou šířku článku, ne mřížka

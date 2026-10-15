@@ -1,15 +1,14 @@
 import React from 'react'
 
+import { relId } from '@/landing/data/format'
+import { fetchGalleryCards } from '@/landing/data/galleries'
+import type { GalleryCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { GalleriesGridBlock } from '@/payload-types'
-
-import { relId } from '../../data/format'
-import { fetchGalleryCards } from '../../data/galleries'
-import type { GalleryCard } from '../../types'
 
 /** Widget galerií — načte karty galerií z kolekce dle filtrů bloku. */
 export async function GalleriesGridBlockComponent({ block }: { block: GalleriesGridBlock }) {

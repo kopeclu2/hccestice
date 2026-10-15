@@ -1,10 +1,9 @@
 import React from 'react'
 
+import { ContactFormLazy } from '@/landing/blocks/Contact/ContactFormLazy'
+import { CONTACT } from '@/landing/content'
+import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionShell } from '@/landing/ui/SectionShell'
-
-import { ContactFormLazy } from '../blocks/Contact/ContactFormLazy'
-import { CONTACT } from '../content'
-import type { PersonCard, SiteLinks } from '../types'
 
 import { KontaktInfoPanel } from './KontaktInfoPanel'
 import { KontaktPeopleCard } from './KontaktPeopleCard'

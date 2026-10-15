@@ -1,18 +1,18 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { fetchMatchDetail } from '@/landing/data/matchDetail'
+import { MatchHeader } from '@/landing/features/matches/components/MatchHeader'
+import { fetchMatchDetail } from '@/landing/features/matches/data/matchDetail'
+import { HeaderApp } from '@/landing/features/matches/header-variants/HeaderApp'
+import { HeaderArena } from '@/landing/features/matches/header-variants/HeaderArena'
+import { HeaderEditorial } from '@/landing/features/matches/header-variants/HeaderEditorial'
+import { HeaderSplit } from '@/landing/features/matches/header-variants/HeaderSplit'
+import type { HeaderVariantProps } from '@/landing/features/matches/header-variants/shared'
+import type { MatchDetail } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import type { MatchDetail } from '@/landing/types'
 import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { HeaderApp } from '@/landing/zapas/header-variants/HeaderApp'
-import { HeaderArena } from '@/landing/zapas/header-variants/HeaderArena'
-import { HeaderEditorial } from '@/landing/zapas/header-variants/HeaderEditorial'
-import { HeaderSplit } from '@/landing/zapas/header-variants/HeaderSplit'
-import type { HeaderVariantProps } from '@/landing/zapas/header-variants/shared'
-import { MatchHeader } from '@/landing/zapas/MatchHeader'
 
 /**
  * Interní náhled variant hlavičky detailu zápasu (`/zapasy/[slug]`).

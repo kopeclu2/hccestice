@@ -1,11 +1,10 @@
 import React from 'react'
 
+import { ctaHref, navHref } from '@/landing/data/navigation'
 import { NavMobile } from '@/landing/layout/NavMobile'
+import type { NavCta, NavItem } from '@/landing/types'
 import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
-
-import { ctaHref, navHref } from '../../data/navigation'
-import type { NavCta, NavItem } from '../../types'
 
 import { LogoTab } from './LogoTab'
 

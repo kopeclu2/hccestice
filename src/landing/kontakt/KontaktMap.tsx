@@ -1,8 +1,7 @@
 import React from 'react'
 
+import { CONTACT_MAP } from '@/landing/content'
 import { MapPanel } from '@/landing/ui/MapPanel'
-
-import { CONTACT_MAP } from '../content'
 
 /**
  * Mapa zimního stadionu na `/kontakt`.
