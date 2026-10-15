@@ -241,6 +241,30 @@ for (const m of theme.matchAll(/^\s*--text-(?!shadow-)([\w-]+):/gm)) {
   }
 }
 
+/* ── twmerge-theme-parity ──────────────────────────────────────────────────
+ * Totéž pro rozměrové tokeny: `--spacing-*`, `--container-*`, `--tracking-*`
+ * a `--leading-*` musí být ve `theme` větvi `extendTailwindMerge`. Neznámou
+ * třídu twMerge nesloučí (`cn('px-gutter', 'px-4')` nechá obě), takže o
+ * výsledku rozhodne pořadí v CSS a ne pořadí argumentů.
+ */
+for (const group of ['spacing', 'container', 'tracking', 'leading']) {
+  const block = ui.match(new RegExp(`\\b${group}:\\s*\\[([\\s\\S]*?)\\]`))?.[1] ?? ''
+  const names = new Set([...block.matchAll(/'([\w-]+)'/g)].map((m) => m[1]))
+  for (const m of theme.matchAll(new RegExp(`^\\s*--${group}-([\\w-]+):`, 'gm'))) {
+    if (!names.has(m[1])) {
+      findings.push({
+        file: UI_FILE,
+        line: 1,
+        col: 1,
+        rule: 'twmerge-theme-parity',
+        text: `--${group}-${m[1]}`,
+        hint: `chybí '${m[1]}' v theme.${group} — twMerge nesloučí třídu s tímhle tokenem`,
+        severity: 'error',
+      })
+    }
+  }
+}
+
 /* ── výstup ────────────────────────────────────────────────────────────── */
 
 if (!findings.length) {

@@ -51,6 +51,14 @@
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
   --breakpoint-nav: 90rem;
+  /* Mikro-breakpointy pod `sm`. Dřív arbitrární `min-[22.5rem]:` (3×),
+   * `max-[22.5rem]:` (7×), `min-[25rem]:` (5×) a `min-[33rem]:` (7×).
+   * `3xs:` = od 360px (zúžené řádky na malých telefonech), `2xs:` = od 400px,
+   * `xs:` = od 528px (Tréninky: karta přestane být přes celou šířku).
+   * `max-3xs:` je `width < 22.5rem`, tedy přesný protějšek `3xs:`. */
+  --breakpoint-3xs: 22.5rem;
+  --breakpoint-2xs: 25rem;
+  --breakpoint-xs: 33rem;
   /* Základní písma. Archivo se načítá přes next/font v (landing)/layout.tsx
    * (`--font-archivo`), Geist se nenačítá vůbec. `font-mono` nemá webfont,
    * takže jde na systémový monospace (/vzory, /widgety). */
@@ -244,6 +252,85 @@
   --text-numeral-xl: 2.25rem; /* 36px — hodnota ve statistické kartě */
   --text-numeral-2xl: 3rem; /* 48px — skóre karty zápasu, velká statistika */
 
+  /* Fluidní display velikosti — plynulé `clamp()` pro nadpisy, skóre a obří
+   * číslice. Hodnoty jsou přesně ty, které bývaly arbitrární `text-[clamp(…)]`
+   * (min, plynulá část, max); komponenty je volají jen přes tyhle jména.
+   * Jména nesou roli, ne číslo, takže `text-title-md` zůstane smysluplné, i
+   * když se hodnota doladí. Každý token je zaregistrovaný v twMerge
+   * (`lib/utils.ts`), jinak by ho bral jako barvu textu. */
+  --text-title-hero: clamp(2.75rem, 5.4vw, 5.75rem); /* PageTitle hero — home page */
+  --text-title-xl: clamp(2.5rem, 6.2vw, 6rem); /* PageTitle xl — typografické hero článku */
+  --text-title-lg: clamp(2.375rem, 4.6vw, 4.5rem); /* PageTitle lg — hero podstránky */
+  --text-title-hero-sm: clamp(1.875rem, 3.4vw, 3.375rem); /* PageTitle hero-sm — HeroModern */
+  --text-title-md: clamp(2.125rem, 4.2vw, 4.125rem); /* PageTitle md — detail článku */
+  --text-title-system: clamp(1.875rem, 3.6vw, 3.5rem); /* PageTitle system — 404/500/údržba */
+  --text-title-sm: clamp(1.625rem, 2.6vw, 2.5rem); /* PageTitle sm — úzký panel přes fotku */
+
+  --text-score: clamp(3.5rem, 7vw, 6.75rem); /* Numeral score — skóre v hero zápasu */
+  --text-score-board: clamp(2.5rem, 12vw, 3rem); /* tabule zápasu na mobilu */
+  --text-score-arena: clamp(2.5rem, 11vw, 6.5rem); /* hlavička Arena */
+  --text-score-editorial: clamp(5.5rem, 24vw, 11.5rem); /* hlavička Editorial — řádek skóre */
+  --text-score-editorial-lg: clamp(6.5rem, 30vw, 14rem); /* hlavička Editorial — obří skóre */
+  --text-score-split: clamp(2.75rem, 13vw, 4rem); /* hlavička Split — mobil */
+  --text-score-split-lg: clamp(4.5rem, 9vw, 8.5rem); /* hlavička Split — od md */
+
+  --text-hero-meta: clamp(1.25rem, 1.8vw, 1.625rem); /* údaje o zápase v hero (soupeř, datum) */
+  --text-hero-value: clamp(1.875rem, 2.6vw, 2.625rem); /* hodnota/čas v hero zápasu */
+  --text-countdown: clamp(1.5rem, 2.6vw, 2.625rem); /* číslice odpočtu */
+  --text-countdown-label: clamp(1.125rem, 1.8vw, 1.625rem); /* název soupeře u odpočtu */
+  --text-contact-lg: clamp(1.25rem, 4vw, 3.625rem); /* e-mail v sekci Kontakt */
+  --text-contact-md: clamp(1.25rem, 2.6vw, 2rem); /* e-mail v panelu kontaktu */
+  --text-year: clamp(3rem, 6vw, 5.5rem); /* letopočet na časové ose historie */
+  --text-jersey: clamp(2.75rem, 18vw, 6.75rem); /* obrysové číslo dresu — mobil */
+  --text-jersey-md: clamp(5rem, 8vw, 6.75rem); /* obrysové číslo dresu — od md */
+  --text-error-code: clamp(8.75rem, 22vw, 21.25rem); /* obří 404/500 */
+  --text-watermark-maintenance: clamp(15rem, 34vw, 32.5rem); /* nápis za obrazovkou údržby */
+
+  /* Zarovnání a rozestupy. `--spacing-*` zároveň vytváří utility pro všechny
+   * rozměrové třídy (`px-gutter`, `-mx-gutter`, `gap-split-gap`, `inset-x-hero-inset`…).
+   * `gutter` je nejčastější arbitrární hodnota v repu (23×). */
+  --spacing-gutter: clamp(0.875rem, 3vw, 2.5rem); /* vodorovné odsazení stránky/sekce */
+  --spacing-gutter-tight: clamp(
+    0.625rem,
+    1.4vw,
+    1.25rem
+  ); /* PageCanvas gutter="tight", chybová stránka */
+  --spacing-gutter-nav: clamp(0.5rem, 2vw, 1.5rem); /* vnitřní odsazení horní lišty článku */
+  --spacing-split-gap: clamp(1.25rem, 3vw, 2.5rem); /* mezera mezi sloupci dvousloupcového bloku */
+  --spacing-hero-gap: clamp(1.75rem, 4vw, 4rem); /* mezera uvnitř hero panelu */
+  --spacing-hero-inset: clamp(1.125rem, 3vw, 3rem); /* obsah hero přes fotku (od okraje) */
+  --spacing-panel: clamp(1.5rem, 4vw, 4rem); /* vodorovný padding velkého panelu */
+  --spacing-panel-y: clamp(2.25rem, 4vw, 3.75rem); /* svislý padding hlavičky zápasu */
+
+  /* Šířky obsahu. `max-w-page` je šířka celého webu (14×), `max-w-article`
+   * tělo článku a RawHtml. */
+  --container-page: 97.5rem;
+  --container-article: 51.25rem;
+
+  /* Tracking. Výchozí škála Tailwindu pokrývá -0.05em (`tracking-tighter`),
+   * -0.025em (`tracking-tight`), 0.025em, 0.05em a 0.1em (`tracking-widest`) —
+   * tyhle hodnoty token nedostaly. Záporné jdou od nejtěsnějšího po nejvolnější. */
+  --tracking-display: -0.06em; /* obrysové watermarky a obří číslice */
+  --tracking-title-tight: -0.04em; /* nadpisy hero/xl, skóre 2xl */
+  --tracking-title: -0.035em; /* PageTitle, SectionTitle xl */
+  --tracking-heading: -0.03em; /* nadpisy sekcí, čísla md–xl, kontaktní odkaz */
+  --tracking-subheading: -0.02em; /* CardTitle sm, číslice xs/sm, názvy týmů */
+  --tracking-snug: -0.01em; /* řádky výpisu, názvy v tabulkách */
+  /* Verzálky (uppercase labely). */
+  --tracking-caps-sm: 0.08em;
+  --tracking-caps-md: 0.12em;
+  --tracking-caps-lg: 0.16em; /* Eyebrow / Kicker */
+
+  /* Řádkování. Výchozí 1.25 (`leading-tight`), 1.5 (`leading-normal`) atd.
+   * token nedostaly. */
+  --leading-copy: 1.55; /* perex a běžný odstavec podstránek */
+  --leading-title: 1.02; /* nadpisy md, hero-sm, system */
+  --leading-title-tight: 0.98; /* nadpisy hero a xl */
+  --leading-heading: 1.15; /* CardTitle sm, položky časové osy */
+  --leading-heading-tight: 1.05; /* názvy týmů v hlavičce Editorial */
+  --leading-display: 0.9; /* obrysový letopočet a 404/500 */
+  --leading-score: 0.82; /* obří skóre Editorial */
+
   /* Tvary — pojmenované radiusy dle rolí v designu.
    * `section` a `block` byly nejčastější arbitrární hodnoty v celém repu
    * (13× a 9×), tedy častější než většina tokenů, které tu už byly. */
@@ -256,6 +343,10 @@
   --radius-row: 1.25rem; /* řádek výsledku, accordion (20px) */
   --radius-badge: 1.125rem; /* mini karty, sponzorské dlaždice (18px) */
   --radius-field: 0.875rem; /* inputy, čtverečky formy, média (14px) */
+  --radius-icon: 1rem; /* ikonové dlaždice, čísla v kartě (16px) */
+  --radius-item: 0.75rem; /* položky seznamů, tooltipy, volby (12px) */
+  --radius-chip: 0.5rem; /* malé štítky a embedy videa (8px) */
+  --radius-tag: 0.25rem; /* inline kód, minuty trestu, drobné značky (4px) */
 
   /* Elevace — barvy přes `--alpha()`, ne ručně přepsané rgb() trojice. */
   --shadow-hero: 0 1.875rem 5rem --alpha(var(--color-ink) / 10%);
@@ -541,8 +632,15 @@
 }
 
 @layer utilities {
+  /*
+   * Tailwind generuje vlastní `.container` s `max-width` pro KAŽDÝ
+   * `--breakpoint-*`, včetně mikro-breakpointů pod `sm`. Bez `max-width: none`
+   * by se kontejner na 360–639px displeji ořezal na 360/400/528px.
+   * Rozměry od `sm` výš přebíjejí `@variant` bloky níž (jsou v souboru později).
+   */
   .container {
     width: 100%;
+    max-width: none;
     margin-inline: auto;
     padding-inline: 1rem;
   }

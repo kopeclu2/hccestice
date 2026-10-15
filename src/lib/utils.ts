@@ -18,6 +18,36 @@ import { extendTailwindMerge } from 'tailwind-merge'
  */
 const twMerge = extendTailwindMerge<'text-stroke'>({
   extend: {
+    /*
+     * Theme klíče, ze kterých Tailwind skládá utility z `@theme`. Bez nich by
+     * `cn('px-gutter', 'px-4')` nechal obě třídy a o výsledku by rozhodlo
+     * pořadí v CSS, ne pořadí argumentů.
+     */
+    theme: {
+      spacing: [
+        'gutter',
+        'gutter-tight',
+        'gutter-nav',
+        'split-gap',
+        'hero-gap',
+        'hero-inset',
+        'panel',
+        'panel-y',
+      ],
+      container: ['page', 'article'],
+      tracking: [
+        'display',
+        'title-tight',
+        'title',
+        'heading',
+        'subheading',
+        'snug',
+        'caps-sm',
+        'caps-md',
+        'caps-lg',
+      ],
+      leading: ['copy', 'title', 'title-tight', 'heading', 'heading-tight', 'display', 'score'],
+    },
     classGroups: {
       'font-size': [
         {
@@ -52,6 +82,32 @@ const twMerge = extendTailwindMerge<'text-stroke'>({
             'watermark-2xl',
             'watermark-3xl',
             'watermark-4xl',
+            'watermark-maintenance',
+            // fluidní display škála (globals.css `--text-title-*` a spol.)
+            'title-hero',
+            'title-xl',
+            'title-lg',
+            'title-hero-sm',
+            'title-md',
+            'title-system',
+            'title-sm',
+            'score',
+            'score-board',
+            'score-arena',
+            'score-editorial',
+            'score-editorial-lg',
+            'score-split',
+            'score-split-lg',
+            'hero-meta',
+            'hero-value',
+            'countdown',
+            'countdown-label',
+            'contact-lg',
+            'contact-md',
+            'year',
+            'jersey',
+            'jersey-md',
+            'error-code',
           ],
         },
       ],
