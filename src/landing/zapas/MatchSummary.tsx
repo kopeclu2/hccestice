@@ -31,12 +31,12 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
             <h3>
               <Eyebrow tone="club">Kanadské body</Eyebrow>
             </h3>
-            <table className="mt-2 w-full text-body">
+            <table className="mt-2 w-full text-body lg:text-lead">
               <caption className="sr-only">
                 Kanadské body hráčů HC Čestice: góly, asistence a body
               </caption>
               <thead>
-                <tr className="text-faint text-caption font-bold">
+                <tr className="text-faint text-caption font-bold lg:text-meta">
                   <th className="py-1.5 text-left font-bold" scope="col">
                     Hráč
                   </th>
@@ -91,20 +91,20 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
           <div>
             <h3 className="flex items-baseline justify-between gap-3">
               <Eyebrow tone="club">Tresty</Eyebrow>
-              <span className="text-meta font-extrabold tabular-nums">
+              <span className="text-meta font-extrabold tabular-nums lg:text-body">
                 {`${penaltyMinutes} `}
                 <span aria-hidden>TM</span>
                 <span className="sr-only">trestných minut celkem</span>
               </span>
             </h3>
-            <ul className="divide-line-soft border-line-soft mt-2 divide-y border-t text-body">
+            <ul className="divide-line-soft border-line-soft mt-2 divide-y border-t text-body lg:text-lead">
               {penalties.map((row) => (
                 <li className="flex items-baseline justify-between gap-3 py-2" key={row.name}>
                   <span className="min-w-0 font-bold break-words">{row.name}</span>
                   <span className="text-ink-soft flex-none font-semibold tabular-nums">
                     {row.minutes}&nbsp;min
                     {row.count > 1 && (
-                      <span className="text-faint text-caption"> ({row.count}×)</span>
+                      <span className="text-faint text-caption lg:text-meta"> ({row.count}×)</span>
                     )}
                   </span>
                 </li>

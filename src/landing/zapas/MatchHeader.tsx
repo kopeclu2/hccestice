@@ -52,7 +52,9 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tone="white">{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-body font-bold text-white [overflow-wrap:anywhere]">{children}</dd>
+      <dd className="mt-1 text-body font-bold text-white [overflow-wrap:anywhere] lg:text-lead">
+        {children}
+      </dd>
     </div>
   )
 }
@@ -109,7 +111,11 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
                 <Badge size="sm" variant={outcome.variant}>
                   {outcome.label}
                 </Badge>
-                {note && <span className="text-meta font-semibold text-white/65">{note}</span>}
+                {note && (
+                  <span className="text-caption font-semibold text-white/65 lg:text-meta">
+                    {note}
+                  </span>
+                )}
               </span>
             </Fact>
           )}

@@ -962,6 +962,14 @@ s `report = post.id`.
   migrace `20261015_085423_match_header_variant` (aditivní, default
   `classic`), **před buildem**.
 
+- **Typografie detailu** (15. 10. 2026) má čtyři role, které od `lg`
+  o stupeň rostou: nadpis panelu 21 → 26 px (`md:`), hlavní text
+  (jména, hodnoty, perex) `text-body` → `text-lead`, vedlejší text (časy,
+  asistence, popisky, čísla tabulek) `text-caption` → `text-meta`,
+  `Eyebrow` 11 px beze změny. Tabulka rolí je v komentáři `MatchPanel`;
+  nový blok detailu ji má dodržet. Varianty hlavičky A–D mají vlastní
+  typografii a tahle škála se jich netýká.
+
 Blok bez dat se nevykreslí. Odehraný zápas bez branek, trestů i statistiky
 ukáže pod hlavičkou poznámku „Podrobný zápis z utkání není k dispozici"
 a případnou kartu reportáže a odkaz na galerii (`match.gallery`, `depth: 2`

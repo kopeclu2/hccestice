@@ -31,7 +31,14 @@ export function MatchScoreboard({
 }: {
   scoreboard: Pick<
     ArticleScoreboard,
-    'homeName' | 'awayName' | 'homeScore' | 'awayScore' | 'weAreHome' | 'weWon' | 'thirds' | 'suffix'
+    | 'homeName'
+    | 'awayName'
+    | 'homeScore'
+    | 'awayScore'
+    | 'weAreHome'
+    | 'weWon'
+    | 'thirds'
+    | 'suffix'
   >
   logos?: { home: Photo | null; away: Photo | null }
 }) {
@@ -160,10 +167,10 @@ function Team({
       >
         {/* `break-words`: jediné slovo širší než sloupec (320 px) se radši
             zlomí, než aby přeteklo pod skóre. */}
-        <div className="text-meta leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-body md:text-[clamp(1.125rem,2vw,1.875rem)]">
+        <div className="text-body leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-lead md:text-[clamp(1.25rem,2vw,1.875rem)]">
           {name}
         </div>
-        <div className="mt-1 text-caption font-semibold text-white/55">{label}</div>
+        <div className="mt-1 text-caption font-semibold text-white/55 lg:text-meta">{label}</div>
       </div>
     </div>
   )
