@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
-import { getPayload } from 'payload'
-import React, { cache } from 'react'
+import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { RenderLandingBlocks } from '@/landing/blocks/render'
 import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
+import { fetchPageBySlug } from '@/landing/features/pages/data'
 import { LandingFooter } from '@/landing/layout/LandingFooter'
 import type { SiteLinks } from '@/landing/types'
 import { PageCanvas } from '@/landing/ui/PageCanvas'
@@ -13,7 +13,6 @@ import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { generateMeta } from '@/lib/generateMeta'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
-import configPromise from '@payload-config'
 
 /**
  * ISR pojistka — obsah se reviduje i bez zásahu v adminu. Změny home
@@ -35,7 +34,7 @@ export const revalidate = 600
 export default async function LandingPage() {
   const { isEnabled: draft } = await draftMode()
   const [page, siteConfig, site] = await Promise.all([
-    queryHomePage(),
+    fetchPageBySlug('home'),
     fetchSiteConfig(),
     fetchSite(),
   ])
@@ -61,24 +60,6 @@ export default async function LandingPage() {
     </PageCanvas>
   )
 }
-
-/** Home dokument z kolekce Pages (draft-aware, cache per request). */
-const queryHomePage = cache(async () => {
-  const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'pages',
-    draft,
-    limit: 1,
-    pagination: false,
-    overrideAccess: draft,
-    where: { slug: { equals: 'home' } },
-    depth: 2,
-  })
-
-  return result.docs?.[0] ?? null
-})
 
 /**
  * JSON-LD (schema.org SportsTeam + WebSite) pro vyhledávače.
@@ -190,7 +171,7 @@ const FALLBACK_META: Metadata = {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await queryHomePage()
+  const page = await fetchPageBySlug('home')
   if (!page?.meta?.title) return FALLBACK_META
   return { ...FALLBACK_META, ...(await generateMeta({ doc: page })) }
 }
