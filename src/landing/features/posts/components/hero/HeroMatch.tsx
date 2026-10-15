@@ -29,7 +29,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mt-3.5">
       {/*
-        Zbylé čtyři varianty hero (`HeroFoto`, `HeroTypo`, `HeroPanel`,
+        Zbylé čtyři varianty hero (`HeroPhoto`, `HeroTypo`, `HeroPanel`,
         `HeroSplit`) emitují drobečky přes `article/hero/Breadcrumbs`, který
         si strukturovaná data nese s sebou. Zápasový hero je ale nemá —
         tmavý panel se scoreboardem je v handoffu bez nich — takže

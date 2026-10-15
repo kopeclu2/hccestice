@@ -14,7 +14,7 @@ import { TitleParts } from './HeroTitle'
  * Hero A · Velké foto — fotka přes celou šířku se zeleným multiply
  * filtrem, ztmavením a rozostřeným spodním pásem; titulek a meta dole.
  */
-export function HeroFoto({ article }: { article: ArticleDetail }) {
+export function HeroPhoto({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mt-3.5">
       <div className="relative h-[min(66vh,41.25rem)] min-h-[32.5rem] overflow-hidden rounded-section bg-pine max-md:h-auto max-md:min-h-[26.25rem]">

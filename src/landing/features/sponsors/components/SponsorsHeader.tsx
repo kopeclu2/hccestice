@@ -11,7 +11,7 @@ import { PillLink } from '@/landing/ui/PillLink'
  * Počet je na rozdíl od soupisky vidět i na mobilu (handoff ho neskrývá)
  * a sedí hned vedle CTA, ne u pravé hrany — proto `spacer={false}`.
  */
-export function SponzoriHeader({
+export function SponsorsHeader({
   count,
   seasonLabel,
 }: {

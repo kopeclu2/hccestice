@@ -2,9 +2,9 @@ import React from 'react'
 
 import type { ArticleDetail, ArticleHeroVariant } from '@/landing/features/posts/types'
 
-import { HeroFoto } from './HeroFoto'
 import { HeroMatch } from './HeroMatch'
 import { HeroPanel } from './HeroPanel'
+import { HeroPhoto } from './HeroPhoto'
 import { HeroSplit } from './HeroSplit'
 import { HeroTypo } from './HeroTypo'
 
@@ -14,7 +14,7 @@ import { HeroTypo } from './HeroTypo'
  * sem už přichází vyřešená varianta.
  */
 const heroes: Record<ArticleHeroVariant, React.ComponentType<{ article: ArticleDetail }>> = {
-  foto: HeroFoto,
+  foto: HeroPhoto,
   rozdelene: HeroSplit,
   typograficke: HeroTypo,
   panel: HeroPanel,

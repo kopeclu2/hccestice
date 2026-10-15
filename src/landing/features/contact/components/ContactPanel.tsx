@@ -5,8 +5,8 @@ import { ContactFormLazy } from '@/landing/features/contact/components/ContactFo
 import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionShell } from '@/landing/ui/SectionShell'
 
-import { KontaktInfoPanel } from './KontaktInfoPanel'
-import { KontaktPeopleCard } from './KontaktPeopleCard'
+import { ContactInfoPanel } from './ContactInfoPanel'
+import { ContactPeopleCard } from './ContactPeopleCard'
 
 /**
  * Tělo stránky `/kontakt`: vizitka, kontaktní osoby a formulář pod sebou
@@ -17,12 +17,12 @@ import { KontaktPeopleCard } from './KontaktPeopleCard'
  * jen formulář má vlastní `max-w-170` (zděděné z homepage varianty), takže
  * zůstává užší a vycentrovaný pod širšími kartami nad ním.
  */
-export function KontaktPanel({ people, site }: { people: PersonCard[]; site: SiteLinks }) {
+export function ContactPanel({ people, site }: { people: PersonCard[]; site: SiteLinks }) {
   return (
     <SectionShell spacing="content">
       <div className="flex flex-col gap-6">
-        <KontaktInfoPanel site={site} />
-        <KontaktPeopleCard people={people} />
+        <ContactInfoPanel site={site} />
+        <ContactPeopleCard people={people} />
         <ContactFormLazy tone="light" topics={[...CONTACT.topics]} />
       </div>
     </SectionShell>

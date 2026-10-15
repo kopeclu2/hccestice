@@ -10,12 +10,12 @@ import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Levý panel stránky `/kontakt`: rychlé údaje vedle tmavé karty s formulářem
- * (`KontaktPanel`). Záměrně jiná kompozice než homepage sekce
+ * (`ContactPanel`). Záměrně jiná kompozice než homepage sekce
  * (`blocks/Contact`) — tam je jedna vystředěná karta s obřím nadpisem přes
  * celou šířku, tady jde o užší „vizitku" v levém sloupci, aby stránka
  * nebyla jen zvětšená kopie stejné karty.
  */
-export function KontaktInfoPanel({ site }: { site: SiteLinks }) {
+export function ContactInfoPanel({ site }: { site: SiteLinks }) {
   return (
     /* Bez `rounded-card bg-surface p-*` — vizitka dřív byla vlastní bílá
        karta s paddingem, takže její obsah (`Přímý kontakt`, e-mail) začínal

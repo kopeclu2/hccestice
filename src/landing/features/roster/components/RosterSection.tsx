@@ -4,7 +4,7 @@ import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 
-import { PlayerTile, type SoupiskaCard } from './PlayerTile'
+import { PlayerTile, type RosterCard } from './PlayerTile'
 
 /**
  * Sekce soupisky: nadpis s počtem nad linkou (2px ink), anglický kicker
@@ -26,7 +26,7 @@ export function RosterSection({
   title: string
   kicker: string
   count: string
-  cards: SoupiskaCard[]
+  cards: RosterCard[]
 }) {
   if (cards.length === 0) return null
   return (

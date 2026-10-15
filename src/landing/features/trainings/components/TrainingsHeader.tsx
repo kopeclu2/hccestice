@@ -8,7 +8,7 @@ import { PageHeader } from '@/landing/ui/PageHeader'
  * a hlavní nadpis nese sám blok `landingTrainings` níž na stránce — druhý
  * pár by byl duplicitní.
  */
-export function TreninkyHeader() {
+export function TrainingsHeader() {
   return (
     <PageHeader
       title="Tréninky"

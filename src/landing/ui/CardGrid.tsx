@@ -123,7 +123,7 @@ export function CardGrid<T>({
   /**
    * Prázdný stav — `EmptyState`, ne text. Volající ho skládá sám, protože
    * jeho znění i cesty dál závisí na tom, jestli je zapnutý filtr (viz
-   * `AktualityGrid`, `GalleryGrid`).
+   * `PostsListGrid`, `GalleryGrid`).
    */
   empty: React.ReactNode
   items: T[]

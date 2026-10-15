@@ -10,7 +10,7 @@ import { TypeFilters } from './TypeFilters'
  * Hlavička výpisu aktualit: drobečky, titulek s lime zvýrazněním, perex,
  * filtr typů a počet článků. `id="seznam"` je scroll kotva stránkování.
  */
-export function AktualityHeader({
+export function PostsHeader({
   activeType,
   totalDocs,
 }: {

@@ -78,7 +78,7 @@ function TrainingsView({
   spacing?: SectionShellProps['spacing']
 }) {
   // `/treninky` posílá `spacing="content"` (viz `TreninkyPage`) — na tý
-  // stránce má hlavičku (`TreninkyHeader`) i vlastní watermark „LED" a
+  // stránce má hlavičku (`TrainingsHeader`) i vlastní watermark „LED" a
   // Kicker „Tréninky" nad blokem, takže je blok sám nevykresluje znova.
   const standalonePage = spacing === 'content'
 

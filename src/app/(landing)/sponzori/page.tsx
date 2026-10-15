@@ -4,7 +4,7 @@ import React from 'react'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { PartnerCard } from '@/landing/features/sponsors/components/PartnerCard'
 import { PartnerSlotCta } from '@/landing/features/sponsors/components/PartnerSlotCta'
-import { SponzoriHeader } from '@/landing/features/sponsors/components/SponzoriHeader'
+import { SponsorsHeader } from '@/landing/features/sponsors/components/SponsorsHeader'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { countLabel } from '@/landing/lib/text'
@@ -31,7 +31,7 @@ export default async function SponzoriPage() {
 
   return (
     <SubpageShell>
-      <SponzoriHeader
+      <SponsorsHeader
         count={seasonLabel ? `${count} v sezóně ${seasonLabel}` : count}
         seasonLabel={seasonLabel}
       />

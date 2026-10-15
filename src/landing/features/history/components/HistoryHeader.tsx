@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
  * Watermark je větší než u ostatních hlaviček (letopočet je široký) a má
  * stažený tracking — proto override místo výchozího stupně.
  */
-export function HistorieHeader() {
+export function HistoryHeader() {
   return (
     <PageHeader
       perex={HISTORY_PAGE.perex}

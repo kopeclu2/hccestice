@@ -49,7 +49,7 @@ export async function StatsBlockComponent({ block }: { block: LandingStatsBlock 
 
 /**
  * „Sezóna 2025/2026 v číslech" — hlavička jako u ostatních sekcí (Kicker +
- * SectionTitle), čtyři čísla v kartách po vzoru `HistorieHeader` (třetí
+ * SectionTitle), čtyři čísla v kartách po vzoru `HistoryHeader` (třetí
  * tmavá). Dřív tu byla jen odstavcem malá věta uprostřed a čísla plavala bez
  * rámce na pozadí — vedle historie, kde stejná čtveřice má karty, to
  * působilo jako nedokončený blok.
@@ -72,7 +72,7 @@ function StatsView({ stats }: { stats: StatsContent }) {
 
         {/* Auto-fit až od `lg`: na tabletu se vešly tři sloupce ze čtyř a
             poslední číslo osiřelo na druhém řádku. Do 1024px proto zůstává
-            čtvercová mřížka 2×2 — stejná past jako u `HistorieHeader`. */}
+            čtvercová mřížka 2×2 — stejná past jako u `HistoryHeader`. */}
         <div className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-[repeat(auto-fit,minmax(min(11.875rem,100%),1fr))] lg:gap-3.5">
           {stats.items.map((stat, index) => {
             const dark = index === 2

@@ -17,7 +17,7 @@ import { PillLink } from '@/landing/ui/PillLink'
  * (od `lg` přes dva sloupce), aby výpis začínal hlavní zprávou, ne mřížkou
  * stejně důležitých dlaždic.
  */
-export function AktualityGrid({
+export function PostsListGrid({
   activeType,
   cards,
   featured: featuredPage = true,
@@ -34,7 +34,7 @@ export function AktualityGrid({
   featured?: boolean
 }) {
   return (
-    <CardGrid empty={<AktualityEmpty activeType={activeType ?? null} />} items={cards}>
+    <CardGrid empty={<PostsListEmpty activeType={activeType ?? null} />} items={cards}>
       {(card, index) => {
         /* Nejnovější článek je „featured": od `sm` přes celý řádek, od `lg`
            přes dva ze tří sloupců a s fotkou vedle textu. */
@@ -65,7 +65,7 @@ export function AktualityGrid({
  * výsledků (nabídne zrušení filtru — handoff „Tomuhle filtru nic neodpovídá")
  * a prázdná kolekce, kde by odkaz „Zrušit filtr" nikam nevedl.
  */
-function AktualityEmpty({ activeType }: { activeType: string | null }) {
+function PostsListEmpty({ activeType }: { activeType: string | null }) {
   const typeLabel = activeType ? POST_TYPE_LABEL[activeType] : null
 
   if (!typeLabel) {

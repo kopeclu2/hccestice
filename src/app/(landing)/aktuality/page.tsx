@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
-import { AktualityGrid } from '@/landing/features/posts/components/AktualityGrid'
-import { AktualityHeader } from '@/landing/features/posts/components/AktualityHeader'
+import { PostsHeader } from '@/landing/features/posts/components/PostsHeader'
+import { PostsListGrid } from '@/landing/features/posts/components/PostsListGrid'
 import { SocialCta } from '@/landing/features/posts/components/SocialCta'
 import { fetchPostsPage } from '@/landing/features/posts/data/posts'
 import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
@@ -55,10 +55,10 @@ export default async function AktualityPage({ searchParams }: Args) {
 
   return (
     <SubpageShell>
-      <AktualityHeader activeType={type} totalDocs={postsPage.totalDocs} />
+      <PostsHeader activeType={type} totalDocs={postsPage.totalDocs} />
 
       <SectionShell spacing="content">
-        <AktualityGrid activeType={type} cards={postsPage.cards} featured={postsPage.featured} />
+        <PostsListGrid activeType={type} cards={postsPage.cards} featured={postsPage.featured} />
         {/* Jedna strana = žádné stránkování. Bez podmínky zůstalo pod výpisem
             (a přímo pod prázdným stavem) mrtvé „Strana 1 z 1" se dvěma
             neaktivními šipkami — `ResultsList` to podmiňuje stejně. */}

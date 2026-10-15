@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { TrainingsBlockComponent } from '@/landing/blocks/Trainings/Component'
-import { TreninkyHeader } from '@/landing/features/trainings/components/TreninkyHeader'
+import { TrainingsHeader } from '@/landing/features/trainings/components/TrainingsHeader'
 import { fetchTrainingsBlock } from '@/landing/features/trainings/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 
@@ -19,7 +19,7 @@ export default async function TreninkyPage() {
 
   return (
     <SubpageShell>
-      <TreninkyHeader />
+      <TrainingsHeader />
       <TrainingsBlockComponent
         block={block ?? { blockType: 'landingTrainings' }}
         spacing="content"

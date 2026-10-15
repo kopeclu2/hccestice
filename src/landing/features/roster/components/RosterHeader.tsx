@@ -8,7 +8,7 @@ import { PillLink } from '@/landing/ui/PillLink'
  * Hlavička soupisky: drobečky, titulek s lime ročníkem sezóny, perex,
  * kotvicí pilulky na sekce postů (s počty) a souhrn vpravo.
  */
-export function SoupiskaHeader({
+export function RosterHeader({
   seasonLabel,
   pills,
   summary,

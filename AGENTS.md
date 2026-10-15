@@ -473,7 +473,7 @@ jednořádkových odstavců, které měl každý výpis vlastní. `actions` je
 **povinné**: slepá ulička („Zatím tu žádné články nejsou.") je nejhorší
 možná odpověď na aktivní filtr.
 
-Zapojení: `AktualityGrid`, `GalleryGrid` (obojí přes `CardGrid empty`),
+Zapojení: `PostsListGrid`, `GalleryGrid` (obojí přes `CardGrid empty`),
 `ResultsList`, `FixturesRail` a widget `MatchesWidget`. Katalog všech
 variant je na `/vzory/prazdne-stavy`.
 

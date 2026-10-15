@@ -11,14 +11,14 @@ import { PhotoTile } from '@/landing/ui/PhotoTile'
  * a e-mailem pod vizitkou a formulářem na `/kontakt`.
  *
  * Samostatné karty vedle sebe (`auto-fit`), ne řádky v jedné velké kartě —
- * sloupec stránky je omezený na `max-w-170` (`KontaktPanel`), takže se
+ * sloupec stránky je omezený na `max-w-170` (`ContactPanel`), takže se
  * vejdou dvě karty vedle sebe i tak.
  *
  * Renderuje se, jen když aspoň jeden člověk z kolekce `people` má
  * vyplněný telefon nebo e-mail — bez toho by karta byla jen jméno,
  * role a fotka bez jakékoli kontaktní hodnoty.
  */
-export function KontaktPeopleCard({ people }: { people: PersonCard[] }) {
+export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
   const contacts = people.filter((person) => person.phone || person.mail)
   if (contacts.length === 0) return null
 
@@ -28,7 +28,7 @@ export function KontaktPeopleCard({ people }: { people: PersonCard[] }) {
         Nebo pište či volejte přímo
       </CardTitle>
 
-      {/* `18rem` drží nejvýš dva sloupce v šířce `max-w-170` (`KontaktPanel`) —
+      {/* `18rem` drží nejvýš dva sloupce v šířce `max-w-170` (`ContactPanel`) —
           při užším minimu se vešly tři a role i dlouhé e-maily se lámaly
           na tři řádky. */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(18rem,100%),1fr))] gap-4">

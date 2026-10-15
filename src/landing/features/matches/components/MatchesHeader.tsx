@@ -10,7 +10,7 @@ import { SeasonFilters, type SeasonPill } from './SeasonFilters'
  * Hlavička stránky zápasů: drobečky, titulek s lime zvýrazněním, perex,
  * watermark „VČHL", filtr sezón (stav v URL) a odkaz na oficiální tabulky.
  */
-export function ZapasyHeader({
+export function MatchesHeader({
   seasons,
   activeSlug,
   fullTableUrl,

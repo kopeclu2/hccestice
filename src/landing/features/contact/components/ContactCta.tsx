@@ -8,7 +8,7 @@ import { PillLink } from '@/landing/ui/PillLink'
  * podstránky (`RosterCta`, `ArchiveCta`…) — stránka dřív končila rovnou
  * formulářem a přímo pod ním patičkou, bez uzavírací sekce.
  */
-export function KontaktCta() {
+export function ContactCta() {
   return (
     <CtaStrip
       headline="Chcete nás vidět v akci?"

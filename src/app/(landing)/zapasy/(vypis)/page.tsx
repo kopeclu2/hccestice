@@ -4,10 +4,10 @@ import React from 'react'
 import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
 import { FormStrip } from '@/landing/features/matches/components/FormStrip'
 import { MatchesCta } from '@/landing/features/matches/components/MatchesCta'
+import { MatchesHeader } from '@/landing/features/matches/components/MatchesHeader'
 import { MatchesJsonLd } from '@/landing/features/matches/components/MatchesJsonLd'
 import { ResultsList } from '@/landing/features/matches/components/ResultsList'
 import { StandingsPanel } from '@/landing/features/matches/components/StandingsPanel'
-import { ZapasyHeader } from '@/landing/features/matches/components/ZapasyHeader'
 import {
   fetchSeasonFixtures,
   fetchSeasonForm,
@@ -100,7 +100,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
     <SubpageShell pattern={{ variant: 'grid', tone: 'club', fade: 'top-right' }}>
       <MatchesJsonLd fixtures={fixtures} results={results.rows} />
 
-      <ZapasyHeader
+      <MatchesHeader
         activeSlug={activeSeason?.slug ?? null}
         fullTableUrl={standings.fullTableUrl}
         seasons={seasons

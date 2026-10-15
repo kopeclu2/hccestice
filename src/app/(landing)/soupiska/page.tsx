@@ -3,10 +3,10 @@ import React from 'react'
 
 import { fetchAllPeople } from '@/landing/data/site'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
-import type { SoupiskaCard } from '@/landing/features/roster/components/PlayerTile'
+import type { RosterCard } from '@/landing/features/roster/components/PlayerTile'
 import { RosterCta } from '@/landing/features/roster/components/RosterCta'
+import { RosterHeader } from '@/landing/features/roster/components/RosterHeader'
 import { RosterSection } from '@/landing/features/roster/components/RosterSection'
-import { SoupiskaHeader } from '@/landing/features/roster/components/SoupiskaHeader'
 import {
   fetchPlayerSeasonStats,
   fetchRosterSections,
@@ -64,7 +64,7 @@ export default async function SoupiskaPage() {
 
   return (
     <SubpageShell>
-      <SoupiskaHeader
+      <RosterHeader
         pills={pills}
         seasonLabel={season ? seasonShortLabel(season) : null}
         summary={summary}
@@ -77,7 +77,7 @@ export default async function SoupiskaPage() {
         {sections.map((section) => (
           <RosterSection
             anchor={section.anchor}
-            cards={section.players.map((player): SoupiskaCard => ({
+            cards={section.players.map((player): RosterCard => ({
               key: `player-${player.id}`,
               name: player.name,
               kicker: (player.position && POSITION_LABEL[player.position]) || 'Hráč',
@@ -97,7 +97,7 @@ export default async function SoupiskaPage() {
         {people.length > 0 && (
           <RosterSection
             anchor="realizacni-tym"
-            cards={people.map((person, index): SoupiskaCard => ({
+            cards={people.map((person, index): RosterCard => ({
               key: `person-${index}-${person.name}`,
               name: person.name,
               kicker: person.role,

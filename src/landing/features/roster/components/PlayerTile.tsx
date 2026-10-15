@@ -9,7 +9,7 @@ import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 /** Karta na soupisce — hráč (kicker = post, číslo) i člen realizačního týmu (kicker = role). */
-export type SoupiskaCard = {
+export type RosterCard = {
   key: string
   name: string
   /** Zelený uppercase štítek nad jménem — post hráče, u staffu role. */
@@ -55,7 +55,7 @@ const initials = (name: string): string =>
  *   linky s limetkovou plaketou čísla a karta měla jiný vnitřní rytmus než
  *   sousedi v řádku mřížky. Teď dvouřádkové jméno roste dolů.
  */
-export function PlayerTile({ card }: { card: SoupiskaCard }) {
+export function PlayerTile({ card }: { card: RosterCard }) {
   return (
     <div className="relative aspect-[1/1.18] overflow-hidden rounded-panel border border-line-soft bg-surface">
       {card.photo ? (
@@ -121,7 +121,7 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
  * fotce i na rastru bez fotky. Vizuální zkratky jsou pro čtečku zbytečně
  * stručné, takže nese celý popis v `aria-label`.
  */
-function SeasonStats({ stats }: { stats: NonNullable<SoupiskaCard['stats']> }) {
+function SeasonStats({ stats }: { stats: NonNullable<RosterCard['stats']> }) {
   const items: Array<[string, number]> = stats.goalie
     ? [['Z', stats.games]]
     : [

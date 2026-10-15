@@ -3,7 +3,7 @@ import React from 'react'
 
 import { ArchiveCta } from '@/landing/features/history/components/ArchiveCta'
 import { EraSection } from '@/landing/features/history/components/EraSection'
-import { HistorieHeader } from '@/landing/features/history/components/HistorieHeader'
+import { HistoryHeader } from '@/landing/features/history/components/HistoryHeader'
 import { StoryPanel } from '@/landing/features/history/components/StoryPanel'
 import { fetchHistoryEras } from '@/landing/features/history/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
@@ -23,7 +23,7 @@ export default async function HistorieKlubuPage() {
 
   return (
     <SubpageShell pattern={{ variant: 'cross', tone: 'club', fade: 'center' }}>
-      <HistorieHeader />
+      <HistoryHeader />
 
       {/* Šířku timeline drží vnitřní obal, ne `SectionShell`. Override
           `max-w` na shellu se totiž potkal s jeho `mx-auto`, takže se obsah

@@ -110,7 +110,7 @@ export function PageHeader({
               uvnitř skupiny. `gap-[inherit]` drží rozestupy z `rowClassName`
               (sponzoři a detail galerie si je přepisují) a pod `md` se
               skupina rozpouští (`contents`), aby vodorovný scrollovaný pás
-              filtrů v `GalerieHeader` zůstal pásem. */}
+              filtrů v `GalleriesHeader` zůstal pásem. */}
           {filters && (
             <div className="flex flex-wrap items-center gap-[inherit] max-md:contents">
               {filters}

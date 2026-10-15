@@ -11,7 +11,7 @@ import { MapPanel } from '@/landing/ui/MapPanel'
  * `mapEmbed` tu použít nejde (stránka není dokument v Payloadu), proto
  * sdílený `MapPanel` s obsahem z `content.ts`.
  */
-export function KontaktMap() {
+export function ContactMap() {
   const query = encodeURIComponent(CONTACT_MAP.query)
 
   return (

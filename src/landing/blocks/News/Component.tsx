@@ -44,11 +44,11 @@ export async function NewsBlockComponent({ block }: { block: LandingNewsBlock })
 }
 
 /**
- * Aktuality — stejná mřížka jako výpis `/aktuality` (`AktualityGrid`):
+ * Aktuality — stejná mřížka jako výpis `/aktuality` (`PostsListGrid`):
  * featured karta od `lg` přes dva ze tří sloupců, s fotkou vedle textu,
  * vedle ní v prvním řádku ještě jedna běžná karta. Výchozích 5 karet proto
  * vyjde beze zbytku (2 + 1 v prvním řádku, pak trojice) — stejný poměr,
- * jaký `AktualityGrid` používá pro devět.
+ * jaký `PostsListGrid` používá pro devět.
  */
 function NewsView({ cards }: { cards: PostCard[] }) {
   if (cards.length === 0) return null
@@ -85,7 +85,7 @@ function NewsView({ cards }: { cards: PostCard[] }) {
                 card={card}
                 featured={featured}
                 /* `sizes` kopíruje zlomy `CardGrid` (1 sloupec / 2 od `sm` =
-                   40rem / 3 od `lg` = 64rem), stejně jako `AktualityGrid`. */
+                   40rem / 3 od `lg` = 64rem), stejně jako `PostsListGrid`. */
                 sizes={
                   featured
                     ? '(max-width: 64rem) 100vw, 37vw'

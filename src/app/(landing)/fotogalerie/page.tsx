@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { GalerieHeader } from '@/landing/features/galleries/components/GalerieHeader'
+import { GalleriesHeader } from '@/landing/features/galleries/components/GalleriesHeader'
 import { GalleryGrid } from '@/landing/features/galleries/components/GalleryGrid'
 import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
 import { fetchGalleriesPage } from '@/landing/features/galleries/data'
@@ -48,7 +48,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
 
   return (
     <SubpageShell pattern={{ variant: 'glow-duo', tone: 'club', fade: 'top' }}>
-      <GalerieHeader
+      <GalleriesHeader
         activeSlug={activeSlug}
         seasons={seasons
           .filter((season) => season.slug)

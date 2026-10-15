@@ -9,7 +9,7 @@ import { PageHeader } from '@/landing/ui/PageHeader'
  * Hlavička výpisu fotogalerií: drobečky, titulek s lime zvýrazněním, perex,
  * filtr sezón a počet galerií. `id="seznam"` je scroll kotva stránkování.
  */
-export function GalerieHeader({
+export function GalleriesHeader({
   seasons,
   activeSlug,
   totalDocs,
