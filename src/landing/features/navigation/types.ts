@@ -5,7 +5,7 @@
  *
  * Rozpojuje tři role, které dřív plnil jediný string `href` v `NAV_LINKS`
  * (cíl odkazu, `id` sekce v DOM, klíč aktivního stavu). Výsledný href se
- * odvozuje podle kontextu renderu — viz `navHref()` v `data/navHref.ts`.
+ * odvozuje podle kontextu renderu — viz `navHref()` v `navHref.ts`.
  */
 export type NavItem = {
   label: string

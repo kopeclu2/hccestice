@@ -30,7 +30,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
     <div className="relative z-1 mt-3.5">
       {/*
         Zbylé čtyři varianty hero (`HeroPhoto`, `HeroTypo`, `HeroPanel`,
-        `HeroSplit`) emitují drobečky přes `article/hero/Breadcrumbs`, který
+        `HeroSplit`) emitují drobečky přes `hero/Breadcrumbs`, který
         si strukturovaná data nese s sebou. Zápasový hero je ale nemá —
         tmavý panel se scoreboardem je v handoffu bez nich — takže
         `BreadcrumbList` chyběl u zápasových reportáží, což je většina

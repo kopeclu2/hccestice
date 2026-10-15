@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 /**
  * Odpočet do buly pro varianty hlavičky. Logika je tatáž jako
- * v `blocks/Hero/Countdown` (hodnoty až po mountu, server kreslí „--",
+ * v `features/matches/components/Countdown` (hodnoty až po mountu, server kreslí „--",
  * po uplynutí věta místo nul), jen vzhled si volí varianta:
  *
  * - `tiles`  — čtyři „LED" dlaždice (Aréna),

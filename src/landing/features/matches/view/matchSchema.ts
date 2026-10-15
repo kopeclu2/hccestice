@@ -2,7 +2,7 @@ import { CLUB_NAME } from './matchFormat'
 
 /**
  * Stavba schema.org `SportsEvent` sdílená výpisem `/zapasy`
- * (`zapasy/MatchesJsonLd`) a detailem zápasu (`zapas/MatchJsonLd`).
+ * (`MatchesJsonLd`) a detailem zápasu (`MatchJsonLd`).
  * Žije na jednom místě, aby se oba výstupy nerozešly.
  *
  * Odehraný zápas zůstává `EventScheduled` — schema.org žádný stav

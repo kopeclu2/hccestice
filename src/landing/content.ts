@@ -3,8 +3,8 @@
  *
  * Obsah spravuje správce v Payload adminu (bloky landing page, globaly
  * a kolekce). Tento soubor je **fallback**: komponenty bloků
- * (`blocks/<blok>/Component.tsx`) a datové moduly (`data/history.ts`,
- * `data/navigation.ts`, `data/seasons.ts`, `data/site.ts`) z něj berou
+ * (`blocks/<blok>/Component.tsx`) a datové moduly (`features/history/data.ts`,
+ * `features/navigation/data.ts`, `features/matches/data/seasons.ts`, `data/site.ts`) z něj berou
  * výchozí znění pro pole, která v adminu nejsou vyplněná, takže se stránka
  * nikdy nerozbije.
  *

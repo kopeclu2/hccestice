@@ -14,7 +14,7 @@ import { splitMatchTitle, TeamPair } from './TeamPair'
  *
  * Jeden vzhled pro dvě místa, která ho dřív měla každé po svém:
  * widget **Nejbližší zápas** (`blocks/NextMatchWidget`) a **jediný**
- * nadcházející zápas v rozpisu (`zapasy/FixturesRail`). Mimo sezónu je
+ * nadcházející zápas v rozpisu (`FixturesRail`). Mimo sezónu je
  * v termínovce často právě jeden zápas a užší karta z pásu v něm nechávala
  * přes 900px prázdna — místo ní se vykreslí tenhle panel přes celou sekci.
  *

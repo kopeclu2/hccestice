@@ -186,7 +186,7 @@
   --color-loss-ink: #8a4437;
 
   /* Trest na časové ose detailu zápasu — minuty ve žlutém poli jako na
-   * Livesportu (`zapas/MatchTimeline.tsx`). Vyšší tresty jdou do `danger`. */
+   * Livesportu (`features/matches/components/MatchTimeline.tsx`). Vyšší tresty jdou do `danger`. */
   --color-penalty: #f5c518;
   --color-penalty-ink: #2b2300;
 

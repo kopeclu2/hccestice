@@ -4,7 +4,7 @@ import { StickyNav } from './StickyNav'
 
 /**
  * Server hranice pro `StickyNav`: fetche jsou obalené `cache()`
- * (`data/navigation.ts`), takže na stránkách, které navigaci načítají
+ * (`features/navigation/data.ts`), takže na stránkách, které navigaci načítají
  * ještě jednou pro `LandingNav`/`ArticleNav`, neproběhne dotaz do
  * databáze dvakrát.
  */

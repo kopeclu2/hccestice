@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'
 
 /**
  * Tabule se skóre, týmy a třetinami na tmavé ploše — sdílí ji hero
- * reportáže (`article/hero/HeroMatch`) a hlavička detailu zápasu
- * (`zapas/MatchHeader`). Obsah stojí v rodiči (tmavý panel), tahle
+ * reportáže (`features/posts/components/hero/HeroMatch`) a hlavička detailu zápasu
+ * (`MatchHeader`). Obsah stojí v rodiči (tmavý panel), tahle
  * komponenta vrací jen dva sourozence: řádek tým · skóre · tým a pod ním
  * třetiny — proto fragment, ne vlastní obal. Rodič tak drží svůj rytmus
  * odsazení. Rozvržení je pro obě místa stejné — oprava zalamování dlouhých

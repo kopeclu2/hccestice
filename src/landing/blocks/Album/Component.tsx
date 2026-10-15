@@ -265,7 +265,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
 
 /**
  * Prázdné fotoalbum. Znění i cesta dál se drží prázdného stavu výpisu
- * (`fotogalerie/GalleryGrid.tsx`), aby web mluvil jedním hlasem; `mailto:`
+ * (`features/galleries/components/GalleryGrid.tsx`), aby web mluvil jedním hlasem; `mailto:`
  * z handoffu by obešel kontaktní formulář a jeho ochranu reCAPTCHOU.
  */
 function AlbumEmpty() {

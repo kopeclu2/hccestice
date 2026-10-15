@@ -8,6 +8,26 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+# Struktura `src/landing/`
+
+| složka | co v ní je |
+|---|---|
+| `ui/` | design systém: tlačítka, nadpisy, karty, dekorace — bez znalosti domény |
+| `layout/` | kostra stránek: `SubpageShell`, navigace, patička, údržba |
+| `blocks/` | CMS bloky (`Component.tsx` + `config.ts`) a `render.tsx`; blok neimportuje jiný blok |
+| `features/<doména>/` | `matches`, `posts`, `galleries`, `roster`, `history`, `contact`, `sponsors`, `trainings`, `products`, `navigation` |
+| `data/` | jen průřezové fetchery: `site`, `tags`, `maintenance`, `session`, `landingSlugs` |
+| `lib/` | pomocníky nad Payload dokumenty a formáty: `dates`, `paths`, `media`, `payload`, `text` |
+| `types.ts` | sdílené jádro view-modelů (`Photo`, `PersonCard`, `SiteLinks`, obsah hero a patičky) |
+
+Uvnitř feature: `components/` (prezentace), `data` (fetchery, `server-only`),
+`view/` (čisté mapování bez I/O — smí do klienta), `types.ts`. Menší features
+mají `data.ts` a `types.ts` přímo v kořeni. Typy jedné domény žijí v její
+`types.ts`, ne v `landing/types.ts`. Prezentační komponenta, kterou potřebuje
+víc bloků (`MatchesWidgetView`, `StandingsCard`, `RosterWidgetView`,
+`ProductTile`, `Countdown`), patří do `components/` feature, ne do bloku.
+`features/*/components` jsou anglicky; složky v `src/app/` zůstávají česky (URL).
+
 # Navigace landing page
 
 Navigaci spravuje správce v adminu: **Nastavení → Menu** (kontejner `hlavni`)

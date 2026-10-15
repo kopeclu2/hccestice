@@ -8,7 +8,7 @@ import { serializeJsonLd } from '@/lib/jsonLd'
  * JSON-LD (schema.org BreadcrumbList) k viditelným drobečkům.
  *
  * Drobečky na webu existují ve dvou vizuálně odlišných variantách
- * (`components/Breadcrumbs` pro podstránky, `article/hero/Breadcrumbs`
+ * (`ui/Breadcrumbs` pro podstránky, `features/posts/components/hero/Breadcrumbs`
  * pro hero článku), ale strukturovaná data jsou pro obě stejná — proto
  * jeden sdílený emitor a ne dvě kopie.
  *
