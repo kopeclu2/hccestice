@@ -9,6 +9,7 @@
  * Spuštění: bun --env-file=.env migration/seed-matches.ts [season-slug]
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const SEASON_SLUG = process.argv[2] ?? '2023-2024'
@@ -18,19 +19,25 @@ const OPPONENT_ALIAS: Record<string, string> = {
   'aloha lanskroun': 'HC Aloha Lanškroun',
   'hc aloha lanskroun': 'HC Aloha Lanškroun',
   'rebels policka': 'Rebels Polička',
-  'rebels': 'Rebels Polička',
+  rebels: 'Rebels Polička',
 }
 
 const CZ_MONTHS: Record<string, number> = {
-  ledna: 1, unora: 2, brezna: 3, dubna: 4, kvetna: 5, cervna: 6,
-  cervence: 7, srpna: 8, zari: 9, rijna: 10, listopadu: 11, prosince: 12,
+  ledna: 1,
+  unora: 2,
+  brezna: 3,
+  dubna: 4,
+  kvetna: 5,
+  cervna: 6,
+  cervence: 7,
+  srpna: 8,
+  zari: 9,
+  rijna: 10,
+  listopadu: 11,
+  prosince: 12,
 }
 
-const strip = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
+const strip = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 /** „REBELS POLIČKA" → „Rebels Polička" (celokapitálky na Title Case) */
 function normalizeName(raw: string): string {
@@ -161,13 +168,23 @@ async function main() {
   const payload = await getPayload({ config })
 
   const season = (
-    await payload.find({ collection: 'seasons', where: { slug: { equals: SEASON_SLUG } }, limit: 1, depth: 0 })
+    await payload.find({
+      collection: 'seasons',
+      where: { slug: { equals: SEASON_SLUG } },
+      limit: 1,
+      depth: 0,
+    })
   ).docs[0]
   if (!season) throw new Error(`Sezóna ${SEASON_SLUG} nenalezena`)
   const seasonStart = season.startYear as number
 
   const teamMuzi = (
-    await payload.find({ collection: 'teams', where: { slug: { equals: 'muzi' } }, limit: 1, depth: 0 })
+    await payload.find({
+      collection: 'teams',
+      where: { slug: { equals: 'muzi' } },
+      limit: 1,
+      depth: 0,
+    })
   ).docs[0]
   if (!teamMuzi) throw new Error('Tým Muži nenalezen')
 
@@ -240,7 +257,9 @@ async function main() {
 
     const opponentId = await resolveOpponent(parsed.opponentRaw)
     const matchDay = parsed.date.slice(0, 10)
-    const gallery = seasonGalleries.find((g) => (g.date as string | null)?.slice(0, 10) === matchDay)
+    const gallery = seasonGalleries.find(
+      (g) => (g.date as string | null)?.slice(0, 10) === matchDay,
+    )
 
     await payload.create({
       collection: 'matches',

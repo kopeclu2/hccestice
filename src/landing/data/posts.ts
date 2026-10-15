@@ -1,16 +1,11 @@
-import type { Post } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
-import type {
-  ArticleAuthor,
-  ArticleDetail,
-  Photo,
-  PostCard,
-} from '../types'
+import type { Post } from '@/payload-types'
+import configPromise from '@payload-config'
+
+import type { ArticleAuthor, ArticleDetail, Photo, PostCard } from '../types'
 
 import {
   formatFullDate,
@@ -52,8 +47,7 @@ export const fetchDefaultPostPhoto = cache(async (): Promise<Photo | null> => {
   return uploadToPhoto(site.defaultPostImage)
 })
 
-export const postTag = (post: Post): string =>
-  POST_TYPE_LABEL[post.type ?? 'news'] ?? 'Novinky'
+export const postTag = (post: Post): string => POST_TYPE_LABEL[post.type ?? 'news'] ?? 'Novinky'
 
 /**
  * Úryvek pro kartu: ruční perex, pak SEO popis, jinak začátek obsahu.
@@ -258,20 +252,18 @@ export const fetchPostSlugs = cache(async (): Promise<string[]> => {
 })
 
 /** Článek podle slugu; `draft` pro live preview v adminu. */
-export const fetchPostBySlug = cache(
-  async (slug: string, draft: boolean): Promise<Post | null> => {
-    const payload = await getPayload({ config: configPromise })
-    const { docs } = await payload.find({
-      collection: 'posts',
-      draft,
-      overrideAccess: draft,
-      where: { slug: { equals: slug } },
-      limit: 1,
-      depth: 2,
-    })
-    return docs[0] ?? null
-  },
-)
+export const fetchPostBySlug = cache(async (slug: string, draft: boolean): Promise<Post | null> => {
+  const payload = await getPayload({ config: configPromise })
+  const { docs } = await payload.find({
+    collection: 'posts',
+    draft,
+    overrideAccess: draft,
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 2,
+  })
+  return docs[0] ?? null
+})
 
 const initialsOf = (name: string): string =>
   name
@@ -326,9 +318,7 @@ export const toArticleDetail = (
     slug: post.slug ?? '',
     title: post.title,
     titleHighlight:
-      post.titleHighlight && post.title.includes(post.titleHighlight)
-        ? post.titleHighlight
-        : null,
+      post.titleHighlight && post.title.includes(post.titleHighlight) ? post.titleHighlight : null,
     variant,
     badge: postTag(post),
     excerpt: post.excerpt ?? null,
@@ -347,71 +337,67 @@ export const toArticleDetail = (
 }
 
 /** Karty souvisejících článků — ruční výběr, dofiltrování dle kategorií. */
-export const fetchRelatedPostCards = cache(
-  async (post: Post, limit = 3): Promise<PostCard[]> => {
-    const payload = await getPayload({ config: configPromise })
+export const fetchRelatedPostCards = cache(async (post: Post, limit = 3): Promise<PostCard[]> => {
+  const payload = await getPayload({ config: configPromise })
 
-    const pickedIds = (post.relatedPosts ?? [])
-      .map(relId)
-      .filter((id): id is number => Boolean(id))
-      .slice(0, limit)
+  const pickedIds = (post.relatedPosts ?? [])
+    .map(relId)
+    .filter((id): id is number => Boolean(id))
+    .slice(0, limit)
 
-    const picked = pickedIds.length
-      ? (
-          await payload.find({
-            collection: 'posts',
-            where: {
-              and: [{ id: { in: pickedIds } }, { _status: { equals: 'published' } }],
-            },
-            limit: pickedIds.length,
-            depth: 1,
-          })
-        ).docs.sort((a, b) => pickedIds.indexOf(a.id) - pickedIds.indexOf(b.id))
-      : []
+  const picked = pickedIds.length
+    ? (
+        await payload.find({
+          collection: 'posts',
+          where: {
+            and: [{ id: { in: pickedIds } }, { _status: { equals: 'published' } }],
+          },
+          limit: pickedIds.length,
+          depth: 1,
+        })
+      ).docs.sort((a, b) => pickedIds.indexOf(a.id) - pickedIds.indexOf(b.id))
+    : []
 
-    const defaultPhoto = await fetchDefaultPostPhoto()
+  const defaultPhoto = await fetchDefaultPostPhoto()
 
-    const missing = limit - picked.length
-    if (missing <= 0) return picked.map((doc) => toPostCard(doc, defaultPhoto))
+  const missing = limit - picked.length
+  if (missing <= 0) return picked.map((doc) => toPostCard(doc, defaultPhoto))
 
-    const categoryIds = (post.categories ?? [])
-      .map(relId)
-      .filter((id): id is number => Boolean(id))
-    const excludeIds = [post.id, ...picked.map((doc) => doc.id)]
+  const categoryIds = (post.categories ?? []).map(relId).filter((id): id is number => Boolean(id))
+  const excludeIds = [post.id, ...picked.map((doc) => doc.id)]
 
-    const and: Array<Record<string, unknown>> = [
-      { _status: { equals: 'published' } },
-      { type: { in: ['news', 'report'] } },
-      { id: { not_in: excludeIds } },
-    ]
-    if (categoryIds.length) and.push({ categories: { in: categoryIds } })
+  const and: Array<Record<string, unknown>> = [
+    { _status: { equals: 'published' } },
+    { type: { in: ['news', 'report'] } },
+    { id: { not_in: excludeIds } },
+  ]
+  if (categoryIds.length) and.push({ categories: { in: categoryIds } })
 
-    let { docs: fill } = await payload.find({
+  let { docs: fill } = await payload.find({
+    collection: 'posts',
+    where: { and } as never,
+    sort: '-publishedAt',
+    limit: missing,
+    depth: 1,
+  })
+
+  // Málo článků ve stejných kategoriích → doplnit nejnovějšími bez filtru.
+  if (fill.length < missing && categoryIds.length) {
+    const { docs: latest } = await payload.find({
       collection: 'posts',
-      where: { and } as never,
+      where: {
+        and: [
+          { _status: { equals: 'published' } },
+          { type: { in: ['news', 'report'] } },
+          { id: { not_in: [...excludeIds, ...fill.map((doc) => doc.id)] } },
+        ],
+      } as never,
       sort: '-publishedAt',
-      limit: missing,
+      limit: missing - fill.length,
       depth: 1,
     })
+    fill = [...fill, ...latest]
+  }
 
-    // Málo článků ve stejných kategoriích → doplnit nejnovějšími bez filtru.
-    if (fill.length < missing && categoryIds.length) {
-      const { docs: latest } = await payload.find({
-        collection: 'posts',
-        where: {
-          and: [
-            { _status: { equals: 'published' } },
-            { type: { in: ['news', 'report'] } },
-            { id: { not_in: [...excludeIds, ...fill.map((doc) => doc.id)] } },
-          ],
-        } as never,
-        sort: '-publishedAt',
-        limit: missing - fill.length,
-        depth: 1,
-      })
-      fill = [...fill, ...latest]
-    }
-
-    return [...picked, ...fill].map((doc) => toPostCard(doc, defaultPhoto))
-  },
-)
+  return [...picked, ...fill].map((doc) => toPostCard(doc, defaultPhoto))
+})

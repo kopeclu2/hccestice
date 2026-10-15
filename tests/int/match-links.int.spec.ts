@@ -1,5 +1,3 @@
-import type { Match } from '../../src/payload-types'
-
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -11,8 +9,16 @@ import {
   toUpcoming,
 } from '../../src/landing/data/matchRows'
 import { eventDescription, toSportsEvent } from '../../src/landing/data/matchSchema'
+import type { Match } from '../../src/payload-types'
 
-const opponent = { id: 5, name: 'HC Zdar', slug: 'hc-zdar', logo: null, updatedAt: '', createdAt: '' }
+const opponent = {
+  id: 5,
+  name: 'HC Zdar',
+  slug: 'hc-zdar',
+  logo: null,
+  updatedAt: '',
+  createdAt: '',
+}
 
 const baseMatch = (overrides: Partial<Match> = {}): Match =>
   ({
@@ -76,9 +82,9 @@ describe('SportsEvent', () => {
       '@type': 'Place',
       name: 'Zimní stadion Rychnov nad Kněžnou',
     })
-    expect(toSportsEvent({ ...input, homeName: 'HC Zdar', awayName: 'HC Čestice' })).not.toHaveProperty(
-      'location',
-    )
+    expect(
+      toSportsEvent({ ...input, homeName: 'HC Zdar', awayName: 'HC Čestice' }),
+    ).not.toHaveProperty('location')
   })
 
   it('zrušený zápas je EventCancelled, odehraný zůstává EventScheduled', () => {

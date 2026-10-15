@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/data/galleries'
 import { formatLongDate, toPhoto, uploadToPhoto } from '@/landing/data/format'
+import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/data/galleries'
 import { seasonShortLabel } from '@/landing/data/seasons'
 import { GalleryDetailHeader } from '@/landing/fotogalerie/GalleryDetailHeader'
 import { PhotoMasonry, type GalleryPhoto } from '@/landing/fotogalerie/PhotoMasonry'

@@ -20,8 +20,20 @@ export const StatCardsBlock: Block = {
         {
           type: 'row',
           fields: [
-            { name: 'value', type: 'text', required: true, label: 'Hodnota', admin: { description: 'Např. „31:18", „2/3", „340".' } },
-            { name: 'label', type: 'text', required: true, label: 'Popisek', admin: { description: 'Např. „Střely na branku".' } },
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              label: 'Hodnota',
+              admin: { description: 'Např. „31:18", „2/3", „340".' },
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              label: 'Popisek',
+              admin: { description: 'Např. „Střely na branku".' },
+            },
           ],
         },
         {

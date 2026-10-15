@@ -1,6 +1,6 @@
-import type { YouTubeBlock as YouTubeBlockProps } from '@/payload-types'
-
 import React from 'react'
+
+import type { YouTubeBlock as YouTubeBlockProps } from '@/payload-types'
 
 function extractVideoId(url: string): string | null {
   const m = url.match(

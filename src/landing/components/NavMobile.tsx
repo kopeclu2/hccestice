@@ -121,8 +121,8 @@ export function NavMobile({
           'grid size-11 flex-none place-items-center rounded-full transition-colors md:size-10 [&_svg]:size-5',
           !always && 'nav:hidden',
           tone === 'glass'
-            ? 'bg-pine-deep/32 border border-white/40 text-white backdrop-blur-lg hover:bg-white/30'
-            : 'border-line text-ink hover:bg-contrast border bg-surface hover:text-on-contrast',
+            ? 'border border-white/40 bg-pine-deep/32 text-white backdrop-blur-lg hover:bg-white/30'
+            : 'border border-line bg-surface text-ink hover:bg-contrast hover:text-on-contrast',
         )}
         onClick={() => setOpen(true)}
         ref={triggerRef}
@@ -136,7 +136,7 @@ export function NavMobile({
         createPortal(
           <div
             className={cn(
-              'bg-pine-deep/97 fixed inset-0 z-50 flex flex-col overflow-y-auto p-5 backdrop-blur-lg',
+              'fixed inset-0 z-50 flex flex-col overflow-y-auto bg-pine-deep/97 p-5 backdrop-blur-lg',
               !always && 'nav:hidden',
             )}
             id="nav-mobile"
@@ -167,7 +167,7 @@ export function NavMobile({
                   <Link
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'hover:text-lime border-b border-white/10 py-3.5 text-2xl font-extrabold tracking-[-0.02em] transition-colors',
+                      'border-b border-white/10 py-3.5 text-2xl font-extrabold tracking-[-0.02em] transition-colors hover:text-lime',
                       active ? 'text-lime' : 'text-white',
                     )}
                     href={navHref(item, context)}

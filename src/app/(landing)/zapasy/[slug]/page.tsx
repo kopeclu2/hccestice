@@ -1,19 +1,16 @@
 import type { Metadata } from 'next'
-
 import { notFound } from 'next/navigation'
 import React from 'react'
-
-import { cn } from '@/utilities/ui'
 
 import { Breadcrumbs } from '@/landing/components/Breadcrumbs'
 import { PillLink } from '@/landing/components/PillLink'
 import { SectionShell } from '@/landing/components/SectionShell'
 import { SubpageShell } from '@/landing/components/SubpageShell'
+import { formatFullDate } from '@/landing/data/format'
 import { fetchMatchDetail, fetchMatchSlugs } from '@/landing/data/matchDetail'
-import { fetchSiteConfig } from '@/landing/data/site'
 import { matchDescription, matchHeadline } from '@/landing/data/matchDetailView'
 import { buildMatchSummary } from '@/landing/data/matchSummary'
-import { formatFullDate } from '@/landing/data/format'
+import { fetchSiteConfig } from '@/landing/data/site'
 import type { MatchDetail } from '@/landing/types'
 import { MatchHeaderByVariant } from '@/landing/zapas/header-variants'
 import { MatchJsonLd } from '@/landing/zapas/MatchJsonLd'
@@ -24,6 +21,7 @@ import { brandTitle } from '@/utilities/brandTitle'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/utilities/mergeOpenGraph'
+import { cn } from '@/utilities/ui'
 
 /**
  * ISR pojistka pro HTML; data jdou přes tagovanou `unstable_cache`
@@ -122,7 +120,7 @@ export default async function MatchDetailPage(args: Args) {
 
       {match.missingProtocol && (
         <SectionShell spacing="split">
-          <p className="border-line-mid text-ink-soft rounded-section border border-dashed bg-surface p-4.5 text-sm md:text-base font-medium text-pretty md:p-7 lg:p-9">
+          <p className="rounded-section border border-dashed border-line-mid bg-surface p-4.5 text-sm font-medium text-pretty text-ink-soft md:p-7 md:text-base lg:p-9">
             Podrobný zápis z utkání není k dispozici.
           </p>
         </SectionShell>

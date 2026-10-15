@@ -82,7 +82,7 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
 function GalleryCardTile({ card }: { card: GalleryCard }) {
   return (
     <CardShell href={card.href} pad="media">
-      <div className="bg-pine relative aspect-[4/3] overflow-hidden rounded-badge">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-badge bg-pine">
         {card.cover && (
           <Image
             alt={card.cover.alt}
@@ -106,7 +106,7 @@ function GalleryCardTile({ card }: { card: GalleryCard }) {
       </div>
       {/* flex-1 + mt-auto v CardCta: odkaz drží u spodní hrany i u kratších titulků */}
       <div className="flex flex-1 flex-col px-2.5 pt-4">
-        <div className="text-faint text-xs font-semibold">{card.dateLabel}</div>
+        <div className="text-xs font-semibold text-faint">{card.dateLabel}</div>
         <CardTitle className="mt-2 line-clamp-3" size="sm">
           {card.title}
         </CardTitle>

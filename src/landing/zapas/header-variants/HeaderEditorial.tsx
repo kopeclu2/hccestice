@@ -35,7 +35,7 @@ export function HeaderEditorial({ match, titleAs = 'h1' }: HeaderVariantProps) {
   const played = match.status === 'played' && hasScore(match)
 
   return (
-    <div className="border-line-mid text-ink relative isolate overflow-hidden rounded-section border bg-surface shadow-tile">
+    <div className="relative isolate overflow-hidden rounded-section border border-line-mid bg-surface text-ink shadow-tile">
       <PatternBackground variant="noise" />
       <SrTitle as={titleAs} match={match} />
 
@@ -44,7 +44,7 @@ export function HeaderEditorial({ match, titleAs = 'h1' }: HeaderVariantProps) {
 
         {played ? <PlayedSpread match={match} /> : <UpcomingSpread match={match} />}
 
-        <p className="text-dim mx-auto mt-6 max-w-160 text-center text-sm leading-relaxed text-pretty md:mt-8 md:text-lg">
+        <p className="mx-auto mt-6 max-w-160 text-center text-sm leading-relaxed text-pretty text-dim md:mt-8 md:text-lg">
           {standfirst(match)}
         </p>
 
@@ -59,14 +59,14 @@ function Masthead({ match }: { match: MatchDetail }) {
   const day = weekday(match.kickoffISO)
   return (
     <div>
-      <div className="border-ink flex flex-wrap items-end justify-between gap-x-6 gap-y-1 border-b-2 pb-2">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1 border-b-2 border-ink pb-2">
         <Eyebrow tone="club">{competitionLabel(match)}</Eyebrow>
         <span className="text-xs font-medium">
           {day && <span className="capitalize">{day} </span>}
           {match.dateLabel}
         </span>
       </div>
-      <div className="border-line text-faint flex flex-wrap justify-between gap-x-6 border-b py-1.5 text-xs font-medium">
+      <div className="flex flex-wrap justify-between gap-x-6 border-b border-line py-1.5 text-xs font-medium text-faint">
         <span>{match.seasonLabel ? `Sezóna ${match.seasonLabel}` : 'HC Čestice'}</span>
         <span>
           {match.status === 'played'
@@ -95,11 +95,11 @@ function PlayedSpread({ match }: { match: MatchDetail }) {
       <div className="relative col-span-2 justify-self-center lg:col-span-1 lg:col-start-2 lg:row-start-1">
         <div className="flex items-start text-[clamp(6.5rem,30vw,14rem)] leading-[0.82] font-extrabold tracking-[-0.06em] tabular-nums select-none">
           <Digit filled={winner === 'home'}>{match.homeScore}</Digit>
-          <span className="bg-club mx-[0.12em] h-[0.07em] w-[0.24em] flex-none self-center" />
+          <span className="mx-[0.12em] h-[0.07em] w-[0.24em] flex-none self-center bg-club" />
           <Digit filled={winner === 'away'}>{match.awayScore}</Digit>
         </div>
         {match.suffix && (
-          <span className="text-club absolute top-1 right-0 translate-x-[calc(100%+0.75rem)] text-xs font-semibold [writing-mode:vertical-rl] max-sm:static max-sm:mt-2 max-sm:block max-sm:translate-x-0 max-sm:text-center max-sm:[writing-mode:horizontal-tb]">
+          <span className="absolute top-1 right-0 translate-x-[calc(100%+0.75rem)] text-xs font-semibold text-club [writing-mode:vertical-rl] max-sm:static max-sm:mt-2 max-sm:block max-sm:translate-x-0 max-sm:text-center max-sm:[writing-mode:horizontal-tb]">
             {SUFFIX_NOTE[match.suffix]}
           </span>
         )}
@@ -126,7 +126,7 @@ function PlayedSpread({ match }: { match: MatchDetail }) {
 }
 
 function Digit({ children, filled }: { children: React.ReactNode; filled: boolean }) {
-  return <span className={cn(filled ? 'text-club' : 'text-stroke text-ink/30')}>{children}</span>
+  return <span className={cn(filled ? 'text-club' : 'text-ink/30 text-stroke')}>{children}</span>
 }
 
 function TeamBlock({
@@ -189,9 +189,9 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
           aria-hidden
           className="flex items-baseline text-[clamp(5.5rem,24vw,11.5rem)] leading-[0.82] font-extrabold tracking-[-0.06em] tabular-nums select-none"
         >
-          <span className="text-stroke text-ink/30">{date.day}</span>
+          <span className="text-ink/30 text-stroke">{date.day}</span>
           <span className="text-club">.</span>
-          <span className="text-stroke text-ink/30">{date.month}</span>
+          <span className="text-ink/30 text-stroke">{date.month}</span>
           <span className="text-club">.</span>
         </div>
       )}
@@ -203,7 +203,7 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
           sizes="44px"
           tone="light"
         />
-        <span className="text-faint text-sm font-semibold">×</span>
+        <span className="text-sm font-semibold text-faint">×</span>
         <Crest
           className="size-9 text-sm md:size-11"
           logo={match.awayLogo}
@@ -273,7 +273,7 @@ function Dateline({ match, played }: { match: MatchDetail; played: boolean }) {
   const columns = played ? periodColumns(match) : []
 
   return (
-    <dl className="border-line mt-7 grid grid-cols-2 gap-x-6 md:grid-cols-[repeat(auto-fit,minmax(min(8.5rem,100%),1fr))] gap-y-4 border-t pt-5 md:mt-9 lg:mt-10">
+    <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-5 md:mt-9 md:grid-cols-[repeat(auto-fit,minmax(min(8.5rem,100%),1fr))] lg:mt-10">
       <Item label="Buly">{match.timeLabel}</Item>
       {match.venue && <Item label="Místo">{match.venue}</Item>}
       {columns.length > 0 && (
@@ -282,7 +282,7 @@ function Dateline({ match, played }: { match: MatchDetail; played: boolean }) {
             {columns.map((column) => (
               <span className="whitespace-nowrap" key={column.label}>
                 {column.label.length > 1 || column.label === 'P' ? (
-                  <abbr className="text-faint mr-1 text-xs no-underline" title={column.title}>
+                  <abbr className="mr-1 text-xs text-faint no-underline" title={column.title}>
                     {column.label}
                   </abbr>
                 ) : null}

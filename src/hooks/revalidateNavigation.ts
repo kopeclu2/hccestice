@@ -1,6 +1,5 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
-
 import { revalidateTag } from 'next/cache'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
 /**
  * Navigace je na každé stránce webu, takže se nerevaliduje po cestách

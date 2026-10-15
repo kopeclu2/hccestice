@@ -8,6 +8,7 @@
  * Spuštění: bun --env-file=.env migration/set-news-count.ts
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const COUNT = 5

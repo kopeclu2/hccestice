@@ -1,6 +1,6 @@
-import type { SectionHeadingBlockType } from '@/payload-types'
-
 import React from 'react'
+
+import type { SectionHeadingBlockType } from '@/payload-types'
 
 import { SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
@@ -20,7 +20,7 @@ export function SectionHeadingBlockComponent({ block }: { block: SectionHeadingB
               {block.title} {block.titleHighlight && <Highlight>{block.titleHighlight}</Highlight>}
             </SectionTitle>
             {block.perex && (
-              <p className="text-dim mt-3 max-w-140 leading-relaxed text-pretty">{block.perex}</p>
+              <p className="mt-3 max-w-140 leading-relaxed text-pretty text-dim">{block.perex}</p>
             )}
           </div>
           <div className="flex-1" />

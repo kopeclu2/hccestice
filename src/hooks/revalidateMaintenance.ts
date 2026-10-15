@@ -1,6 +1,5 @@
-import type { GlobalAfterChangeHook } from 'payload'
-
 import { revalidateTag } from 'next/cache'
+import type { GlobalAfterChangeHook } from 'payload'
 
 /**
  * Přepínač režimu údržby platí pro **celý** veřejný web — včetně detailů

@@ -6,6 +6,7 @@ import type { SeasonCtx } from '../context'
 import { buildPatch } from '../diff'
 import { span } from '../sentry'
 import { pragueLocalToUtc, utcToPragueLocal } from '../time'
+
 import type { SyncContext } from './ctx'
 import {
   buildGoals,
@@ -164,7 +165,8 @@ export function resolveMatchDate(
   existing: Pick<Match, 'date'> | null,
 ): Date {
   if (entry.rozpis?.timeKnown) return pragueLocalToUtc(entry.rozpis.dateISO)
-  if (detail?.dateISO && !detail.dateISO.endsWith('T00:00:00')) return pragueLocalToUtc(detail.dateISO)
+  if (detail?.dateISO && !detail.dateISO.endsWith('T00:00:00'))
+    return pragueLocalToUtc(detail.dateISO)
   const base = entry.vysledky ?? entry.rozpis!
   const day = base.dateISO.slice(0, 10)
   if (existing) {
@@ -206,8 +208,11 @@ export function pairLegacy(
     const d = sameDay[0]
     const score = entry.vysledky?.score
     const consistent =
-      !score || d.scoreOurs == null || d.scoreOpp == null ||
-      (weAreHome ? [score.home, score.away] : [score.away, score.home]).join(':') === `${d.scoreOurs}:${d.scoreOpp}`
+      !score ||
+      d.scoreOurs == null ||
+      d.scoreOpp == null ||
+      (weAreHome ? [score.home, score.away] : [score.away, score.home]).join(':') ===
+        `${d.scoreOurs}:${d.scoreOpp}`
     if (consistent) return d
   }
   return null
@@ -233,7 +238,9 @@ export async function syncSeasonMatches(
   drafts: DraftCandidate[],
 ): Promise<SeasonMatchState> {
   const entries = mergeLists(lists)
-  const allListedIds = new Set([...(lists.rozpis ?? []), ...(lists.vysledky ?? [])].map((m) => m.matchId))
+  const allListedIds = new Set(
+    [...(lists.rozpis ?? []), ...(lists.vysledky ?? [])].map((m) => m.matchId),
+  )
 
   // Zápasy sezóny v DB (muži). `matchId` je unikátní napříč sezónami, takže
   // se hledá i mimo sezónu — zápas přeřazený do jiné sezóny se nezduplikuje.
@@ -275,7 +282,11 @@ export async function syncSeasonMatches(
     let existing = byMatchId.get(entry.matchId) ?? null
     let legacy = false
     if (!existing) {
-      existing = pairLegacy(entry, legacyPool.filter((d) => !claimed.has(d.id)), opponents)
+      existing = pairLegacy(
+        entry,
+        legacyPool.filter((d) => !claimed.has(d.id)),
+        opponents,
+      )
       if (existing) {
         claimed.add(existing.id)
         legacy = true
@@ -301,11 +312,14 @@ export async function syncSeasonMatches(
     await span('vchl.matchDetail', async () => {
       for (const it of items) {
         const played = Boolean(it.entry.vysledky?.score)
-        const date = it.existing ? new Date(it.existing.date) : resolveMatchDate(it.entry, null, null)
+        const date = it.existing
+          ? new Date(it.existing.date)
+          : resolveMatchDate(it.entry, null, null)
         const recent = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
         const hasReport = Boolean(it.existing?.ahl?.hasReport)
         const outdated = isDetailOutdated(it.existing)
-        if (!shouldFetchDetail({ played, recent, hasReport, outdated, trigger: ctx.trigger })) continue
+        if (!shouldFetchDetail({ played, recent, hasReport, outdated, trigger: ctx.trigger }))
+          continue
         const detail = await fetchMatchDetail(ctx, it.entry.matchId)
         if (!detail) continue
         const side = ourSide(detail)
@@ -351,7 +365,8 @@ export async function syncSeasonMatches(
       const existingOpp = relId(existing?.opponent)
       if (existingOpp != null && existingOpp !== opponent) {
         const a = opponents.byId(existingOpp)
-        if (a && keysIntersect(ahlNameKeys(it.opponentName), opponentKeys(a))) opponent = existingOpp
+        if (a && keysIntersect(ahlNameKeys(it.opponentName), opponentKeys(a)))
+          opponent = existingOpp
       }
 
       const desired: Record<string, unknown> = {
@@ -363,7 +378,11 @@ export async function syncSeasonMatches(
         // by přepsal přesnější místo z detailu stažené v dřívějším běhu.
         venue: detail?.venue ?? (!existing?.venue ? (base.venue ?? undefined) : undefined),
       }
-      const status = desiredStatus(existing?.status, Boolean(score), Boolean(lists.rozpis && entry.rozpis))
+      const status = desiredStatus(
+        existing?.status,
+        Boolean(score),
+        Boolean(lists.rozpis && entry.rozpis),
+      )
       if (status) desired.status = status
       if (lists.vysledky) {
         if (score) {
@@ -401,12 +420,19 @@ export async function syncSeasonMatches(
       }
 
       const hasReport = detail ? detail.hasReport : Boolean(existing?.ahl?.hasReport)
-      const { patch, fields, before, after } = buildPatch(existing as unknown as Record<string, unknown>, desired)
+      const { patch, fields, before, after } = buildPatch(
+        existing as unknown as Record<string, unknown>,
+        desired,
+      )
       // Verze zpracování se zvedá jen po staženém detailu; bez něj zůstává stará
       // (nikdy se nepřepisuje na null). Změna verze musí vyvolat zápis `ahl`
       // i tehdy, když se `penalties`/`stats` neliší (zápas bez trestů).
       const detailVersion = nextDetailVersion(existing, detail)
-      const ahlChanged = ahlNeedsWrite(existing, { matchId: entry.matchId, hasReport, detailVersion })
+      const ahlChanged = ahlNeedsWrite(existing, {
+        matchId: entry.matchId,
+        hasReport,
+        detailVersion,
+      })
       const label = `${utcToPragueLocal(date).day} ${it.weAreHome ? 'doma' : 'venku'} ${it.opponentName}`
 
       if (existing && fields.length === 0 && !ahlChanged) {
@@ -415,7 +441,11 @@ export async function syncSeasonMatches(
 
       // Změna termínu u zápasu, který už byl s AHL spárovaný, je důvod
       // k upozornění (hráči a diváci se musí dozvědět nový čas).
-      if (existing?.ahl?.matchId != null && fields.includes('date') && isReschedule(existing.date, date)) {
+      if (
+        existing?.ahl?.matchId != null &&
+        fields.includes('date') &&
+        isReschedule(existing.date, date)
+      ) {
         ctx.warn({
           type: 'rescheduled',
           ref: String(entry.matchId),
@@ -447,7 +477,9 @@ export async function syncSeasonMatches(
           action: 'update',
           fields: changedFields,
           before: ahlChanged ? { ...before, ahl: existing.ahl ?? null } : before,
-          after: ahlChanged ? { ...after, ahl: { matchId: ahl.matchId, hasReport, detailVersion } } : after,
+          after: ahlChanged
+            ? { ...after, ahl: { matchId: ahl.matchId, hasReport, detailVersion } }
+            : after,
         })
         await ctx.update('matches', existing.id, full)
         ctx.changes.matchesUpdated += 1
@@ -481,7 +513,14 @@ export async function syncSeasonMatches(
       // by backfill historie založil koncept ke každému zápasu minulé sezóny.
       const wasDone = existing?.status === 'played' && Boolean(existing.ahl?.hasReport)
       const fresh = ctx.now.getTime() - date.getTime() <= RECENT_DAYS * DAY_MS
-      if (detail && detail.hasReport && finalDoc.status === 'played' && !wasDone && fresh && !ahl.draftPostCreated) {
+      if (
+        detail &&
+        detail.hasReport &&
+        finalDoc.status === 'played' &&
+        !wasDone &&
+        fresh &&
+        !ahl.draftPostCreated
+      ) {
         drafts.push({ doc: finalDoc, detail })
       }
     }

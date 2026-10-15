@@ -31,7 +31,7 @@ export function ErrorCode({
     <div
       aria-hidden
       className={cn(
-        'text-stroke text-[clamp(8.75rem,22vw,21.25rem)] leading-[0.9] font-extrabold tracking-[-0.06em] select-none',
+        'text-[clamp(8.75rem,22vw,21.25rem)] leading-[0.9] font-extrabold tracking-[-0.06em] select-none text-stroke',
         tone === 'dark' ? 'text-lime/28' : 'text-club/22',
       )}
     >

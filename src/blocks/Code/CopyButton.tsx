@@ -1,7 +1,8 @@
 'use client'
-import { Button } from '@/components/ui/button'
 import { Copy } from 'lucide-react'
 import { useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 
 /**
  * Ikona jde z `lucide-react`, ne z `@payloadcms/ui/icons/Copy`.

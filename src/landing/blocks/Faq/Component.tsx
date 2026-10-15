@@ -1,6 +1,6 @@
-import type { LandingFaqBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { LandingFaqBlock } from '@/payload-types'
 
 import { FAQ } from '../../content'
 import { arrayOr } from '../../data/format'

@@ -1,8 +1,7 @@
-import type { LandingSponsorsBlock } from '@/payload-types'
-
 import Image from 'next/image'
 import React from 'react'
 
+import type { LandingSponsorsBlock } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { cn } from '@/utilities/ui'
 
@@ -93,7 +92,7 @@ function SponsorsView({
 
   return (
     <SectionShell id="sponzori">
-      <GlowCircle className="-left-60 -top-40 size-180" tone="club" />
+      <GlowCircle className="-top-40 -left-60 size-180" tone="club" />
       <GlowCircle className="-right-50 -bottom-50 size-160" tone="lime" />
 
       <Reveal>
@@ -110,7 +109,7 @@ function SponsorsView({
             <PillLink href="/sponzori" variant="outline" withArrow>
               Všichni partneři
             </PillLink>
-            <span className="text-faint text-sm font-medium">{count}</span>
+            <span className="text-sm font-medium text-faint">{count}</span>
           </div>
         </div>
       </Reveal>
@@ -136,7 +135,7 @@ function SponsorsView({
  */
 function MarqueeRow({ sponsors, reverse }: { sponsors: Sponsor[]; reverse: boolean }) {
   return (
-    <div className="-my-5 overflow-hidden py-5 [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
+    <div className="-my-5 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] py-5">
       <div
         className={cn(
           'flex w-max gap-3.5 hover:[animation-play-state:paused] motion-reduce:animate-none',

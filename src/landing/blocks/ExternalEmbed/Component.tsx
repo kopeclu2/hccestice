@@ -1,6 +1,6 @@
-import type { ExternalEmbedBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { ExternalEmbedBlock } from '@/payload-types'
 
 import { SectionTitle } from '../../components/Heading'
 import { Highlight } from '../../components/Kicker'

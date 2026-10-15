@@ -1,9 +1,7 @@
-import type { PersonCardBlock } from '@/payload-types'
-
 import { Mail, Phone } from 'lucide-react'
 import React from 'react'
 
-import type { PersonCard } from '../../types'
+import type { PersonCardBlock } from '@/payload-types'
 
 import { CardTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
@@ -13,6 +11,7 @@ import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { relId, toPersonCard } from '../../data/format'
 import { fetchPerson } from '../../data/site'
+import type { PersonCard } from '../../types'
 
 /** Kontaktní karta osoby — portrét, role, telefon a e-mail. */
 export async function PersonCardBlockComponent({ block }: { block: PersonCardBlock }) {
@@ -40,7 +39,7 @@ function PersonCardView({ person }: { person: PersonCard }) {
             <CardTitle as="h3" className="mt-0.5" size="sm">
               {person.name}
             </CardTitle>
-            {person.note && <p className="text-dim mt-1 text-sm">{person.note}</p>}
+            {person.note && <p className="mt-1 text-sm text-dim">{person.note}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
               {person.phone && (
                 <PillLink

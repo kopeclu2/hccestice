@@ -1,8 +1,8 @@
-import type { LandingTrainingsBlock } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
+
+import type { LandingTrainingsBlock } from '@/payload-types'
+import configPromise from '@payload-config'
 
 /**
  * Rozpis tréninků žije jen jako blok `landingTrainings` v `layout` homepage

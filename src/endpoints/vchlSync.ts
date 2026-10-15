@@ -50,7 +50,10 @@ export type VchlLinkedWarning = VchlWarning & { link?: VchlWarningLink }
  * - rescheduled / missing-on-ahl / other / stats-mismatch: `ahl.matchId`,
  *   resp. `ahlPlayerId` u neshody statistik hráče
  */
-async function linkWarnings(req: PayloadRequest, warnings: VchlWarning[]): Promise<VchlLinkedWarning[]> {
+async function linkWarnings(
+  req: PayloadRequest,
+  warnings: VchlWarning[],
+): Promise<VchlLinkedWarning[]> {
   const { payload } = req
   const out: VchlLinkedWarning[] = []
   for (const w of warnings) {
@@ -59,16 +62,22 @@ async function linkWarnings(req: PayloadRequest, warnings: VchlWarning[]): Promi
     if (ref) {
       try {
         const numeric = /^\d+$/.test(ref) ? Number(ref) : null
-        if (w.type === 'unknown-player' || w.type === 'ambiguous-player' || w.type === 'stats-mismatch') {
+        if (
+          w.type === 'unknown-player' ||
+          w.type === 'ambiguous-player' ||
+          w.type === 'stats-mismatch'
+        ) {
           const res = await payload.find({
             collection: 'players',
-            where: numeric != null ? { ahlPlayerId: { equals: numeric } } : { name: { equals: ref } },
+            where:
+              numeric != null ? { ahlPlayerId: { equals: numeric } } : { name: { equals: ref } },
             limit: 1,
             depth: 0,
             req,
           })
           const doc = res.docs[0]
-          if (doc) link = { label: `Hráč ${doc.name}`, href: `/admin/collections/players/${doc.id}` }
+          if (doc)
+            link = { label: `Hráč ${doc.name}`, href: `/admin/collections/players/${doc.id}` }
         } else if (w.type === 'unknown-opponent') {
           const res = await payload.find({
             collection: 'opponents',
@@ -78,7 +87,8 @@ async function linkWarnings(req: PayloadRequest, warnings: VchlWarning[]): Promi
             req,
           })
           const doc = res.docs[0]
-          if (doc) link = { label: `Soupeř ${doc.name}`, href: `/admin/collections/opponents/${doc.id}` }
+          if (doc)
+            link = { label: `Soupeř ${doc.name}`, href: `/admin/collections/opponents/${doc.id}` }
         } else if (numeric != null) {
           const res = await payload.find({
             collection: 'matches',
@@ -172,7 +182,10 @@ const run: Endpoint = {
   handler: authed(async (req) => {
     const body = await readBody(req)
     const dryRun = body.dryRun === true
-    const result = await runVchlSync(req.payload, { trigger: dryRun ? 'dry' : 'manual', force: true })
+    const result = await runVchlSync(req.payload, {
+      trigger: dryRun ? 'dry' : 'manual',
+      force: true,
+    })
     if (result.status === 'skipped' && result.skippedReason === 'locked') {
       return json({ message: 'Synchronizace právě běží, zkuste to za chvíli.', result }, 409)
     }

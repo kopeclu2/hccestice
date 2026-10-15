@@ -28,10 +28,10 @@ export function MaintenanceScreen({
   site: SiteLinks
 }) {
   return (
-    <main className="text-ink relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-paper px-5 py-12">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-paper px-5 py-12 text-ink">
       <div
         aria-hidden
-        className="hatch pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_70%_at_50%_45%,transparent_30%,#000)]"
+        className="pointer-events-none absolute inset-0 hatch [mask-image:radial-gradient(70%_70%_at_50%_45%,transparent_30%,#000)]"
       />
       {/* Monogram klubu přes celou obrazovku. Nejde o `Watermark` — ten je
           `absolute` v rámci sekce, tady se centruje k viewportu.
@@ -41,7 +41,7 @@ export function MaintenanceScreen({
           monogram prořezával perex i trajektorii puku. */}
       <div
         aria-hidden
-        className="text-stroke pointer-events-none absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-club/9 text-[clamp(15rem,34vw,32.5rem)] leading-none font-extrabold tracking-[-0.06em] whitespace-nowrap select-none lg:block"
+        className="pointer-events-none absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 text-[clamp(15rem,34vw,32.5rem)] leading-none font-extrabold tracking-[-0.06em] whitespace-nowrap text-club/9 select-none text-stroke lg:block"
       >
         HCČ
       </div>
@@ -66,7 +66,7 @@ export function MaintenanceScreen({
           <HeadlineWithAccent>{maintenance.headline}</HeadlineWithAccent>
         </PageTitle>
 
-        <p className="text-ink-soft mt-4.5 max-w-115 text-lg leading-[1.55] text-pretty">
+        <p className="mt-4.5 max-w-115 text-lg leading-[1.55] text-pretty text-ink-soft">
           {maintenance.perex}
         </p>
 

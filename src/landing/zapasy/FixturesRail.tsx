@@ -5,16 +5,16 @@ import { cn } from '@/utilities/ui'
 import { Badge } from '../components/Badge'
 import { CardTitle } from '../components/Heading'
 import { Eyebrow } from '../components/Kicker'
+import { MatchMeta } from '../components/MatchMeta'
 import { MoreLink } from '../components/MoreLink'
 import { NextMatchPanel } from '../components/NextMatchPanel'
 import { Numeral } from '../components/Numeral'
 import { PillLink } from '../components/PillLink'
+import { SectionShell, type SectionShellProps } from '../components/SectionShell'
 import { StretchedLink, stretchHost } from '../components/StretchedLink'
 import { TeamPair } from '../components/TeamPair'
-import { SectionShell, type SectionShellProps } from '../components/SectionShell'
 import type { FixtureCard } from '../types'
 
-import { MatchMeta } from '../components/MatchMeta'
 import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen } from './MatchRow'
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 
@@ -122,7 +122,7 @@ export function FixturesRail({
         </div>
       ) : (
         <div
-          className="no-scrollbar mt-5 -mx-[clamp(0.875rem,3vw,2.5rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pt-0.5 pb-2.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] md:mx-0 md:gap-3.5 md:px-0.5"
+          className="-mx-[clamp(0.875rem,3vw,2.5rem)] mt-5 no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pt-0.5 pb-2.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] md:mx-0 md:gap-3.5 md:px-0.5"
           id={RAIL_ID}
         >
           {rest.map((fixture) => (
@@ -143,7 +143,7 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
   return (
     <article
       className={cn(
-        'border-line-soft hover:border-club overflow-hidden rounded-tile border bg-surface px-5 py-5 transition-colors md:px-6 md:py-5.5 lg:px-6.5 lg:py-6',
+        'overflow-hidden rounded-tile border border-line-soft bg-surface px-5 py-5 transition-colors hover:border-club md:px-6 md:py-5.5 lg:px-6.5 lg:py-6',
         stretchHost,
         className,
       )}
@@ -156,7 +156,7 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
         <div className="flex-1" />
         {fixture.isNext && (
           <Eyebrow className="flex items-center gap-1.75" tone="club">
-            <span className="bg-lime size-1.75 rounded-full shadow-ring-lime" />
+            <span className="size-1.75 rounded-full bg-lime shadow-ring-lime" />
             Nejbližší
           </Eyebrow>
         )}
@@ -223,10 +223,10 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
           </div>
 
           <div className="hidden min-w-0 lg:block">
-            <div className="text-ink-soft text-sm font-medium text-pretty">
+            <div className="text-sm font-medium text-pretty text-ink-soft">
               {fixture.venue ?? '—'}
             </div>
-            <div className="text-faint mt-0.5 text-xs font-medium">{fixture.stage}</div>
+            <div className="mt-0.5 text-xs font-medium text-faint">{fixture.stage}</div>
           </div>
 
           <Badge className="justify-self-end" variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}>

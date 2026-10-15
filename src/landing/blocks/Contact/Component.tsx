@@ -1,7 +1,7 @@
-import type { LandingContactBlock } from '@/payload-types'
-
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
+
+import type { LandingContactBlock } from '@/payload-types'
 
 import { Badge } from '../../components/Badge'
 import { SectionTitle } from '../../components/Heading'
@@ -42,7 +42,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
   return (
     <SectionShell id="kontakt">
       <Watermark
-        className="text-club/6 top-70 -right-10 text-watermark-lg tracking-[-0.05em]"
+        className="top-70 -right-10 text-watermark-lg tracking-[-0.05em] text-club/6"
         outlined={false}
       >
         ZIMÁK
@@ -56,12 +56,12 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
           {/* Kruhy mají pevné pozice od pravé hrany karty. Na tabletu se karta
               zúží, ale nadpis zůstane vycentrovaný, takže lime tečka nasedla
               přímo na tečku za „led". Dekorace proto naskakují až od `lg`. */}
-          <div className="border-club/14 pointer-events-none absolute top-17 right-15 hidden size-37.5 rounded-full border-2 lg:block" />
-          <div className="bg-lime pointer-events-none absolute top-30 right-27 hidden size-13 rounded-full opacity-55 lg:block" />
-          <div className="text-club/22 pointer-events-none absolute top-37 left-11 hidden origin-top-left -rotate-90 text-sm md:text-base font-bold tracking-[0.3em] whitespace-nowrap uppercase md:block">
+          <div className="pointer-events-none absolute top-17 right-15 hidden size-37.5 rounded-full border-2 border-club/14 lg:block" />
+          <div className="pointer-events-none absolute top-30 right-27 hidden size-13 rounded-full bg-lime opacity-55 lg:block" />
+          <div className="pointer-events-none absolute top-37 left-11 hidden origin-top-left -rotate-90 text-sm font-bold tracking-[0.3em] whitespace-nowrap text-club/22 uppercase md:block md:text-base">
             HC ČESTICE · VČHL
           </div>
-          <div className="text-club/22 pointer-events-none absolute right-11 bottom-37 hidden origin-bottom-right rotate-90 text-sm md:text-base font-bold tracking-[0.3em] whitespace-nowrap uppercase md:block">
+          <div className="pointer-events-none absolute right-11 bottom-37 hidden origin-bottom-right rotate-90 text-sm font-bold tracking-[0.3em] whitespace-nowrap text-club/22 uppercase md:block md:text-base">
             POJĎME NA LED
           </div>
 
@@ -69,7 +69,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
           <SectionTitle className="relative mx-auto mt-5 mb-2.5" size="xl">
             Pojďme na <Highlight dot>led</Highlight>
           </SectionTitle>
-          <p className="text-dim relative mx-auto mb-9 max-w-120 leading-relaxed text-pretty">
+          <p className="relative mx-auto mb-9 max-w-120 leading-relaxed text-pretty text-dim">
             {content.perex}
           </p>
 
@@ -80,11 +80,11 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
                boxu, takže shrink-to-fit `inline-flex` vyšel o jeden znak kratší
                a adresa se lámala („hccestice@seznam.c / z") i tam, kde se
                vejde. Záchranná brzda pro dlouhou adresu z CMS zůstává. */
-            className="text-ink hover:text-club relative inline-flex items-center gap-2.5 text-[clamp(1.25rem,4vw,3.625rem)] font-extrabold tracking-[-0.03em] break-words transition-colors md:gap-4.5"
+            className="relative inline-flex items-center gap-2.5 text-[clamp(1.25rem,4vw,3.625rem)] font-extrabold tracking-[-0.03em] break-words text-ink transition-colors hover:text-club md:gap-4.5"
             href={`mailto:${site.email}`}
           >
             {site.email}
-            <span className="bg-lime text-ink grid size-[0.9em] flex-none place-items-center rounded-full [&_svg]:size-[0.5em]">
+            <span className="grid size-[0.9em] flex-none place-items-center rounded-full bg-lime text-ink [&_svg]:size-[0.5em]">
               <ArrowUpRight strokeWidth={2.5} />
             </span>
           </a>

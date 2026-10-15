@@ -52,7 +52,9 @@ export const toSportsEvent = ({
     sport: 'Ice Hockey',
     startDate,
     eventStatus:
-      status === 'canceled' ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled',
+      status === 'canceled'
+        ? 'https://schema.org/EventCancelled'
+        : 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     homeTeam: team(homeName),
     awayTeam: team(awayName),

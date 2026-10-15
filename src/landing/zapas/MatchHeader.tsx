@@ -52,7 +52,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tone="white">{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-sm font-semibold text-white [overflow-wrap:anywhere] md:text-base">
+      <dd className="mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-white md:text-base">
         {children}
       </dd>
     </div>
@@ -65,8 +65,8 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
   const hasScore = match.homeScore != null && match.awayScore != null
 
   return (
-    <div className="bg-contrast relative overflow-hidden rounded-section px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
-      <div className="hatch absolute inset-0 opacity-40" />
+    <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
+      <div className="absolute inset-0 hatch opacity-40" />
       <div className="relative">
         <DotEyebrow>{kicker(match)}</DotEyebrow>
 
@@ -170,8 +170,8 @@ function ScheduledHeader({ match }: { match: MatchDetail }) {
 
 function CanceledHeader({ match }: { match: MatchDetail }) {
   return (
-    <div className="bg-contrast relative overflow-hidden rounded-section p-6 text-on-contrast md:p-8 lg:p-12">
-      <div className="hatch absolute inset-0 opacity-40" />
+    <div className="relative overflow-hidden rounded-section bg-contrast p-6 text-on-contrast md:p-8 lg:p-12">
+      <div className="absolute inset-0 hatch opacity-40" />
       <div className="relative">
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2">
           <Badge size="sm" variant="loss">

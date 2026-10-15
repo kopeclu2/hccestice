@@ -12,7 +12,9 @@ describe('ahl klient', () => {
     expect(await c.get('https://x/a')).toBe('<html>x</html>')
     const init = (fetchImpl.mock.calls[0] as unknown as [string, RequestInit])[1]
     expect((init.headers as Record<string, string>)['User-Agent']).toContain('hccestice.cz')
-    expect(onRequest).toHaveBeenCalledWith(expect.objectContaining({ url: 'https://x/a', status: 200 }))
+    expect(onRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ url: 'https://x/a', status: 200 }),
+    )
     expect(c.requestCount).toBe(1)
   })
 
@@ -22,12 +24,19 @@ describe('ahl klient', () => {
     expect(await c1.get('u')).toBe('dobre')
     expect(c1.requestCount).toBe(2)
 
-    const f2 = vi.fn().mockRejectedValueOnce(new TypeError('fetch failed')).mockResolvedValueOnce(ok('ok'))
+    const f2 = vi
+      .fn()
+      .mockRejectedValueOnce(new TypeError('fetch failed'))
+      .mockResolvedValueOnce(ok('ok'))
     expect(await createAhlClient({ fetchImpl: f2 as never, delayMs: 0 }).get('u')).toBe('ok')
 
     const f3 = vi.fn(async () => ok('', 404))
     const c3 = createAhlClient({ fetchImpl: f3 as never, delayMs: 0 })
-    await expect(c3.get('u')).rejects.toMatchObject({ name: 'AhlFetchError', status: 404, url: 'u' })
+    await expect(c3.get('u')).rejects.toMatchObject({
+      name: 'AhlFetchError',
+      status: 404,
+      url: 'u',
+    })
     expect(f3).toHaveBeenCalledTimes(1)
   })
 

@@ -1,18 +1,17 @@
 import type { Metadata } from 'next'
-
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 import { draftMode } from 'next/headers'
 import { permanentRedirect } from 'next/navigation'
+import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 import React, { cache } from 'react'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { RenderHero } from '@/heros/RenderHero'
 import { PageHeader } from '@/landing/components/PageHeader'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { generateMeta } from '@/utilities/generateMeta'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
+import configPromise from '@payload-config'
 
 /**
  * ISR pojistka. Tahle routa byla jediná prerenderovaná bez ní — čistě

@@ -29,7 +29,7 @@ export function Watermark({
     <div
       aria-hidden
       className={cn(
-        'pointer-events-none absolute -z-1 hidden font-bold leading-none tracking-tighter whitespace-nowrap select-none lg:block',
+        'pointer-events-none absolute -z-1 hidden leading-none font-bold tracking-tighter whitespace-nowrap select-none lg:block',
         outlined && 'text-stroke',
         className,
       )}

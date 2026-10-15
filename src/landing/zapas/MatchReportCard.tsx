@@ -34,7 +34,7 @@ export function MatchReportCard({
     <section
       aria-label="Reportáž a fotky"
       className={cn(
-        'border-line-soft min-w-0 overflow-hidden rounded-tile border bg-surface',
+        'min-w-0 overflow-hidden rounded-tile border border-line-soft bg-surface',
         wide && report?.photo && 'md:grid md:grid-cols-2 md:items-center',
       )}
     >
@@ -44,7 +44,7 @@ export function MatchReportCard({
             <div
               className={cn(
                 'relative aspect-[16/10] w-full overflow-hidden bg-chip',
-                wide ? 'md:h-full md:min-h-72 md:aspect-auto' : 'md:aspect-[2/1] lg:aspect-[16/10]',
+                wide ? 'md:aspect-auto md:h-full md:min-h-72' : 'md:aspect-[2/1] lg:aspect-[16/10]',
               )}
             >
               <Image
@@ -66,7 +66,7 @@ export function MatchReportCard({
               {report.title}
             </CardTitle>
             {report.excerpt && (
-              <p className="text-ink-soft mt-3 text-sm leading-relaxed text-pretty md:text-base">
+              <p className="mt-3 text-sm leading-relaxed text-pretty text-ink-soft md:text-base">
                 {report.excerpt}
               </p>
             )}

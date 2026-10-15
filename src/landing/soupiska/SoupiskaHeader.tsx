@@ -21,7 +21,7 @@ export function SoupiskaHeader({
     <PageHeader
       filters={pills.map((pill) => (
         <PillLink href={pill.href} key={pill.href} size="sm" variant="outline">
-          {pill.label} <span className="text-faint font-medium">{pill.count}</span>
+          {pill.label} <span className="font-medium text-faint">{pill.count}</span>
         </PillLink>
       ))}
       meta={summary}

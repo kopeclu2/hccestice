@@ -22,11 +22,11 @@ import { CategoryBadge } from './CategoryBadge'
 export function HeroPanel({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mt-3.5">
-      <div className="bg-club relative overflow-hidden rounded-section px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,4rem)] text-white max-md:px-4.5 max-md:py-6">
-        <Watermark className="z-0 -right-12.5 -bottom-17.5 text-watermark-4xl tracking-[-0.06em] text-white/12">
+      <div className="relative overflow-hidden rounded-section bg-club px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,4rem)] text-white max-md:px-4.5 max-md:py-6">
+        <Watermark className="-right-12.5 -bottom-17.5 z-0 text-watermark-4xl tracking-[-0.06em] text-white/12">
           HCČ
         </Watermark>
-        <div className="hatch-white pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute inset-0 hatch-white" />
 
         <div className="relative grid items-end gap-[clamp(1.75rem,4vw,4rem)] lg:grid-cols-[1.15fr_.85fr]">
           <div>
@@ -44,7 +44,7 @@ export function HeroPanel({ article }: { article: ArticleDetail }) {
             />
           </div>
 
-          <div className="bg-pine relative h-[clamp(15rem,26vw,21.25rem)] overflow-hidden rounded-thumb">
+          <div className="relative h-[clamp(15rem,26vw,21.25rem)] overflow-hidden rounded-thumb bg-pine">
             {article.photo && (
               <Image
                 alt={article.photo.alt}

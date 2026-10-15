@@ -1,15 +1,15 @@
-import type { LandingHeroBlock } from '@/payload-types'
-
 import Link from 'next/link'
 import React from 'react'
+
+import type { LandingHeroBlock } from '@/payload-types'
 
 import { PageTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
 import { PhotoTile } from '../../components/PhotoTile'
 import { PillLink } from '../../components/PillLink'
 import { HERO } from '../../content'
-import { fetchPlayed, fetchUpcoming } from '../../data/matches'
 import { uploadToPhoto } from '../../data/format'
+import { fetchPlayed, fetchUpcoming } from '../../data/matches'
 import { fetchNavCta, fetchNavigation } from '../../data/navigation'
 import type { HeroContent, LastResult, NavCta, NavItem, UpcomingMatch } from '../../types'
 
@@ -116,7 +116,7 @@ function HeroView({
                     <HeroMatchLink href={lastResult.href}>{lastResult.title}</HeroMatchLink>
                   </div>
                   <div className="mt-2.5 flex items-baseline gap-2 md:justify-end">
-                    <span className="text-lime text-[clamp(1.875rem,2.6vw,2.625rem)] font-extrabold tracking-tight tabular-nums">
+                    <span className="text-[clamp(1.875rem,2.6vw,2.625rem)] font-extrabold tracking-tight text-lime tabular-nums">
                       {lastResult.score}
                       {lastResult.suffix && ` ${lastResult.suffix}`}
                     </span>
@@ -156,7 +156,7 @@ function HeroMatchLink({ href, children }: { href: string | null; children: Reac
 function MatchLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="bg-lime shadow-ring-lime size-2 rounded-full" />
+      <span className="size-2 rounded-full bg-lime shadow-ring-lime" />
       <Eyebrow tone="lime">{label}</Eyebrow>
     </div>
   )

@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { getServerSideURL } from '@/utilities/getURL'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 
 import type { Crumb } from './Breadcrumbs'
-import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /**
  * JSON-LD (schema.org BreadcrumbList) k viditelným drobečkům.
@@ -32,9 +32,7 @@ export function BreadcrumbsJsonLd({ trail }: { trail: Crumb[] }) {
       '@type': 'ListItem',
       position: index + 1,
       name: crumb.label,
-      ...(crumb.href && index < items.length - 1
-        ? { item: `${baseUrl}${crumb.href}` }
-        : {}),
+      ...(crumb.href && index < items.length - 1 ? { item: `${baseUrl}${crumb.href}` } : {}),
     })),
   }
 

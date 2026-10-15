@@ -1,6 +1,5 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
-
 import { revalidateTag } from 'next/cache'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
 /**
  * Invaliduje `matches-sitemap.xml`, kde figurují detaily zápasů

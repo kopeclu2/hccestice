@@ -33,14 +33,14 @@ const SQUARE_CLASS: Record<Outcome, string> = {
 export function FormStrip({ form }: { form: TeamForm }) {
   return (
     <SectionShell spacing="split">
-      <div className="border-line-soft flex flex-wrap items-center gap-x-[clamp(1.125rem,3vw,2.5rem)] gap-y-3 rounded-tile border bg-surface px-5 py-4.5 md:px-6 md:py-5 lg:px-7 lg:py-5.5">
+      <div className="flex flex-wrap items-center gap-x-[clamp(1.125rem,3vw,2.5rem)] gap-y-3 rounded-tile border border-line-soft bg-surface px-5 py-4.5 md:px-6 md:py-5 lg:px-7 lg:py-5.5">
         <div className="min-w-42.5">
           <Eyebrow>Forma HC Čestice</Eyebrow>
           <CardTitle className="mt-0.75" size="xs">
             Posledních {form.squares.length}{' '}
             {form.squares.length === 1 ? 'zápas' : form.squares.length <= 4 ? 'zápasy' : 'zápasů'}
           </CardTitle>
-          <div className="text-faint mt-0.75 text-xs font-medium">{form.summary}</div>
+          <div className="mt-0.75 text-xs font-medium text-faint">{form.summary}</div>
         </div>
 
         <div className="flex-1" />
@@ -61,7 +61,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
                     aria-label={`${square.score}${square.suffix ? ` ${square.suffix}` : ''}, ${square.stage}, ${square.title}, ${square.dateLabel} — detail zápasu`}
                     className={cn(
                       squareClass,
-                      'focus-visible:outline-club transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2',
+                      'transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-club',
                     )}
                     href={square.href}
                   >
@@ -74,7 +74,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
                 <div
                   aria-hidden={square.href ? true : undefined}
                   className={cn(
-                    'bg-contrast pointer-events-none absolute bottom-[calc(100%+0.5rem)] z-5 translate-y-1 rounded-xl px-3.5 py-2 text-center whitespace-nowrap text-on-contrast opacity-0 shadow-tooltip transition-[opacity,transform] duration-150 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100',
+                    'pointer-events-none absolute bottom-[calc(100%+0.5rem)] z-5 translate-y-1 rounded-xl bg-contrast px-3.5 py-2 text-center whitespace-nowrap text-on-contrast opacity-0 shadow-tooltip transition-[opacity,transform] duration-150 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100',
                     alignRight ? 'right-0' : 'left-1/2 -translate-x-1/2',
                   )}
                 >

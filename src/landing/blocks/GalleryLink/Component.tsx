@@ -1,10 +1,9 @@
-import type { GalleryLinkBlock } from '@/payload-types'
-
 import { ArrowUpRight, Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import type { GalleryLinkBlock } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { CardTitle } from '../../components/Heading'
@@ -45,7 +44,7 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
     <SectionShell>
       <Reveal>
         <Link
-          className="border-line-soft hover:border-club group relative flex flex-col overflow-hidden rounded-card border bg-surface transition-colors sm:flex-row sm:items-center sm:gap-4 sm:p-3 md:p-4"
+          className="group relative flex flex-col overflow-hidden rounded-card border border-line-soft bg-surface transition-colors hover:border-club sm:flex-row sm:items-center sm:gap-4 sm:p-3 md:p-4"
           href={card.href!}
         >
           {/* Pevná výška na `sm`+, ne `aspect-[4/3]`: karta je tam flex řádek
@@ -55,7 +54,7 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
               se posunul dolů o desítky pixelů a nahoře probleskovalo pozadí
               `bg-pine`. Na mobilu (`flex-col`, bez `items-center`) je to
               v pořádku, `aspect-video` tam zůstává. */}
-          <div className="bg-pine relative aspect-video flex-none overflow-hidden sm:aspect-auto sm:h-24 sm:w-32 sm:rounded-panel md:h-30 md:w-40">
+          <div className="relative aspect-video flex-none overflow-hidden bg-pine sm:aspect-auto sm:h-24 sm:w-32 sm:rounded-panel md:h-30 md:w-40">
             {card.cover && (
               <Image
                 alt={card.cover.alt}
@@ -71,13 +70,13 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
             <CardTitle className="line-clamp-2" size="xs">
               {label || card.title}
             </CardTitle>
-            <div className="text-faint mt-1.5 flex items-center gap-1.5 text-xs font-medium">
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-faint">
               <ImageIcon size={13} strokeWidth={2.4} />
               {countLabel(card.photoCount, ['fotka', 'fotky', 'fotek'])}
             </div>
           </div>
 
-          <span className="bg-lime text-ink group-hover:bg-club absolute top-3 right-3 grid size-9 flex-none place-items-center rounded-full transition-colors group-hover:text-white sm:static [&_svg]:size-4">
+          <span className="absolute top-3 right-3 grid size-9 flex-none place-items-center rounded-full bg-lime text-ink transition-colors group-hover:bg-club group-hover:text-white sm:static [&_svg]:size-4">
             <ArrowUpRight strokeWidth={2.5} />
           </span>
         </Link>

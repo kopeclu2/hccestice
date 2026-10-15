@@ -116,7 +116,7 @@ export function StandingsPanel({
           Tabulka VČHL se naplní, jakmile odehrajeme první zápasy sezóny.
         </EmptyState>
       ) : (
-        <div className="border-line-soft mt-5 rounded-tile border bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
+        <div className="mt-5 rounded-tile border border-line-soft bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
           <Eyebrow as="div" tone="dark">
             <div className={cn('grid px-2.5 py-2.5 md:py-2.75 lg:py-3', gridCols)}>
               <span>P</span>
@@ -175,24 +175,24 @@ export function StandingsPanel({
                 >
                   {row.team}
                 </span>
-                <span className="text-faint text-center text-sm font-medium tabular-nums">
+                <span className="text-center text-sm font-medium text-faint tabular-nums">
                   {row.games}
                 </span>
                 {extended && (
                   <>
-                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
                       {row.wins ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
                       {row.otWins ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
                       {row.otLosses ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
                       {row.losses ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
                       {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
                     </span>
                   </>

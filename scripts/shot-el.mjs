@@ -5,9 +5,10 @@
 // Doplněk k `shot.mjs`: ten fotí celé stránky po obrazovkách, tohle izoluje
 // jednu sekci, aby se dala porovnat mezi šířkami vedle sebe.
 
-import { chromium } from 'playwright'
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
+
+import { chromium } from 'playwright'
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000'
 

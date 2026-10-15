@@ -1,5 +1,6 @@
 import { AhlParseError } from '../errors'
 import type { AhlStandingRow } from '../types'
+
 import { paramFromHref, parseDocument, requireInt, text } from './dom'
 
 const PAGE = 'tabulky'

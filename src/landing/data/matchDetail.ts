@@ -1,9 +1,9 @@
-import type { Match, Post } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
+
+import type { Match, Post } from '@/payload-types'
+import configPromise from '@payload-config'
 
 import type { MatchDetail } from '../types'
 

@@ -1,6 +1,6 @@
-import type { LandingHeroModernBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { LandingHeroModernBlock } from '@/payload-types'
 
 import { PageTitle } from '../../components/Heading'
 import { PhotoTile } from '../../components/PhotoTile'
@@ -79,7 +79,7 @@ function HeroModernView({
                 {content.cta.label}
               </PillLink>
             )}
-            <p className="text-shadow-photo mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-white/92">
+            <p className="mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-white/92 text-shadow-photo">
               {content.intro}
             </p>
             {/* dvouřádkový headline: základ regular (PageTitle weight="normal"),
@@ -87,7 +87,7 @@ function HeroModernView({
                 tečku kreslí handoff v lime jako součást kompozice, ne textu.
                 Sousedí přímo s textem: JSX by z odřádkování udělalo mezeru,
                 proto je výraz i span na jednom řádku. */}
-            <PageTitle className="text-shadow-photo text-white" size="hero-sm" weight="normal">
+            <PageTitle className="text-white text-shadow-photo" size="hero-sm" weight="normal">
               <span className="block">{content.headlineLight}</span>
               <span className="block font-bold">
                 {content.headlineBold.replace(/\s*[.!]$/, '')}

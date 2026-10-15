@@ -1,6 +1,6 @@
-import type { RosterWidgetBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { RosterWidgetBlock } from '@/payload-types'
 
 import { CardTitle } from '../../components/Heading'
 import { Highlight } from '../../components/Kicker'
@@ -47,9 +47,9 @@ export function RosterWidgetView({
                   </TileBadge>
                 )}
               </PhotoTile>
-              <div className="mt-2 text-sm md:text-base font-bold">{player.name}</div>
+              <div className="mt-2 text-sm font-bold md:text-base">{player.name}</div>
               {player.position && (
-                <div className="text-faint text-xs font-medium">
+                <div className="text-xs font-medium text-faint">
                   {POSITION_LABEL[player.position] ?? player.position}
                 </div>
               )}

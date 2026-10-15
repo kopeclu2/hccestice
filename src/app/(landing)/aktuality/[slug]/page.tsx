@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
-
 import { draftMode } from 'next/headers'
 import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { PillLink } from '@/landing/components/PillLink'
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { ArticleBody } from '@/landing/article/ArticleBody'
 import { ArticleRelated } from '@/landing/article/ArticleRelated'
 import { AuthorCard } from '@/landing/article/AuthorCard'
-import { TagRow } from '@/landing/article/TagRow'
 import { RenderArticleHero } from '@/landing/article/hero/RenderArticleHero'
+import { TagRow } from '@/landing/article/TagRow'
+import { PillLink } from '@/landing/components/PillLink'
+import { SubpageShell } from '@/landing/components/SubpageShell'
+import { fetchMatchSlugForPost } from '@/landing/data/matchDetail'
 import {
   fetchDefaultPostPhoto,
   fetchPostBySlug,
@@ -19,14 +19,12 @@ import {
   fetchRelatedPostCards,
   toArticleDetail,
 } from '@/landing/data/posts'
-import { fetchMatchSlugForPost } from '@/landing/data/matchDetail'
 import { fetchSiteConfig } from '@/landing/data/site'
-import { generateMeta } from '@/utilities/generateMeta'
-import { getServerSideURL } from '@/utilities/getURL'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-
 import type { ArticleDetail } from '@/landing/types'
 import type { Post } from '@/payload-types'
+import { generateMeta } from '@/utilities/generateMeta'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getServerSideURL } from '@/utilities/getURL'
 import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /** ISR pojistka; publikace revaliduje okamžitě (hook `revalidatePost`). */
@@ -119,11 +117,11 @@ function StructuredData({
     '@type': 'NewsArticle',
     headline: article.title,
     ...(article.excerpt ? { description: article.excerpt } : {}),
-    ...(article.photo ? { image: [`${baseUrl}${getMediaUrl(article.photo.url, article.photo.updatedAt)}`] } : {}),
-    ...(publishedAt ? { datePublished: publishedAt } : {}),
-    ...(post.updatedAt || publishedAt
-      ? { dateModified: post.updatedAt ?? publishedAt }
+    ...(article.photo
+      ? { image: [`${baseUrl}${getMediaUrl(article.photo.url, article.photo.updatedAt)}`] }
       : {}),
+    ...(publishedAt ? { datePublished: publishedAt } : {}),
+    ...(post.updatedAt || publishedAt ? { dateModified: post.updatedAt ?? publishedAt } : {}),
     author: { '@type': 'Person', name: article.author.name },
     publisher: {
       '@type': 'SportsTeam',

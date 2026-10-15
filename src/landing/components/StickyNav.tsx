@@ -51,7 +51,7 @@ export function StickyNav({ items, cta }: { items: NavItem[]; cta: NavCta }) {
     <div
       aria-hidden={!visible}
       className={cn(
-        'border-line fixed inset-x-0 top-0 z-30 border-b bg-surface/95 shadow-tile backdrop-blur-lg transition-all duration-300',
+        'fixed inset-x-0 top-0 z-30 border-b border-line bg-surface/95 shadow-tile backdrop-blur-lg transition-all duration-300',
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-full opacity-0',
       )}
       // Skrytá lišta byla jen `opacity-0`/`pointer-events-none` — vizuálně

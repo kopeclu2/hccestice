@@ -1,5 +1,4 @@
 import type { VariantProps } from 'class-variance-authority'
-
 import { cva } from 'class-variance-authority'
 import React from 'react'
 
@@ -24,23 +23,23 @@ import { cn } from '@/utilities/ui'
 const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowrap', {
   variants: {
     variant: {
-      lime: 'bg-lime text-ink font-bold',
-      chip: 'bg-chip text-ink font-bold',
-      muted: 'bg-chip text-ink-soft font-bold',
-      loss: 'bg-loss text-loss-ink font-bold',
+      lime: 'bg-lime font-bold text-ink',
+      chip: 'bg-chip font-bold text-ink',
+      muted: 'bg-chip font-bold text-ink-soft',
+      loss: 'bg-loss font-bold text-loss-ink',
       split:
-        'bg-[linear-gradient(90deg,var(--color-loss)_50%,var(--color-win)_50%)] text-loss-ink font-bold',
-      club: 'bg-club text-white font-bold',
-      outline: 'border-line text-ink-soft border font-semibold',
+        'bg-[linear-gradient(90deg,var(--color-loss)_50%,var(--color-win)_50%)] font-bold text-loss-ink',
+      club: 'bg-club font-bold text-white',
+      outline: 'border border-line font-semibold text-ink-soft',
       /** Bílý štítek na tmavé ploše / v zelené kartě. */
-      light: 'bg-surface text-ink font-bold',
+      light: 'bg-surface font-bold text-ink',
       /**
        * Průsvitný tmavý štítek přes fotku (počet fotek v galerii, třetiny
        * u výsledku). Musí být čitelný na libovolném snímku, proto blur.
        */
-      glass: 'bg-pine-deep/62 text-white font-semibold backdrop-blur-[0.5rem]',
+      glass: 'bg-pine-deep/62 font-semibold text-white backdrop-blur-[0.5rem]',
       /** Obrys na tmavé ploše — protipól `outline`. */
-      glassOutline: 'border-white/40 text-white border font-semibold',
+      glassOutline: 'border border-white/40 font-semibold text-white',
     },
     size: {
       /** Drobný štítek v hustých výpisech (11px text). */

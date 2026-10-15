@@ -49,7 +49,7 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
         {photos.slice(0, visibleCount).map(({ photo }, index) => (
           <button
             aria-label={`Otevřít fotku ${index + 1}`}
-            className="bg-pine relative mb-2.5 block w-full cursor-zoom-in overflow-hidden rounded-thumb break-inside-avoid md:mb-4"
+            className="relative mb-2.5 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-thumb bg-pine md:mb-4"
             key={`${photo.url}-${index}`}
             onClick={() => setOpenIndex(index)}
             style={{ aspectRatio: String(photo.width / photo.height) }}

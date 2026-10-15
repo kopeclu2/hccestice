@@ -1,11 +1,10 @@
-import type { Season } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
+import type { Season } from '@/payload-types'
+import configPromise from '@payload-config'
 
 import { STANDINGS } from '../content'
 import type { StandingsContent, StatsContent } from '../types'

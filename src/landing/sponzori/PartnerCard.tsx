@@ -97,7 +97,7 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
   ]
 
   return (
-    <div className="border-line-soft hover:border-club rounded-badge flex h-full gap-3.5 border bg-surface p-4 transition-colors sm:flex-col sm:gap-3 md:p-4.5">
+    <div className="flex h-full gap-3.5 rounded-badge border border-line-soft bg-surface p-4 transition-colors hover:border-club sm:flex-col sm:gap-3 md:p-4.5">
       <div className="grid h-20 w-28 flex-none place-items-center px-2 sm:w-full">
         {sponsor.logo ? (
           <Image
@@ -111,7 +111,7 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
         ) : (
           // Obrysový monogram — dekorativní placeholder bez loga, stejně jako
           // watermarky necháváme velikost beze změny.
-          <Numeral aria-hidden className="text-club/35 text-stroke select-none" size="lg">
+          <Numeral aria-hidden className="text-club/35 select-none text-stroke" size="lg">
             {monogram(sponsor.name)}
           </Numeral>
         )}
@@ -123,10 +123,10 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
             {sponsor.name}
           </CardTitle>
           {sponsor.person && (
-            <div className="text-ink-soft mt-1 text-xs font-semibold">{sponsor.person}</div>
+            <div className="mt-1 text-xs font-semibold text-ink-soft">{sponsor.person}</div>
           )}
           {sponsor.address && (
-            <div className="text-dim mt-0.75 text-xs leading-[1.45] font-medium text-pretty">
+            <div className="mt-0.75 text-xs leading-[1.45] font-medium text-pretty text-dim">
               {sponsor.address}
             </div>
           )}
@@ -137,7 +137,7 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
             {links.map(({ external, href, Icon, key, label }) => (
               <a
                 aria-label={label}
-                className="border-line-soft text-club-dark hover:bg-club hover:border-club hover:text-on-contrast grid size-10 flex-none place-items-center rounded-full border transition-colors md:size-9"
+                className="grid size-10 flex-none place-items-center rounded-full border border-line-soft text-club-dark transition-colors hover:border-club hover:bg-club hover:text-on-contrast md:size-9"
                 href={href}
                 key={key}
                 rel={external ? 'noreferrer' : undefined}

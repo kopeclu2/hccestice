@@ -51,12 +51,12 @@ export function MatchWhen({
       className="col-span-2 flex items-baseline gap-x-2 tabular-nums md:col-span-1 md:flex-col md:gap-0.5"
       dateTime={dateTime}
     >
-      <span className="text-faint text-xs font-semibold tracking-wider uppercase">{weekday}</span>
+      <span className="text-xs font-semibold tracking-wider text-faint uppercase">{weekday}</span>
       <span className="text-base leading-tight font-bold tracking-[-0.01em] md:text-lg">
         {date}
       </span>
       {time && (
-        <span className="text-ink-soft text-sm font-semibold">
+        <span className="text-sm font-semibold text-ink-soft">
           <span aria-hidden className="text-faint md:hidden">
             ·{' '}
           </span>

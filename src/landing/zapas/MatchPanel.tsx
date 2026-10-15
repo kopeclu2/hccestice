@@ -43,7 +43,7 @@ export function MatchPanel({
     <section
       aria-labelledby={id}
       className={cn(
-        'border-line-soft min-w-0 rounded-tile border bg-surface p-4.5 md:p-7 lg:p-9',
+        'min-w-0 rounded-tile border border-line-soft bg-surface p-4.5 md:p-7 lg:p-9',
         className,
       )}
     >

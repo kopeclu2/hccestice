@@ -7,9 +7,9 @@
  * bun --env-file=.env migration/seed-milestones.ts
  */
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
 
 import { HISTORY_PAGE } from '../src/landing/content'
+import config from '../src/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

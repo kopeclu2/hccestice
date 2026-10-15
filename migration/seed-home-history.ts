@@ -8,9 +8,9 @@
  * bun --env-file=.env migration/seed-home-history.ts > /tmp/seed-home-history.log 2>&1
  */
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
 
 import { HISTORY } from '../src/landing/content'
+import config from '../src/payload.config'
 
 const payload = await getPayload({ config })
 

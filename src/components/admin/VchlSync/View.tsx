@@ -1,7 +1,7 @@
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter } from '@payloadcms/ui'
-import type { AdminViewServerProps } from 'payload'
 import { redirect } from 'next/navigation'
+import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
 import { VchlSyncPanel } from './Panel'

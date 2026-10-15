@@ -23,7 +23,10 @@ const MAX_ATTEMPTS = 1000
  * Najde první volný slug z řady `base`, `base-2`, `base-3`…
  * `isTaken` je injektované, aby šla logika testovat bez databáze.
  */
-export async function uniqueSlug(base: string, isTaken: (slug: string) => Promise<boolean>): Promise<string> {
+export async function uniqueSlug(
+  base: string,
+  isTaken: (slug: string) => Promise<boolean>,
+): Promise<string> {
   for (let n = 1; n <= MAX_ATTEMPTS; n++) {
     const candidate = withSlugSuffix(base, n)
     if (!(await isTaken(candidate))) return candidate

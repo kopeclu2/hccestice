@@ -2,14 +2,15 @@ import { Newspaper } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { cn } from '@/utilities/ui'
+
+import type { PostCard } from '../types'
 
 import { Badge } from './Badge'
 import { CardCta, CardShell } from './CardGrid'
 import { CardTitle } from './Heading'
 import { PatternBackground } from './PatternBackground'
-import type { PostCard } from '../types'
 
 /**
  * Karta článku — náhled, štítek, datum, titulek a úryvek textu.
@@ -73,7 +74,7 @@ export function ArticleCard({
       {hasMedia && (
         <div
           className={cn(
-            'bg-pine relative aspect-video overflow-hidden rounded-badge',
+            'relative aspect-video overflow-hidden rounded-badge bg-pine',
             featured ? 'lg:w-[55%] lg:shrink-0' : 'aspect-[2/1]',
           )}
         >
@@ -89,11 +90,11 @@ export function ArticleCard({
             /* Bez fotky: vzor v klubové zelené místo prázdného tmavého pruhu.
                `bg-chip`, ne `bg-pine` — plocha bez fotky se nemá tvářit jako
                fotka, která se nenačetla. */
-            <div className="bg-chip absolute inset-0 grid place-items-center">
+            <div className="absolute inset-0 grid place-items-center bg-chip">
               <PatternBackground fade="center" tone="club" variant="circuit" />
               <span
                 className={cn(
-                  'text-club/40 relative',
+                  'relative text-club/40',
                   featured ? '[&_svg]:size-14' : '[&_svg]:size-9',
                 )}
               >
@@ -115,7 +116,7 @@ export function ArticleCard({
           <Badge size="xs" variant="lime">
             {card.tag}
           </Badge>
-          <div className="text-faint text-xs font-semibold">{card.dateLabel}</div>
+          <div className="text-xs font-semibold text-faint">{card.dateLabel}</div>
         </div>
         {/* `min-h-[2lh]` drží u varianty s náhledem dva řádky i pro krátký
             titulek: bez toho začíná úryvek na každé kartě v jiné výšce.
@@ -134,7 +135,7 @@ export function ArticleCard({
         {(hasMedia || card.excerpt) && (
           <p
             className={cn(
-              'text-faint mt-2.5 text-sm md:text-base leading-[1.5] text-pretty',
+              'mt-2.5 text-sm leading-[1.5] text-pretty text-faint md:text-base',
               /* Featured karta stojí ve svém řádku sama, takže se nemá k čemu
                  zarovnávat — `min-h` by pod krátkým perexem udělalo prázdno. */
               featured
@@ -151,7 +152,7 @@ export function ArticleCard({
             úryvkem. S náhledem linku nepotřebuje — kartu drží pohromadě fotka. */}
         <CardCta
           className={cn(
-            hasMedia ? 'pt-3' : 'border-line-soft border-t pt-3.5',
+            hasMedia ? 'pt-3' : 'border-t border-line-soft pt-3.5',
             /* `mt-auto` z `CardCta` drží odkaz u spodní hrany karty. U featured
                karty je text od `lg` vedle fotky a vertikálně vystředěný, takže
                by odkaz zůstal sám dole s ~180px prázdna nad sebou. */

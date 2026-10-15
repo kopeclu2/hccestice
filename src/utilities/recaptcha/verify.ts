@@ -67,7 +67,10 @@ export async function verifyRecaptchaToken({
   }
 
   if (!result.success) {
-    return { ok: false, reason: `odmítnuto: ${result['error-codes']?.join(', ') ?? 'neznámý důvod'}` }
+    return {
+      ok: false,
+      reason: `odmítnuto: ${result['error-codes']?.join(', ') ?? 'neznámý důvod'}`,
+    }
   }
   if (result.action !== action) {
     return { ok: false, reason: `nesouhlasí akce (${result.action} ≠ ${action})` }

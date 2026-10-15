@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
+
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -90,7 +91,8 @@ describe('ahl: detail zápasu - okrajové případy', () => {
   })
 })
 
-const sumMinutes = (ps: { minutes: number | null }[]) => ps.reduce((n, p) => n + (p.minutes ?? 0), 0)
+const sumMinutes = (ps: { minutes: number | null }[]) =>
+  ps.reduce((n, p) => n + (p.minutes ?? 0), 0)
 const sumPim = (rows: { pim: number }[]) => rows.reduce((n, r) => n + r.pim, 0)
 
 describe('ahl: tresty a statistika zápasu', () => {
@@ -180,8 +182,19 @@ describe('ahl: tresty a statistika zápasu', () => {
         46616,
       )
       expect(d.penalties).toHaveLength(15)
-      expect(d.penalties![0]).toMatchObject({ minutes: 5, kind: 'Větší trest', reason: 'Napadení', side: 'home' })
-      expect(d.penalties![1]).toMatchObject({ code: null, minutes: null, kind: 'Osobní', reason: null, side: 'home' })
+      expect(d.penalties![0]).toMatchObject({
+        minutes: 5,
+        kind: 'Větší trest',
+        reason: 'Napadení',
+        side: 'home',
+      })
+      expect(d.penalties![1]).toMatchObject({
+        code: null,
+        minutes: null,
+        kind: 'Osobní',
+        reason: null,
+        side: 'home',
+      })
     })
 
     it('písmenný kód OK je trest do konce utkání za 20 minut, neznámý kód délku nemá', () => {
@@ -192,12 +205,25 @@ describe('ahl: tresty a statistika zápasu', () => {
         ),
         46616,
       )
-      expect(d.penalties![0]).toMatchObject({ code: 'OK', minutes: 20, kind: 'Trest do konce utkání', side: 'home' })
-      expect(d.penalties![1]).toMatchObject({ code: 'XX', minutes: null, kind: 'Něco', side: 'home' })
+      expect(d.penalties![0]).toMatchObject({
+        code: 'OK',
+        minutes: 20,
+        kind: 'Trest do konce utkání',
+        side: 'home',
+      })
+      expect(d.penalties![1]).toMatchObject({
+        code: 'XX',
+        minutes: null,
+        kind: 'Něco',
+        side: 'home',
+      })
     })
 
     it('řádek bez hráče dostane stranu z mapy kódů', () => {
-      const d = parseMatchDetail(withRows(row('CES', '3:00', '', '2 - Menší trest', 'Střídání')), 46616)
+      const d = parseMatchDetail(
+        withRows(row('CES', '3:00', '', '2 - Menší trest', 'Střídání')),
+        46616,
+      )
       expect(d.penalties![0]).toMatchObject({ player: null, side: 'home', teamCode: 'CES' })
     })
 
@@ -224,11 +250,17 @@ describe('ahl: tresty a statistika zápasu', () => {
     }
 
     it('neznámý kód bez hráče zahodí jen tresty', () => {
-      expectPenaltiesDropped(withRows(row('XYZ', '5:00', '', '2 - Menší trest')), /nelze určit stranu \(XYZ\)/)
+      expectPenaltiesDropped(
+        withRows(row('XYZ', '5:00', '', '2 - Menší trest')),
+        /nelze určit stranu \(XYZ\)/,
+      )
     })
 
     it('nečitelný čas zahodí jen tresty', () => {
-      expectPenaltiesDropped(withRows(row('CES', 'x', '', '2 - Menší trest')), /nečitelný řádek trestu/)
+      expectPenaltiesDropped(
+        withRows(row('CES', 'x', '', '2 - Menší trest')),
+        /nečitelný řádek trestu/,
+      )
     })
 
     it('změněné záhlaví zahodí jen tresty', () => {
@@ -244,10 +276,17 @@ describe('ahl: tresty a statistika zápasu', () => {
 
     it('řádek bez odkazu nese jméno v playerText, prázdná buňka ne', () => {
       const d = parseMatchDetail(
-        withRows(row('CES', '3:00', 'Novák, Petr', '2 - Menší trest') + row('CES', '4:00', '', '2 - Menší trest')),
+        withRows(
+          row('CES', '3:00', 'Novák, Petr', '2 - Menší trest') +
+            row('CES', '4:00', '', '2 - Menší trest'),
+        ),
         46616,
       )
-      expect(d.penalties![0]).toMatchObject({ player: null, playerText: 'Petr Novák', side: 'home' })
+      expect(d.penalties![0]).toMatchObject({
+        player: null,
+        playerText: 'Petr Novák',
+        side: 'home',
+      })
       expect(d.penalties![1]).toMatchObject({ player: null, playerText: null })
       // s odkazem jméno nese `player`
       expect(detail.penalties![1]).toMatchObject({ playerText: null })
@@ -271,7 +310,8 @@ describe('ahl: tresty a statistika zápasu', () => {
       const tcap = oneGoal.indexOf('Tresty</caption>')
       const tbody = oneGoal.indexOf('<tbody>', tcap) + '<tbody>'.length
       const tend = oneGoal.indexOf('</tbody>', tbody)
-      const html = oneGoal.slice(0, tbody) + row('ZH', '6:00', '', '2 - Menší trest') + oneGoal.slice(tend)
+      const html =
+        oneGoal.slice(0, tbody) + row('ZH', '6:00', '', '2 - Menší trest') + oneGoal.slice(tend)
       const d = parseMatchDetail(html, 46616)
       expect(d.goals).toHaveLength(1)
       expect(d.penalties).toHaveLength(1)
@@ -343,10 +383,14 @@ describe('ahl: výsledky', () => {
   })
   it('chyby', () => {
     expect(() => parseMatchList('', { seasonStartYear: 2026 })).toThrow(AhlParseError)
-    expect(() => parseMatchList(fx('tabulky-1185.html'), { seasonStartYear: 2026 })).toThrow(AhlParseError)
+    expect(() => parseMatchList(fx('tabulky-1185.html'), { seasonStartYear: 2026 })).toThrow(
+      AhlParseError,
+    )
   })
   it('špatný rok sezóny odhalí kontrola dne v týdnu', () => {
-    expect(() => parseMatchList(fx('vysledky-1185.html'), { seasonStartYear: 2025 })).toThrow(AhlParseError)
+    expect(() => parseMatchList(fx('vysledky-1185.html'), { seasonStartYear: 2025 })).toThrow(
+      AhlParseError,
+    )
   })
 })
 
@@ -377,7 +421,15 @@ describe('ahl: statistiky a ročník', () => {
   it('Sajdl 6 G, 5 A', () => {
     const stats = parsePlayerStats(fx('statistiky-10181.html'))
     const s = stats.find((p) => p.playerId === 38010)!
-    expect(s).toMatchObject({ name: 'Lukáš Sajdl', games: 2, goals: 6, assists: 5, points: 11, pim: 2, goalie: false })
+    expect(s).toMatchObject({
+      name: 'Lukáš Sajdl',
+      games: 2,
+      goals: 6,
+      assists: 5,
+      points: 11,
+      pim: 2,
+      goalie: false,
+    })
     expect(stats.filter((p) => p.goalie)).toHaveLength(3)
     expect(stats).toHaveLength(27)
     expect(() => parsePlayerStats('')).toThrow(AhlParseError)
@@ -411,7 +463,8 @@ describe('ahl: jména', () => {
     expect(displayName('Sajdl Lukáš')).toBe('Lukáš Sajdl')
   })
   it('isOurTeam', () => {
-    for (const n of ['Čestice', 'HC Čestice', 'CES', 'cestice', 'hc  CESTICE']) expect(isOurTeam(n)).toBe(true)
+    for (const n of ['Čestice', 'HC Čestice', 'CES', 'cestice', 'hc  CESTICE'])
+      expect(isOurTeam(n)).toBe(true)
     for (const n of ['Pardubice', 'Litomyšl B', '']) expect(isOurTeam(n)).toBe(false)
   })
 })

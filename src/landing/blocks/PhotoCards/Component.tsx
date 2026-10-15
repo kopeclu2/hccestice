@@ -1,7 +1,6 @@
-import type { PhotoCardsBlockType } from '@/payload-types'
-
 import React from 'react'
 
+import type { PhotoCardsBlockType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { PhotoTile, TileBadge } from '../../components/PhotoTile'
@@ -58,7 +57,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
                 </TileBadge>
               )}
               {card.caption && (
-                <div className="absolute inset-x-4 bottom-4 text-sm md:text-base leading-normal font-medium text-white">
+                <div className="absolute inset-x-4 bottom-4 text-sm leading-normal font-medium text-white md:text-base">
                   {card.caption}
                 </div>
               )}

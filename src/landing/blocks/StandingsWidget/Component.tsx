@@ -1,6 +1,6 @@
-import type { StandingsWidgetBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { StandingsWidgetBlock } from '@/payload-types'
 
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'

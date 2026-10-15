@@ -1,8 +1,7 @@
-import type { CtaBannerBlockType } from '@/payload-types'
-
 import Image from 'next/image'
 import React from 'react'
 
+import type { CtaBannerBlockType } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { cn } from '@/utilities/ui'
 

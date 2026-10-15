@@ -24,12 +24,12 @@ export function stripClubPrefix(folded: string): string {
  * backfillu jde smazat.
  */
 const LEGACY_ALIASES: Record<string, string> = {
-  'aloha': 'HC Aloha Lanškroun',
+  aloha: 'HC Aloha Lanškroun',
   'aloha lanskroun': 'HC Aloha Lanškroun',
   'hc aloha lanskroun': 'HC Aloha Lanškroun',
   'baroni opocno': 'HC Opočno',
   'hc baroni opocno': 'HC Opočno',
-  'rebels': 'Rebels Polička',
+  rebels: 'Rebels Polička',
   'rebels policka': 'Rebels Polička',
   'hc stavoblock rebels policka': 'Rebels Polička',
   'hc spartak policka b': 'HC Polička B',

@@ -1,6 +1,5 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
-
 import { revalidateTag } from 'next/cache'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
 /**
  * Invaliduje tagované feedy, ve kterých fotoalba figurují —
@@ -26,10 +25,7 @@ const revalidate = (context: Record<string, unknown>) => {
   revalidateTag('llms-txt', 'max')
 }
 
-export const revalidateGalleryFeeds: CollectionAfterChangeHook = ({
-  doc,
-  req: { context },
-}) => {
+export const revalidateGalleryFeeds: CollectionAfterChangeHook = ({ doc, req: { context } }) => {
   revalidate(context)
   return doc
 }

@@ -1,5 +1,6 @@
-import { PreviewSearchParams } from '@/app/(landing)/next/preview/route'
 import { PayloadRequest, CollectionSlug } from 'payload'
+
+import { PreviewSearchParams } from '@/app/(landing)/next/preview/route'
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   posts: '/aktuality',

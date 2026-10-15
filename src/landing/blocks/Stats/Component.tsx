@@ -1,6 +1,7 @@
-import type { LandingStatsBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { LandingStatsBlock } from '@/payload-types'
+import { cn } from '@/utilities/ui'
 
 import { SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
@@ -11,7 +12,6 @@ import { SEASON_STATS } from '../../content'
 import { relId } from '../../data/format'
 import { fetchAutoStats } from '../../data/seasons'
 import type { StatsContent } from '../../types'
-import { cn } from '@/utilities/ui'
 
 /**
  * Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah —

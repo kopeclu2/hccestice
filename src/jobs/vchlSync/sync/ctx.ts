@@ -29,13 +29,23 @@ export type SyncContext = {
   sentryEventIds: string[]
   warn(w: VchlWarning): void
   recordDiff(e: VchlDiffEntry): void
-  create(collection: string, data: Record<string, unknown>): Promise<{ id: number } & Record<string, unknown>>
-  update(collection: string, id: number, data: Record<string, unknown>): Promise<Record<string, unknown>>
+  create(
+    collection: string,
+    data: Record<string, unknown>,
+  ): Promise<{ id: number } & Record<string, unknown>>
+  update(
+    collection: string,
+    id: number,
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>>
   /** Zachytí chybu do Sentry a poznamená ji; běh pokračuje (status `partial`). */
   partialFailure(err: unknown, stage: VchlStage, where?: Parameters<typeof captureFailure>[3]): void
 }
 
-export type SyncContextInit = Pick<SyncContext, 'payload' | 'client' | 'trigger' | 'settings' | 'now' | 'teamId'> & {
+export type SyncContextInit = Pick<
+  SyncContext,
+  'payload' | 'client' | 'trigger' | 'settings' | 'now' | 'teamId'
+> & {
   changes: VchlChanges
 }
 

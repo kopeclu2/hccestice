@@ -1,9 +1,9 @@
-import type { Match, Media } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload, type Payload } from 'payload'
 import { cache } from 'react'
+
+import type { Match, Media } from '@/payload-types'
+import configPromise from '@payload-config'
 
 import type {
   FixtureCard,

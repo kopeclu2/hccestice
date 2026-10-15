@@ -1,6 +1,5 @@
-import type { Metadata } from 'next'
-
 import { X } from 'lucide-react'
+import type { Metadata } from 'next'
 import React from 'react'
 
 import { EmptyState } from '@/landing/components/EmptyState'
@@ -31,16 +30,16 @@ export default function EmptyStatesPage() {
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Prázdné stavy
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
-          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-sm">EmptyState</code> —
+        <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
+          Komponenta <code className="rounded bg-chip px-1.5 font-mono text-sm">EmptyState</code> —
           vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
         </p>
       </header>
 
       <SectionShell spacing="section">
-        <div className="border-line border-b pb-5">
+        <div className="border-b border-line pb-5">
           <SectionTitle>Varianty</SectionTitle>
-          <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">
+          <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">
             Živé komponenty, ne obrázky. Znění textů a cesty dál si skládá každý výpis sám — závisí
             na tom, jestli je zapnutý filtr.
           </p>
@@ -144,7 +143,7 @@ function Demo({ caption, children }: { caption: string; children: React.ReactNod
   return (
     <figure className="m-0">
       {children}
-      <figcaption className="text-faint mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] uppercase">
+      <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] text-faint uppercase">
         {caption}
       </figcaption>
     </figure>

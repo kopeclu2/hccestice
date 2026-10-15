@@ -58,7 +58,7 @@ const initials = (name: string): string =>
  */
 export function PlayerTile({ card }: { card: SoupiskaCard }) {
   return (
-    <div className="border-line-soft rounded-panel relative aspect-[1/1.18] overflow-hidden border bg-surface">
+    <div className="relative aspect-[1/1.18] overflow-hidden rounded-panel border border-line-soft bg-surface">
       {card.photo ? (
         <div className="absolute inset-x-0 top-0 h-4/5 [mask-image:linear-gradient(180deg,#000_40%,transparent_84%)] md:[mask-image:linear-gradient(180deg,#000_58%,transparent_97%)]">
           <Image
@@ -73,10 +73,10 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
         </div>
       ) : (
         <>
-          <div className="hatch absolute inset-0 [mask-image:linear-gradient(180deg,#000,transparent_70%)]" />
+          <div className="absolute inset-0 hatch [mask-image:linear-gradient(180deg,#000,transparent_70%)]" />
           <div
             aria-hidden
-            className="text-club/35 text-stroke absolute inset-x-0 top-[30%] -translate-y-1/2 text-center md:top-[38%] text-[clamp(2.75rem,18vw,6.75rem)] leading-none md:text-[clamp(5rem,8vw,6.75rem)] font-extrabold tracking-[-0.05em] select-none"
+            className="absolute inset-x-0 top-[30%] -translate-y-1/2 text-center text-[clamp(2.75rem,18vw,6.75rem)] leading-none font-extrabold tracking-[-0.05em] text-club/35 select-none text-stroke md:top-[38%] md:text-[clamp(5rem,8vw,6.75rem)]"
           >
             {initials(card.name)}
           </div>

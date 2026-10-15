@@ -63,7 +63,7 @@ function maybeDecode(value: string): string {
     const decoded = buf.toString('utf8')
     // validní UTF-8? (roundtrip test) + žádné kontrolní znaky kromě \n \r \t
     if (Buffer.from(decoded, 'utf8').compare(buf) !== 0) return value
-    // eslint-disable-next-line no-control-regex
+
     if (/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(decoded)) return value
     return decoded
   } catch {
@@ -300,9 +300,25 @@ function resolveDirContext(id: number): { season: string | null; team: string | 
 
 /** Datum z názvu složky: 8_1_2009 / 10.2.2017 / 28.12.2013 / 22.prosince-2024 */
 const CZECH_MONTHS: Record<string, number> = {
-  ledna: 1, unora: 2, února: 2, brezna: 3, března: 3, dubna: 4, kvetna: 5, května: 5,
-  cervna: 6, června: 6, cervence: 7, července: 7, srpna: 8, zari: 9, září: 9,
-  rijna: 10, října: 10, listopadu: 11, prosince: 12,
+  ledna: 1,
+  unora: 2,
+  února: 2,
+  brezna: 3,
+  března: 3,
+  dubna: 4,
+  kvetna: 5,
+  května: 5,
+  cervna: 6,
+  června: 6,
+  cervence: 7,
+  července: 7,
+  srpna: 8,
+  zari: 9,
+  září: 9,
+  rijna: 10,
+  října: 10,
+  listopadu: 11,
+  prosince: 12,
 }
 
 function detectDateFromName(name: string): string | null {
@@ -315,7 +331,9 @@ function detectDateFromName(name: string): string | null {
       return `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     }
   }
-  m = name.match(/(\d{1,2})\.?\s*[.-]?\s*(ledna|února|unora|března|brezna|dubna|května|kvetna|června|cervna|července|cervence|srpna|září|zari|října|rijna|listopadu|prosince)[.-]*\s*(20\d{2})/i)
+  m = name.match(
+    /(\d{1,2})\.?\s*[.-]?\s*(ledna|února|unora|března|brezna|dubna|května|kvetna|června|cervna|července|cervence|srpna|září|zari|října|rijna|listopadu|prosince)[.-]*\s*(20\d{2})/i,
+  )
   if (m) {
     const day = parseInt(m[1], 10)
     const month = CZECH_MONTHS[m[2].toLowerCase()]
@@ -478,7 +496,9 @@ console.log('\n=== SOUHRN ===')
 console.log(`Články: ${articles.length} (pages: ${byTarget.page}, posts: ${byTarget.post})`)
 console.log(`  typy:`, byType)
 console.log(`Galerie: ${galleries.length} (fotek: ${totalPhotos})`)
-console.log(`  sezónní: ${galleries.filter((g) => g.group === 'season').length}, tematické: ${galleries.filter((g) => g.group === 'theme').length}, admin: ${galleries.filter((g) => g.isAdminDir).length}`)
+console.log(
+  `  sezónní: ${galleries.filter((g) => g.group === 'season').length}, tematické: ${galleries.filter((g) => g.group === 'theme').length}, admin: ${galleries.filter((g) => g.isAdminDir).length}`,
+)
 console.log(`  s datem: ${galleries.filter((g) => g.date).length}`)
 console.log(`Sezóny detekované: ${[...seasonsFound].sort().join(', ')}`)
 console.log(`Obrázky článků (s_pictures): ${pictures.length}`)

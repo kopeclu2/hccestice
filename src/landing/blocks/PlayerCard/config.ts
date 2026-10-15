@@ -1,6 +1,5 @@
 import type { Block } from 'payload'
 
-
 export const PlayerCardWidget: Block = {
   slug: 'playerCard',
   interfaceName: 'PlayerCardBlock',

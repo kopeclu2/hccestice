@@ -79,8 +79,8 @@ export function MatchScoreboard({
               hranaté body, které v drobném řezu na tmavém pozadí čtou
               jako náhodné čtverečky, ne jako oddělovač skóre. */}
           <span className="flex flex-col items-center gap-1.5 self-center md:gap-2.5">
-            <span className="bg-white/30 size-1.5 rounded-full md:size-2" />
-            <span className="bg-white/30 size-1.5 rounded-full md:size-2" />
+            <span className="size-1.5 rounded-full bg-white/30 md:size-2" />
+            <span className="size-1.5 rounded-full bg-white/30 md:size-2" />
           </span>
           <span className={cn(scoreboard.weWon && !scoreboard.weAreHome && 'text-lime')}>
             {scoreboard.awayScore}

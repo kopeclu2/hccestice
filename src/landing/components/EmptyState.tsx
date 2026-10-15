@@ -54,7 +54,7 @@ export function EmptyState({
       className={cn(
         'relative z-1 flex flex-col items-center overflow-hidden text-center',
         frame === 'card'
-          ? 'border-line-mid rounded-section border bg-surface p-[clamp(2rem,5vw,4.5rem)]'
+          ? 'rounded-section border border-line-mid bg-surface p-[clamp(2rem,5vw,4.5rem)]'
           : 'py-6',
         className,
       )}
@@ -63,7 +63,7 @@ export function EmptyState({
         // `-right-16`, ne `-right-7.5`: karta má `overflow-hidden`, takže
         // menší posun řezal „VČHL" uprostřed posledního písmene a zbylo z něj
         // „VČHI". Za hranou teď mizí celé „L".
-        <Watermark className="top-1/2 -right-16 -translate-y-1/2 text-club/8 text-watermark-sm">
+        <Watermark className="top-1/2 -right-16 -translate-y-1/2 text-watermark-sm text-club/8">
           {watermark}
         </Watermark>
       )}
@@ -75,7 +75,7 @@ export function EmptyState({
       </CardTitle>
 
       {children && (
-        <p className="text-ink-soft mt-3 max-w-110 text-sm md:text-base leading-[1.55] text-pretty">
+        <p className="mt-3 max-w-110 text-sm leading-[1.55] text-pretty text-ink-soft md:text-base">
           {children}
         </p>
       )}

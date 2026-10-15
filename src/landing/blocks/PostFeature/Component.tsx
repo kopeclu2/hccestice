@@ -1,9 +1,7 @@
-import type { PostFeatureBlock } from '@/payload-types'
-
 import Link from 'next/link'
 import React from 'react'
 
-import type { Photo } from '../../types'
+import type { PostFeatureBlock } from '@/payload-types'
 
 import { CardTitle } from '../../components/Heading'
 import { PhotoTile, TileBadge } from '../../components/PhotoTile'
@@ -11,6 +9,7 @@ import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { formatFullDate, relId, toPhoto } from '../../data/format'
 import { fetchDefaultPostPhoto, fetchPost, POST_TYPE_LABEL, postHref } from '../../data/posts'
+import type { Photo } from '../../types'
 
 /** Vypíchnutý článek — velká fotokarta se štítkem, datem a titulkem. */
 export async function PostFeatureBlockComponent({ block }: { block: PostFeatureBlock }) {

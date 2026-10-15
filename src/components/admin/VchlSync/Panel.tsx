@@ -16,7 +16,14 @@ import {
   WARNING_LABEL,
 } from './format'
 import s from './styles.module.css'
-import type { DetectPayload, LinkedWarning, RunPayload, RunRow, StatusPayload, VchlDiffEntry } from './types'
+import type {
+  DetectPayload,
+  LinkedWarning,
+  RunPayload,
+  RunRow,
+  StatusPayload,
+  VchlDiffEntry,
+} from './types'
 
 const TABS = [
   { key: 'overview', label: 'Přehled' },
@@ -44,7 +51,11 @@ async function api<T>(path: string, init?: { method: 'POST'; body?: unknown }): 
   })
   const data = (await res.json().catch(() => ({}))) as T & { message?: string }
   if (!res.ok) {
-    throw new ApiError(data.message || `Požadavek selhal (HTTP ${res.status}).`, res.status, data as Record<string, unknown>)
+    throw new ApiError(
+      data.message || `Požadavek selhal (HTTP ${res.status}).`,
+      res.status,
+      data as Record<string, unknown>,
+    )
   }
   return data
 }
@@ -52,7 +63,14 @@ async function api<T>(path: string, init?: { method: 'POST'; body?: unknown }): 
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Neznámá chyba.')
 
 const statusPill = (status: string) => {
-  const style = status === 'ok' ? 'success' : status === 'error' ? 'error' : status === 'partial' ? 'warning' : 'light-gray'
+  const style =
+    status === 'ok'
+      ? 'success'
+      : status === 'error'
+        ? 'error'
+        : status === 'partial'
+          ? 'warning'
+          : 'light-gray'
   return (
     <Pill pillStyle={style} size="small">
       {STATUS_LABEL[status] ?? status}
@@ -116,13 +134,20 @@ export const VchlSyncPanel: React.FC<{ sentryOrg: string | null }> = ({ sentryOr
   const toggle = async () => {
     if (!data) return
     const enabled = !data.status.enabled
-    if (!enabled && !window.confirm('Opravdu vypnout automatickou synchronizaci? Zápasy a statistiky se přestanou aktualizovat samy.')) {
+    if (
+      !enabled &&
+      !window.confirm(
+        'Opravdu vypnout automatickou synchronizaci? Zápasy a statistiky se přestanou aktualizovat samy.',
+      )
+    ) {
       return
     }
     setBusy('toggle')
     try {
       await api('toggle', { method: 'POST', body: { enabled } })
-      toast.success(enabled ? 'Automatická synchronizace je zapnutá.' : 'Automatická synchronizace je vypnutá.')
+      toast.success(
+        enabled ? 'Automatická synchronizace je zapnutá.' : 'Automatická synchronizace je vypnutá.',
+      )
       await load()
     } catch (e) {
       toast.error(errMsg(e))
@@ -227,10 +252,20 @@ const Overview: React.FC<{
         {last?.error && <p className={`${s.error} ${s.muted}`}>{last.error}</p>}
 
         <div className={s.actions}>
-          <Button buttonStyle="primary" disabled={working} onClick={() => onRun(false)} size="medium">
+          <Button
+            buttonStyle="primary"
+            disabled={working}
+            onClick={() => onRun(false)}
+            size="medium"
+          >
             {busy === 'run' ? 'Synchronizuji…' : 'Spustit teď'}
           </Button>
-          <Button buttonStyle="secondary" disabled={working} onClick={() => onRun(true)} size="medium">
+          <Button
+            buttonStyle="secondary"
+            disabled={working}
+            onClick={() => onRun(true)}
+            size="medium"
+          >
             {busy === 'dry' ? 'Zkouším…' : 'Nanečisto'}
           </Button>
           <Button buttonStyle="secondary" disabled={working} onClick={onToggle} size="medium">
@@ -284,8 +319,8 @@ const DryResult: React.FC<{ result: RunPayload }> = ({ result }) => {
     <section className={s.card}>
       <h2>Výsledek nanečisto</h2>
       <p className={s.muted}>
-        {statusPill(result.status)} {describeChanges(result.changes)} · {result.requests} požadavků na AHL ·{' '}
-        {(result.durationMs / 1000).toFixed(1).replace('.', ',')} s
+        {statusPill(result.status)} {describeChanges(result.changes)} · {result.requests} požadavků
+        na AHL · {(result.durationMs / 1000).toFixed(1).replace('.', ',')} s
       </p>
       {result.error && <Banner type="error">{result.error}</Banner>}
       {diff.length === 0 && !result.error && <p>Nic se nezmění, data v CMS odpovídají AHL.</p>}
@@ -365,7 +400,10 @@ const DiffRow: React.FC<{ entry: VchlDiffEntry }> = ({ entry }) => {
 
 /* ------------------------------ Historie ------------------------------ */
 
-const History: React.FC<{ runs: RunRow[] | null; sentryOrg: string | null }> = ({ runs, sentryOrg }) => {
+const History: React.FC<{ runs: RunRow[] | null; sentryOrg: string | null }> = ({
+  runs,
+  sentryOrg,
+}) => {
   if (!runs) return <p className={s.muted}>Načítám…</p>
   if (runs.length === 0) return <p className={s.muted}>Zatím neproběhl žádný běh.</p>
   return (
@@ -390,7 +428,9 @@ const History: React.FC<{ runs: RunRow[] | null; sentryOrg: string | null }> = (
           </tbody>
         </table>
       </div>
-      <p className={s.muted}>Zobrazeno posledních {runs.length} běhů. Starší než 60 dní se mažou.</p>
+      <p className={s.muted}>
+        Zobrazeno posledních {runs.length} běhů. Starší než 60 dní se mažou.
+      </p>
     </section>
   )
 }
@@ -486,7 +526,8 @@ const Settings: React.FC = () => {
       <section className={s.card}>
         <h2>Nastavení synchronizace</h2>
         <p className={s.muted}>
-          Co se synchronizuje, jak často a komu chodí upozornění, se nastavuje v samostatném formuláři.
+          Co se synchronizuje, jak často a komu chodí upozornění, se nastavuje v samostatném
+          formuláři.
         </p>
         <div className={s.actions}>
           <Button buttonStyle="primary" el="link" size="medium" to="/admin/globals/vchl-sync">
@@ -523,18 +564,35 @@ const Settings: React.FC = () => {
             </div>
           </dl>
         )}
-        {detect && !detect.changed && <Banner type="success">Uložené hodnoty odpovídají AHL.</Banner>}
+        {detect && !detect.changed && (
+          <Banner type="success">Uložené hodnoty odpovídají AHL.</Banner>
+        )}
         <div className={s.actions}>
-          <Button buttonStyle="secondary" disabled={busy !== null} onClick={() => call(false)} size="medium">
+          <Button
+            buttonStyle="secondary"
+            disabled={busy !== null}
+            onClick={() => call(false)}
+            size="medium"
+          >
             {busy === 'detect' ? 'Hledám…' : 'Autodetekovat'}
           </Button>
           {detect && detect.changed && !detect.saved && (
-            <Button buttonStyle="primary" disabled={busy !== null} onClick={() => call(true)} size="medium">
+            <Button
+              buttonStyle="primary"
+              disabled={busy !== null}
+              onClick={() => call(true)}
+              size="medium"
+            >
               Uložit do sezóny
             </Button>
           )}
           {detect && (
-            <Button buttonStyle="subtle" el="link" size="medium" to={`/admin/collections/seasons/${detect.season.id}`}>
+            <Button
+              buttonStyle="subtle"
+              el="link"
+              size="medium"
+              to={`/admin/collections/seasons/${detect.season.id}`}
+            >
               Upravit sezónu
             </Button>
           )}

@@ -1,8 +1,6 @@
-import type { GalleryEmbedBlock } from '@/payload-types'
-
 import React from 'react'
 
-import type { Photo } from '../../types'
+import type { GalleryEmbedBlock } from '@/payload-types'
 
 import { CardTitle } from '../../components/Heading'
 import { PhotoTile } from '../../components/PhotoTile'
@@ -10,6 +8,7 @@ import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { relId, toPhoto } from '../../data/format'
 import { fetchGallery } from '../../data/galleries'
+import type { Photo } from '../../types'
 
 /** Vložená galerie — nadpis + mřížka prvních N fotek. */
 export async function GalleryEmbedBlockComponent({ block }: { block: GalleryEmbedBlock }) {

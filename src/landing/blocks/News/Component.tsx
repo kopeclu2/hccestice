@@ -1,11 +1,10 @@
-import type { LandingNewsBlock, Post } from '@/payload-types'
-
 import React from 'react'
 
+import type { LandingNewsBlock, Post } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
-import { ArcLines, GlowCircle } from '../../components/Decorations'
 import { ArticleCard } from '../../components/ArticleCard'
+import { ArcLines, GlowCircle } from '../../components/Decorations'
 import { SectionTitle } from '../../components/Heading'
 import { Highlight, Kicker } from '../../components/Kicker'
 import { PillLink } from '../../components/PillLink'
@@ -55,8 +54,8 @@ function NewsView({ cards }: { cards: PostCard[] }) {
 
   return (
     <SectionShell id="aktuality">
-      <GlowCircle className="-left-65 -top-15 size-175" tone="club" />
-      <ArcLines className="-right-5 -top-2.5" />
+      <GlowCircle className="-top-15 -left-65 size-175" tone="club" />
+      <ArcLines className="-top-2.5 -right-5" />
       <Reveal>
         <div className="mb-10 flex flex-wrap items-end gap-4">
           <div>

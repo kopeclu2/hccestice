@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { PageHeader } from '../components/PageHeader'
 import { Highlight } from '../components/Kicker'
+import { PageHeader } from '../components/PageHeader'
 import { CONTACT, CONTACT_PAGE } from '../content'
 
 /**

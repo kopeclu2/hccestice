@@ -26,7 +26,7 @@ export function DotEyebrow({
   return (
     <Eyebrow as="div" className={cn('flex gap-2.5', className)} tone={tone}>
       <span aria-hidden className="flex h-[1lh] flex-none items-center">
-        <span className="bg-lime size-2 rounded-full shadow-ring-lime" />
+        <span className="size-2 rounded-full bg-lime shadow-ring-lime" />
       </span>
       <span className="min-w-0">
         {parts

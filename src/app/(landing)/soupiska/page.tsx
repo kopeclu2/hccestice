@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { SectionShell } from '@/landing/components/SectionShell'

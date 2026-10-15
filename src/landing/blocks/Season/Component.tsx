@@ -1,8 +1,8 @@
-import type { LandingSeasonBlock } from '@/payload-types'
-
 import React from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
+import type { LandingSeasonBlock } from '@/payload-types'
+import { cn } from '@/utilities/ui'
 
 import { EmptyState } from '../../components/EmptyState'
 import { CardTitle, SectionTitle } from '../../components/Heading'
@@ -17,7 +17,6 @@ import type { FixtureCard, ResultRow, StandingsContent } from '../../types'
 import { FixturesRail } from '../../zapasy/FixturesRail'
 import { ResultsList } from '../../zapasy/ResultsList'
 import { StandingsPanel } from '../../zapasy/StandingsPanel'
-import { cn } from '@/utilities/ui'
 
 /** Výřezy sekcí na home page — plný výpis je na /zapasy. */
 const ZAPASY_HREF = '/zapasy'
@@ -158,7 +157,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
         <CardTitle as="h3" size="md">
           Tabulka <Highlight>VČHL</Highlight>
         </CardTitle>
-        <span className="text-faint text-xs">{standings.seasonLabel}</span>
+        <span className="text-xs text-faint">{standings.seasonLabel}</span>
       </div>
 
       {standings.rows.length === 0 ? (
@@ -185,7 +184,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                   /* Na mobilu užší pevné sloupce a menší mezera: s desktopovými
                      hodnotami (32+40+40 px a gap-3) zbylo na název týmu tak málo,
                      že se „HC Spartak Choceň B" lámalo na čtyři řádky. */
-                  'border-line-soft grid grid-cols-[1.5rem_1fr_1.75rem_2rem] items-center gap-2 border-b py-2.75 md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3',
+                  'grid grid-cols-[1.5rem_1fr_1.75rem_2rem] items-center gap-2 border-b border-line-soft py-2.75 md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3',
                   isOurs && 'bg-tint',
                 )}
                 key={row.pos}
@@ -196,14 +195,14 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                 <div className={cn('text-sm md:text-base', isOurs ? 'font-bold' : 'font-medium')}>
                   {row.team}
                 </div>
-                <div className="text-faint text-right text-sm">{row.games}</div>
-                <div className="text-right text-sm md:text-base font-bold">{row.points}</div>
+                <div className="text-right text-sm text-faint">{row.games}</div>
+                <div className="text-right text-sm font-bold md:text-base">{row.points}</div>
               </div>
             )
           })}
 
           <a
-            className="text-club-dark hover:text-club mt-3.5 inline-block text-sm font-semibold"
+            className="mt-3.5 inline-block text-sm font-semibold text-club-dark hover:text-club"
             href={standings.fullTableUrl}
             rel="noreferrer"
             target="_blank"

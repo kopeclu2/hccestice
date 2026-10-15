@@ -1,9 +1,8 @@
-import type { Media, TestimonialsBlock } from '@/payload-types'
-
 import { Quote } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import type { Media, TestimonialsBlock } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { SectionTitle } from '../../components/Heading'
@@ -31,8 +30,8 @@ export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock
           return (
             <Reveal delay={index * 0.06} key={item.id ?? index}>
               <figure className="flex h-full flex-col rounded-tile bg-surface p-4.5 md:p-6 lg:p-6.5">
-                <Quote aria-hidden className="text-lime size-7 fill-current" strokeWidth={0} />
-                <blockquote className="text-ink mt-3 flex-1 leading-relaxed text-pretty">
+                <Quote aria-hidden className="size-7 fill-current text-lime" strokeWidth={0} />
+                <blockquote className="mt-3 flex-1 leading-relaxed text-pretty text-ink">
                   {item.quote}
                 </blockquote>
                 <figcaption className="mt-5 flex items-center gap-3">
@@ -45,14 +44,14 @@ export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock
                       width={44}
                     />
                   ) : (
-                    <span className="bg-chip text-club-dark grid size-11 place-items-center rounded-full text-sm font-bold">
+                    <span className="grid size-11 place-items-center rounded-full bg-chip text-sm font-bold text-club-dark">
                       {item.name.charAt(0)}
                     </span>
                   )}
                   <span>
                     <span className="block text-sm font-bold">{item.name}</span>
                     {item.role && (
-                      <span className="text-faint block text-xs font-medium">{item.role}</span>
+                      <span className="block text-xs font-medium text-faint">{item.role}</span>
                     )}
                   </span>
                 </figcaption>

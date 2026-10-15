@@ -18,7 +18,12 @@ import { breadcrumb, captureFailure, captureWarning, rootSpan, span } from './se
 import { loadSettings } from './settings'
 import { createSyncContext, type SyncContext } from './sync/ctx'
 import { createDraftPost } from './sync/draftPost'
-import { syncSeasonMatches, type DraftCandidate, type SeasonLists, type SeasonMatchState } from './sync/matches'
+import {
+  syncSeasonMatches,
+  type DraftCandidate,
+  type SeasonLists,
+  type SeasonMatchState,
+} from './sync/matches'
 import { createOpponentResolver } from './sync/opponents'
 import { createPlayerResolver } from './sync/players'
 import { syncStandings } from './sync/standings'
@@ -66,7 +71,11 @@ const LOCK_STALE_MS = 15 * 60_000
  * Dotaz na `payload-jobs` (plán) nejde: tik sám je rozpracovaný job.
  */
 const LOCK_KEY = Symbol.for('hccestice.vchlSync.lock')
-type Lock = { running: boolean; since: number; /** kdo zámek drží; `finally` cizí zámek neuvolní */ token: symbol | null }
+type Lock = {
+  running: boolean
+  since: number
+  /** kdo zámek drží; `finally` cizí zámek neuvolní */ token: symbol | null
+}
 function lockState(): Lock {
   const g = globalThis as unknown as Record<symbol, Lock | undefined>
   return (g[LOCK_KEY] ??= { running: false, since: 0, token: null })
@@ -113,7 +122,11 @@ async function checkDue(payload: Payload, settings: VchlSettings, now: Date): Pr
     lastRunAt: lastRun?.startedAt ?? null,
     lastRunStatus: lastRun?.status ?? null,
     settings,
-    ourMatches: around.docs.map((m) => ({ date: m.date, status: m.status, hasReport: m.ahl?.hasReport })),
+    ourMatches: around.docs.map((m) => ({
+      date: m.date,
+      status: m.status,
+      hasReport: m.ahl?.hasReport,
+    })),
   })
   return { ...r, lastRun }
 }
@@ -134,7 +147,11 @@ async function lastSuccessfulRun(payload: Payload): Promise<VchlSyncRun | null> 
   }
 }
 
-function skipped(reason: 'disabled' | 'not-due' | 'locked', mode: VchlMode, t0: number): VchlRunResult {
+function skipped(
+  reason: 'disabled' | 'not-due' | 'locked',
+  mode: VchlMode,
+  t0: number,
+): VchlRunResult {
   return {
     runId: null,
     status: 'skipped',
@@ -219,15 +236,25 @@ async function executeRun(
     await syncAll(ctx)
   } catch (err) {
     error = err instanceof Error ? err.message : String(err)
-    const stage = err instanceof AhlParseError ? 'parse' : err instanceof AhlFetchError ? 'fetch' : 'write'
-    const id = captureFailure(err, stage, trigger, err instanceof AhlFetchError ? { url: err.url } : {})
+    const stage =
+      err instanceof AhlParseError ? 'parse' : err instanceof AhlFetchError ? 'fetch' : 'write'
+    const id = captureFailure(
+      err,
+      stage,
+      trigger,
+      err instanceof AhlFetchError ? { url: err.url } : {},
+    )
     if (id) eventIds.push(id)
     payload.logger.error({ err }, 'vchl-sync: běh selhal')
   }
 
   const warnings = ctx?.warnings ?? warningsFallback
   eventIds.push(...(ctx?.sentryEventIds ?? []))
-  const status: VchlRunResult['status'] = error ? 'error' : ctx && ctx.partialErrors.length > 0 ? 'partial' : 'ok'
+  const status: VchlRunResult['status'] = error
+    ? 'error'
+    : ctx && ctx.partialErrors.length > 0
+      ? 'partial'
+      : 'ok'
   const dry = trigger === 'dry'
 
   // Do Sentry jen NOVÁ upozornění: stejné varování v řadě běhů by jinak
@@ -237,9 +264,7 @@ async function executeRun(
     // běh varování nemá, takže by po něm další OK běh poslal všechna trvalá
     // varování znovu.
     const reference = await lastSuccessfulRun(payload)
-    const prev = new Set(
-      (reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`),
-    )
+    const prev = new Set((reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`))
     for (const w of warnings) {
       if (prev.has(`${w.type}:${w.ref ?? ''}`)) continue
       const id = captureWarning(w, trigger)
@@ -339,7 +364,11 @@ type Fetched = { season: SeasonCtx; lists: SeasonLists }
  * je čekáme, je spíš rozbitá stránka než prázdná sezóna — a „prázdný" výpis
  * by jinak vypadal jako nic nového. Běh skončí chybou dřív, než cokoli zapíše.
  */
-async function assertListsPlausible(ctx: SyncContext, season: SeasonCtx, lists: SeasonLists): Promise<void> {
+async function assertListsPlausible(
+  ctx: SyncContext,
+  season: SeasonCtx,
+  lists: SeasonLists,
+): Promise<void> {
   const { rozpis, vysledky } = lists
   const synced = await ctx.payload.count({
     collection: 'matches',
@@ -356,10 +385,16 @@ async function assertListsPlausible(ctx: SyncContext, season: SeasonCtx, lists: 
     },
   })
   if (vysledky && vysledky.length === 0 && played.totalDocs > 0) {
-    throw new AhlParseError('vysledky', `výpis výsledků je prázdný, ale v CMS je ${played.totalDocs} odehraných zápasů z AHL`)
+    throw new AhlParseError(
+      'vysledky',
+      `výpis výsledků je prázdný, ale v CMS je ${played.totalDocs} odehraných zápasů z AHL`,
+    )
   }
   if (rozpis && vysledky && rozpis.length === 0 && vysledky.length === 0 && synced.totalDocs > 0) {
-    throw new AhlParseError('rozpis/vysledky', `oba výpisy jsou prázdné, ale v CMS je ${synced.totalDocs} zápasů z AHL`)
+    throw new AhlParseError(
+      'rozpis/vysledky',
+      `oba výpisy jsou prázdné, ale v CMS je ${synced.totalDocs} zápasů z AHL`,
+    )
   }
 }
 

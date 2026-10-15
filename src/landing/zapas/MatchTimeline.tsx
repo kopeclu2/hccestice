@@ -4,10 +4,9 @@ import { cn } from '@/utilities/ui'
 
 import { Badge } from '../components/Badge'
 import { Eyebrow } from '../components/Kicker'
+import { MatchMeta } from '../components/MatchMeta'
 import { countLabel } from '../data/format'
 import type { ArticleGoal, MatchTimelineEvent, MatchTimelinePeriod } from '../types'
-
-import { MatchMeta } from '../components/MatchMeta'
 
 import { MatchPanel } from './MatchPanel'
 
@@ -95,7 +94,7 @@ export function MatchTimeline({
       <div className="mt-5 space-y-5 md:space-y-6">
         {periods.map((period) => (
           <div key={period.label}>
-            <h3 className="bg-paper rounded-field flex items-center justify-between gap-3 px-3 py-2 md:px-4">
+            <h3 className="flex items-center justify-between gap-3 rounded-field bg-paper px-3 py-2 md:px-4">
               <Eyebrow tone="club">{period.label}</Eyebrow>
               {period.score && (
                 <span className="text-sm font-bold tabular-nums">
@@ -104,7 +103,7 @@ export function MatchTimeline({
                 </span>
               )}
             </h3>
-            <ol className="divide-line-soft divide-y">
+            <ol className="divide-y divide-line-soft">
               {period.events.map((event, index) => (
                 <TimelineRow
                   event={event}
@@ -123,7 +122,7 @@ export function MatchTimeline({
 function TimelineRow({ event, opponentName }: { event: MatchTimelineEvent; opponentName: string }) {
   return (
     <li className={ROW}>
-      <span className={cn(CELL, 'text-faint text-xs font-semibold tabular-nums')}>
+      <span className={cn(CELL, 'text-xs font-semibold text-faint tabular-nums')}>
         {event.time}
       </span>
       <span aria-hidden className={cn(CELL, 'justify-center')}>
@@ -174,7 +173,7 @@ function EventScore({ event }: { event: MatchTimelineEvent }) {
   ) : (
     <span
       aria-hidden
-      className="text-faint inline-flex h-5 min-w-11 flex-none items-center justify-center text-xs font-bold tabular-nums md:h-6"
+      className="inline-flex h-5 min-w-11 flex-none items-center justify-center text-xs font-bold text-faint tabular-nums md:h-6"
     >
       {event.score}
     </span>
@@ -201,7 +200,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
     // Jméno soupeře se smí zalomit — výpustka („HC Aloha Lan…“) ho na
     // 320 px usekla v polovině. Pro čtečku ho nahrazuje „Gól soupeře“.
     return (
-      <div className="text-faint flex items-start gap-x-2 text-sm font-semibold md:text-base">
+      <div className="flex items-start gap-x-2 text-sm font-semibold text-faint md:text-base">
         <span className="sr-only">
           {event.score ? `Gól soupeře, stav ${event.score}` : 'Gól soupeře'}
         </span>
@@ -244,7 +243,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
             )}
           </div>
           {event.assists.length > 0 && (
-            <div className="text-faint mt-0.5 text-xs font-medium text-pretty break-words">
+            <div className="mt-0.5 text-xs font-medium text-pretty break-words text-faint">
               <span className="sr-only">Asistence: </span>
               <span aria-hidden>(</span>
               {event.assists.join(', ')}

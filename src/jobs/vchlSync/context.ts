@@ -1,9 +1,8 @@
 import type { Payload } from 'payload'
 
 import { AHL_BASE_URL, AhlParseError, isOurTeam, parseCompetitionInfo, tabulkyUrl } from '@/ahl'
-import type { Season } from '@/payload-types'
-
 import type { AhlClient } from '@/ahl/client'
+import type { Season } from '@/payload-types'
 
 import type { SyncContext } from './sync/ctx'
 

@@ -26,9 +26,7 @@ export const FormBlockServer: React.FC<{ id?: string } & FormBlockType> = (props
   return (
     <FormBlockLazy
       {...props}
-      confirmation={
-        form?.confirmationMessage ? <RichText data={form.confirmationMessage} /> : null
-      }
+      confirmation={form?.confirmationMessage ? <RichText data={form.confirmationMessage} /> : null}
       intro={
         enableIntro && introContent ? (
           <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />

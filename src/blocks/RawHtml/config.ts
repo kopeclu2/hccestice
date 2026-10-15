@@ -14,7 +14,8 @@ export const RawHtml: Block = {
       required: true,
       admin: {
         language: 'html',
-        description: 'Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky.',
+        description:
+          'Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky.',
       },
     },
   ],

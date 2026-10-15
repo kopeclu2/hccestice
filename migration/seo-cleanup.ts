@@ -32,6 +32,7 @@
  * runtime by spadl na `Invariant: static generation store missing`.
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const APPLY = process.argv.includes('--apply')

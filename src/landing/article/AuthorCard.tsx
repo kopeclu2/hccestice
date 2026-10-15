@@ -22,16 +22,16 @@ export function AuthorCard({ author }: { author: ArticleAuthor }) {
           width={52}
         />
       ) : (
-        <span className="bg-contrast text-lime grid size-13 flex-none place-items-center rounded-full text-sm md:text-base font-bold">
+        <span className="grid size-13 flex-none place-items-center rounded-full bg-contrast text-sm font-bold text-lime md:text-base">
           {author.initials}
         </span>
       )}
       {/* `min-w-50` je desktopová rezerva, aby jméno nesdílelo řádek s CTA.
           Na 320px kvůli ní jméno spadlo pod avatar a vizitka měla tři řádky. */}
       <div className="min-w-0 md:min-w-50">
-        <div className="text-sm md:text-base font-bold tracking-tight">{author.name}</div>
+        <div className="text-sm font-bold tracking-tight md:text-base">{author.name}</div>
         {(author.role || author.note) && (
-          <div className="text-faint text-sm font-medium">
+          <div className="text-sm font-medium text-faint">
             {[author.role, author.note].filter(Boolean).join(' · ')}
           </div>
         )}

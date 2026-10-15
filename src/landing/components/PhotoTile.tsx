@@ -38,7 +38,7 @@ export function PhotoTile({
   children?: React.ReactNode
 }) {
   return (
-    <div className={cn('bg-pine relative overflow-hidden rounded-tile', className)}>
+    <div className={cn('relative overflow-hidden rounded-tile bg-pine', className)}>
       {photo && (
         <Image
           alt={photo.alt}
@@ -54,13 +54,13 @@ export function PhotoTile({
         />
       )}
       {gradient === 'bottom' && (
-        <div className="from-pine-deep/0 to-pine-deep/80 pointer-events-none absolute inset-0 bg-linear-to-b from-40%" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-pine-deep/0 from-40% to-pine-deep/80" />
       )}
       {gradient === 'bottom-soft' && (
         /* Široká dlaždice mozaiky je o polovinu nižší než velká, takže `bottom`
            by na ní ztmavil skoro celou fotku — handoff tu má nástup později
            a slabší konec. */
-        <div className="from-pine-deep/0 to-pine-deep/66 pointer-events-none absolute inset-0 bg-linear-to-b from-55%" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-pine-deep/0 from-55% to-pine-deep/66" />
       )}
       {gradient === 'full' && (
         <>
@@ -87,7 +87,7 @@ export function TileArrow({ className, size = 'lg' }: { className?: string; size
     <span
       aria-hidden
       className={cn(
-        'text-ink group-hover:bg-lime absolute grid place-items-center rounded-full bg-white transition-colors',
+        'absolute grid place-items-center rounded-full bg-white text-ink transition-colors group-hover:bg-lime',
         size === 'lg' ? 'size-9.5 [&_svg]:size-4' : 'size-8 [&_svg]:size-3.5',
         className,
       )}

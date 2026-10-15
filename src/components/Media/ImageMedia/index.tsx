@@ -1,14 +1,13 @@
 'use client'
 
 import type { StaticImageData } from 'next/image'
-
-import { cn } from '@/utilities/ui'
 import NextImage from 'next/image'
 import React from 'react'
 
-import type { Props as MediaProps } from '../types'
-
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { cn } from '@/utilities/ui'
+
+import type { Props as MediaProps } from '../types'
 
 /**
  * Placeholder pod obrázkem, který se ještě nenačetl.

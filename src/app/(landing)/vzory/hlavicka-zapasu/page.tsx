@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { PageTitle, SectionTitle } from '@/landing/components/Heading'
@@ -118,16 +117,16 @@ export default async function MatchHeaderVariantsPage() {
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Hlavička detailu zápasu
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
+        <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
           Čtyři koncepty hlavičky stránky{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
+          <code className="rounded bg-chip px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
           současné podoby. Každý je vykreslený nad stejnými zápasy z databáze — po nájezdech, v
           normální hrací době, naplánovaný a soupeř bez znaku.
         </p>
         <nav aria-label="Varianty" className="mt-6 flex flex-wrap justify-center gap-2">
           {VARIANTS.map((variant) => (
             <a
-              className="border-line text-ink-soft hover:bg-chip rounded-full border px-4 py-1.5 text-xs font-medium"
+              className="rounded-full border border-line px-4 py-1.5 text-xs font-medium text-ink-soft hover:bg-chip"
               href={`#${variant.id}`}
               key={variant.id}
             >
@@ -139,18 +138,18 @@ export default async function MatchHeaderVariantsPage() {
 
       {VARIANTS.map((variant) => (
         <SectionShell id={variant.id} key={variant.id} spacing="section">
-          <div className="border-line border-b pb-5">
+          <div className="border-b border-line pb-5">
             <SectionTitle>
               <span className="text-club">{variant.number}</span> — {variant.name}
             </SectionTitle>
-            <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">{variant.summary}</p>
+            <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">{variant.summary}</p>
           </div>
 
           <div className="mt-8 flex flex-col gap-10 md:gap-12">
             {samples.map((sample) => (
               <figure className="m-0" data-variant={variant.id} key={sample.slug}>
                 {variant.render({ match: sample.match, titleAs: 'h3' })}
-                <figcaption className="text-faint mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] uppercase">
+                <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] text-faint uppercase">
                   {sample.caption}
                 </figcaption>
               </figure>

@@ -19,7 +19,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
 
   return (
     <SectionShell>
-      <Watermark className="text-ink/9 -left-10 top-10 text-watermark-sm tracking-[-0.04em]">
+      <Watermark className="top-10 -left-10 text-watermark-sm tracking-[-0.04em] text-ink/9">
         OTÁZKY?
       </Watermark>
 
@@ -37,12 +37,12 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 type="button"
               >
                 <span className="flex-1 font-semibold">{item.question}</span>
-                <span className="bg-chip grid size-7 flex-none place-items-center rounded-full [&_svg]:size-3.5">
+                <span className="grid size-7 flex-none place-items-center rounded-full bg-chip [&_svg]:size-3.5">
                   {isOpen ? <Minus /> : <Plus />}
                 </span>
               </button>
               {isOpen && (
-                <p className="text-dim max-w-160 px-4.5 pb-4 text-sm md:text-base leading-relaxed text-pretty md:px-5 md:pb-4.25 lg:px-5.5 lg:pb-4.5">
+                <p className="max-w-160 px-4.5 pb-4 text-sm leading-relaxed text-pretty text-dim md:px-5 md:pb-4.25 md:text-base lg:px-5.5 lg:pb-4.5">
                   {item.answer}
                 </p>
               )}

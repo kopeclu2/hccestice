@@ -1,13 +1,13 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
 import { BreadcrumbsJsonLd } from '../../components/BreadcrumbsJsonLd'
-import { PageTitle } from '../../components/Heading'
 import { DotEyebrow } from '../../components/DotEyebrow'
+import { PageTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
 import { MatchScoreboard } from '../../components/MatchScoreboard'
 import { PillLink } from '../../components/PillLink'
@@ -40,7 +40,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
       <BreadcrumbsJsonLd
         trail={[{ href: '/aktuality', label: 'Aktuality' }, { label: article.badge }]}
       />
-      <div className="bg-contrast relative overflow-hidden rounded-section px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
+      <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
         {article.photo && (
           <div className="absolute inset-0 opacity-16">
             <Image
@@ -55,7 +55,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
         )}
         {/* Scrim přes fotku musí zůstat tmavý i v dark režimu, proto `pine-deep`
             (téma-nezávislý podklad fotek), ne `ink` (barva textu). */}
-        <div className="from-pine-deep/55 to-pine-deep/92 pointer-events-none absolute inset-0 bg-linear-to-b" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-pine-deep/55 to-pine-deep/92" />
 
         <div className="relative">
           <div className="flex items-start gap-x-2.5 gap-y-2">
@@ -166,7 +166,7 @@ function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
                 )}
               </div>
               {goal.assists.length > 0 && (
-                <div className="mt-0.5 pl-4 text-xs font-medium text-white/55 text-pretty">
+                <div className="mt-0.5 pl-4 text-xs font-medium text-pretty text-white/55">
                   <span className="sr-only">Asistence: </span>
                   {goal.assists.join(', ')}
                 </div>

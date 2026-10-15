@@ -1,10 +1,10 @@
-import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
 import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
 import { getServerSideURL } from '@/utilities/getURL'
 import { htmlPlainText, snippet } from '@/utilities/plainText'
+import config from '@payload-config'
 
 /**
  * `llms.txt` podle konvence llmstxt.org — strukturovaný rozcestník obsahu

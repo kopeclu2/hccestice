@@ -1,8 +1,5 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
-
-import { cn } from '@/utilities/ui'
 
 import { EmptyState } from '@/landing/components/EmptyState'
 import { PillLink } from '@/landing/components/PillLink'
@@ -23,6 +20,7 @@ import { MatchesJsonLd } from '@/landing/zapasy/MatchesJsonLd'
 import { ResultsList } from '@/landing/zapasy/ResultsList'
 import { StandingsPanel } from '@/landing/zapasy/StandingsPanel'
 import { ZapasyHeader } from '@/landing/zapasy/ZapasyHeader'
+import { cn } from '@/utilities/ui'
 
 type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }
 

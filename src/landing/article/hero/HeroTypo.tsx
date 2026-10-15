@@ -21,7 +21,7 @@ import { TitleParts } from './HeroTitle'
 export function HeroTypo({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mx-auto mt-6 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-13 lg:mt-16">
-      <Watermark className="text-club/13 -top-14 right-0 z-0 text-watermark-3xl tracking-[-0.06em]">
+      <Watermark className="-top-14 right-0 z-0 text-watermark-3xl tracking-[-0.06em] text-club/13">
         HC ČESTICE
       </Watermark>
 
@@ -49,7 +49,7 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
       </PageTitle>
 
       {article.excerpt && (
-        <p className="text-ink-soft mt-6.5 max-w-160 text-lg leading-relaxed text-pretty">
+        <p className="mt-6.5 max-w-160 text-lg leading-relaxed text-pretty text-ink-soft">
           {article.excerpt}
         </p>
       )}

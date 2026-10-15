@@ -56,7 +56,7 @@ export function SectionHead({
   }
 
   return (
-    <div className="border-contrast flex items-center gap-3.5 border-b-2 pb-4">
+    <div className="flex items-center gap-3.5 border-b-2 border-contrast pb-4">
       <SectionTitle className="m-0" size="md">
         {title}
       </SectionTitle>
@@ -67,7 +67,7 @@ export function SectionHead({
             {note}
           </Eyebrow>
         ) : (
-          <span className="text-faint text-xs font-semibold">{note}</span>
+          <span className="text-xs font-semibold text-faint">{note}</span>
         ))}
       {children}
     </div>

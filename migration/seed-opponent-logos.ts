@@ -10,6 +10,7 @@
  * Spuštění: bun --env-file=.env migration/seed-opponent-logos.ts
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 // opponents.slug → media.filename

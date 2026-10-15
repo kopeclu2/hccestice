@@ -19,6 +19,7 @@
  * Spuštění: bun --env-file=.env migration/seed-home-landing.ts [--force]
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const force = process.argv.includes('--force')
@@ -31,7 +32,12 @@ const stripIds = <T extends Record<string, unknown>>(rows: T[] | null | undefine
 
 // ── 1) legacy home → home-legacy ────────────────────────────────────────────
 const existingHome = (
-  await payload.find({ collection: 'pages', where: { slug: { equals: 'home' } }, limit: 1, depth: 0 })
+  await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: 'home' } },
+    limit: 1,
+    depth: 0,
+  })
 ).docs[0]
 
 if (existingHome) {
@@ -151,7 +157,12 @@ const homeData = {
 } as any
 
 const landingHome = (
-  await payload.find({ collection: 'pages', where: { slug: { equals: 'home' } }, limit: 1, depth: 0 })
+  await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: 'home' } },
+    limit: 1,
+    depth: 0,
+  })
 ).docs[0]
 
 if (landingHome) {

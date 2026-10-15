@@ -1,6 +1,6 @@
-import type { GalleriesGridBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { GalleriesGridBlock } from '@/payload-types'
 
 import { CardTitle } from '../../components/Heading'
 import { Highlight } from '../../components/Kicker'
@@ -49,7 +49,7 @@ function GalleriesGridView({
                 {gallery.photoCount} fotek
               </TileBadge>
               <div className="absolute inset-x-4 bottom-4 text-white">
-                <div className="text-sm md:text-base leading-snug font-semibold">
+                <div className="text-sm leading-snug font-semibold md:text-base">
                   {gallery.title}
                 </div>
                 <div className="text-xs opacity-75">{gallery.dateLabel}</div>

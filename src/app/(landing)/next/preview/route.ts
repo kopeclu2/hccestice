@@ -1,9 +1,8 @@
-import type { PayloadRequest } from 'payload'
-import { getPayload } from 'payload'
-
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
+import { getPayload } from 'payload'
+import type { PayloadRequest } from 'payload'
 
 import configPromise from '@payload-config'
 

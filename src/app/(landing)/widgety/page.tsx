@@ -1,6 +1,5 @@
-import type { Metadata } from 'next'
-
 import { Database, MousePointerClick, Puzzle } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
@@ -38,13 +37,13 @@ export default async function WidgetCatalogPage() {
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Katalog widgetů
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-150 leading-relaxed text-pretty">
+        <p className="mx-auto mt-4 max-w-150 leading-relaxed text-pretty text-dim">
           Všech {total} widgetů, které lze v adminu vložit na stránku (Stránky → Content → Add
           Layout). U každého: co dělá, odkud bere obsah, jak ho nastavit — a živá ukázka.
         </p>
-        <p className="text-faint mx-auto mt-3 max-w-150 text-sm">
+        <p className="mx-auto mt-3 max-w-150 text-sm text-faint">
           Sekce homepage (Hero, Aktuality, Sezóna…) tu nejsou — ty vidíš na{' '}
-          <Link className="text-club font-semibold" href="/">
+          <Link className="font-semibold text-club" href="/">
             úvodní stránce
           </Link>
           .
@@ -53,14 +52,14 @@ export default async function WidgetCatalogPage() {
 
       {catalog.map((category) => (
         <SectionShell key={category.title} spacing="section">
-          <div className="border-line border-b pb-6">
+          <div className="border-b border-line pb-6">
             <SectionTitle>
               {category.title}
-              <span className="text-faint ml-3 text-lg font-medium">
+              <span className="ml-3 text-lg font-medium text-faint">
                 {category.widgets.length}×
               </span>
             </SectionTitle>
-            <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">{category.perex}</p>
+            <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">{category.perex}</p>
           </div>
 
           {category.widgets.map((widget) => (
@@ -78,7 +77,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
     <article className="mt-16" id={widget.blockType}>
       {/* Dokumentace. Odsazení má tři stupně: `p-6` bralo na 390px displeji
           48 ze 370px šířky panelu, desktopová hodnota z handoffu patří na `lg`. */}
-      <div className="bg-contrast rounded-card p-4.5 text-on-contrast md:p-6 lg:p-8">
+      <div className="rounded-card bg-contrast p-4.5 text-on-contrast md:p-6 lg:p-8">
         <div className="flex flex-wrap items-center gap-3">
           <CardTitle size="md">{widget.name}</CardTitle>
           <Badge className="font-mono" size="sm" variant="lime">
@@ -88,7 +87,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
         <p className="mt-2 max-w-200 leading-relaxed text-white/85">{widget.description}</p>
         <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2">
           <div className="flex gap-3">
-            <Database className="text-lime mt-0.5 size-4.5 flex-none" strokeWidth={2.25} />
+            <Database className="mt-0.5 size-4.5 flex-none text-lime" strokeWidth={2.25} />
             <div>
               <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
                 Odkud bere obsah
@@ -97,7 +96,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
             </div>
           </div>
           <div className="flex gap-3">
-            <MousePointerClick className="text-lime mt-0.5 size-4.5 flex-none" strokeWidth={2.25} />
+            <MousePointerClick className="mt-0.5 size-4.5 flex-none text-lime" strokeWidth={2.25} />
             <div>
               <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
                 Jak použít v adminu
@@ -111,7 +110,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
       {/* Živá ukázka — widget renderuje stejnou komponentou jako na webu.
           `md:[&_section]:mt-8` bylo bajtově totožné s bezpodmínečnou třídou,
           tedy mrtvé; skutečný mezistupeň je rytmus 32 → 40px od `lg`. */}
-      <div className="border-line relative mt-4 rounded-card border-2 border-dashed pb-4 [&_section]:mt-8 lg:[&_section]:mt-10">
+      <div className="relative mt-4 rounded-card border-2 border-dashed border-line pb-4 [&_section]:mt-8 lg:[&_section]:mt-10">
         <Eyebrow
           className="absolute -top-2.5 left-8 z-2 inline-flex items-center gap-1.5 bg-paper px-2"
           tone="faint"

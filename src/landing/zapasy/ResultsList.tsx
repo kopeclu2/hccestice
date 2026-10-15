@@ -4,15 +4,15 @@ import { cn } from '@/utilities/ui'
 
 import { Badge } from '../components/Badge'
 import { EmptyState } from '../components/EmptyState'
+import { MatchMeta } from '../components/MatchMeta'
 import { MoreLink } from '../components/MoreLink'
 import { Numeral } from '../components/Numeral'
+import { OUTCOME_BADGE } from '../components/outcome'
 import { Pagination } from '../components/Pagination'
 import { PillLink } from '../components/PillLink'
 import { stretchHost } from '../components/StretchedLink'
-import { OUTCOME_BADGE } from '../components/outcome'
 import type { ResultRow } from '../types'
 
-import { MatchMeta } from '../components/MatchMeta'
 import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen } from './MatchRow'
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 
@@ -46,7 +46,7 @@ export function ResultsList({
   showScorers?: boolean
 }) {
   return (
-    <div className="scroll-mt-8 flex h-full flex-col" id="odehrane">
+    <div className="flex h-full scroll-mt-8 flex-col" id="odehrane">
       <SectionHead note="Výsledky" title="Odehrané zápasy" variant={headVariant}>
         {moreHref && <MoreLink href={moreHref}>{moreLabel}</MoreLink>}
       </SectionHead>
@@ -121,15 +121,15 @@ export function ResultsList({
                   </Badge>
                   <Numeral className="min-w-14 flex-none text-right" size="xs">
                     {row.score}
-                    {row.suffix && <span className="text-faint text-sm"> {row.suffix}</span>}
+                    {row.suffix && <span className="text-sm text-faint"> {row.suffix}</span>}
                   </Numeral>
                 </div>
 
                 {/* Střelci přes celou šířku karty; od `md` odsazení srovnané
                     se sloupcem názvu (96 px datum + mezera 16 px). */}
                 {showScorers && row.scorers && (
-                  <p className="text-faint col-span-full text-xs font-medium text-pretty md:col-start-2">
-                    <span className="text-ink font-semibold">Střelci:</span> {row.scorers}
+                  <p className="col-span-full text-xs font-medium text-pretty text-faint md:col-start-2">
+                    <span className="font-semibold text-ink">Střelci:</span> {row.scorers}
                   </p>
                 )}
               </li>

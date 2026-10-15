@@ -1,9 +1,9 @@
-import type { Player } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
+
+import type { Player } from '@/payload-types'
+import configPromise from '@payload-config'
 
 import type { PlayerSeasonStat, RosterPlayer } from '../types'
 
@@ -71,7 +71,12 @@ export const fetchRosterSections = cache(async (): Promise<RosterSection[]> => {
     { anchor: 'brankari', title: 'Brankáři', kicker: 'Goalies', match: (p) => p.position === 'G' },
     { anchor: 'obranci', title: 'Obránci', kicker: 'Defense', match: (p) => p.position === 'D' },
     { anchor: 'utocnici', title: 'Útočníci', kicker: 'Forwards', match: (p) => p.position === 'F' },
-    { anchor: 'hraci', title: 'Hráči', kicker: 'Players', match: (p) => !p.position || !(p.position in POSITION_LABEL) },
+    {
+      anchor: 'hraci',
+      title: 'Hráči',
+      kicker: 'Players',
+      match: (p) => !p.position || !(p.position in POSITION_LABEL),
+    },
   ]
   return groups
     .map(({ match, ...section }) => ({

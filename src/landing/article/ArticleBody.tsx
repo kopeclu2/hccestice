@@ -1,8 +1,7 @@
-import type { Post } from '@/payload-types'
-
 import React from 'react'
 
 import RichTextServer from '@/components/RichText/Server'
+import type { Post } from '@/payload-types'
 
 /**
  * Tělo článku — lexical rich text, nebo legacy HTML z importu.
@@ -14,7 +13,7 @@ export function ArticleBody({ post }: { post: Post }) {
   const isLegacy = post.contentType === 'html' && post.legacyHtml
 
   return (
-    <div className="article-prose relative z-1 mx-auto mt-11 max-w-[51.25rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-14 lg:mt-18">
+    <div className="relative z-1 article-prose mx-auto mt-11 max-w-[51.25rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-14 lg:mt-18">
       {isLegacy ? (
         <div
           className="legacy-html"

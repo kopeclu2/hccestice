@@ -62,7 +62,10 @@ const RULES = [
   },
   {
     name: 'no-default-palette',
-    re: new RegExp(String.raw`\b(?:bg|text|border|ring|fill|stroke|from|via|to)-(?:${TW_PALETTE})-(?:50|\d00|950)\b`, 'g'),
+    re: new RegExp(
+      String.raw`\b(?:bg|text|border|ring|fill|stroke|from|via|to)-(?:${TW_PALETTE})-(?:50|\d00|950)\b`,
+      'g',
+    ),
     hint: 'default paleta Tailwindu obchází design systém',
   },
   {
@@ -138,9 +141,7 @@ for (const file of files) {
 
   lines.forEach((line, i) => {
     // escape hatch na stejném nebo předchozím řádku, s povinným důvodem
-    const ignored = [line, lines[i - 1] ?? ''].some((l) =>
-      /token-check-ignore:\s*\S+/.test(l),
-    )
+    const ignored = [line, lines[i - 1] ?? ''].some((l) => /token-check-ignore:\s*\S+/.test(l))
     if (ignored || isComment(line)) return
 
     for (const rule of RULES) {

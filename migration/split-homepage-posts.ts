@@ -29,7 +29,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -123,11 +125,7 @@ function htmlToLines(html: string): string[] {
     .filter((line) => line && line !== '|' && !/^[_—–\-|]+$/.test(line))
 }
 
-const dia = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
+const dia = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 const slugify = (s: string) =>
   dia(s)
@@ -226,7 +224,10 @@ function parseBlocks(html: string): Block[] {
     }
     if (titleIdx < 0) {
       const text = lines.join(' ')
-      skippedSegments.push({ words: text.split(/\s+/).filter(Boolean).length, preview: text.slice(0, 110) })
+      skippedSegments.push({
+        words: text.split(/\s+/).filter(Boolean).length,
+        preview: text.slice(0, 110),
+      })
       continue
     }
 
@@ -234,7 +235,11 @@ function parseBlocks(html: string): Block[] {
     // Archiv: úvodní datum = datum publikace, datum zápasu bývá na konci titulku.
     const inTitle = [...title.matchAll(/(\d{1,2})\.\s?(\d{1,2})\.\s?(\d{4})/g)]
     const itemDate = inTitle.length
-      ? toISO(inTitle[inTitle.length - 1][1], inTitle[inTitle.length - 1][2], inTitle[inTitle.length - 1][3])
+      ? toISO(
+          inTitle[inTitle.length - 1][1],
+          inTitle[inTitle.length - 1][2],
+          inTitle[inTitle.length - 1][3],
+        )
       : leadDate
     if (!publishedDate) publishedDate = leadDate
 
@@ -244,7 +249,11 @@ function parseBlocks(html: string): Block[] {
     for (let i = titleIdx + 1; i < lines.length; i++) {
       const line = lines[i]
       const key = dia(line).replace(/[^a-z0-9]/g, '')
-      if (titleFp.length > 12 && (key.includes(titleFp) || titleFp.includes(key)) && key.length > 12)
+      if (
+        titleFp.length > 12 &&
+        (key.includes(titleFp) || titleFp.includes(key)) &&
+        key.length > 12
+      )
         break
       if (DATE_TITLE.test(line) || DATE_ONLY.test(line)) break
       body.push(line)
@@ -255,7 +264,13 @@ function parseBlocks(html: string): Block[] {
     let goals: string | null = null
     if (goalsIdx >= 0) {
       const inline = body[goalsIdx].replace(/^branky\s*:?\s*/i, '').trim()
-      goals = (inline || body.slice(goalsIdx + 1).join(' ').trim()) || null
+      goals =
+        inline ||
+        body
+          .slice(goalsIdx + 1)
+          .join(' ')
+          .trim() ||
+        null
     }
     const text = goalsIdx >= 0 ? body.slice(0, goalsIdx) : body
 
@@ -413,7 +428,11 @@ async function buildContent(block: Block): Promise<Record<string, unknown>> {
 function postTitle(block: Block): string {
   if (!block.isMatch || !block.itemDate) return block.title
   // titulek už datum obsahuje (archivní formát) → neduplikovat
-  if (/\d{1,2}\.\s?\d{1,2}\.\s?\d{4}|\d{1,2}\.\s?(led|únor|břez|dub|květ|červ|srp|září|říj|listop|prosin)/i.test(block.title))
+  if (
+    /\d{1,2}\.\s?\d{1,2}\.\s?\d{4}|\d{1,2}\.\s?(led|únor|břez|dub|květ|červ|srp|září|říj|listop|prosin)/i.test(
+      block.title,
+    )
+  )
     return block.title
   const [y, m, d] = block.itemDate.split('-')
   return `${block.title} - ${Number(d)}.${Number(m)}.${y}`
@@ -468,7 +487,12 @@ const season = seasonSlug
     ).docs[0]
   : undefined
 const teamMuzi = (
-  await payload.find({ collection: 'teams', where: { slug: { equals: 'muzi' } }, limit: 1, depth: 0 })
+  await payload.find({
+    collection: 'teams',
+    where: { slug: { equals: 'muzi' } },
+    limit: 1,
+    depth: 0,
+  })
 ).docs[0]
 
 const seasonMatches = season
@@ -492,7 +516,9 @@ function titleKey(title: string): TitleKey {
   const t = dia(title)
   const round = /(\d+)\s*\.?\s*kolo/.exec(t)?.[1] ?? null
   const teams = new Set(
-    [...t.matchAll(new RegExp(TEAM_WORDS.source, 'g'))].map((m) => m[0]).filter((w) => w !== 'cestice'),
+    [...t.matchAll(new RegExp(TEAM_WORDS.source, 'g'))]
+      .map((m) => m[0])
+      .filter((w) => w !== 'cestice'),
   )
   const dates = new Set(
     [...title.matchAll(/(\d{1,2})\.\s?(\d{1,2})\.\s?(\d{4})/g)].map((m) => toISO(m[1], m[2], m[3])),
@@ -529,7 +555,11 @@ const seasonPosts = season
         depth: 0,
         draft: true,
       })
-    ).docs.map((p) => ({ id: p.id as number, title: p.title as string, key: titleKey(p.title as string) }))
+    ).docs.map((p) => ({
+      id: p.id as number,
+      title: p.title as string,
+      key: titleKey(p.title as string),
+    }))
   : []
 
 type MediaPick = { id: number; filename: string; width: number | null; height?: number | null }
@@ -581,7 +611,11 @@ async function bestMedia(filename: string): Promise<MediaPick | undefined> {
       width: (d.width as number | null) ?? null,
       height: (d.height as number | null) ?? null,
     }))
-    .filter((d) => new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(-\\d+)?\\.[a-z0-9]+$`, 'i').test(d.filename))
+    .filter((d) =>
+      new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(-\\d+)?\\.[a-z0-9]+$`, 'i').test(
+        d.filename,
+      ),
+    )
 
   const exact = candidates.find((c) => c.filename === filename)
   // bez přesné shody (přepsaný název) bereme největší variantu — poměr stran
@@ -631,9 +665,13 @@ if (argv.includes('--purge')) {
     const url = String((p.legacy as { url?: string } | undefined)?.url ?? '')
     return prefixes.some((prefix) => url.startsWith(prefix))
   })
-  console.log(`--purge: ${mine.length} postů ze zdroje „${prefixes.join(' | ')}"${APPLY ? '' : ' (DRY-RUN)'}`)
+  console.log(
+    `--purge: ${mine.length} postů ze zdroje „${prefixes.join(' | ')}"${APPLY ? '' : ' (DRY-RUN)'}`,
+  )
   for (const p of mine) {
-    console.log(`  ${APPLY ? '- smazáno' : '- ke smazání'}: #${p.id} ${String(p.title).slice(0, 70)}`)
+    console.log(
+      `  ${APPLY ? '- smazáno' : '- ke smazání'}: #${p.id} ${String(p.title).slice(0, 70)}`,
+    )
     if (APPLY) await payload.delete({ collection: 'posts', id: p.id, ...noRevalidate })
   }
   process.exit(0)
@@ -657,7 +695,7 @@ let skippedDuplicate = 0
 /** Volný slug — kolize (např. 4× „Změny tréninků") rozlišíme datem. */
 async function freeSlug(base: string, date: string | null): Promise<string> {
   const taken = async (s: string) =>
-    ((
+    (
       await payload.find({
         collection: 'posts',
         where: { slug: { equals: s } },
@@ -665,7 +703,7 @@ async function freeSlug(base: string, date: string | null): Promise<string> {
         depth: 0,
         draft: true,
       })
-    ).docs.length > 0) || usedSlugs.has(s)
+    ).docs.length > 0 || usedSlugs.has(s)
   if (!(await taken(base))) return base
   const dated = date ? `${base}-${date.split('-').reverse().join('-')}` : base
   if (dated !== base && !(await taken(dated))) return dated
@@ -756,7 +794,9 @@ for (const block of blocks) {
       : undefined) ?? findDuplicate(title, seasonPosts)
   if (dup) {
     skippedDuplicate++
-    console.log(`  = DUPLIKÁT  ${info}\n              ↳ už jako post #${dup.id} „${dup.title.slice(0, 70)}"`)
+    console.log(
+      `  = DUPLIKÁT  ${info}\n              ↳ už jako post #${dup.id} „${dup.title.slice(0, 70)}"`,
+    )
     continue
   }
 

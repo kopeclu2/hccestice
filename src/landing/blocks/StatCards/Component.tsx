@@ -1,7 +1,6 @@
-import type { StatCardsBlockType } from '@/payload-types'
-
 import React from 'react'
 
+import type { StatCardsBlockType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { Numeral } from '../../components/Numeral'

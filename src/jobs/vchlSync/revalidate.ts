@@ -17,10 +17,15 @@ import type { VchlTrigger } from './types'
  * Selhání revalidace běh neshodí: data jsou zapsaná a landing se stejně
  * obnoví po vypršení `revalidate` (600 s u ISR, tagované cache mají TTL).
  */
-export async function revalidateAfterSync(payload: Payload, trigger: VchlTrigger): Promise<boolean> {
+export async function revalidateAfterSync(
+  payload: Payload,
+  trigger: VchlTrigger,
+): Promise<boolean> {
   const secret = process.env.CRON_SECRET
   if (!secret) {
-    payload.logger.warn('vchl-sync: CRON_SECRET není nastavený, revalidace přeskočena (web se obnoví po vypršení cache).')
+    payload.logger.warn(
+      'vchl-sync: CRON_SECRET není nastavený, revalidace přeskočena (web se obnoví po vypršení cache).',
+    )
     return false
   }
   const url = `http://127.0.0.1:${process.env.PORT ?? 3000}/internal/revalidate`

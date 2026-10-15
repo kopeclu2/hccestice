@@ -1,11 +1,16 @@
 import React from 'react'
 
+import { ArticleNav } from '../article/ArticleNav'
 import { fetchSite, fetchSiteConfig, mapFooter } from '../data/site'
 
-import { ArticleNav } from '../article/ArticleNav'
-import { PatternBackground, type PatternFade, type PatternTone, type PatternVariant } from './PatternBackground'
 import { LandingFooter } from './LandingFooter'
 import { PageCanvas, type PageCanvasProps } from './PageCanvas'
+import {
+  PatternBackground,
+  type PatternFade,
+  type PatternTone,
+  type PatternVariant,
+} from './PatternBackground'
 
 export type SubpagePattern = {
   variant: PatternVariant
@@ -49,7 +54,11 @@ export async function SubpageShell({
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 -z-1 hidden h-[56rem] overflow-hidden lg:block"
         >
-          <PatternBackground fade={pattern.fade ?? 'top'} tone={pattern.tone} variant={pattern.variant} />
+          <PatternBackground
+            fade={pattern.fade ?? 'top'}
+            tone={pattern.tone}
+            variant={pattern.variant}
+          />
         </div>
       )}
       <ArticleNav />

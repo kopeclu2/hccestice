@@ -35,13 +35,13 @@ export function HeaderArena({ match, titleAs = 'h1' }: HeaderVariantProps) {
   const scheduled = match.status !== 'played' || !hasScore(match)
 
   return (
-    <div className="bg-contrast relative isolate overflow-hidden rounded-section text-on-contrast">
+    <div className="relative isolate overflow-hidden rounded-section bg-contrast text-on-contrast">
       <PatternBackground className="opacity-70" fade="center" tone="lime" variant="circuit" />
       <PatternBackground tone="lime" variant="glow" />
       <SrTitle as={titleAs} match={match} />
 
       {/* Horní lišta: soutěž vlevo, stav vpravo — jako horní řádek TV grafiky. */}
-      <div className="border-white/10 relative flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 border-b px-4.5 py-3.5 md:px-8 lg:px-12 lg:py-4">
+      <div className="relative flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 border-b border-white/10 px-4.5 py-3.5 md:px-8 lg:px-12 lg:py-4">
         <DotEyebrow className="min-w-0">{competitionLabel(match)}</DotEyebrow>
         <StatusChip match={match} />
       </div>
@@ -85,7 +85,7 @@ function StatusChip({ match }: { match: MatchDetail }) {
   }
   return (
     <Badge caps className="gap-2 text-white/80" size="xs" variant="glassOutline">
-      <span aria-hidden className="bg-white/60 size-1.5 rounded-full" />
+      <span aria-hidden className="size-1.5 rounded-full bg-white/60" />
       Konec{match.suffix ? ` · ${SUFFIX_NOTE[match.suffix]}` : ''}
     </Badge>
   )
@@ -131,7 +131,7 @@ function Board({
             {match.awayScore}
           </LedBox>
           {match.suffix && (
-            <span className="bg-lime text-ink z-1 col-span-2 col-start-2 row-start-1 translate-y-1/2 self-end justify-self-center rounded-full px-2 py-0.5 font-mono text-eyebrow font-semibold tracking-[0.12em] uppercase md:px-2.5 md:text-xs">
+            <span className="z-1 col-span-2 col-start-2 row-start-1 translate-y-1/2 self-end justify-self-center rounded-full bg-lime px-2 py-0.5 font-mono text-eyebrow font-semibold tracking-[0.12em] text-ink uppercase md:px-2.5 md:text-xs">
               {match.suffix}
             </span>
           )}
@@ -174,8 +174,8 @@ function TeamCrest({
     <div className={cn('row-start-1 rounded-full', className)}>
       <Crest
         className={cn(
-          'size-13 text-lg min-[25rem]:size-16 md:size-22 md:p-1.5 lg:p-2 md:text-3xl lg:size-28 lg:text-4xl',
-          lit && 'ring-lime ring-offset-contrast ring-2 ring-offset-3 md:ring-offset-4',
+          'size-13 text-lg min-[25rem]:size-16 md:size-22 md:p-1.5 md:text-3xl lg:size-28 lg:p-2 lg:text-4xl',
+          lit && 'ring-2 ring-lime ring-offset-3 ring-offset-contrast md:ring-offset-4',
         )}
         logo={logo}
         name={name}
@@ -211,7 +211,7 @@ function LedBox({
   return (
     <div
       className={cn(
-        'border-white/12 relative min-w-[1.35em] rounded-field border bg-pine-deep/80 px-2 py-1.5 text-center font-mono text-[clamp(2.5rem,11vw,6.5rem)] leading-none font-bold tabular-nums shadow-overlay md:px-4 md:py-3',
+        'relative min-w-[1.35em] rounded-field border border-white/12 bg-pine-deep/80 px-2 py-1.5 text-center font-mono text-[clamp(2.5rem,11vw,6.5rem)] leading-none font-bold tabular-nums shadow-overlay md:px-4 md:py-3',
         lit
           ? 'text-lime [text-shadow:0_0_0.35em_color-mix(in_oklab,var(--color-lime)_55%,transparent)]'
           : 'text-white/90',
@@ -258,7 +258,7 @@ function PeriodTable({
                 </abbr>
               </th>
             ))}
-            <th className="text-lime pb-2 font-semibold" scope="col">
+            <th className="pb-2 font-semibold text-lime" scope="col">
               <abbr className="no-underline" title="Celkem">
                 Σ
               </abbr>
@@ -267,7 +267,7 @@ function PeriodTable({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr className="border-white/10 border-t" key={row.side}>
+            <tr className="border-t border-white/10" key={row.side}>
               <th className="py-2.5 text-left font-semibold text-white md:py-3" scope="row">
                 <span aria-hidden>{teamCode(row.name)}</span>
                 <span className="sr-only">{row.name}</span>
@@ -299,7 +299,7 @@ function Facts({ match, scheduled }: { match: MatchDetail; scheduled: boolean })
   const day = weekday(match.kickoffISO)
 
   return (
-    <dl className="border-white/10 relative grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-[repeat(auto-fit,minmax(min(11rem,100%),1fr))] md:gap-x-8 border-t bg-white/4 px-4.5 py-5 md:px-8 lg:px-12 lg:py-6">
+    <dl className="relative grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/10 bg-white/4 px-4.5 py-5 md:grid-cols-[repeat(auto-fit,minmax(min(11rem,100%),1fr))] md:gap-x-8 md:px-8 lg:px-12 lg:py-6">
       <Fact className="col-span-2 md:col-span-1" label="Datum">
         {day && <span className="text-white/60 capitalize">{day} · </span>}
         <span className="inline-block">
@@ -339,7 +339,7 @@ function Fact({
       <dt>
         <Eyebrow tone="white">{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-sm md:text-base font-semibold text-white [overflow-wrap:anywhere]">
+      <dd className="mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-white md:text-base">
         {children}
       </dd>
     </div>

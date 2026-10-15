@@ -12,6 +12,7 @@
  * Výstup jde i do migration/seed-sponsors.log (stdout se v bunu ztrácí).
  */
 import { writeFileSync } from 'node:fs'
+
 import { getPayload } from 'payload'
 
 import config from '../src/payload.config'

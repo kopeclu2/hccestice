@@ -47,7 +47,8 @@ const fetchTiles = async (participantId: number): Promise<Tile[]> => {
     await get(`${AHL_BASE_URL}/ucastnici/?ucastniksouteznihorocnikuid=${participantId}`)
   ).text()
   const tiles: Tile[] = []
-  const re = /<img class="ahl_team_tile_img" src="[^"]*\/loga-teamu\/[^/]+\/([^"/]+)\.png" alt="([^"]+)"/g
+  const re =
+    /<img class="ahl_team_tile_img" src="[^"]*\/loga-teamu\/[^/]+\/([^"/]+)\.png" alt="([^"]+)"/g
   for (const [, code, name] of html.matchAll(re)) tiles.push({ code, name })
   if (tiles.length === 0) throw new Error('ahl.cz: na stránce účastníka nejsou dlaždice týmů')
   return tiles
@@ -87,7 +88,10 @@ for (const opp of opponents) {
     candidates = tiles.filter((t) => names.some((n) => isSubset(words(n), words(t.name))))
   }
   if (candidates.length !== 1) {
-    const why = candidates.length === 0 ? 'v ročníku na AHL není' : `víc kandidátů: ${candidates.map((t) => t.name).join(', ')}`
+    const why =
+      candidates.length === 0
+        ? 'v ročníku na AHL není'
+        : `víc kandidátů: ${candidates.map((t) => t.name).join(', ')}`
     console.warn(`  ! ${opp.name}: ${why}`)
     missing++
     continue

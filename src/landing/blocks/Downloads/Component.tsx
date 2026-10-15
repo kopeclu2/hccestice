@@ -1,8 +1,7 @@
-import type { DownloadsBlock, Media } from '@/payload-types'
-
 import { Download } from 'lucide-react'
 import React from 'react'
 
+import type { DownloadsBlock, Media } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { CardTitle } from '../../components/Heading'
@@ -37,21 +36,21 @@ export function DownloadsBlockComponent({ block }: { block: DownloadsBlock }) {
           )}
           {items.map((item, index) => (
             <a
-              className="border-line-soft hover:bg-tint-hover -mx-2 flex items-center gap-4 rounded-xl border-b px-2 py-3.5 transition-colors last:border-b-0"
+              className="-mx-2 flex items-center gap-4 rounded-xl border-b border-line-soft px-2 py-3.5 transition-colors last:border-b-0 hover:bg-tint-hover"
               download
               href={getMediaUrl(item.file.url, item.file.updatedAt)}
               key={item.id ?? index}
             >
-              <span className="bg-chip text-club-dark rounded-lg px-2.5 py-1.5 text-eyebrow font-bold tracking-wide">
+              <span className="rounded-lg bg-chip px-2.5 py-1.5 text-eyebrow font-bold tracking-wide text-club-dark">
                 {fileExtension(item.file.filename)}
               </span>
-              <span className="flex-1 text-sm md:text-base font-semibold">
+              <span className="flex-1 text-sm font-semibold md:text-base">
                 {item.label || item.file.filename}
               </span>
-              <span className="text-faint text-xs font-medium">
+              <span className="text-xs font-medium text-faint">
                 {formatFileSize(item.file.filesize)}
               </span>
-              <span className="bg-lime text-ink grid size-8 flex-none place-items-center rounded-full [&_svg]:size-4">
+              <span className="grid size-8 flex-none place-items-center rounded-full bg-lime text-ink [&_svg]:size-4">
                 <Download strokeWidth={2.5} />
               </span>
             </a>

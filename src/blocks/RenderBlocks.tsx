@@ -1,10 +1,9 @@
 import React, { Fragment } from 'react'
 
-import type { Page } from '@/payload-types'
-
-import { isLandingBlock, renderLandingBlock } from '@/landing/render'
 import { FormBlockServer } from '@/blocks/Form/Server'
 import { RawHtmlBlock } from '@/blocks/RawHtml/Component'
+import { isLandingBlock, renderLandingBlock } from '@/landing/render'
+import type { Page } from '@/payload-types'
 
 /**
  * Render layoutu dynamických stránek (kolekce Stránky mimo homepage).
@@ -41,7 +40,7 @@ export const RenderBlocks: React.FC<{
           if (blockType && isLandingBlock(blockType)) {
             return (
               <div
-                className="font-display text-ink overflow-x-clip [&_section]:mt-10! md:[&_section]:mt-13! lg:[&_section]:mt-16!"
+                className="overflow-x-clip font-display text-ink [&_section]:mt-10! md:[&_section]:mt-13! lg:[&_section]:mt-16!"
                 key={index}
               >
                 {renderLandingBlock(block, index)}

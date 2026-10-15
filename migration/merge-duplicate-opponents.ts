@@ -24,10 +24,10 @@ const ctx = { disableRevalidate: true }
 
 // slug duplikátu → slug originálu
 const MERGE: Record<string, string> = {
-  'divocaci': 'sk-divocaci-zamberk',
+  divocaci: 'sk-divocaci-zamberk',
   'chocen-b': 'hc-chocen-b',
-  'skutec': 'hc-skutec',
-  'opocno': 'hc-opocno',
+  skutec: 'hc-skutec',
+  opocno: 'hc-opocno',
   'litomysl-b': 'hc-litomysl-b',
 }
 

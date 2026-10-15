@@ -1,9 +1,9 @@
-import type { Gallery, Season } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
+
+import type { Gallery, Season } from '@/payload-types'
+import configPromise from '@payload-config'
 
 import type { GalleryCard } from '../types'
 

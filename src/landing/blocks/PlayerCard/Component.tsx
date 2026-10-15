@@ -1,8 +1,6 @@
-import type { PlayerCardBlock } from '@/payload-types'
-
 import React from 'react'
 
-import type { RosterPlayer } from '../../types'
+import type { PlayerCardBlock } from '@/payload-types'
 
 import { CardTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'
@@ -11,6 +9,7 @@ import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { relId } from '../../data/format'
 import { fetchPickedPlayers, POSITION_LABEL } from '../../data/players'
+import type { RosterPlayer } from '../../types'
 
 /** Karta jednoho hráče — velký portrét, číslo, post, poznámka. */
 export async function PlayerCardBlockComponent({ block }: { block: PlayerCardBlock }) {
@@ -44,10 +43,10 @@ function PlayerCardView({ player, note }: { player: RosterPlayer; note: string |
             <CardTitle as="h3" className="mt-1" size="lg">
               {player.name}
               {player.number != null && (
-                <span className="text-faint ml-3 font-normal">#{player.number}</span>
+                <span className="ml-3 font-normal text-faint">#{player.number}</span>
               )}
             </CardTitle>
-            {note && <p className="text-dim mt-3 leading-relaxed text-pretty">{note}</p>}
+            {note && <p className="mt-3 leading-relaxed text-pretty text-dim">{note}</p>}
           </div>
         </div>
       </Reveal>

@@ -1,8 +1,8 @@
-import type { Product } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
+
+import type { Product } from '@/payload-types'
+import configPromise from '@payload-config'
 
 /** Produkty (merch) — fetchery pro widgety Produkty a Karta produktu. */
 

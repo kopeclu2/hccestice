@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { AktualityHeader } from '@/landing/aktuality/AktualityHeader'
 import { AktualityGrid } from '@/landing/aktuality/AktualityGrid'
+import { AktualityHeader } from '@/landing/aktuality/AktualityHeader'
 import { SocialCta } from '@/landing/aktuality/SocialCta'
 import { Pagination } from '@/landing/components/Pagination'
 import { SectionShell } from '@/landing/components/SectionShell'

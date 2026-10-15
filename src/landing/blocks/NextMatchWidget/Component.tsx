@@ -1,6 +1,6 @@
-import type { NextMatchWidgetBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { NextMatchWidgetBlock } from '@/payload-types'
 
 import { NextMatchPanel } from '../../components/NextMatchPanel'
 import { Reveal } from '../../components/Reveal'
@@ -38,8 +38,8 @@ function NextMatchWidgetView({
             title={upcoming.title}
           />
         ) : (
-          <div className="bg-contrast relative overflow-hidden rounded-card p-6 text-on-contrast md:p-8 lg:p-12">
-            <div className="hatch absolute inset-0 opacity-40" />
+          <div className="relative overflow-hidden rounded-card bg-contrast p-6 text-on-contrast md:p-8 lg:p-12">
+            <div className="absolute inset-0 hatch opacity-40" />
             <p className="relative text-white/85">
               {note ?? 'Žádný zápas není naplánovaný — rozpis nové sezóny připravujeme.'}
             </p>

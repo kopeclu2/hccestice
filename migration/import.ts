@@ -12,7 +12,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -45,7 +47,8 @@ function findByBasename(filename: string): string | null {
       for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
         const p = path.join(dir, e.name)
         if (e.isDirectory()) walk(p)
-        else if (!basenameIndex!.has(e.name.toLowerCase())) basenameIndex!.set(e.name.toLowerCase(), p)
+        else if (!basenameIndex!.has(e.name.toLowerCase()))
+          basenameIndex!.set(e.name.toLowerCase(), p)
       }
     }
     walk(MIRROR)
@@ -100,8 +103,7 @@ async function uploadMedia(
 async function main() {
   const payload = await getPayload({ config })
   const t0 = Date.now()
-  const log = (msg: string) =>
-    console.log(`[${Math.round((Date.now() - t0) / 1000)}s] ${msg}`)
+  const log = (msg: string) => console.log(`[${Math.round((Date.now() - t0) / 1000)}s] ${msg}`)
 
   const articles = DATA('articles.json') as any[]
   const galleries = DATA('galleries.json') as any[]
@@ -229,10 +231,7 @@ async function main() {
   const teamId = new Map<string, number>()
   let order = 0
   for (const name of ['Muži', 'Dorost', 'Žáci', 'Přípravka', 'Mládež']) {
-    const slug = name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
+    const slug = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
     const existing = await payload.find({
       collection: 'teams',
       where: { slug: { equals: slug } },
@@ -291,7 +290,10 @@ async function main() {
     if (fs.existsSync(logoPath)) {
       const logoDoc = await payload.create({
         collection: 'media',
-        data: { alt: `Logo ${name}`, legacy: { source: 'ftp', legacyPath: `/__files__/${logoFile}` } },
+        data: {
+          alt: `Logo ${name}`,
+          legacy: { source: 'ftp', legacyPath: `/__files__/${logoFile}` },
+        },
         filePath: logoPath,
         ...noRevalidate,
       })
@@ -572,7 +574,16 @@ async function main() {
   // ==========================================================================
 
   const counts: Record<string, number> = {}
-  for (const c of ['media', 'pages', 'posts', 'seasons', 'teams', 'opponents', 'galleries', 'redirects'] as const) {
+  for (const c of [
+    'media',
+    'pages',
+    'posts',
+    'seasons',
+    'teams',
+    'opponents',
+    'galleries',
+    'redirects',
+  ] as const) {
     const r = await payload.count({ collection: c })
     counts[c] = r.totalDocs
   }

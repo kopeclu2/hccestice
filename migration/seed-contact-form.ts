@@ -9,8 +9,9 @@
  * Spuštění: bun --env-file=.env migration/seed-contact-form.ts
  */
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
+
 import { notificationAddress } from '../src/email/config'
+import config from '../src/payload.config'
 
 const TITLE = 'Kontakt — landing page'
 

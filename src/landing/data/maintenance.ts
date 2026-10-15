@@ -1,6 +1,7 @@
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
+
+import configPromise from '@payload-config'
 
 /** Obsah údržbové stránky — `enabled` rozhoduje, jestli se vůbec zobrazí. */
 export type MaintenanceState = {

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { SubpageShell } from '@/landing/components/SubpageShell'

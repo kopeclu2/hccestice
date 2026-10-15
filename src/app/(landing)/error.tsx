@@ -40,8 +40,8 @@ export default function Error({
   }, [error])
 
   return (
-    <main className="text-on-contrast relative flex min-h-screen flex-col overflow-x-clip bg-contrast px-[clamp(0.625rem,1.4vw,1.25rem)] pt-3.5">
-      <div aria-hidden className="hatch-lime pointer-events-none absolute inset-0" />
+    <main className="relative flex min-h-screen flex-col overflow-x-clip bg-contrast px-[clamp(0.625rem,1.4vw,1.25rem)] pt-3.5 text-on-contrast">
+      <div aria-hidden className="pointer-events-none absolute inset-0 hatch-lime" />
 
       <nav className="relative z-2 mx-auto flex w-full max-w-[97.5rem] items-center px-[clamp(0.5rem,2vw,1.5rem)] py-2">
         <LogoStamp href="/" tone="glass" />
@@ -54,7 +54,7 @@ export default function Error({
           Technická přestávka <span className="text-lime">na naší straně</span>
         </PageTitle>
 
-        <p className="mt-4.5 max-w-130 text-lg leading-[1.55] text-white/72 text-pretty">
+        <p className="mt-4.5 max-w-130 text-lg leading-[1.55] text-pretty text-white/72">
           Na serveru se něco pokazilo. Už na tom pracujeme — zkuste stránku za chvíli obnovit.
         </p>
 

@@ -36,7 +36,7 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
                 Kanadské body hráčů HC Čestice: góly, asistence a body
               </caption>
               <thead>
-                <tr className="text-faint text-xs font-semibold">
+                <tr className="text-xs font-semibold text-faint">
                   <th className="py-1.5 text-left font-semibold" scope="col">
                     Hráč
                   </th>
@@ -57,14 +57,14 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-line-soft divide-y border-line-soft border-t">
+              <tbody className="divide-y divide-line-soft border-t border-line-soft">
                 {points.map((row) => (
                   <tr key={row.name}>
                     <th className="py-2 pr-2 text-left font-semibold break-words" scope="row">
                       {row.name}
                     </th>
-                    <td className={`${NUM} text-ink-soft font-semibold`}>{row.goals}</td>
-                    <td className={`${NUM} text-ink-soft font-semibold`}>{row.assists}</td>
+                    <td className={`${NUM} font-semibold text-ink-soft`}>{row.goals}</td>
+                    <td className={`${NUM} font-semibold text-ink-soft`}>{row.assists}</td>
                     <td className={`${NUM} font-extrabold`}>{row.points}</td>
                   </tr>
                 ))}
@@ -97,13 +97,13 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
                 <span className="sr-only">trestných minut celkem</span>
               </span>
             </h3>
-            <ul className="divide-line-soft border-line-soft mt-2 divide-y border-t text-sm md:text-base">
+            <ul className="mt-2 divide-y divide-line-soft border-t border-line-soft text-sm md:text-base">
               {penalties.map((row) => (
                 <li className="flex items-baseline justify-between gap-3 py-2" key={row.name}>
                   <span className="min-w-0 font-semibold break-words">{row.name}</span>
-                  <span className="text-ink-soft flex-none font-medium tabular-nums">
+                  <span className="flex-none font-medium text-ink-soft tabular-nums">
                     {row.minutes}&nbsp;min
-                    {row.count > 1 && <span className="text-faint text-xs"> ({row.count}×)</span>}
+                    {row.count > 1 && <span className="text-xs text-faint"> ({row.count}×)</span>}
                   </span>
                 </li>
               ))}

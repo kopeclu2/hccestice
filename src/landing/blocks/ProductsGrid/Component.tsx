@@ -1,10 +1,9 @@
-import type { Product, ProductsGridBlock } from '@/payload-types'
-
 import { Mail, Megaphone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import type { Product, ProductsGridBlock } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { Badge } from '../../components/Badge'
@@ -38,7 +37,7 @@ export async function ProductsGridBlockComponent({ block }: { block: ProductsGri
         )}
 
         {block.orderInfo && (
-          <div className="bg-club mb-8 flex items-start gap-3.5 rounded-tile px-4.5 py-4 text-white md:px-5 lg:px-5.5 lg:py-4.5">
+          <div className="mb-8 flex items-start gap-3.5 rounded-tile bg-club px-4.5 py-4 text-white md:px-5 lg:px-5.5 lg:py-4.5">
             <Megaphone className="mt-0.5 size-5 flex-none" strokeWidth={2.25} />
             <p className="text-sm leading-relaxed font-semibold whitespace-pre-line">
               {block.orderInfo}
@@ -80,7 +79,7 @@ export function ProductTile({
     <article className="flex h-full flex-col rounded-tile bg-surface p-4.5 md:p-5 lg:p-5.5">
       {/* produktovky mají bílé pozadí a různé poměry → contain, ne cover */}
       <MaybeLink
-        className="bg-chip relative block aspect-square overflow-hidden rounded-badge"
+        className="relative block aspect-square overflow-hidden rounded-badge bg-chip"
         href={detailHref}
       >
         {/* `sizes` kopíruje zlomy mřížky výš (`sm:grid-cols-2 lg:grid-cols-3`).
@@ -98,7 +97,7 @@ export function ProductTile({
       </MaybeLink>
       <div className="mt-4 flex items-start justify-between gap-3">
         <CardTitle as="h3" size="xs">
-          <MaybeLink className="hover:text-club transition-colors" href={detailHref}>
+          <MaybeLink className="transition-colors hover:text-club" href={detailHref}>
             {product.name}
           </MaybeLink>
         </CardTitle>
@@ -107,20 +106,20 @@ export function ProductTile({
         </Badge>
       </div>
       {product.description && (
-        <p className="text-dim mt-1.5 text-sm leading-relaxed">{product.description}</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-dim">{product.description}</p>
       )}
       {(product.sizes ?? []).length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
           {(product.sizes ?? []).map((size) => (
             <Badge key={size.id} size="xs" title={size.note ?? undefined} variant="chip">
               {size.label}
-              {size.note && <span className="text-faint font-medium"> · {size.note}</span>}
+              {size.note && <span className="font-medium text-faint"> · {size.note}</span>}
             </Badge>
           ))}
         </div>
       )}
       {product.orderNote && (
-        <p className="text-faint mt-2 text-xs font-medium">⚠ {product.orderNote}</p>
+        <p className="mt-2 text-xs font-medium text-faint">⚠ {product.orderNote}</p>
       )}
       <div className="flex-1" />
       <PillLink className="mt-4 self-start" href={mailto} size="sm" variant="dark">

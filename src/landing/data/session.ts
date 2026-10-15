@@ -1,6 +1,7 @@
-import configPromise from '@payload-config'
 import { headers as nextHeaders } from 'next/headers'
 import { getPayload } from 'payload'
+
+import configPromise from '@payload-config'
 
 /**
  * Je návštěvník přihlášený do administrace?

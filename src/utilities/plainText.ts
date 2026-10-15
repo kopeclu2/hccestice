@@ -75,7 +75,10 @@ export const decodeEntities = (value: string): string =>
   value
     .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) => String.fromCodePoint(parseInt(hex, 16)))
     .replace(/&#(\d+);/g, (_, dec: string) => String.fromCodePoint(Number(dec)))
-    .replace(/&([a-zA-Z]+);/g, (match, name: string) => ENTITY[name] ?? ENTITY[name.toLowerCase()] ?? match)
+    .replace(
+      /&([a-zA-Z]+);/g,
+      (match, name: string) => ENTITY[name] ?? ENTITY[name.toLowerCase()] ?? match,
+    )
 
 /**
  * HTML → prostý text. Entity se dekódují ještě před stripováním tagů, protože
@@ -91,11 +94,13 @@ export const htmlPlainText = (html: string): string => {
       .replace(/<[^>]*>/g, ' ')
     text = decodeEntities(text)
   }
-  return text
-    // oddělovací linky z editoru („-----", „_____") nejsou text
-    .replace(/[-_=]{3,}/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  return (
+    text
+      // oddělovací linky z editoru („-----", „_____") nejsou text
+      .replace(/[-_=]{3,}/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+  )
 }
 
 /**

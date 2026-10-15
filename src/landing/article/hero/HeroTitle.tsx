@@ -34,7 +34,7 @@ export function TitleParts({
       {title.slice(0, index)}
       <span
         className={cn(
-          accent === 'lime-box' ? 'bg-lime text-ink box-decoration-clone px-2' : 'text-lime',
+          accent === 'lime-box' ? 'bg-lime box-decoration-clone px-2 text-ink' : 'text-lime',
           highlightClassName,
         )}
       >

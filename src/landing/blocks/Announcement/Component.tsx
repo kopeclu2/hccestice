@@ -1,6 +1,6 @@
-import type { AnnouncementBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { AnnouncementBlock } from '@/payload-types'
 
 import { SectionShell } from '../../components/SectionShell'
 

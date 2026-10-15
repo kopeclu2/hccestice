@@ -30,7 +30,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
           <TitleParts accent="lime-box" highlight={article.titleHighlight} title={article.title} />
         </PageTitle>
         {article.excerpt && (
-          <p className="text-ink-soft mt-5 max-w-130 text-lg leading-relaxed text-pretty">
+          <p className="mt-5 max-w-130 text-lg leading-relaxed text-pretty text-ink-soft">
             {article.excerpt}
           </p>
         )}
@@ -43,7 +43,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
         />
       </div>
 
-      <div className="bg-pine relative h-[clamp(20rem,42vw,30rem)] overflow-hidden rounded-section">
+      <div className="relative h-[clamp(20rem,42vw,30rem)] overflow-hidden rounded-section bg-pine">
         {article.photo && (
           <Image
             alt={article.photo.alt}
@@ -55,7 +55,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
           />
         )}
         {article.photoCaption && (
-          <span className="bg-pine-deep/72 absolute bottom-4 left-4 rounded-full px-4 py-2 text-xs font-medium text-white backdrop-blur-md">
+          <span className="absolute bottom-4 left-4 rounded-full bg-pine-deep/72 px-4 py-2 text-xs font-medium text-white backdrop-blur-md">
             {article.photoCaption}
           </span>
         )}

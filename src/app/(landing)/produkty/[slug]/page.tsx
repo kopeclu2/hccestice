@@ -1,24 +1,23 @@
-import type { Metadata } from 'next'
-import type { Media, Product } from '@/payload-types'
-
 import { ArrowLeft, CircleCheck, CircleX, Mail } from 'lucide-react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { BreadcrumbsJsonLd } from '@/landing/components/BreadcrumbsJsonLd'
 import { CardTitle, PageTitle } from '@/landing/components/Heading'
 import { Kicker } from '@/landing/components/Kicker'
 import { Numeral } from '@/landing/components/Numeral'
 import { PillLink } from '@/landing/components/PillLink'
+import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchProductBySlug, fetchProductSlugs } from '@/landing/data/products'
 import { fetchSite } from '@/landing/data/site'
+import type { Media, Product } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { getServerSideURL } from '@/utilities/getURL'
-import { cn } from '@/utilities/ui'
 import { serializeJsonLd } from '@/utilities/jsonLd'
+import { cn } from '@/utilities/ui'
 
 export const revalidate = 600
 
@@ -60,7 +59,7 @@ export default async function ProductDetailPage({ params }: Args) {
       />
       <div className="mx-auto max-w-[80rem] pt-10">
         <Link
-          className="text-faint hover:text-club inline-flex items-center gap-2 text-sm font-semibold transition-colors [&_svg]:size-4"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-faint transition-colors hover:text-club [&_svg]:size-4"
           href="/produkty-merch"
         >
           <ArrowLeft strokeWidth={2.5} /> Zpět na Produkty merch
@@ -70,12 +69,12 @@ export default async function ProductDetailPage({ params }: Args) {
           {/* fotky: první přes celou šířku, další jako mřížka */}
           <div className="grid grid-cols-3 gap-4">
             {photos.length === 0 && (
-              <div className="bg-chip col-span-3 aspect-square rounded-panel" />
+              <div className="col-span-3 aspect-square rounded-panel bg-chip" />
             )}
             {photos.map((photo, index) => (
               <div
                 className={cn(
-                  'bg-chip relative overflow-hidden rounded-panel',
+                  'relative overflow-hidden rounded-panel bg-chip',
                   index === 0 ? 'col-span-3 aspect-[4/3]' : 'aspect-square',
                 )}
                 key={index}
@@ -99,7 +98,7 @@ export default async function ProductDetailPage({ params }: Args) {
               <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
                 <PageTitle size="sm">{product.name}</PageTitle>
                 <Numeral
-                  className="bg-lime text-ink rounded-full px-4 py-1.5 whitespace-nowrap"
+                  className="rounded-full bg-lime px-4 py-1.5 whitespace-nowrap text-ink"
                   size="sm"
                 >
                   {product.price} Kč
@@ -107,11 +106,11 @@ export default async function ProductDetailPage({ params }: Args) {
               </div>
               <div className="mt-3">
                 {product.available ? (
-                  <span className="text-club-dark inline-flex items-center gap-1.5 text-sm font-semibold [&_svg]:size-4">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-club-dark [&_svg]:size-4">
                     <CircleCheck strokeWidth={2.5} /> V nabídce
                   </span>
                 ) : (
-                  <span className="text-faint inline-flex items-center gap-1.5 text-sm font-semibold [&_svg]:size-4">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-faint [&_svg]:size-4">
                     <CircleX strokeWidth={2.5} /> Momentálně mimo nabídku
                   </span>
                 )}
@@ -119,7 +118,7 @@ export default async function ProductDetailPage({ params }: Args) {
             </div>
 
             {product.description && (
-              <p className="text-dim leading-relaxed text-pretty">{product.description}</p>
+              <p className="leading-relaxed text-pretty text-dim">{product.description}</p>
             )}
 
             {(product.sizes ?? []).length > 0 && (
@@ -130,11 +129,11 @@ export default async function ProductDetailPage({ params }: Args) {
                 <div className="flex flex-wrap gap-2">
                   {(product.sizes ?? []).map((size) => (
                     <span
-                      className="border-line rounded-xl border bg-surface px-4 py-2 text-sm font-semibold"
+                      className="rounded-xl border border-line bg-surface px-4 py-2 text-sm font-semibold"
                       key={size.id}
                     >
                       {size.label}
-                      {size.note && <span className="text-faint font-medium"> · {size.note}</span>}
+                      {size.note && <span className="font-medium text-faint"> · {size.note}</span>}
                     </span>
                   ))}
                 </div>
@@ -150,7 +149,7 @@ export default async function ProductDetailPage({ params }: Args) {
                 >
                   <Mail strokeWidth={2.5} /> Objednat e-mailem
                 </PillLink>
-                <p className="text-faint mt-2 text-center text-xs font-medium">
+                <p className="mt-2 text-center text-xs font-medium text-faint">
                   {product.orderNote ??
                     'V objednávce uveďte název předmětu, velikost a počet kusů.'}
                 </p>
@@ -165,10 +164,10 @@ export default async function ProductDetailPage({ params }: Args) {
                 <dl>
                   {(product.params ?? []).map((param) => (
                     <div
-                      className="border-line-soft flex items-center justify-between gap-6 border-b py-3 last:border-b-0"
+                      className="flex items-center justify-between gap-6 border-b border-line-soft py-3 last:border-b-0"
                       key={param.id}
                     >
-                      <dt className="text-faint text-sm font-medium">{param.label}</dt>
+                      <dt className="text-sm font-medium text-faint">{param.label}</dt>
                       <dd className="text-right text-sm font-semibold">{param.value}</dd>
                     </div>
                   ))}

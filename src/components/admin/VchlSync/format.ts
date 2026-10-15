@@ -27,7 +27,13 @@ export function fmtRelative(iso?: string | null, now = Date.now()): string {
   const abs = Math.abs(diff)
   const min = Math.round(abs / 60_000)
   const text =
-    min < 1 ? 'okamžik' : min < 60 ? `${min} min` : min < 2880 ? `${Math.round(min / 60)} h` : `${Math.round(min / 1440)} dní`
+    min < 1
+      ? 'okamžik'
+      : min < 60
+        ? `${min} min`
+        : min < 2880
+          ? `${Math.round(min / 60)} h`
+          : `${Math.round(min / 1440)} dní`
   if (min < 1) return 'právě teď'
   return diff >= 0 ? `za ${text}` : `před ${text}`
 }

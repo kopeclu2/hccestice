@@ -1,8 +1,7 @@
-import type { PricingCardsBlock } from '@/payload-types'
-
 import { Check } from 'lucide-react'
 import React from 'react'
 
+import type { PricingCardsBlock } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { SectionTitle } from '../../components/Heading'
@@ -22,7 +21,7 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
       <Reveal>
         {block.title && <SectionTitle className="text-center">{block.title}</SectionTitle>}
         {block.perex && (
-          <p className="text-dim mx-auto mt-3 max-w-120 text-center leading-relaxed text-pretty">
+          <p className="mx-auto mt-3 max-w-120 text-center leading-relaxed text-pretty text-dim">
             {block.perex}
           </p>
         )}

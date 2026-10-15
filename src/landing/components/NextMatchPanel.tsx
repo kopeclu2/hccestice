@@ -3,8 +3,9 @@ import React from 'react'
 import { cn } from '@/utilities/ui'
 
 import { Countdown } from '../blocks/Hero/Countdown'
-import { CardTitle } from './Heading'
+
 import { DotEyebrow } from './DotEyebrow'
+import { CardTitle } from './Heading'
 import { MatchMeta } from './MatchMeta'
 import { StretchedLink, stretchHost } from './StretchedLink'
 import { splitMatchTitle, TeamPair } from './TeamPair'
@@ -76,12 +77,12 @@ export function NextMatchPanel({
        nevešel a „sek" padala na vlastní řádek. */
     <div
       className={cn(
-        'bg-contrast relative overflow-hidden p-4.5 text-on-contrast md:p-8 lg:p-12',
+        'relative overflow-hidden bg-contrast p-4.5 text-on-contrast md:p-8 lg:p-12',
         href && stretchHost,
         radius === 'card' ? 'rounded-card' : 'rounded-section',
       )}
     >
-      <div className="hatch absolute inset-0 opacity-40" />
+      <div className="absolute inset-0 hatch opacity-40" />
       <div
         className={cn(
           'relative',
@@ -93,7 +94,7 @@ export function NextMatchPanel({
           <CardTitle as={titleAs} className="mt-2 leading-tight text-white" size="lg">
             {/* `-inset-*` = odsazení panelu, aby klikací byl i jeho okraj. */}
             <StretchedLink
-              className="decoration-lime underline-offset-6 hover:underline after:-inset-4.5 md:after:-inset-8 lg:after:-inset-12"
+              className="decoration-lime underline-offset-6 after:-inset-4.5 hover:underline md:after:-inset-8 lg:after:-inset-12"
               href={href ?? null}
             >
               <PanelTitle title={title} />

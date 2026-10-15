@@ -13,12 +13,11 @@
  *
  * Spuštění: bun --env-file=.env migration/seed-navigation.ts
  */
-import type { NavigationItem } from '../src/payload-types'
-
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
 
 import { FALLBACK_NAV } from '../src/landing/content'
+import type { NavigationItem } from '../src/payload-types'
+import config from '../src/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

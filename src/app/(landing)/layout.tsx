@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-
-import { draftMode } from 'next/headers'
 import { Archivo } from 'next/font/google'
+import { draftMode } from 'next/headers'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'

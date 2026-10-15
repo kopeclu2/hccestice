@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import { notFound, permanentRedirect } from 'next/navigation'
 
 import { getCachedRedirects } from '@/utilities/getRedirects'

@@ -1,14 +1,13 @@
-import type { Person, SiteConfig } from '@/payload-types'
-
-import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import type { Person, SiteConfig } from '@/payload-types'
+import { stripTracking } from '@/utilities/stripTracking'
+import configPromise from '@payload-config'
+
 import { CLUB_EMAIL, FOOTER } from '../content'
 import type { FooterContent, PersonCard, SiteLinks } from '../types'
-
-import { stripTracking } from '@/utilities/stripTracking'
 
 import { arrayOr, toPersonCard, uploadToPhoto } from './format'
 

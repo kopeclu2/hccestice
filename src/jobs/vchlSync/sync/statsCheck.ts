@@ -4,6 +4,7 @@ import type { Match } from '@/payload-types'
 
 import type { SeasonCtx } from '../context'
 import { span } from '../sentry'
+
 import type { SyncContext } from './ctx'
 import { ourSide } from './matchDetail'
 import type { PlayerResolver } from './players'
@@ -29,7 +30,11 @@ export async function checkStats(
     )
 
     const sums = new Map<number, Sum>()
-    const add = (id: number | null, name: string, r: { goals: number; assists: number; pim: number }) => {
+    const add = (
+      id: number | null,
+      name: string,
+      r: { goals: number; assists: number; pim: number },
+    ) => {
       if (id == null) return
       const s = sums.get(id) ?? { name, games: 0, goals: 0, assists: 0, pim: 0 }
       s.games += 1
@@ -50,7 +55,10 @@ export async function checkStats(
         for (const r of detail.lineups[side]) add(r.playerId, r.name, r)
       } else {
         for (const r of doc.lineup ?? []) {
-          const rel = typeof r.player === 'object' && r.player ? r.player.id : (r.player as number | null | undefined)
+          const rel =
+            typeof r.player === 'object' && r.player
+              ? r.player.id
+              : (r.player as number | null | undefined)
           add(rel != null ? players.ahlIdOf(rel) : null, r.name ?? '', {
             goals: r.goals ?? 0,
             assists: r.assists ?? 0,
@@ -66,7 +74,12 @@ export async function checkStats(
       if (st.playerId == null) continue
       seen.add(st.playerId)
       const s = sums.get(st.playerId) ?? { name: st.name, games: 0, goals: 0, assists: 0, pim: 0 }
-      if (s.games !== st.games || s.goals !== st.goals || s.assists !== st.assists || s.pim !== st.pim) {
+      if (
+        s.games !== st.games ||
+        s.goals !== st.goals ||
+        s.assists !== st.assists ||
+        s.pim !== st.pim
+      ) {
         ctx.warn({
           type: 'stats-mismatch',
           ref: String(st.playerId),

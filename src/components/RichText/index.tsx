@@ -1,4 +1,3 @@
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
@@ -11,8 +10,13 @@ import {
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
+import { BannerBlock } from '@/blocks/Banner/Component'
 import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-
+import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { YouTubeBlock } from '@/blocks/YouTube/Component'
+import { TEXT_STATE } from '@/fields/textStateColors'
+import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
+import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
 import type {
   BannerBlock as BannerBlockProps,
   DataTableBlockType,
@@ -20,11 +24,6 @@ import type {
   StatCardsBlockType,
   YouTubeBlock as YouTubeBlockProps,
 } from '@/payload-types'
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { YouTubeBlock } from '@/blocks/YouTube/Component'
-import { TEXT_STATE } from '@/fields/textStateColors'
-import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
-import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
 import { cn } from '@/utilities/ui'
 
 /**
@@ -73,9 +72,7 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 }
 
 /** Klient-safe konvertory — sdílí je i serverová varianta. */
-export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({
-  defaultConverters,
-}) => ({
+export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   // Barvy a zvýraznění z TextStateFeature — výchozí converter stav
@@ -100,7 +97,7 @@ export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (
       <MediaBlock
-        className="col-start-1 col-span-3"
+        className="col-span-3 col-start-1"
         imgClassName="m-0"
         {...node.fields}
         captionClassName="mx-auto max-w-[48rem]"
@@ -116,7 +113,7 @@ export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({
     ),
     // tabulka v textu — bez sekčních rozestupů a bočního paddingu
     dataTable: ({ node }) => (
-      <div className="not-prose font-display text-ink my-6 [&_section]:mt-0! [&_section]:px-0!">
+      <div className="not-prose my-6 font-display text-ink [&_section]:mt-0! [&_section]:px-0!">
         <DataTableBlockComponent block={node.fields} />
       </div>
     ),

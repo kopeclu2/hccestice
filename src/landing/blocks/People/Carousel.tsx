@@ -45,13 +45,13 @@ export function PeopleCarousel({ people, intro }: { people: PersonCard[]; intro:
           </SectionTitle>
         </div>
         <div className="flex-1" />
-        <p className="text-faint hidden max-w-75 text-right text-sm leading-normal lg:block">
+        <p className="hidden max-w-75 text-right text-sm leading-normal text-faint lg:block">
           {intro}
         </p>
         <div className="flex gap-2">
           <button
             aria-label="Předchozí"
-            className="border-line hover:bg-contrast grid size-10.5 place-items-center rounded-full border bg-surface transition-colors hover:text-on-contrast [&_svg]:size-4"
+            className="grid size-10.5 place-items-center rounded-full border border-line bg-surface transition-colors hover:bg-contrast hover:text-on-contrast [&_svg]:size-4"
             onClick={() => scrollByCard(-1)}
             type="button"
           >
@@ -59,7 +59,7 @@ export function PeopleCarousel({ people, intro }: { people: PersonCard[]; intro:
           </button>
           <button
             aria-label="Další"
-            className="bg-contrast hover:bg-club grid size-10.5 place-items-center rounded-full text-on-contrast transition-colors [&_svg]:size-4"
+            className="grid size-10.5 place-items-center rounded-full bg-contrast text-on-contrast transition-colors hover:bg-club [&_svg]:size-4"
             onClick={() => scrollByCard(1)}
             type="button"
           >
@@ -69,7 +69,7 @@ export function PeopleCarousel({ people, intro }: { people: PersonCard[]; intro:
       </div>
 
       <div
-        className="no-scrollbar -mx-4.5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4.5 pb-4.5 md:mx-0 md:gap-7 md:px-1"
+        className="-mx-4.5 no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto px-4.5 pb-4.5 md:mx-0 md:gap-7 md:px-1"
         ref={carouselRef}
       >
         {people.map((person) => (
@@ -89,10 +89,10 @@ function PersonTile({ person }: { person: PersonCard }) {
 
   return (
     <article className="flex-[0_0_70%] snap-start sm:flex-[0_0_44%] md:flex-[0_0_18.75rem]">
-      <div className="border-paper-deep bg-surface relative aspect-[1/1.2] overflow-hidden rounded-panel border">
+      <div className="relative aspect-[1/1.2] overflow-hidden rounded-panel border border-paper-deep bg-surface">
         {/* lime záře + šrafování na pozadí karty */}
-        <div className="bg-[radial-gradient(circle,--alpha(var(--color-lime)/55%),--alpha(var(--color-lime)/6%)_68%)] absolute -bottom-2/5 left-1/2 aspect-square w-[130%] -translate-x-1/2 rounded-full" />
-        <div className="hatch absolute inset-0 opacity-60" />
+        <div className="absolute -bottom-2/5 left-1/2 aspect-square w-[130%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,--alpha(var(--color-lime)/55%),--alpha(var(--color-lime)/6%)_68%)]" />
+        <div className="absolute inset-0 hatch opacity-60" />
         <Image
           alt=""
           aria-hidden
@@ -101,7 +101,7 @@ function PersonTile({ person }: { person: PersonCard }) {
           src="/logo-cestice.png"
           width={74}
         />
-        <div className="text-club/35 absolute top-4.5 right-4.5 text-eyebrow font-bold tracking-[0.26em] uppercase [writing-mode:vertical-rl]">
+        <div className="absolute top-4.5 right-4.5 text-eyebrow font-bold tracking-[0.26em] text-club/35 uppercase [writing-mode:vertical-rl]">
           {person.role}
         </div>
 
@@ -117,17 +117,17 @@ function PersonTile({ person }: { person: PersonCard }) {
 
         {/* glass jmenovka */}
         <a
-          className="shadow-float absolute inset-x-3.5 bottom-3.5 flex items-center justify-between gap-3 rounded-badge bg-white/94 px-4.5 py-3.25 backdrop-blur-md"
+          className="absolute inset-x-3.5 bottom-3.5 flex items-center justify-between gap-3 rounded-badge bg-white/94 px-4.5 py-3.25 shadow-float backdrop-blur-md"
           href={contactHref}
           title={person.mail ?? person.phone ?? undefined}
         >
           <span>
-            <span className="block text-sm md:text-base font-bold tracking-tight">
+            <span className="block text-sm font-bold tracking-tight md:text-base">
               {person.name}
             </span>
             <Eyebrow className="mt-0.25 block">{person.role}</Eyebrow>
           </span>
-          <span className="bg-lime text-ink grid size-8 flex-none place-items-center rounded-full [&_svg]:size-3.5">
+          <span className="grid size-8 flex-none place-items-center rounded-full bg-lime text-ink [&_svg]:size-3.5">
             <ArrowUpRight strokeWidth={2.5} />
           </span>
         </a>

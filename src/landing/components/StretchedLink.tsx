@@ -34,7 +34,10 @@ export function StretchedLink({
 
   return (
     <Link
-      className={cn("block outline-none after:absolute after:inset-0 after:content-['']", className)}
+      className={cn(
+        "block outline-none after:absolute after:inset-0 after:content-['']",
+        className,
+      )}
       data-stretched=""
       href={href}
     >

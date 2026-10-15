@@ -1,5 +1,4 @@
 import type { VariantProps } from 'class-variance-authority'
-
 import { cva } from 'class-variance-authority'
 import React from 'react'
 
@@ -14,7 +13,7 @@ import { cn } from '@/utilities/ui'
  * Barvy gradientu jsou tokeny; dřív to byl literál `#fff` a `#e9f0eb`
  * (což je `--color-paper-mid` s odchylkou 1/255 na dvou kanálech).
  */
-const pageCanvasVariants = cva('text-ink relative overflow-x-clip', {
+const pageCanvasVariants = cva('relative overflow-x-clip text-ink', {
   variants: {
     /**
      * Svislý gradient podkladu. Zlomy se liší podle výšky obsahu nad prvním
@@ -59,7 +58,7 @@ export function PageCanvas({
   return (
     <main className={cn(pageCanvasVariants({ gutter, surface }), className)} {...props}>
       {hatch && (
-        <div className="hatch pointer-events-none absolute inset-0 z-0 [mask-image:repeating-linear-gradient(180deg,transparent_0,#000_27.5rem,#000_51.25rem,transparent_78.75rem)]" />
+        <div className="pointer-events-none absolute inset-0 z-0 hatch [mask-image:repeating-linear-gradient(180deg,transparent_0,#000_27.5rem,#000_51.25rem,transparent_78.75rem)]" />
       )}
       {children}
     </main>

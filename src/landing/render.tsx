@@ -1,6 +1,6 @@
-import type { Page } from '@/payload-types'
-
 import React from 'react'
+
+import type { Page } from '@/payload-types'
 
 import { AlbumBlockComponent } from './blocks/Album/Component'
 import { AnnouncementBlockComponent } from './blocks/Announcement/Component'
@@ -30,9 +30,9 @@ import { PlayerCardBlockComponent } from './blocks/PlayerCard/Component'
 import { PlayersPickerBlockComponent } from './blocks/PlayersPicker/Component'
 import { PostFeatureBlockComponent } from './blocks/PostFeature/Component'
 import { PostsGridBlockComponent } from './blocks/PostsGrid/Component'
+import { PricingCardsBlockComponent } from './blocks/PricingCards/Component'
 import { ProductCardBlockComponent } from './blocks/ProductCard/Component'
 import { ProductsGridBlockComponent } from './blocks/ProductsGrid/Component'
-import { PricingCardsBlockComponent } from './blocks/PricingCards/Component'
 import { RosterWidgetBlockComponent } from './blocks/RosterWidget/Component'
 import { SeasonBlockComponent } from './blocks/Season/Component'
 import { SectionHeadingBlockComponent } from './blocks/SectionHeading/Component'

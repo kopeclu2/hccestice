@@ -1,10 +1,9 @@
 import type { PayloadRequest } from 'payload'
-
 import { describe, expect, it, vi } from 'vitest'
 
+import { generateMatchSlug } from '../../src/hooks/matchSlug'
 import { draftSlug } from '../../src/jobs/vchlSync/sync/draftPost'
 import { utcToPragueLocal } from '../../src/jobs/vchlSync/time'
-import { generateMatchSlug } from '../../src/hooks/matchSlug'
 import { matchSlug, uniqueSlug, withSlugSuffix } from '../../src/utilities/matchSlug'
 import { slugifyCs } from '../../src/utilities/slugifyCs'
 
@@ -39,13 +38,17 @@ describe('matchSlug', () => {
   })
 
   it('slug soupeře ze slugifyCs odpovídá slugům v DB', () => {
-    expect(matchSlug('2025-10-12', slugifyCs('HC Žďár nad Sázavou'))).toBe('2025-10-12-hc-zdar-nad-sazavou')
+    expect(matchSlug('2025-10-12', slugifyCs('HC Žďár nad Sázavou'))).toBe(
+      '2025-10-12-hc-zdar-nad-sazavou',
+    )
   })
 
   it('den se bere v Europe/Prague, ne v UTC', () => {
     // Letní čas (UTC+2): 22:30 UTC je v Praze už půl hodiny po půlnoci.
     expect(utcToPragueLocal('2025-10-11T22:30:00Z').day).toBe('2025-10-12')
-    expect(matchSlug(utcToPragueLocal('2025-10-11T22:30:00Z').day, 'hc-zdar')).toBe('2025-10-12-hc-zdar')
+    expect(matchSlug(utcToPragueLocal('2025-10-11T22:30:00Z').day, 'hc-zdar')).toBe(
+      '2025-10-12-hc-zdar',
+    )
     // Zimní čas (UTC+1): totéž ve 23:30 UTC.
     expect(utcToPragueLocal('2026-01-14T23:30:00Z').day).toBe('2026-01-15')
     expect(utcToPragueLocal('2026-01-14T22:30:00Z').day).toBe('2026-01-14')
@@ -72,30 +75,43 @@ describe('kolizní přípony', () => {
 })
 
 describe('hook generateMatchSlug', () => {
-  const setup = (opts: { opponent?: { slug?: string | null } | 'missing'; taken?: string[] } = {}) => {
+  const setup = (
+    opts: { opponent?: { slug?: string | null } | 'missing'; taken?: string[] } = {},
+  ) => {
     const taken = new Set(opts.taken ?? [])
     const findByID = vi.fn(async () => {
       if (opts.opponent === 'missing') throw new Error('Not found')
       return opts.opponent ?? { slug: 'hc-zdar' }
     })
-    const count = vi.fn(async ({ where }: { where: { and: Array<{ slug?: { equals: string } }> } }) => ({
-      totalDocs: taken.has(where.and[0].slug!.equals) ? 1 : 0,
-    }))
+    const count = vi.fn(
+      async ({ where }: { where: { and: Array<{ slug?: { equals: string } }> } }) => ({
+        totalDocs: taken.has(where.and[0].slug!.equals) ? 1 : 0,
+      }),
+    )
     const req = { payload: { findByID, count } } as unknown as PayloadRequest
-    const run = (args: { data: Record<string, unknown>; originalDoc?: Record<string, unknown>; operation: 'create' | 'update' }) =>
-      generateMatchSlug({ ...args, req } as never) as Promise<Record<string, unknown>>
+    const run = (args: {
+      data: Record<string, unknown>
+      originalDoc?: Record<string, unknown>
+      operation: 'create' | 'update'
+    }) => generateMatchSlug({ ...args, req } as never) as Promise<Record<string, unknown>>
     return { run, findByID, count }
   }
 
   it('při založení vygeneruje slug z dne v Praze a slugu soupeře', async () => {
     const { run } = setup()
-    const out = await run({ data: { date: '2025-10-11T22:30:00.000Z', opponent: 4 }, operation: 'create' })
+    const out = await run({
+      data: { date: '2025-10-11T22:30:00.000Z', opponent: 4 },
+      operation: 'create',
+    })
     expect(out.slug).toBe('2025-10-12-hc-zdar')
   })
 
   it('kolize dostane příponu', async () => {
     const { run } = setup({ taken: ['2025-10-12-hc-zdar', '2025-10-12-hc-zdar-2'] })
-    const out = await run({ data: { date: '2025-10-12T14:00:00.000Z', opponent: 4 }, operation: 'create' })
+    const out = await run({
+      data: { date: '2025-10-12T14:00:00.000Z', opponent: 4 },
+      operation: 'create',
+    })
     expect(out.slug).toBe('2025-10-12-hc-zdar-3')
   })
 
@@ -132,15 +148,24 @@ describe('hook generateMatchSlug', () => {
   })
 
   it('soupeř bez slugu nebo neexistující → jen den', async () => {
-    const a = await setup({ opponent: { slug: null } }).run({ data: { date: '2025-10-12T14:00:00Z', opponent: 4 }, operation: 'create' })
+    const a = await setup({ opponent: { slug: null } }).run({
+      data: { date: '2025-10-12T14:00:00Z', opponent: 4 },
+      operation: 'create',
+    })
     expect(a.slug).toBe('2025-10-12')
-    const b = await setup({ opponent: 'missing' }).run({ data: { date: '2025-10-12T14:00:00Z', opponent: 4 }, operation: 'create' })
+    const b = await setup({ opponent: 'missing' }).run({
+      data: { date: '2025-10-12T14:00:00Z', opponent: 4 },
+      operation: 'create',
+    })
     expect(b.slug).toBe('2025-10-12')
   })
 
   it('ručně zadaný slug se jen očistí', async () => {
     const { run } = setup()
-    const out = await run({ data: { slug: 'Můj Zápas', date: '2025-10-12T14:00:00Z' }, operation: 'create' })
+    const out = await run({
+      data: { slug: 'Můj Zápas', date: '2025-10-12T14:00:00Z' },
+      operation: 'create',
+    })
     expect(out.slug).toBe('muj-zapas')
   })
 
@@ -160,13 +185,19 @@ describe('hook generateMatchSlug', () => {
 
   it('ruční slug, který se po očištění vyprázdní, se generuje jako prázdný', async () => {
     const { run } = setup()
-    const out = await run({ data: { slug: ' ??? – ', date: '2025-10-12T14:00:00Z', opponent: 4 }, operation: 'create' })
+    const out = await run({
+      data: { slug: ' ??? – ', date: '2025-10-12T14:00:00Z', opponent: 4 },
+      operation: 'create',
+    })
     expect(out.slug).toBe('2025-10-12-hc-zdar')
   })
 
   it('slug soupeře se pro jistotu čistí taky', async () => {
     const { run } = setup({ opponent: { slug: 'HC Žďár' } })
-    const out = await run({ data: { date: '2025-10-12T14:00:00Z', opponent: 4 }, operation: 'create' })
+    const out = await run({
+      data: { date: '2025-10-12T14:00:00Z', opponent: 4 },
+      operation: 'create',
+    })
     expect(out.slug).toBe('2025-10-12-hc-zdar')
   })
 

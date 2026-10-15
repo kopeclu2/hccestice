@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { ErrorCode, ErrorMeta } from '@/landing/components/ErrorCode'
@@ -37,7 +36,7 @@ export default function NotFound() {
           Puk zajel <Highlight>mimo hřiště</Highlight>
         </PageTitle>
 
-        <p className="text-ink-soft mt-4.5 max-w-130 text-lg leading-[1.55] text-pretty">
+        <p className="mt-4.5 max-w-130 text-lg leading-[1.55] text-pretty text-ink-soft">
           Stránka, kterou hledáte, neexistuje nebo byla přesunuta. Zkuste to z domovské stránky —
           tam se hraje.
         </p>

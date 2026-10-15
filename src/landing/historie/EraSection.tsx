@@ -15,7 +15,7 @@ export function EraSection({ era }: { era: HistoryEra }) {
   return (
     <section className="scroll-mt-8" id={`era-${era.value}`}>
       <Reveal>
-        <div className="border-contrast flex flex-wrap items-baseline gap-x-4 gap-y-3 border-b-2 pb-4">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-3 border-b-2 border-contrast pb-4">
           <SectionTitle size="lg">
             <Highlight>{era.title}</Highlight>
           </SectionTitle>

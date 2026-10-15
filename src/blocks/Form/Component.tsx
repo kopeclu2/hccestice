@@ -1,16 +1,16 @@
 'use client'
 import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-builder/types'
-
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
-import { fields } from './fields'
+import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/utilities/getURL'
 import { RECAPTCHA_ACTIONS } from '@/utilities/recaptcha/config'
 import { useRecaptcha } from '@/utilities/recaptcha/useRecaptcha'
+
+import { fields } from './fields'
 
 export type FormBlockType = {
   blockName?: string
@@ -138,7 +138,7 @@ export const FormBlock: React.FC<
   return (
     <div className="container lg:max-w-[48rem]">
       {enableIntro && intro && !hasSubmitted && intro}
-      <div className="p-4 lg:p-6 border border-border rounded-field">
+      <div className="rounded-field border border-border p-4 lg:p-6">
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && confirmation}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
@@ -149,7 +149,7 @@ export const FormBlock: React.FC<
               tady jednou přes `data-slot`, ne v osmi souborech polí. */}
           {!hasSubmitted && (
             <form
-              className="[&_[data-slot=input]]:h-11 [&_[data-slot=select-trigger]]:h-11 md:[&_[data-slot=input]]:h-9 md:[&_[data-slot=select-trigger]]:h-9"
+              className="[&_[data-slot=input]]:h-11 md:[&_[data-slot=input]]:h-9 [&_[data-slot=select-trigger]]:h-11 md:[&_[data-slot=select-trigger]]:h-9"
               id={formID}
               onSubmit={handleSubmit(onSubmit)}
             >

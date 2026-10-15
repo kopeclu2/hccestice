@@ -1,7 +1,7 @@
-import type { LandingTrainingsBlock } from '@/payload-types'
-
 import React from 'react'
 
+import type { LandingTrainingsBlock } from '@/payload-types'
+import { serializeJsonLd } from '@/utilities/jsonLd'
 import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
@@ -15,7 +15,6 @@ import { TRAININGS } from '../../content'
 import type { TrainingSlot, TrainingsContent } from '../../types'
 
 import { parseTrainingSchedule } from './openingHours'
-import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
@@ -88,7 +87,7 @@ function TrainingsView({
     <SectionShell id="treninky" spacing={spacing}>
       <TrainingsJsonLd rows={content.rows} />
       {!standalonePage && (
-        <Watermark className="text-club/8 bottom-0 left-40 text-watermark-lg tracking-[-0.06em]">
+        <Watermark className="bottom-0 left-40 text-watermark-lg tracking-[-0.06em] text-club/8">
           LED
         </Watermark>
       )}
@@ -102,7 +101,7 @@ function TrainingsView({
           {content.headlineRest && <span className="text-club">.</span>}
         </SectionTitle>
         {content.perex && (
-          <p className="text-dim mt-4 max-w-130 leading-relaxed text-pretty">{content.perex}</p>
+          <p className="mt-4 max-w-130 leading-relaxed text-pretty text-dim">{content.perex}</p>
         )}
       </Reveal>
 
@@ -133,11 +132,11 @@ function TrainingsView({
  */
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <article className="border-line-soft w-full min-w-0 rounded-thumb border bg-surface px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:max-w-75 min-[33rem]:px-6">
+    <article className="w-full min-w-0 rounded-thumb border border-line-soft bg-surface px-5 py-5 min-[33rem]:w-auto min-[33rem]:max-w-75 min-[33rem]:min-w-60 min-[33rem]:px-6">
       <CardTitle as="h3" size="sm">
         {title}
       </CardTitle>
-      <p className="text-dim mt-2 text-xs leading-relaxed">{children}</p>
+      <p className="mt-2 text-xs leading-relaxed text-dim">{children}</p>
     </article>
   )
 }
@@ -199,7 +198,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
            `min-w-0` je pojistka proti přetečení na 320px, kde je 240px + padding
            na hraně. */
         'w-full min-w-0 rounded-thumb px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:px-6',
-        slot.accent ? 'bg-contrast text-on-contrast' : 'border-line-soft border bg-surface',
+        slot.accent ? 'bg-contrast text-on-contrast' : 'border border-line-soft bg-surface',
       )}
     >
       <div className="flex flex-wrap items-center gap-2.5">

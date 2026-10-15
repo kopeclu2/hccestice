@@ -63,7 +63,7 @@ export function HeaderSplit({ match, titleAs = 'h1' }: HeaderVariantProps) {
   const style = { '--home': FILL_VAR[home], '--away': FILL_VAR[away] } as React.CSSProperties
 
   return (
-    <div className="border-line-mid relative isolate overflow-hidden rounded-card border bg-surface">
+    <div className="relative isolate overflow-hidden rounded-card border border-line-mid bg-surface">
       <SrTitle as={titleAs} match={match} />
 
       <div
@@ -200,8 +200,8 @@ function Half({
  */
 function Seal({ label }: { label: string | null }) {
   return (
-    <span className="bg-contrast text-lime ring-surface absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full font-mono text-xs font-semibold uppercase ring-4 md:size-14 md:text-sm">
-      {label ?? <span className="bg-lime shadow-ring-lime size-2 rounded-full" />}
+    <span className="absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-contrast font-mono text-xs font-semibold text-lime uppercase ring-4 ring-surface md:size-14 md:text-sm">
+      {label ?? <span className="size-2 rounded-full bg-lime shadow-ring-lime" />}
     </span>
   )
 }
@@ -219,7 +219,7 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
           {competitionLabel(match)}
         </Eyebrow>
         <MatchMeta
-          className="text-ink mt-1.5 text-sm font-semibold md:text-base"
+          className="mt-1.5 text-sm font-semibold text-ink md:text-base"
           items={[
             day
               ? `${day.charAt(0).toUpperCase()}${day.slice(1)} ${match.dateLabel}`
@@ -233,7 +233,7 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
       <div className="flex flex-wrap items-center gap-2 lg:justify-end">
         {columns.map((column) => (
           <Badge className="tabular-nums" key={column.label} size="sm" variant="outline">
-            <span className="text-faint mr-1.5">{column.label}</span>
+            <span className="mr-1.5 text-faint">{column.label}</span>
             {column.home}:{column.away}
           </Badge>
         ))}
@@ -248,7 +248,7 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
               {match.weAreHome ? 'Doma' : 'Venku'}
             </Badge>
             <VariantCountdown
-              className="text-ink ml-1"
+              className="ml-1 text-ink"
               look="inline"
               targetISO={match.kickoffISO}
             />

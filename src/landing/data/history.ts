@@ -1,6 +1,7 @@
-import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
+
+import configPromise from '@payload-config'
 
 import { HISTORY_PAGE } from '../content'
 import type { HistoryEra, Milestone } from '../types'

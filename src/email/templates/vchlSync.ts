@@ -38,7 +38,6 @@ export type NotificationPlan = {
 type Item = { text: string; href?: string }
 type Section = { title: string; items: Item[]; note?: string }
 
-
 const MAX_ITEMS = 15
 
 const cap = (items: Item[]): Item[] =>
@@ -53,7 +52,12 @@ export function buildSubject(plan: NotificationPlan): string {
   const n = (count: number, one: string, few: string, many: string) =>
     count > 0 ? parts.push(`${count} ${plural(count, one, few, many)}`) : undefined
   n(plan.newPlayers.length, 'nový hráč', 'noví hráči', 'nových hráčů')
-  n(plan.ambiguousPlayers.length, 'nejednoznačný hráč', 'nejednoznační hráči', 'nejednoznačných hráčů')
+  n(
+    plan.ambiguousPlayers.length,
+    'nejednoznačný hráč',
+    'nejednoznační hráči',
+    'nejednoznačných hráčů',
+  )
   n(plan.newOpponents.length, 'nový soupeř', 'noví soupeři', 'nových soupeřů')
   n(plan.rescheduled.length, 'přeložený zápas', 'přeložené zápasy', 'přeložených zápasů')
   n(plan.results.length, 'nový výsledek', 'nové výsledky', 'nových výsledků')
@@ -183,6 +187,9 @@ export function renderVchlSyncEmail(
   return {
     subject,
     html: renderEmailHtml({ ...common, bodyHtml: secs.map(sectionHtml).join('') }),
-    text: renderEmailText({ ...common, bodyHtml: escapeHtml(secs.map(sectionText).join('\n\n')).replace(/\n/g, '<br />') }),
+    text: renderEmailText({
+      ...common,
+      bodyHtml: escapeHtml(secs.map(sectionText).join('\n\n')).replace(/\n/g, '<br />'),
+    }),
   }
 }

@@ -31,7 +31,7 @@
 export default function Loading() {
   return (
     <div aria-hidden className="fixed inset-x-0 top-0 z-50 h-1">
-      <div className="bg-lime h-full w-1/3 animate-pulse" />
+      <div className="h-full w-1/3 animate-pulse bg-lime" />
     </div>
   )
 }

@@ -28,8 +28,7 @@ export const formattedFrom = (): string => `${fromName()} <${fromAddress()}>`
  * Kam míří notifikace o odeslaném formuláři, když si adresáta neurčí sám
  * formulář v adminu (pole „E-mail komu").
  */
-export const notificationAddress = (): string =>
-  fromEnv('EMAIL_NOTIFICATION_ADDRESS') ?? CLUB_EMAIL
+export const notificationAddress = (): string => fromEnv('EMAIL_NOTIFICATION_ADDRESS') ?? CLUB_EMAIL
 
 /** Hlavička a patička layoutu — stejné pro všechny šablony. */
 export const emailBranding = (): { clubName: string; siteUrl: string } => ({

@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import type { Media, Page, Post, Config } from '../payload-types'
 
 import { brandTitle } from './brandTitle'
-import { mergeOpenGraph, OG_FALLBACK_IMAGE } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+import { mergeOpenGraph, OG_FALLBACK_IMAGE } from './mergeOpenGraph'
 import { htmlPlainText, snippet } from './plainText'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {

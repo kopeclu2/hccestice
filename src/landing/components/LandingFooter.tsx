@@ -46,7 +46,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
        * skok z 18px na mobilu bez jakéhokoli mezistupně. Ten je teď
        * 28/32px, desktopová hodnota začíná na `lg`.
        */}
-      <div className="bg-club relative overflow-hidden rounded-card px-4.5 py-6 text-white md:px-7 md:py-8 lg:px-11 lg:py-14">
+      <div className="relative overflow-hidden rounded-card bg-club px-4.5 py-6 text-white md:px-7 md:py-8 lg:px-11 lg:py-14">
         <Watermark className="-right-10 -bottom-15 text-watermark-3xl tracking-[-0.06em] text-white/12">
           HCČ
         </Watermark>
@@ -70,7 +70,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
              */}
             <div
               aria-hidden
-              className="from-club/95 via-club/80 to-club/55 absolute inset-0 bg-linear-to-t"
+              className="absolute inset-0 bg-linear-to-t from-club/95 via-club/80 to-club/55"
             />
           </>
         )}
@@ -151,7 +151,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
-                    className="hover:text-lime py-1.5 text-white transition-colors md:py-0.5"
+                    className="py-1.5 text-white transition-colors hover:text-lime md:py-0.5"
                     href={link.href}
                     key={link.href}
                   >
@@ -204,11 +204,11 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * jako u sloupců odkazů výš.
            */}
           <span className="flex flex-wrap items-center gap-x-5 gap-y-1 sm:gap-x-6">
-            <Link className="hover:text-lime py-1 transition-colors" href="/cookies">
+            <Link className="py-1 transition-colors hover:text-lime" href="/cookies">
               Zásady cookies
             </Link>
             <button
-              className="hover:text-lime cursor-pointer py-1 transition-colors"
+              className="cursor-pointer py-1 transition-colors hover:text-lime"
               data-cc="show-preferencesModal"
               type="button"
             >
@@ -222,9 +222,9 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
       {/* Autorský odkaz je záměrně mimo zelený panel — na rozdíl od
           klubových odkazů výš nejde o obsah webu, ale o kredit tvůrce, ať
           se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
-      <p className="text-faint mt-4 text-center text-caption">
+      <p className="mt-4 text-center text-caption text-faint">
         <Link
-          className="hover:text-club-dark inline-block py-1.5 transition-colors"
+          className="inline-block py-1.5 transition-colors hover:text-club-dark"
           href="https://lukaskopecky.cz"
           rel="noreferrer"
           target="_blank"

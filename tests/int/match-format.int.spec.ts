@@ -1,8 +1,7 @@
-import type { Match } from '../../src/payload-types'
-
 import { describe, expect, it } from 'vitest'
 
 import { formatCompetition, phaseLabel } from '../../src/landing/data/matchFormat'
+import type { Match } from '../../src/payload-types'
 
 const withCompetition = (competition: string | null): Match =>
   ({ id: 1, competition, date: '', updatedAt: '', createdAt: '' }) as unknown as Match

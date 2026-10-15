@@ -42,7 +42,7 @@ export function KontaktPeopleCard({ people }: { people: PersonCard[] }) {
 
 function PersonContactTile({ person }: { person: PersonCard }) {
   return (
-    <div className="border-line-soft flex items-center gap-3.5 rounded-card border bg-surface p-4.5 md:p-5">
+    <div className="flex items-center gap-3.5 rounded-card border border-line-soft bg-surface p-4.5 md:p-5">
       <PhotoTile
         className="aspect-square w-14 flex-none rounded-panel md:w-16"
         photo={person.photo}
@@ -59,7 +59,7 @@ function PersonContactTile({ person }: { person: PersonCard }) {
         <div className="mt-2 flex flex-col gap-1">
           {person.phone && (
             <a
-              className="text-ink-soft hover:text-club flex items-center gap-1.5 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-club"
               href={`tel:${person.phone.replace(/\s/g, '')}`}
             >
               <Phone className="size-3.5 flex-none" /> {person.phone}
@@ -67,7 +67,7 @@ function PersonContactTile({ person }: { person: PersonCard }) {
           )}
           {person.mail && (
             <a
-              className="text-ink-soft hover:text-club flex items-center gap-1.5 text-xs font-medium break-all transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium break-all text-ink-soft transition-colors hover:text-club"
               href={`mailto:${person.mail}`}
             >
               <Mail className="size-3.5 flex-none" /> {person.mail}

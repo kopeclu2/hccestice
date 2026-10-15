@@ -21,6 +21,4 @@ export const contactSchema = z.object({
 export type ContactValues = z.infer<typeof contactSchema>
 
 /** Výsledek server action — buď úspěch, nebo chyby po polích. */
-export type ContactResult =
-  | { ok: true }
-  | { ok: false; error: string }
+export type ContactResult = { ok: true } | { ok: false; error: string }

@@ -35,11 +35,11 @@ export const CodeBlock: React.FC<Props> = ({ className, code }) => {
 
   return (
     <div className={[className, 'not-prose'].filter(Boolean).join(' ')}>
-      <pre className="bg-black p-4 border text-xs border-border rounded overflow-x-auto">
+      <pre className="overflow-x-auto rounded border border-border bg-black p-4 text-xs">
         <code className="table w-full">
           {lines.map((line, i) => (
             <span className="table-row" key={i}>
-              <span className="table-cell select-none text-right text-white/25">{i + 1}</span>
+              <span className="table-cell text-right text-white/25 select-none">{i + 1}</span>
               <span className="table-cell pl-4 text-white">{line}</span>
             </span>
           ))}

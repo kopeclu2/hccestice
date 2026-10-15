@@ -1,5 +1,3 @@
-import type { DataTableBlockType } from '@/payload-types'
-
 import React from 'react'
 
 import {
@@ -11,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import type { DataTableBlockType } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { CardTitle } from '../../components/Heading'
@@ -113,7 +112,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
               })}
             </TableBody>
             {block.caption && (
-              <TableCaption className="text-faint text-left text-xs">{block.caption}</TableCaption>
+              <TableCaption className="text-left text-xs text-faint">{block.caption}</TableCaption>
             )}
           </Table>
         </div>

@@ -1,6 +1,6 @@
-import type { MatchesPickerBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { MatchesPickerBlock } from '@/payload-types'
 
 import { relId } from '../../data/format'
 import { fetchPickedMatchRows } from '../../data/matches'

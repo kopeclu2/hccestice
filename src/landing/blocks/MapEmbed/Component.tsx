@@ -1,6 +1,6 @@
-import type { MapEmbedBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { MapEmbedBlock } from '@/payload-types'
 
 import { MapPanel } from '../../components/MapPanel'
 

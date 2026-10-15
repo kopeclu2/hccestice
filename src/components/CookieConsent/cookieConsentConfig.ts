@@ -5,7 +5,12 @@ import { disableGoogleAnalytics, enableGoogleAnalytics } from './googleAnalytics
 /** `_ga`, `_ga_<container-id>` — obojí zakládá gtag.js pro GA4. */
 const GA_COOKIE_PATTERN = /^_ga(_.*)?$/
 
-const COOKIE_TABLE_HEADERS = { name: 'Název', domain: 'Poskytovatel', desc: 'Účel', exp: 'Platnost' }
+const COOKIE_TABLE_HEADERS = {
+  name: 'Název',
+  domain: 'Poskytovatel',
+  desc: 'Účel',
+  exp: 'Platnost',
+}
 
 /**
  * `gaMeasurementId` je `null`, když `NEXT_PUBLIC_GA_MEASUREMENT_ID` není

@@ -63,12 +63,12 @@ export function VariantCountdown({
       <p
         className={cn(
           'flex items-center gap-2 font-semibold text-balance',
-          look === 'tiles' ? 'text-lg text-white' : 'text-ink text-sm',
+          look === 'tiles' ? 'text-lg text-white' : 'text-sm text-ink',
           className,
         )}
         role="status"
       >
-        <span className="bg-lime shadow-ring-lime size-2 flex-none rounded-full" />
+        <span className="size-2 flex-none rounded-full bg-lime shadow-ring-lime" />
         {LIVE_TEXT}
       </p>
     )
@@ -88,14 +88,14 @@ export function VariantCountdown({
 
   if (look === 'plain') {
     return (
-      <dl className={cn('divide-line flex divide-x tabular-nums', className)}>
+      <dl className={cn('flex divide-x divide-line tabular-nums', className)}>
         {units.map((unit) => (
           <div
             className="flex min-w-0 flex-1 flex-col px-2.5 first:pl-0 last:pr-0 md:px-5"
             key={unit.label}
           >
-            <dt className="text-faint order-2 text-xs font-medium">{unit.label}</dt>
-            <dd className="text-ink text-3xl leading-none font-extrabold tracking-[-0.03em] md:text-5xl">
+            <dt className="order-2 text-xs font-medium text-faint">{unit.label}</dt>
+            <dd className="text-3xl leading-none font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
               {unit.value}
             </dd>
           </div>
@@ -108,7 +108,7 @@ export function VariantCountdown({
     <dl className={cn('grid grid-cols-4 gap-1.5 tabular-nums md:gap-2.5', className)}>
       {units.map((unit, index) => (
         <div
-          className="border-white/10 flex flex-col items-center rounded-field border bg-pine-deep/70 px-1 py-2 md:py-3"
+          className="flex flex-col items-center rounded-field border border-white/10 bg-pine-deep/70 px-1 py-2 md:py-3"
           key={unit.label}
         >
           <dt className="order-2 mt-1 text-eyebrow font-semibold tracking-[0.12em] text-white/50 uppercase">

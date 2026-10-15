@@ -1,7 +1,6 @@
-import type { MatchesWidgetBlock } from '@/payload-types'
-
 import React from 'react'
 
+import type { MatchesWidgetBlock } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
@@ -68,19 +67,19 @@ export function MatchesWidgetView({
                    nad názvem zápasu. S desktopovým sloupcem 88px zbylo na
                    320px na název ~88px a lisoval se do „HC / Čestice / × HC". */
                 className={cn(
-                  'border-line-soft grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 border-b py-3.25 last:border-b-0 md:grid-cols-[5.5rem_1fr_auto] md:gap-4',
+                  'grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 border-b border-line-soft py-3.25 last:border-b-0 md:grid-cols-[5.5rem_1fr_auto] md:gap-4',
                   stretchHost,
                   // Hover a obrys uvnitř karty widgetu, ne přes její okraj.
-                  row.href && 'hover:bg-chip/40 transition-colors',
+                  row.href && 'transition-colors hover:bg-chip/40',
                   'has-[[data-stretched]:focus-visible]:-outline-offset-2',
                 )}
                 key={row.id}
               >
                 <div className="col-span-2 flex items-baseline gap-2 md:col-span-1 md:block">
-                  <div className="text-sm md:text-base font-bold">{row.dateLabel}</div>
-                  <div className="text-faint text-eyebrow">{row.timeLabel}</div>
+                  <div className="text-sm font-bold md:text-base">{row.dateLabel}</div>
+                  <div className="text-eyebrow text-faint">{row.timeLabel}</div>
                 </div>
-                <div className="text-sm md:text-base font-semibold">
+                <div className="text-sm font-semibold md:text-base">
                   <StretchedLink href={row.href}>{row.title}</StretchedLink>
                 </div>
                 {row.score ? (

@@ -18,7 +18,9 @@ import { formatCompetition } from './matchFormat'
 /** Jméno hráče z branky: text ze zápisu, jinak jméno z populované relace. */
 export const goalName = (name: string | null | undefined, rel: unknown): string | null => {
   if (name) return name
-  return typeof rel === 'object' && rel && 'name' in rel ? String((rel as { name: unknown }).name) : null
+  return typeof rel === 'object' && rel && 'name' in rel
+    ? String((rel as { name: unknown }).name)
+    : null
 }
 
 /**
@@ -63,10 +65,13 @@ export const toGoals = (match: Match, weAreHome: boolean): ArticleGoal[] =>
 /** Výsledková tabule z odehraného zápasu; null = nelze sestavit. */
 export const toScoreboard = (match: Match): ArticleScoreboard | null => {
   if (match.status !== 'played' || match.scoreOurs == null || match.scoreOpp == null) return null
-  const opponent = typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
+  const opponent =
+    typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
   const weAreHome = Boolean(match.home)
   return {
-    kicker: ['Zápasové zpravodajství', formatCompetition(match.competition)].filter(Boolean).join(' · '),
+    kicker: ['Zápasové zpravodajství', formatCompetition(match.competition)]
+      .filter(Boolean)
+      .join(' · '),
     metaLine: [match.venue, formatLongDate(match.date)].filter(Boolean).join(' · '),
     homeName: weAreHome ? 'HC Čestice' : opponent,
     awayName: weAreHome ? opponent : 'HC Čestice',

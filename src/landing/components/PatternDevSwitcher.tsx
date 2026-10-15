@@ -107,7 +107,7 @@ export function PatternDevSwitcher() {
         </div>
       )}
 
-      <div className="bg-contrast/92 fixed bottom-4.5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/14 p-1.5 shadow-overlay backdrop-blur-xl md:flex">
+      <div className="fixed bottom-4.5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/14 bg-contrast/92 p-1.5 shadow-overlay backdrop-blur-xl md:flex">
         <span className="px-2 pl-3 text-eyebrow font-bold tracking-[0.14em] text-white/50 uppercase">
           Vzor
         </span>

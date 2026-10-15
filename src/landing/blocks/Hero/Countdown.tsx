@@ -30,7 +30,7 @@ export function Countdown({ targetISO }: { targetISO: string }) {
   if (remainingMs === 0) {
     return (
       <div className="mt-2.5 flex items-center gap-2.5 text-white" role="status">
-        <span className="bg-lime shadow-ring-lime size-2 flex-none rounded-full" />
+        <span className="size-2 flex-none rounded-full bg-lime shadow-ring-lime" />
         <span className="text-[clamp(1.125rem,1.8vw,1.625rem)] font-extrabold tracking-tight text-balance">
           Zápas právě probíhá nebo čeká na výsledek
         </span>

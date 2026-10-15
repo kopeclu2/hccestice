@@ -1,6 +1,6 @@
-import type { ProductCardBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { ProductCardBlock } from '@/payload-types'
 
 import { Kicker } from '../../components/Kicker'
 import { Reveal } from '../../components/Reveal'
@@ -29,7 +29,7 @@ export async function ProductCardBlockComponent({ block }: { block: ProductCardB
           )}
           <ProductTile ctaLabel="Objednat e-mailem" email={site.email} product={product} />
           {!product.available && (
-            <p className="text-faint mt-3 text-center text-sm font-medium">
+            <p className="mt-3 text-center text-sm font-medium text-faint">
               Momentálně mimo nabídku.
             </p>
           )}

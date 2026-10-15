@@ -1,17 +1,16 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { PageCanvas } from '@/landing/components/PageCanvas'
 import { PageTitle, SectionTitle } from '@/landing/components/Heading'
 import { Kicker } from '@/landing/components/Kicker'
-import { SectionShell } from '@/landing/components/SectionShell'
+import { PageCanvas } from '@/landing/components/PageCanvas'
 import {
   PatternBackground,
   type PatternFade,
   type PatternTone,
   type PatternVariant,
 } from '@/landing/components/PatternBackground'
+import { SectionShell } from '@/landing/components/SectionShell'
 import { cn } from '@/utilities/ui'
 
 export const revalidate = 600
@@ -65,15 +64,15 @@ export default function PatternGalleryPage() {
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Vzory pozadí
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
+        <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
           Komponenta{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">PatternBackground</code> — vzor
+          <code className="rounded bg-chip px-1.5 font-mono text-sm">PatternBackground</code> — vzor
           se vkládá jako první potomek do sekce s{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>, obsah nad ním
-          dostane <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>. Volí
-          se vzor (<code className="bg-chip rounded px-1.5 font-mono text-sm">variant</code>
-          ), vytracení (<code className="bg-chip rounded px-1.5 font-mono text-sm">fade</code>) a
-          barva (<code className="bg-chip rounded px-1.5 font-mono text-sm">tone</code>).
+          <code className="rounded bg-chip px-1.5 font-mono text-sm">relative</code>, obsah nad ním
+          dostane <code className="rounded bg-chip px-1.5 font-mono text-sm">relative</code>. Volí
+          se vzor (<code className="rounded bg-chip px-1.5 font-mono text-sm">variant</code>
+          ), vytracení (<code className="rounded bg-chip px-1.5 font-mono text-sm">fade</code>) a
+          barva (<code className="rounded bg-chip px-1.5 font-mono text-sm">tone</code>).
         </p>
       </header>
 
@@ -134,9 +133,9 @@ function Section({
 }) {
   return (
     <SectionShell spacing="section">
-      <div className="border-line border-b pb-5">
+      <div className="border-b border-line pb-5">
         <SectionTitle>{title}</SectionTitle>
-        <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">{perex}</p>
+        <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">{perex}</p>
       </div>
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
     </SectionShell>
@@ -161,7 +160,7 @@ function DemoCard({
     <figure
       className={cn(
         'relative isolate h-64 overflow-hidden rounded-panel border',
-        dark ? 'bg-contrast border-contrast' : 'border-line bg-surface',
+        dark ? 'border-contrast bg-contrast' : 'border-line bg-surface',
       )}
     >
       {children}

@@ -205,7 +205,7 @@ export function Crest({
       aria-hidden
       className={cn(
         'flex-none rounded-full object-contain',
-        tone === 'light' ? 'border-line-soft border bg-surface p-0.5' : 'bg-white/92 p-1',
+        tone === 'light' ? 'border border-line-soft bg-surface p-0.5' : 'bg-white/92 p-1',
         className,
       )}
       height={128}

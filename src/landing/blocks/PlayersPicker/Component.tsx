@@ -1,6 +1,6 @@
-import type { PlayersPickerBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { PlayersPickerBlock } from '@/payload-types'
 
 import { relId } from '../../data/format'
 import { fetchPickedPlayers } from '../../data/players'

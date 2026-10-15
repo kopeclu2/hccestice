@@ -42,7 +42,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
   ]
 
   return (
-    <div className="border-line-mid text-ink overflow-hidden rounded-tile border bg-surface">
+    <div className="overflow-hidden rounded-tile border border-line-mid bg-surface text-ink">
       <SrTitle as={titleAs} match={match} />
 
       <div className="grid lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
@@ -57,7 +57,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           <table className="mt-3 w-full border-collapse tabular-nums md:mt-4">
             <caption className="sr-only">{played ? 'Skóre po třetinách' : 'Týmy zápasu'}</caption>
             <thead>
-              <tr className="text-faint text-eyebrow font-semibold tracking-[0.08em] uppercase">
+              <tr className="text-eyebrow font-semibold tracking-[0.08em] text-faint uppercase">
                 <th className="pb-1.5 text-left font-semibold" scope="col">
                   <span className="sr-only">Tým</span>
                 </th>
@@ -91,7 +91,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                 const won = winner === row.side
                 const lost = played && !won && winner !== 'draw'
                 return (
-                  <tr className="border-line-soft border-t" key={row.side}>
+                  <tr className="border-t border-line-soft" key={row.side}>
                     <th className="py-2 pr-2 text-left md:py-2.5" scope="row">
                       <span className="flex items-center gap-2.5 md:gap-3">
                         <Crest
@@ -104,13 +104,13 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                         <span
                           className={cn(
                             'min-w-0 text-sm leading-tight text-balance break-words md:text-lg',
-                            lost ? 'text-ink-soft font-medium' : 'font-bold',
+                            lost ? 'font-medium text-ink-soft' : 'font-bold',
                           )}
                         >
                           {row.name}
                           <span
                             aria-hidden
-                            className="text-faint ml-1.5 text-eyebrow font-semibold tracking-[0.08em] whitespace-nowrap uppercase"
+                            className="ml-1.5 text-eyebrow font-semibold tracking-[0.08em] whitespace-nowrap text-faint uppercase"
                           >
                             {row.side === 'home' ? 'D' : 'H'}
                           </span>
@@ -122,7 +122,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </th>
                     {columns.map((column) => (
                       <td
-                        className="text-faint py-2 text-center text-sm font-medium max-[22.5rem]:hidden md:py-2.5 md:text-base"
+                        className="py-2 text-center text-sm font-medium text-faint max-[22.5rem]:hidden md:py-2.5 md:text-base"
                         key={column.label}
                       >
                         {column[row.side]}
@@ -144,7 +144,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           </table>
 
           {columns.length > 0 && (
-            <p aria-hidden className="text-faint mt-2 text-xs font-medium min-[22.5rem]:hidden">
+            <p aria-hidden className="mt-2 text-xs font-medium text-faint min-[22.5rem]:hidden">
               {columns
                 .map(
                   (column) =>
@@ -172,8 +172,8 @@ function Status({ match }: { match: MatchDetail }) {
   }
   if (match.status === 'scheduled') {
     return (
-      <span className="bg-tint text-club inline-flex items-center gap-2 rounded-full px-3 py-1">
-        <span aria-hidden className="bg-lime shadow-ring-lime size-1.5 rounded-full" />
+      <span className="inline-flex items-center gap-2 rounded-full bg-tint px-3 py-1 text-club">
+        <span aria-hidden className="size-1.5 rounded-full bg-lime shadow-ring-lime" />
         <VariantCountdown className="text-xs" look="inline" targetISO={match.kickoffISO} />
       </span>
     )
@@ -191,10 +191,10 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
   const day = weekday(match.kickoffISO)
 
   return (
-    <dl className="border-line-soft bg-tint-hover grid grid-cols-2 content-center gap-x-5 gap-y-3 border-t px-4 py-4 md:grid-cols-4 md:px-6 lg:grid-cols-2 lg:border-t-0 lg:border-l lg:px-7 lg:py-6">
+    <dl className="grid grid-cols-2 content-center gap-x-5 gap-y-3 border-t border-line-soft bg-tint-hover px-4 py-4 md:grid-cols-4 md:px-6 lg:grid-cols-2 lg:border-t-0 lg:border-l lg:px-7 lg:py-6">
       <Fact label="Datum">
         {match.dateLabel}
-        {day && <span className="text-faint block text-xs font-medium capitalize">{day}</span>}
+        {day && <span className="block text-xs font-medium text-faint capitalize">{day}</span>}
       </Fact>
       <Fact label="Buly">{match.timeLabel}</Fact>
       <Fact label="Místo">{match.venue ?? '—'}</Fact>
@@ -203,7 +203,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
           <Badge size="xs" variant={outcome.variant}>
             {outcome.label}
           </Badge>
-          {note && <span className="text-faint mt-1 block text-xs font-medium">{note}</span>}
+          {note && <span className="mt-1 block text-xs font-medium text-faint">{note}</span>}
         </Fact>
       ) : (
         <Fact label="Strana">

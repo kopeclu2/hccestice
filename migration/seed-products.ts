@@ -10,6 +10,7 @@
  * bun --env-file=.env migration/seed-products.ts
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const payload = await getPayload({ config })

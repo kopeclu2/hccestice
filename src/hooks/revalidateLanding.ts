@@ -1,10 +1,9 @@
+import { revalidatePath, revalidateTag } from 'next/cache'
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
   GlobalAfterChangeHook,
 } from 'payload'
-
-import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { LANDING_CACHE_TAGS } from '@/landing/data/tags'
 

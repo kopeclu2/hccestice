@@ -166,8 +166,20 @@ export const Matches: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'overtime', access: { update: notSyncedFromAhl }, type: 'checkbox', label: 'Prodloužení', defaultValue: false },
-        { name: 'shootout', access: { update: notSyncedFromAhl }, type: 'checkbox', label: 'Nájezdy', defaultValue: false },
+        {
+          name: 'overtime',
+          access: { update: notSyncedFromAhl },
+          type: 'checkbox',
+          label: 'Prodloužení',
+          defaultValue: false,
+        },
+        {
+          name: 'shootout',
+          access: { update: notSyncedFromAhl },
+          type: 'checkbox',
+          label: 'Nájezdy',
+          defaultValue: false,
+        },
       ],
     },
     {
@@ -213,8 +225,18 @@ export const Matches: CollectionConfig = {
           },
         },
         { name: 'hasReport', type: 'checkbox', label: 'Zápis vložen', admin: { readOnly: true } },
-        { name: 'syncedAt', type: 'date', label: 'Naposledy synchronizováno', admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } } },
-        { name: 'draftPostCreated', type: 'checkbox', label: 'Koncept reportáže vytvořen', admin: { readOnly: true } },
+        {
+          name: 'syncedAt',
+          type: 'date',
+          label: 'Naposledy synchronizováno',
+          admin: { readOnly: true, date: { pickerAppearance: 'dayAndTime' } },
+        },
+        {
+          name: 'draftPostCreated',
+          type: 'checkbox',
+          label: 'Koncept reportáže vytvořen',
+          admin: { readOnly: true },
+        },
         {
           // Verze zpracování zápisu. Podle ní job pozná zápasy, které je potřeba
           // znovu stáhnout, když se ze zápisu začne brát nové pole (backfill).
@@ -358,7 +380,12 @@ export const Matches: CollectionConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'ppGoalsOurs', type: 'number', label: 'Branky v přesilovce — HC Čestice', min: 0 },
+            {
+              name: 'ppGoalsOurs',
+              type: 'number',
+              label: 'Branky v přesilovce — HC Čestice',
+              min: 0,
+            },
             { name: 'ppGoalsOpp', type: 'number', label: 'Branky v přesilovce — soupeř', min: 0 },
           ],
         },

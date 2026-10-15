@@ -9,7 +9,6 @@
  * alternativu tam předat nelze — proto se `renderEmailText` nepoužívá.
  */
 import type { User } from '@/payload-types'
-
 import { getServerSideURL } from '@/utilities/getURL'
 
 import { CLUB_NAME, emailBranding } from '../config'

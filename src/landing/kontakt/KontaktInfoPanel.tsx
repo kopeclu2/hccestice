@@ -41,16 +41,16 @@ export function KontaktInfoPanel({ site }: { site: SiteLinks }) {
            hranice clampu 20px a `break-words` místo `overflow-wrap:anywhere`
            (to by shrink-to-fit `inline-flex` zkrátilo o znak a adresa by se
            lámala i tam, kde se vejde). */
-        className="text-ink hover:text-club relative mt-3 inline-flex items-center gap-2.5 text-[clamp(1.25rem,2.6vw,2rem)] font-extrabold tracking-[-0.03em] break-words transition-colors"
+        className="relative mt-3 inline-flex items-center gap-2.5 text-[clamp(1.25rem,2.6vw,2rem)] font-extrabold tracking-[-0.03em] break-words text-ink transition-colors hover:text-club"
         href={`mailto:${site.email}`}
       >
         {site.email}
-        <span className="bg-lime text-ink grid size-[0.9em] flex-none place-items-center rounded-full [&_svg]:size-[0.5em]">
+        <span className="grid size-[0.9em] flex-none place-items-center rounded-full bg-lime text-ink [&_svg]:size-[0.5em]">
           <ArrowUpRight strokeWidth={2.5} />
         </span>
       </a>
 
-      <p className="text-dim mt-4 text-sm leading-relaxed text-pretty">
+      <p className="mt-4 text-sm leading-relaxed text-pretty text-dim">
         Obvykle odpovídáme do pár dní. Když to spěchá, zavolejte přímo někomu z realizačního týmu.
       </p>
 

@@ -4,12 +4,7 @@
  */
 
 function fold(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim()
+  return s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/\s+/g, ' ').trim()
 }
 
 // AHL má pro Čestice tři podoby: krátký název ve výpisech, plný v tabulce

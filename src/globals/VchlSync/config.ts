@@ -64,7 +64,8 @@ export const VchlSync: GlobalConfig = {
           min: 5,
           max: 120,
           admin: {
-            description: 'Jak často se synchronizuje v okolí zápasu, kdy čekáme na výsledek a zápis.',
+            description:
+              'Jak často se synchronizuje v okolí zápasu, kdy čekáme na výsledek a zápis.',
           },
         },
         {

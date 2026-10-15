@@ -1,6 +1,6 @@
-import type { LandingHistoryBlock } from '@/payload-types'
-
 import React from 'react'
+
+import type { LandingHistoryBlock } from '@/payload-types'
 
 import { Badge } from '../../components/Badge'
 import { CardTitle, SectionTitle } from '../../components/Heading'
@@ -53,7 +53,7 @@ export function HistoryBlockComponent({ block }: { block: LandingHistoryBlock })
 function HistoryView({ content }: { content: HistoryContent }) {
   return (
     <SectionShell id="historie">
-      <Watermark className="text-club/10 -top-20 -right-7.5 text-watermark-2xl tracking-[-0.06em]">
+      <Watermark className="-top-20 -right-7.5 text-watermark-2xl tracking-[-0.06em] text-club/10">
         {content.watermark}
       </Watermark>
 
@@ -71,15 +71,15 @@ function HistoryView({ content }: { content: HistoryContent }) {
           <PillLink href={PHOTOS_HREF} variant="outline" withArrow>
             {content.photosCtaLabel}
           </PillLink>
-          <span className="text-faint text-sm font-medium">{content.metaLine}</span>
+          <span className="text-sm font-medium text-faint">{content.metaLine}</span>
         </div>
       </Reveal>
 
       <div className="mt-14 grid grid-cols-1 items-center gap-[clamp(1.5rem,4vw,4rem)] md:grid-cols-[1.15fr_0.85fr]">
         <Reveal>
           {/* perex i doplňkový odstavec drží stejnou škálu jako hlavičky podstránek */}
-          <p className="text-ink-soft text-lg leading-[1.55] text-pretty">{content.lead}</p>
-          <p className="text-dim mt-4 leading-relaxed text-pretty">{content.text}</p>
+          <p className="text-lg leading-[1.55] text-pretty text-ink-soft">{content.lead}</p>
+          <p className="mt-4 leading-relaxed text-pretty text-dim">{content.text}</p>
 
           <div className="mt-6.5 flex flex-wrap items-center gap-2">
             {content.chips.map((chip) => (
@@ -94,7 +94,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
           <figure className="relative m-0 flex flex-col justify-center px-[clamp(0rem,1vw,0.625rem)]">
             <span
               aria-hidden
-              className="text-lime text-watermark-xs leading-[0.55] font-extrabold select-none"
+              className="text-watermark-xs leading-[0.55] font-extrabold text-lime select-none"
             >
               „
             </span>
@@ -104,7 +104,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
                 {content.quoteEnd}
               </CardTitle>
             </blockquote>
-            <figcaption className="text-faint border-contrast mt-5 max-w-80 border-t-2 pt-4 text-sm font-medium">
+            <figcaption className="mt-5 max-w-80 border-t-2 border-contrast pt-4 text-sm font-medium text-faint">
               {content.quoteSource}
             </figcaption>
           </figure>

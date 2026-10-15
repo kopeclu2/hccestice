@@ -22,13 +22,13 @@ import { arrowVariants, pillVariants } from '../components/pill'
 export function PartnerSlotCta() {
   return (
     <Link
-      className="bg-contrast rounded-tile relative flex flex-col items-start gap-y-4 overflow-hidden px-4.5 py-5 text-on-contrast md:flex-row md:flex-nowrap md:items-center md:gap-[clamp(1rem,2.5vw,2rem)] md:px-5.5 md:py-5.5 lg:px-6.5 lg:py-6"
+      className="relative flex flex-col items-start gap-y-4 overflow-hidden rounded-tile bg-contrast px-4.5 py-5 text-on-contrast md:flex-row md:flex-nowrap md:items-center md:gap-[clamp(1rem,2.5vw,2rem)] md:px-5.5 md:py-5.5 lg:px-6.5 lg:py-6"
       href="/#kontakt"
     >
       {/* Dekorativní velký znak „+" — necháváme beze změny stejně jako watermarky. */}
       <span
         aria-hidden
-        className="text-lime/20 text-stroke pointer-events-none absolute right-15 -bottom-11.5 hidden text-watermark-xs leading-none font-extrabold tracking-[-0.06em] select-none md:block"
+        className="pointer-events-none absolute right-15 -bottom-11.5 hidden text-watermark-xs leading-none font-extrabold tracking-[-0.06em] text-lime/20 select-none text-stroke md:block"
       >
         +
       </span>

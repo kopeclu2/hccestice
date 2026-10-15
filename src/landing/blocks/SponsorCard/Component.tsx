@@ -1,12 +1,9 @@
-import type { SponsorCardBlock } from '@/payload-types'
-
 import { ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import type { SponsorCardBlock } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
-
-import type { Photo } from '../../types'
 
 import { CardTitle } from '../../components/Heading'
 import { Kicker } from '../../components/Kicker'
@@ -14,6 +11,7 @@ import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'
 import { relId, toPhoto } from '../../data/format'
 import { fetchSponsor } from '../../data/sponsors'
+import type { Photo } from '../../types'
 
 /** Karta sponzora — logo, jméno, poděkování a odkaz na web. */
 export async function SponsorCardBlockComponent({ block }: { block: SponsorCardBlock }) {
@@ -51,7 +49,7 @@ function SponsorCardView({
       <Reveal>
         <div className="mx-auto flex max-w-140 flex-col items-center gap-4 rounded-card bg-surface p-4.5 text-center md:p-7.5 lg:p-10">
           {kicker && <Kicker>{kicker}</Kicker>}
-          <div className="bg-chip grid h-28 w-56 place-items-center rounded-badge px-6">
+          <div className="grid h-28 w-56 place-items-center rounded-badge bg-chip px-6">
             {logo ? (
               <Image
                 alt={name}
@@ -67,10 +65,10 @@ function SponsorCardView({
           <CardTitle as="h3" size="md">
             {name}
           </CardTitle>
-          {note && <p className="text-dim max-w-100 leading-relaxed text-pretty">{note}</p>}
+          {note && <p className="max-w-100 leading-relaxed text-pretty text-dim">{note}</p>}
           {url && (
             <a
-              className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-semibold"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-club-dark hover:text-club"
               href={url}
               rel="noreferrer"
               target="_blank"

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { GlowCircle } from '@/landing/components/Decorations'
@@ -25,17 +24,14 @@ const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partne
  * prázdné se nevykreslují.
  */
 export default async function SponzoriPage() {
-  const [sponsors, season] = await Promise.all([
-    fetchSponsors(),
-    fetchSeason(null),
-  ])
+  const [sponsors, season] = await Promise.all([fetchSponsors(), fetchSeason(null)])
 
   const seasonLabel = season ? seasonShortLabel(season) : null
   const count = countLabel(sponsors.length, PARTNER_FORMS)
 
   return (
     <SubpageShell>
-<SponzoriHeader
+      <SponzoriHeader
         count={seasonLabel ? `${count} v sezóně ${seasonLabel}` : count}
         seasonLabel={seasonLabel}
       />

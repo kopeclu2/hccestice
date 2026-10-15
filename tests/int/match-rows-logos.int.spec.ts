@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { teamLogos } from '../../src/landing/data/matchRows'
 import { CLUB_LOGO } from '../../src/landing/data/matchFormat'
+import { teamLogos } from '../../src/landing/data/matchRows'
 import type { Match } from '../../src/payload-types'
 
 const logo = {

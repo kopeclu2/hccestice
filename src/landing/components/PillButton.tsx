@@ -1,7 +1,6 @@
 'use client'
 
 import type { VariantProps } from 'class-variance-authority'
-
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 

@@ -97,18 +97,18 @@ export function ContactForm({
            o dva stupně větší než karta, kterou nahradil. */
         <div
           className={cn(
-            'rounded-panel relative mx-auto mt-10 max-w-170 p-4.5 text-left md:p-6.5 lg:p-8.5',
+            'relative mx-auto mt-10 max-w-170 rounded-panel p-4.5 text-left md:p-6.5 lg:p-8.5',
             tone === 'dark'
               ? 'bg-contrast text-on-contrast'
               : /* `z-0`, ne jen `relative`: bez vlastního z-indexu karta nezaloží
                    stacking context, takže `-z-1` uvnitř `GlowCircle` propadne až
                    za tuhle kartu v kontextu nadřazeného `SectionShellu` (`z-1`)
                    a její neprůhledné bílé pozadí kruh úplně zakryje. */
-                'border-line-soft bg-surface text-ink z-0 overflow-hidden border',
+                'z-0 overflow-hidden border border-line-soft bg-surface text-ink',
           )}
         >
           {tone === 'light' && <GlowCircle className="-top-20 -right-20 size-60" tone="lime" />}
-          <div className="bg-lime text-ink relative mb-4 grid size-11 place-items-center rounded-full [&_svg]:size-5">
+          <div className="relative mb-4 grid size-11 place-items-center rounded-full bg-lime text-ink [&_svg]:size-5">
             <Check strokeWidth={3} />
           </div>
           <CardTitle className="relative" size="xs">
@@ -124,10 +124,10 @@ export function ContactForm({
       ) : (
         <form
           className={cn(
-            'rounded-panel relative mx-auto mt-10 max-w-170 p-4.5 text-left md:p-6.5 lg:p-8.5',
+            'relative mx-auto mt-10 max-w-170 rounded-panel p-4.5 text-left md:p-6.5 lg:p-8.5',
             tone === 'dark'
               ? 'bg-contrast text-on-contrast'
-              : 'border-line-soft bg-surface text-ink z-0 overflow-hidden border',
+              : 'z-0 overflow-hidden border border-line-soft bg-surface text-ink',
           )}
           noValidate
           onSubmit={onSubmit}

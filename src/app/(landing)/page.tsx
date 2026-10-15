@@ -1,20 +1,18 @@
 import type { Metadata } from 'next'
-
-import configPromise from '@payload-config'
 import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
 import { LandingFooter } from '@/landing/components/LandingFooter'
 import { PageCanvas } from '@/landing/components/PageCanvas'
+import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
 import { RenderLandingBlocks } from '@/landing/render'
+import type { SiteLinks } from '@/landing/types'
 import { generateMeta } from '@/utilities/generateMeta'
 import { getServerSideURL } from '@/utilities/getURL'
-
-import type { SiteLinks } from '@/landing/types'
 import { serializeJsonLd } from '@/utilities/jsonLd'
+import configPromise from '@payload-config'
 
 /**
  * ISR pojistka — obsah se reviduje i bez zásahu v adminu. Změny home

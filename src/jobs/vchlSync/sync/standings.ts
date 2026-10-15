@@ -3,6 +3,7 @@ import { parseCompetitionInfo, parseStandings, tabulkyUrl } from '@/ahl'
 import type { SeasonCtx } from '../context'
 import { sameValue } from '../diff'
 import { span } from '../sentry'
+
 import type { SyncContext } from './ctx'
 
 /**

@@ -32,11 +32,11 @@ export function RosterSection({
   return (
     <section className="scroll-mt-8" id={anchor}>
       <Reveal>
-        <div className="border-contrast flex flex-wrap items-baseline gap-x-3.5 gap-y-1 border-b-2 pb-4">
+        <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1 border-b-2 border-contrast pb-4">
           <SectionTitle size="md">{title}</SectionTitle>
-          <span className="text-club text-sm font-semibold">{count}</span>
+          <span className="text-sm font-semibold text-club">{count}</span>
           <div className="flex-1" />
-          <Eyebrow className="text-faint/80 hidden md:block" wide>
+          <Eyebrow className="hidden text-faint/80 md:block" wide>
             {kicker}
           </Eyebrow>
         </div>

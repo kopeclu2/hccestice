@@ -5,6 +5,7 @@
  * Spuštění: bun --env-file=.env migration/make-sections-demo.ts
  */
 import { getPayload } from 'payload'
+
 import config from '../src/payload.config'
 
 const payload = await getPayload({ config })
@@ -131,7 +132,14 @@ await payload.create({
       // ── výběrové widgety (konkrétní dokumenty) ──
       {
         blockType: 'playerCard',
-        player: (await payload.find({ collection: 'players', where: { name: { equals: 'Lukáš Beránek' } }, limit: 1, depth: 0 })).docs[0]?.id,
+        player: (
+          await payload.find({
+            collection: 'players',
+            where: { name: { equals: 'Lukáš Beránek' } },
+            limit: 1,
+            depth: 0,
+          })
+        ).docs[0]?.id,
         season: null,
         note: 'Předseda oddílu a vedoucí mužstva — na ledě i v šatně.',
       },
@@ -139,41 +147,84 @@ await payload.create({
         blockType: 'playersPicker',
         title: 'Brankářská dvojice',
         players: (
-          await payload.find({ collection: 'players', where: { name: { in: ['Jakub Sajdl', 'Martin Mráz'] } }, limit: 2, depth: 0 })
+          await payload.find({
+            collection: 'players',
+            where: { name: { in: ['Jakub Sajdl', 'Martin Mráz'] } },
+            limit: 2,
+            depth: 0,
+          })
         ).docs.map((p) => p.id),
         season: null,
       },
       {
         blockType: 'matchCard',
-        match: (await payload.find({ collection: 'matches', where: { date: { greater_than: '2026-03-07' } }, sort: 'date', limit: 1, depth: 0 })).docs[0]?.id,
+        match: (
+          await payload.find({
+            collection: 'matches',
+            where: { date: { greater_than: '2026-03-07' } },
+            sort: 'date',
+            limit: 1,
+            depth: 0,
+          })
+        ).docs[0]?.id,
         kicker: 'Historický bronz',
       },
       {
         blockType: 'matchesPicker',
         title: 'Play-off 2026 — cesta za bronzem',
         matches: (
-          await payload.find({ collection: 'matches', where: { competition: { like: 'play-off' } }, sort: 'date', limit: 6, depth: 0 })
+          await payload.find({
+            collection: 'matches',
+            where: { competition: { like: 'play-off' } },
+            sort: 'date',
+            limit: 6,
+            depth: 0,
+          })
         ).docs.map((m) => m.id),
       },
       {
         blockType: 'personCard',
-        person: (await payload.find({ collection: 'people', where: { name: { like: 'Beránek' } }, limit: 1, depth: 0 })).docs[0]?.id,
+        person: (
+          await payload.find({
+            collection: 'people',
+            where: { name: { like: 'Beránek' } },
+            limit: 1,
+            depth: 0,
+          })
+        ).docs[0]?.id,
       },
       {
         blockType: 'galleryEmbed',
-        gallery: (await payload.find({ collection: 'galleries', sort: '-date', limit: 1, depth: 0 })).docs[0]?.id,
+        gallery: (
+          await payload.find({ collection: 'galleries', sort: '-date', limit: 1, depth: 0 })
+        ).docs[0]?.id,
         title: null,
         limit: 8,
       },
       {
         blockType: 'postFeature',
-        post: (await payload.find({ collection: 'posts', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 1, depth: 0 })).docs[0]?.id,
+        post: (
+          await payload.find({
+            collection: 'posts',
+            where: { _status: { equals: 'published' } },
+            sort: '-publishedAt',
+            limit: 1,
+            depth: 0,
+          })
+        ).docs[0]?.id,
         fallbackPhoto: await photo('p3081726.jpg'),
         tag: 'Z archivu',
       },
       {
         blockType: 'sponsorCard',
-        sponsor: (await payload.find({ collection: 'sponsors', where: { name: { like: 'Obec' } }, limit: 1, depth: 0 })).docs[0]?.id,
+        sponsor: (
+          await payload.find({
+            collection: 'sponsors',
+            where: { name: { like: 'Obec' } },
+            limit: 1,
+            depth: 0,
+          })
+        ).docs[0]?.id,
         kicker: 'Partner klubu',
         note: 'Bez podpory obce by čestický hokej nebyl — děkujeme za dlouholetou přízeň.',
       },
@@ -190,21 +241,58 @@ await payload.create({
         blockType: 'featureGrid',
         title: 'Proč hrát u nás',
         items: [
-          { icon: 'shield', title: 'Výstroj půjčíme', text: 'Na první zkoušky nepotřebuješ nic — brusle, helmu i chrániče máme.' },
-          { icon: 'wallet', title: 'První měsíc zdarma', text: 'Mládež má první měsíc na zkoušku bez příspěvků.' },
-          { icon: 'clock', title: 'Trénink 2× týdně', text: 'Úterý a pátek na zimním stadionu v Rychnově nad Kněžnou.' },
-          { icon: 'users', title: 'Parta z vesnice', text: 'Většina týmu jsou kluci z okolí — hokej tu pořád patří vesnici.' },
-          { icon: 'trophy', title: 'Hrajeme o poháry', text: 'Historický bronz v play-off VČHL 2025/26 mluví za vše.' },
-          { icon: 'heart', title: 'Rodinný klub', text: 'Čtyři generace, jeden klub. Děti trénují společně s muži.' },
+          {
+            icon: 'shield',
+            title: 'Výstroj půjčíme',
+            text: 'Na první zkoušky nepotřebuješ nic — brusle, helmu i chrániče máme.',
+          },
+          {
+            icon: 'wallet',
+            title: 'První měsíc zdarma',
+            text: 'Mládež má první měsíc na zkoušku bez příspěvků.',
+          },
+          {
+            icon: 'clock',
+            title: 'Trénink 2× týdně',
+            text: 'Úterý a pátek na zimním stadionu v Rychnově nad Kněžnou.',
+          },
+          {
+            icon: 'users',
+            title: 'Parta z vesnice',
+            text: 'Většina týmu jsou kluci z okolí — hokej tu pořád patří vesnici.',
+          },
+          {
+            icon: 'trophy',
+            title: 'Hrajeme o poháry',
+            text: 'Historický bronz v play-off VČHL 2025/26 mluví za vše.',
+          },
+          {
+            icon: 'heart',
+            title: 'Rodinný klub',
+            text: 'Čtyři generace, jeden klub. Děti trénují společně s muži.',
+          },
         ],
       },
       {
         blockType: 'testimonials',
         title: 'Co říkají naši lidé',
         items: [
-          { quote: 'Nikdy jsem nehrál závodně a kluci mě vzali mezi sebe. Dneska si neumím představit úterý bez ledu.', name: 'Tomáš', role: 'hráč, 3. sezóna' },
-          { quote: 'Syn začal v šesti letech. Trenéři se mu věnují a hlavně ho to strašně baví.', name: 'Markéta', role: 'maminka mladého hokejisty' },
-          { quote: 'Na zápasy jezdíme celá rodina. Atmosféra na zimáku je nejlepší v okolí.', name: 'Josef', role: 'fanoušek' },
+          {
+            quote:
+              'Nikdy jsem nehrál závodně a kluci mě vzali mezi sebe. Dneska si neumím představit úterý bez ledu.',
+            name: 'Tomáš',
+            role: 'hráč, 3. sezóna',
+          },
+          {
+            quote: 'Syn začal v šesti letech. Trenéři se mu věnují a hlavně ho to strašně baví.',
+            name: 'Markéta',
+            role: 'maminka mladého hokejisty',
+          },
+          {
+            quote: 'Na zápasy jezdíme celá rodina. Atmosféra na zimáku je nejlepší v okolí.',
+            name: 'Josef',
+            role: 'fanoušek',
+          },
         ],
       },
       {
@@ -217,7 +305,11 @@ await payload.create({
             price: '1 500 Kč',
             period: 'za sezónu',
             description: 'Děti od šesti let',
-            features: [{ text: 'První měsíc zdarma' }, { text: 'Zapůjčení výstroje' }, { text: 'Trénink s muži v úterý' }],
+            features: [
+              { text: 'První měsíc zdarma' },
+              { text: 'Zapůjčení výstroje' },
+              { text: 'Trénink s muži v úterý' },
+            ],
             highlighted: true,
             ctaLabel: 'Přihlásit dítě',
             ctaHref: '/#kontakt',
@@ -227,7 +319,11 @@ await payload.create({
             price: '3 000 Kč',
             period: 'za sezónu',
             description: 'Soutěžní tým VČHL',
-            features: [{ text: 'Ledové hodiny 2× týdně' }, { text: 'Zápasy VČHL' }, { text: 'Klubová šatna' }],
+            features: [
+              { text: 'Ledové hodiny 2× týdně' },
+              { text: 'Zápasy VČHL' },
+              { text: 'Klubová šatna' },
+            ],
             highlighted: false,
             ctaLabel: 'Chci hrát',
             ctaHref: '/#kontakt',
@@ -255,7 +351,8 @@ await payload.create({
       {
         blockType: 'mapEmbed',
         title: 'Kde nás najdete',
-        embedUrl: 'https://maps.google.com/maps?q=Zimn%C3%AD%20stadion%20Rychnov%20nad%20Kn%C4%9B%C5%BEnou&output=embed',
+        embedUrl:
+          'https://maps.google.com/maps?q=Zimn%C3%AD%20stadion%20Rychnov%20nad%20Kn%C4%9B%C5%BEnou&output=embed',
         pills: [{ text: 'ZS Rychnov nad Kněžnou' }, { text: 'TJ Sokol Čestice, 517 41' }],
       },
       {

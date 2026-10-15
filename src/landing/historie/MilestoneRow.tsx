@@ -33,7 +33,7 @@ export function MilestoneRow({ milestone, index }: { milestone: Milestone; index
         {/* Obrysový letopočet je dekorativní číselný displej, necháváme beze změny. */}
         <div
           aria-hidden
-          className="text-club/45 text-stroke hidden text-[clamp(3rem,6vw,5.5rem)] leading-[0.9] font-extrabold tracking-[-0.05em] select-none [-webkit-text-stroke-width:0.15625rem] md:block"
+          className="hidden text-[clamp(3rem,6vw,5.5rem)] leading-[0.9] font-extrabold tracking-[-0.05em] text-club/45 select-none text-stroke [-webkit-text-stroke-width:0.15625rem] md:block"
         >
           {milestone.year}
         </div>
@@ -47,7 +47,7 @@ export function MilestoneRow({ milestone, index }: { milestone: Milestone; index
           <CardTitle className="leading-[1.15] text-pretty" size="lg">
             {milestone.title}
           </CardTitle>
-          <p className="text-dim mt-2.5 max-w-130 text-sm md:text-base leading-[1.65] text-pretty">
+          <p className="mt-2.5 max-w-130 text-sm leading-[1.65] text-pretty text-dim md:text-base">
             {milestone.text}
           </p>
         </div>

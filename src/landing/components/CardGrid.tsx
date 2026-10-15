@@ -1,14 +1,13 @@
 import type { VariantProps } from 'class-variance-authority'
-
+import { cva } from 'class-variance-authority'
 import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
-import { cva } from 'class-variance-authority'
 import React from 'react'
 
 import { cn } from '@/utilities/ui'
 
 const cardShellVariants = cva(
-  'hover:border-club flex h-full flex-col overflow-hidden rounded-block border border-line-mid bg-surface transition-colors',
+  'flex h-full flex-col overflow-hidden rounded-block border border-line-mid bg-surface transition-colors hover:border-club',
   {
     variants: {
       /**
@@ -88,12 +87,12 @@ export function CardCta({
   return (
     <div
       className={cn(
-        'text-club-dark mt-auto flex items-center gap-2 pt-4 text-xs font-semibold',
+        'mt-auto flex items-center gap-2 pt-4 text-xs font-semibold text-club-dark',
         className,
       )}
     >
       {children}
-      <span className="bg-contrast text-lime grid size-5.5 place-items-center rounded-full [&_svg]:size-3">
+      <span className="grid size-5.5 place-items-center rounded-full bg-contrast text-lime [&_svg]:size-3">
         <ArrowUpRight strokeWidth={2.5} />
       </span>
     </div>

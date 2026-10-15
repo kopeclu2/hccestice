@@ -17,31 +17,56 @@ describe('vchl isDue', () => {
 
   it('klidový režim: interval 6 h', () => {
     const last = at('2026-10-01T10:00:00Z')
-    const early = isDue({ now: at('2026-10-01T15:00:00Z'), lastRunAt: last, settings, ourMatches: [] })
+    const early = isDue({
+      now: at('2026-10-01T15:00:00Z'),
+      lastRunAt: last,
+      settings,
+      ourMatches: [],
+    })
     expect(early.due).toBe(false)
     expect(early.nextDueAt.toISOString()).toBe('2026-10-01T16:00:00.000Z')
-    expect(isDue({ now: at('2026-10-01T16:00:00Z'), lastRunAt: last, settings, ourMatches: [] }).due).toBe(true)
+    expect(
+      isDue({ now: at('2026-10-01T16:00:00Z'), lastRunAt: last, settings, ourMatches: [] }).due,
+    ).toBe(true)
   })
 
   it('zápasový režim začíná přesně v čase zápasu', () => {
-    const before = isDue({ now: new Date(Date.parse(match.date) - 1), lastRunAt: null, settings, ourMatches: [match] })
+    const before = isDue({
+      now: new Date(Date.parse(match.date) - 1),
+      lastRunAt: null,
+      settings,
+      ourMatches: [match],
+    })
     expect(before.mode).toBe('idle')
-    const start = isDue({ now: new Date(match.date), lastRunAt: null, settings, ourMatches: [match] })
+    const start = isDue({
+      now: new Date(match.date),
+      lastRunAt: null,
+      settings,
+      ourMatches: [match],
+    })
     expect(start.mode).toBe('matchday')
   })
 
   it('zápasový režim končí po okně (hranice včetně)', () => {
     const end = Date.parse(match.date) + 48 * 60 * MIN
-    expect(isDue({ now: new Date(end), lastRunAt: null, settings, ourMatches: [match] }).mode).toBe('matchday')
-    expect(isDue({ now: new Date(end + 1), lastRunAt: null, settings, ourMatches: [match] }).mode).toBe('idle')
+    expect(isDue({ now: new Date(end), lastRunAt: null, settings, ourMatches: [match] }).mode).toBe(
+      'matchday',
+    )
+    expect(
+      isDue({ now: new Date(end + 1), lastRunAt: null, settings, ourMatches: [match] }).mode,
+    ).toBe('idle')
   })
 
   it('odehraný zápas se zápisem zápasový režim nedrží, bez zápisu ano', () => {
     const now = at('2026-10-05T10:00:00Z')
     const played = { ...match, status: 'played', hasReport: true }
     expect(isDue({ now, lastRunAt: null, settings, ourMatches: [played] }).mode).toBe('idle')
-    expect(isDue({ now, lastRunAt: null, settings, ourMatches: [{ ...played, hasReport: false }] }).mode).toBe('matchday')
-    expect(isDue({ now, lastRunAt: null, settings, ourMatches: [{ ...played, hasReport: null }] }).mode).toBe('matchday')
+    expect(
+      isDue({ now, lastRunAt: null, settings, ourMatches: [{ ...played, hasReport: false }] }).mode,
+    ).toBe('matchday')
+    expect(
+      isDue({ now, lastRunAt: null, settings, ourMatches: [{ ...played, hasReport: null }] }).mode,
+    ).toBe('matchday')
   })
 
   it('zápasový režim: interval 15 min s tolerancí na jitter cronu', () => {
@@ -56,12 +81,20 @@ describe('vchl isDue', () => {
     const now = at('2026-10-01T10:20:00Z')
     const last = at('2026-10-01T10:00:00Z')
     expect(isDue({ now, lastRunAt: last, settings, ourMatches: [] }).due).toBe(false)
-    expect(isDue({ now, lastRunAt: last, settings, ourMatches: [], lastRunStatus: 'error' }).due).toBe(true)
+    expect(
+      isDue({ now, lastRunAt: last, settings, ourMatches: [], lastRunStatus: 'error' }).due,
+    ).toBe(true)
   })
 
   it('zrušený zápas bez zápisu drží zápasový režim jen v okně', () => {
     const canceled = { ...match, status: 'canceled' }
-    expect(isDue({ now: at('2026-10-04T20:00:00Z'), lastRunAt: null, settings, ourMatches: [canceled] }).mode).toBe('matchday')
-    expect(isDue({ now: at('2026-10-07T20:00:00Z'), lastRunAt: null, settings, ourMatches: [canceled] }).mode).toBe('idle')
+    expect(
+      isDue({ now: at('2026-10-04T20:00:00Z'), lastRunAt: null, settings, ourMatches: [canceled] })
+        .mode,
+    ).toBe('matchday')
+    expect(
+      isDue({ now: at('2026-10-07T20:00:00Z'), lastRunAt: null, settings, ourMatches: [canceled] })
+        .mode,
+    ).toBe('idle')
   })
 })

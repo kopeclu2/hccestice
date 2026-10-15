@@ -1,7 +1,6 @@
-import type { LandingAlbumBlock } from '@/payload-types'
-
 import React from 'react'
 
+import type { LandingAlbumBlock } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
@@ -140,9 +139,9 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
 
   return (
     <SectionShell id="fotoalbum">
-      <GlowCircle className="-right-60 -top-20 size-190" tone="lime" />
+      <GlowCircle className="-top-20 -right-60 size-190" tone="lime" />
       <Watermark
-        className="text-club/8 top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-[-0.06em] [writing-mode:vertical-rl]"
+        className="top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-[-0.06em] text-club/8 [writing-mode:vertical-rl]"
         outlined={false}
       >
         PONÍCI
@@ -173,7 +172,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
                 /* Odsazení pásu se musí rovnat odsazení sekce
                    (`clamp(0.875rem,3vw,2.5rem)`), jinak dlaždice na mobilu
                    nekončí na stejné svislici jako nadpis nad nimi. */
-                'no-scrollbar -mx-[clamp(0.875rem,3vw,2.5rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
+                '-mx-[clamp(0.875rem,3vw,2.5rem)] no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
                 sparse
                   ? 'md:auto-rows-[13.75rem] lg:grid-cols-3'
                   : 'md:auto-rows-[11.25rem] lg:grid-cols-4',
@@ -229,7 +228,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
               </Badge>
             )}
             {tile.title && (
-              <div className="text-shadow-photo line-clamp-2 text-xs leading-snug font-semibold text-white">
+              <div className="line-clamp-2 text-xs leading-snug font-semibold text-white text-shadow-photo">
                 {tile.title}
               </div>
             )}
@@ -248,7 +247,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
           </CardTitle>
         )}
         {tile.title && tile.span === 'wide' && (
-          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm md:text-base font-semibold text-white">
+          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm font-semibold text-white md:text-base">
             {tile.title}
           </div>
         )}

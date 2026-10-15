@@ -9,9 +9,9 @@
  * Idempotentní. Spuštění: bun --env-file=.env migration/seed-collections-content.ts
  */
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
 
 import { STANDINGS } from '../src/landing/content'
+import config from '../src/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }
@@ -115,7 +115,12 @@ for (const post of legacyPosts) {
 
 // ── 4) home bloky do auto režimu ─────────────────────────────────────────────
 const home = (
-  await payload.find({ collection: 'pages', where: { slug: { equals: 'home' } }, limit: 1, depth: 0 })
+  await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: 'home' } },
+    limit: 1,
+    depth: 0,
+  })
 ).docs[0]
 if (!home) throw new Error('Home stránka nenalezena')
 
