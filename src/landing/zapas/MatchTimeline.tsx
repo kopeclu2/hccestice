@@ -26,8 +26,8 @@ const MAJOR_MINUTES = 5
  * (`EventScore` uvnitř obsahu), ne ve vlastním sloupci u pravého okraje —
  * v širokém panelu byl od jména daleko a oko ho k řádku nepřiřadilo.
  *
- * `items-start` + výška `h-5.5` u času, ikony a stavu = první řádek obsahu
- * (`leading-5.5`): u víceřádkových řádků (dlouhé jméno, asistence, důvod
+ * `items-start` + výška `h-5.5` / `lg:h-6` u času, ikony a stavu = první
+ * řádek obsahu (`leading-5.5` / `lg:leading-6`, typografie viz `MatchPanel`): u víceřádkových řádků (dlouhé jméno, asistence, důvod
  * trestu) drží čas a ikonu u jména, ne uprostřed bloku.
  *
  * Od `md` mají řádky stejné vodorovné odsazení jako pruh třetiny nad nimi,
@@ -38,7 +38,7 @@ const ROW =
   'grid grid-cols-[2.25rem_1.25rem_minmax(0,1fr)] items-start gap-x-2 py-3 md:grid-cols-[3.25rem_2rem_minmax(0,1fr)] md:gap-x-4 md:px-4'
 
 /** Buňka zarovnaná na první řádek obsahu. */
-const CELL = 'flex h-5.5 items-center'
+const CELL = 'flex h-5.5 items-center lg:h-6'
 
 /**
  * Časová osa zápasu ve stylu Livesportu, ale jen se stranou HC Čestice:
@@ -97,7 +97,7 @@ export function MatchTimeline({
             <h3 className="bg-paper rounded-field flex items-center justify-between gap-3 px-3 py-2 md:px-4">
               <Eyebrow tone="club">{period.label}</Eyebrow>
               {period.score && (
-                <span className="text-meta font-extrabold tabular-nums">
+                <span className="text-meta font-extrabold tabular-nums lg:text-body">
                   <span className="sr-only">skóre </span>
                   {period.score.replace(':', ' : ')}
                 </span>
@@ -122,7 +122,7 @@ export function MatchTimeline({
 function TimelineRow({ event, opponentName }: { event: MatchTimelineEvent; opponentName: string }) {
   return (
     <li className={ROW}>
-      <span className={cn(CELL, 'text-faint text-caption font-bold tabular-nums')}>
+      <span className={cn(CELL, 'text-faint text-caption font-bold tabular-nums lg:text-meta')}>
         {event.time}
       </span>
       <span aria-hidden className={cn(CELL, 'justify-center')}>
@@ -173,7 +173,7 @@ function EventScore({ event }: { event: MatchTimelineEvent }) {
   ) : (
     <span
       aria-hidden
-      className="text-faint inline-flex h-5.5 min-w-11 flex-none items-center justify-center text-caption font-extrabold tabular-nums"
+      className="text-faint inline-flex h-5.5 min-w-11 flex-none items-center justify-center text-caption font-extrabold tabular-nums lg:h-6 lg:text-meta"
     >
       {event.score}
     </span>
@@ -184,14 +184,14 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
   if (event.type === 'penalty') {
     return (
       <>
-        <div className="text-body leading-5.5 font-extrabold text-pretty break-words">
+        <div className="text-body leading-5.5 font-extrabold text-pretty break-words lg:text-lead lg:leading-6">
           <span className="sr-only">
             Trest{event.minutes != null ? ` ${event.minutes} min` : ''}:{' '}
           </span>
           {event.player}
         </div>
         {/* Druh a důvod se lámou mezi sebou, ne „Menší trest · | Nesportovní…“. */}
-        <MatchMeta className="mt-0.5" items={[event.kind, event.reason]} />
+        <MatchMeta className="mt-0.5 lg:text-meta" items={[event.kind, event.reason]} />
       </>
     )
   }
@@ -200,7 +200,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
     // Jméno soupeře se smí zalomit — výpustka („HC Aloha Lan…“) ho na
     // 320 px usekla v polovině. Pro čtečku ho nahrazuje „Gól soupeře“.
     return (
-      <div className="text-faint flex items-start gap-x-2 text-body leading-5.5 font-bold">
+      <div className="text-faint flex items-start gap-x-2 text-body leading-5.5 font-bold lg:text-lead lg:leading-6">
         <span className="sr-only">
           {event.score ? `Gól soupeře, stav ${event.score}` : 'Gól soupeře'}
         </span>
@@ -223,7 +223,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
         <EventScore event={event} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="text-body leading-5.5 min-w-0 font-extrabold text-pretty break-words">
+            <span className="text-body leading-5.5 min-w-0 font-extrabold text-pretty break-words lg:text-lead lg:leading-6">
               <span className="sr-only">
                 {event.score ? `Gól HC Čestice, stav ${event.score}: ` : 'Gól HC Čestice: '}
               </span>
@@ -243,7 +243,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
             )}
           </div>
           {event.assists.length > 0 && (
-            <div className="text-faint mt-0.5 text-caption font-semibold text-pretty break-words">
+            <div className="text-faint mt-0.5 text-caption font-semibold text-pretty break-words lg:text-meta">
               <span className="sr-only">Asistence: </span>
               <span aria-hidden>(</span>
               {event.assists.join(', ')}

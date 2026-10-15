@@ -62,7 +62,7 @@ export function MatchReportCard({
               {report.title}
             </CardTitle>
             {report.excerpt && (
-              <p className="text-ink-soft mt-3 text-body leading-[1.55] text-pretty">
+              <p className="text-ink-soft mt-3 text-body leading-[1.55] text-pretty lg:text-lead">
                 {report.excerpt}
               </p>
             )}
