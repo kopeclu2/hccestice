@@ -215,6 +215,81 @@ async function runLocked(
   return rootSpan(() => executeRun(payload, opts, t0, now, settings, due))
 }
 
+/**
+ * Do Sentry jen NOVÁ upozornění: stejné varování v řadě běhů by jinak
+ * znamenalo spam (neznámý hráč se hlásí, dokud ho správce nepřiřadí).
+ * Vrací id odeslaných událostí.
+ */
+async function reportNewWarnings(
+  payload: Payload,
+  warnings: VchlRunResult['warnings'],
+  trigger: VchlTrigger,
+): Promise<string[]> {
+  // Porovnává se s posledním během, který skončil `ok`/`partial`: `error`
+  // běh varování nemá, takže by po něm další OK běh poslal všechna trvalá
+  // varování znovu.
+  const reference = await lastSuccessfulRun(payload)
+  const prev = new Set((reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`))
+  const ids: string[] = []
+  for (const w of warnings) {
+    if (prev.has(`${w.type}:${w.ref ?? ''}`)) continue
+    const id = captureWarning(w, trigger)
+    if (id) ids.push(id)
+  }
+  return ids
+}
+
+type RunRecord = {
+  trigger: VchlTrigger
+  status: VchlRunResult['status']
+  startedAt: number
+  requests: number
+  changes: VchlRunResult['changes']
+  warnings: VchlRunResult['warnings']
+  error: string | undefined
+  sentryEventId: string | undefined
+}
+
+/** Záznam běhu do `vchl-sync-runs`; selhání uložení běh neshodí. Vrací id nebo `null`. */
+async function persistRun(payload: Payload, run: RunRecord): Promise<number | string | null> {
+  try {
+    const rec = await payload.create({
+      collection: 'vchl-sync-runs',
+      data: {
+        trigger: run.trigger,
+        status: run.status,
+        startedAt: new Date(run.startedAt).toISOString(),
+        finishedAt: new Date().toISOString(),
+        requests: run.requests,
+        changes: { ...run.changes },
+        warnings: run.warnings.map((w) => ({ type: w.type, message: w.message, ref: w.ref })),
+        error: run.error,
+        sentryEventId: run.sentryEventId,
+      },
+      context: { disableRevalidate: true },
+    })
+    return rec.id
+  } catch (err) {
+    payload.logger.error({ err }, 'vchl-sync: záznam běhu se nepodařilo uložit')
+    captureFailure(err, 'write', run.trigger)
+    return null
+  }
+}
+
+/** Smaže záznamy starší než `RUN_RETENTION_DAYS`; chyba úklidu běh neshodí. */
+async function pruneOldRuns(payload: Payload): Promise<void> {
+  try {
+    const cutoff = new Date(Date.now() - RUN_RETENTION_DAYS * 86_400_000).toISOString()
+    await payload.delete({
+      collection: 'vchl-sync-runs',
+      where: { startedAt: { less_than: cutoff } },
+      context: { disableRevalidate: true },
+    })
+  } catch (err) {
+    payload.logger.error({ err }, 'vchl-sync: úklid starých běhů selhal')
+  }
+}
+
 async function executeRun(
   payload: Payload,
   opts: { trigger: VchlTrigger; force?: boolean },
@@ -237,11 +312,9 @@ async function executeRun(
     await syncAll(ctx)
   } catch (err) {
     error = errorMessage(err)
-    const stage =
-      err instanceof AhlParseError ? 'parse' : err instanceof AhlFetchError ? 'fetch' : 'write'
     const id = captureFailure(
       err,
-      stage,
+      stageOf(err),
       trigger,
       err instanceof AhlFetchError ? { url: err.url } : {},
     )
@@ -258,59 +331,22 @@ async function executeRun(
       : 'ok'
   const dry = trigger === 'dry'
 
-  // Do Sentry jen NOVÁ upozornění: stejné varování v řadě běhů by jinak
-  // znamenalo spam (neznámý hráč se hlásí, dokud ho správce nepřiřadí).
-  if (!dry) {
-    // Porovnává se s posledním během, který skončil `ok`/`partial`: `error`
-    // běh varování nemá, takže by po něm další OK běh poslal všechna trvalá
-    // varování znovu.
-    const reference = await lastSuccessfulRun(payload)
-    const prev = new Set((reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`))
-    for (const w of warnings) {
-      if (prev.has(`${w.type}:${w.ref ?? ''}`)) continue
-      const id = captureWarning(w, trigger)
-      if (id) eventIds.push(id)
-    }
-  }
+  if (!dry) eventIds.push(...(await reportNewWarnings(payload, warnings, trigger)))
 
   if (!dry && ctx && ctx.writes > 0) await revalidateAfterSync(payload, trigger)
 
-  const finished = new Date()
-  let runId: number | string | null = null
-  try {
-    const rec = await payload.create({
-      collection: 'vchl-sync-runs',
-      data: {
-        trigger,
-        status,
-        startedAt: new Date(t0).toISOString(),
-        finishedAt: finished.toISOString(),
-        requests: client.requestCount,
-        changes: { ...changes },
-        warnings: warnings.map((w) => ({ type: w.type, message: w.message, ref: w.ref })),
-        error: error ?? (ctx?.partialErrors.length ? ctx.partialErrors.join('\n') : undefined),
-        sentryEventId: eventIds[0],
-      },
-      context: { disableRevalidate: true },
-    })
-    runId = rec.id
-  } catch (err) {
-    payload.logger.error({ err }, 'vchl-sync: záznam běhu se nepodařilo uložit')
-    captureFailure(err, 'write', trigger)
-  }
+  const runId = await persistRun(payload, {
+    trigger,
+    status,
+    startedAt: t0,
+    requests: client.requestCount,
+    changes,
+    warnings,
+    error: error ?? (ctx?.partialErrors.length ? ctx.partialErrors.join('\n') : undefined),
+    sentryEventId: eventIds[0],
+  })
 
-  if (!dry) {
-    try {
-      const cutoff = new Date(Date.now() - RUN_RETENTION_DAYS * 86_400_000).toISOString()
-      await payload.delete({
-        collection: 'vchl-sync-runs',
-        where: { startedAt: { less_than: cutoff } },
-        context: { disableRevalidate: true },
-      })
-    } catch (err) {
-      payload.logger.error({ err }, 'vchl-sync: úklid starých běhů selhal')
-    }
-  }
+  if (!dry) await pruneOldRuns(payload)
 
   const result: VchlRunResult = {
     runId,
