@@ -10,6 +10,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
@@ -58,7 +59,7 @@ export default async function SponzoriPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Partneři | HC Čestice',
+  title: brandTitle('Partneři'),
   description:
     'Firmy a lidé z okolí, kteří drží vesnický hokej v Česticích nad vodou — partneři a sponzoři HC Čestice.',
   alternates: { canonical: '/sponzori' },

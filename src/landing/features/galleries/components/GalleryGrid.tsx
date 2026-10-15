@@ -10,6 +10,7 @@ import { CardTitle } from '@/landing/ui/Heading'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { countLabel } from '@/lib/plural'
+import { routes } from '@/lib/routes'
 
 /**
  * Výpis galerií — pravidelná mřížka, na mobilu jeden sloupec.
@@ -48,7 +49,7 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
             Poslat fotky
           </PillLink>
           {activeSeasonLabel && (
-            <PillLink href="/fotogalerie#seznam" size="md" variant="outline">
+            <PillLink href={`${routes.list.galleries}#seznam`} size="md" variant="outline">
               Starší sezóny
             </PillLink>
           )}

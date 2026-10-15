@@ -8,6 +8,7 @@ import { Badge } from '@/landing/ui/Badge'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { linkOrNull, routes } from '@/lib/routes'
 import type { Product } from '@/payload-types'
 
 /** Karta produktu v mřížce — sdílí ji i widget Karta produktu. */
@@ -23,7 +24,7 @@ export function ProductTile({
   const mailto = `mailto:${email}?subject=${encodeURIComponent(`Objednávka: ${product.name}`)}`
 
   const photo = uploadToPhoto(product.photo)
-  const detailHref = product.slug ? `/produkty/${product.slug}` : null
+  const detailHref = linkOrNull(routes.product, product.slug)
 
   return (
     <article className="flex h-full flex-col rounded-tile bg-surface p-4.5 md:p-5 lg:p-5.5">

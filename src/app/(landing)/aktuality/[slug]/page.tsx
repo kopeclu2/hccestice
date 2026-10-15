@@ -7,6 +7,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { fetchMatchSlugForPost } from '@/landing/features/matches/data/matchDetail'
 import { ArticleBody } from '@/landing/features/posts/components/ArticleBody'
+import { ArticleJsonLd } from '@/landing/features/posts/components/ArticleJsonLd'
 import { ArticleRelated } from '@/landing/features/posts/components/ArticleRelated'
 import { AuthorCard } from '@/landing/features/posts/components/AuthorCard'
 import { RenderArticleHero } from '@/landing/features/posts/components/hero/RenderArticleHero'
@@ -17,15 +18,12 @@ import {
   fetchPostSlugs,
   fetchRelatedPostCards,
 } from '@/landing/features/posts/data/posts'
-import type { ArticleDetail } from '@/landing/features/posts/types'
 import { toArticleDetail } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PillLink } from '@/landing/ui/PillLink'
+import { brandTitle } from '@/lib/brandTitle'
 import { generateMeta } from '@/lib/generateMeta'
-import { getMediaUrl } from '@/lib/getMediaUrl'
-import { getServerSideURL } from '@/lib/getURL'
-import { serializeJsonLd } from '@/lib/jsonLd'
-import type { Post } from '@/payload-types'
+import { routes } from '@/lib/routes'
 
 /** ISR pojistka; publikace revaliduje okamžitě (hook `revalidatePost`). */
 export const revalidate = 600
@@ -51,7 +49,7 @@ export default async function ArticlePage({ params }: Args) {
   const { isEnabled: draft } = await draftMode()
 
   const post = await fetchPostBySlug(slug, draft)
-  if (!post) return <PayloadRedirects url={`/aktuality/${slug}`} />
+  if (!post) return <PayloadRedirects url={routes.post(slug)} />
 
   const article = toArticleDetail(
     post,
@@ -88,54 +86,8 @@ export default async function ArticlePage({ params }: Args) {
 
       {article.showRelated && <ArticleRelated cards={related} showPhoto={relatedShowPhoto} />}
 
-      <StructuredData article={article} post={post} slug={slug} />
+      <ArticleJsonLd article={article} post={post} slug={slug} />
     </SubpageShell>
-  )
-}
-
-/**
- * JSON-LD (schema.org NewsArticle) pro vyhledávače.
- *
- * `datePublished` je pro Article rich results **povinné** a chybělo tu —
- * proto komponenta bere celý `post`, ne jen zobrazovací `article`.
- * `publisher.logo` musí být `ImageObject`, holé URL Google reportuje
- * jako chybu.
- */
-function StructuredData({
-  article,
-  post,
-  slug,
-}: {
-  article: ArticleDetail
-  post: Post
-  slug: string
-}) {
-  const baseUrl = getServerSideURL()
-  const publishedAt = post.publishedAt ?? post.createdAt
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
-    headline: article.title,
-    ...(article.excerpt ? { description: article.excerpt } : {}),
-    ...(article.photo
-      ? { image: [`${baseUrl}${getMediaUrl(article.photo.url, article.photo.updatedAt)}`] }
-      : {}),
-    ...(publishedAt ? { datePublished: publishedAt } : {}),
-    ...(post.updatedAt || publishedAt ? { dateModified: post.updatedAt ?? publishedAt } : {}),
-    author: { '@type': 'Person', name: article.author.name },
-    publisher: {
-      '@type': 'SportsTeam',
-      name: 'HC Čestice',
-      logo: { '@type': 'ImageObject', url: `${baseUrl}/logo-cestice.png` },
-    },
-    mainEntityOfPage: `${baseUrl}/aktuality/${slug}`,
-  }
-
-  return (
-    <script
-      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
-      type="application/ld+json"
-    />
   )
 }
 
@@ -143,12 +95,12 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
   const post = await fetchPostBySlug(slug, false)
-  if (!post) return { title: 'Článek nenalezen | HC Čestice' }
+  if (!post) return { title: brandTitle('Článek nenalezen') }
 
   const meta = await generateMeta({ collection: 'posts', doc: post })
   return {
     ...meta,
     description: meta.description ?? post.excerpt ?? undefined,
-    alternates: { canonical: `/aktuality/${slug}` },
+    alternates: { canonical: routes.post(slug) },
   }
 }

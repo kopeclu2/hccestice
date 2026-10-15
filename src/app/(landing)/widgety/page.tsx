@@ -10,6 +10,7 @@ import { CardTitle, PageTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Kicker } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { buildWidgetCatalog, resolveExampleIds, type WidgetDoc } from '@/landing/widget-catalog'
+import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
 
@@ -124,7 +125,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
 }
 
 export const metadata: Metadata = {
-  title: 'Katalog widgetů — příručka pro správce | HC Čestice',
+  title: brandTitle('Katalog widgetů — příručka pro správce'),
   description: 'Interní přehled všech bloků a widgetů webu HC Čestice s ukázkami a návodem.',
   robots: { index: false, follow: false },
 }

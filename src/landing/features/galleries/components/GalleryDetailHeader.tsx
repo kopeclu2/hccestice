@@ -3,6 +3,7 @@ import React from 'react'
 import { Badge } from '@/landing/ui/Badge'
 import { PageHeader } from '@/landing/ui/PageHeader'
 import { countLabel } from '@/lib/plural'
+import { routes } from '@/lib/routes'
 
 /**
  * Hlavička detailu galerie: drobečky, titulek a meta řádek
@@ -48,7 +49,7 @@ export function GalleryDetailHeader({
       title={title}
       titleClassName="max-w-260"
       titleSize="md"
-      trail={[{ href: '/fotogalerie', label: 'Fotoalbum' }, { label: title }]}
+      trail={[{ href: routes.list.galleries, label: 'Fotoalbum' }, { label: title }]}
       watermark="FOTO"
     />
   )

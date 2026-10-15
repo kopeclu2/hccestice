@@ -2,6 +2,7 @@ import React from 'react'
 
 import { CtaStrip } from '@/landing/ui/CtaStrip'
 import { PillLink } from '@/landing/ui/PillLink'
+import { routes } from '@/lib/routes'
 
 /**
  * Zelený CTA pás na konci `/kontakt`, stejný vzor jako mají ostatní
@@ -16,7 +17,7 @@ export function ContactCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href="/zapasy" variant="light" withArrow>
+      <PillLink href={routes.list.matches} variant="light" withArrow>
         Rozpis zápasů
       </PillLink>
     </CtaStrip>

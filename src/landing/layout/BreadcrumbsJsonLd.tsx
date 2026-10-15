@@ -1,16 +1,19 @@
 import React from 'react'
 
-import type { Crumb } from '@/landing/ui/Breadcrumbs'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
+
+export type Crumb = {
+  label: string
+  /** Bez `href` je položka poslední (aktuální stránka) — vykreslí se jako text. */
+  href?: string
+}
 
 /**
  * JSON-LD (schema.org BreadcrumbList) k viditelným drobečkům.
  *
- * Drobečky na webu existují ve dvou vizuálně odlišných variantách
- * (`ui/Breadcrumbs` pro podstránky, `features/posts/components/hero/Breadcrumbs`
- * pro hero článku), ale strukturovaná data jsou pro obě stejná — proto
- * jeden sdílený emitor a ne dvě kopie.
+ * Typ `Crumb` žije tady, ne v `ui/Breadcrumbs`: ta komponentu importuje,
+ * takže by opačný směr udělal import cyklus.
  *
  * „Domů" se doplňuje automaticky, stejně jako ve vizuální komponentě,
  * takže volající předává jen zbytek cesty a obě reprezentace se nemohou

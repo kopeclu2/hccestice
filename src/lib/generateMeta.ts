@@ -6,6 +6,7 @@ import { brandTitle } from './brandTitle'
 import { getServerSideURL } from './getURL'
 import { mergeOpenGraph, OG_FALLBACK_IMAGE } from './mergeOpenGraph'
 import { htmlPlainText, snippet } from './plainText'
+import { routes } from './routes'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -51,13 +52,7 @@ export const generateMeta = async (args: {
    */
   const slug = typeof doc?.slug === 'string' ? doc.slug : null
   const path =
-    collection === 'posts'
-      ? slug
-        ? `/aktuality/${slug}`
-        : '/aktuality'
-      : !slug || slug === 'home'
-        ? '/'
-        : `/${slug}`
+    collection === 'posts' ? (slug ? routes.post(slug) : routes.list.posts) : routes.page(slug)
 
   const url = `${getServerSideURL()}${path}`
   const images = ogImage ? [{ url: ogImage }] : undefined

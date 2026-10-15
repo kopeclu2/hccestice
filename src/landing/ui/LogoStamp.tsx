@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { cn } from '@/lib/utils'
 
 import { Eyebrow } from './Kicker'
@@ -37,7 +38,7 @@ export function LogoStamp({
       )}
       href={href}
     >
-      <Image alt="HC Čestice" height={34} src="/logo-cestice.png" width={34} />
+      <Image alt={CLUB_NAME} height={34} src={CLUB_LOGO} width={34} />
       <span className="leading-tight">
         <span className="block text-sm font-bold tracking-tight">HC ČESTICE</span>
         <Eyebrow className="block" tone={glass ? 'white' : 'faint'}>

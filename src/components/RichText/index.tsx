@@ -17,6 +17,7 @@ import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
 import { MediaBlock } from '@/landing/blocks/MediaBlock/Component'
 import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
 import { YouTubeBlock } from '@/landing/blocks/YouTube/Component'
+import { collectionDocPath } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type {
   BannerBlock as BannerBlockProps,
@@ -55,20 +56,12 @@ const toReactStyle = (css: Record<string, string>): React.CSSProperties => {
   return style
 }
 
-/** Ručně psané prefixy — `pages` jsou jediná kolekce beze svého, žije na `/[slug]`. */
-const INTERNAL_LINK_PREFIX: Partial<Record<string, string>> = {
-  posts: '/aktuality',
-  galleries: '/fotogalerie',
-}
-
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== 'object') {
     throw new Error('Expected value to be an object')
   }
-  const slug = value.slug
-  const prefix = INTERNAL_LINK_PREFIX[relationTo]
-  return prefix ? `${prefix}/${slug}` : `/${slug}`
+  return collectionDocPath(relationTo, String(value.slug))
 }
 
 /** Klient-safe konvertory — sdílí je i serverová varianta. */

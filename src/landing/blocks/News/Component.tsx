@@ -11,6 +11,7 @@ import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { LandingNewsBlock, Post } from '@/payload-types'
 
@@ -66,7 +67,7 @@ function NewsView({ cards }: { cards: PostCard[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <PillLink href="/aktuality" size="md" variant="dark" withArrow>
+          <PillLink href={routes.list.posts} size="md" variant="dark" withArrow>
             Všechny aktuality
           </PillLink>
         </div>

@@ -13,6 +13,8 @@
  */
 
 import type { NavItem } from '@/landing/features/navigation/types'
+import { CLUB_NAME } from '@/lib/club'
+import { routes } from '@/lib/routes'
 
 /**
  * Fallback hlavní navigace — použije se, když je v CMS prázdná.
@@ -31,13 +33,13 @@ import type { NavItem } from '@/landing/features/navigation/types'
  * kde na stránce co je.
  */
 export const FALLBACK_NAV: NavItem[] = [
-  { label: 'Aktuality', anchor: 'aktuality', path: '/aktuality' },
+  { label: 'Aktuality', anchor: 'aktuality', path: routes.list.posts },
   { label: 'Sezóna', anchor: 'sezona', path: null },
-  { label: 'Zápasy', anchor: null, path: '/zapasy' },
+  { label: 'Zápasy', anchor: null, path: routes.list.matches },
   { label: 'Soupiska', anchor: null, path: '/soupiska' },
   { label: 'Tréninky', anchor: 'treninky', path: '/treninky' },
   { label: 'O klubu', anchor: 'klub', path: null },
-  { label: 'Fotoalbum', anchor: 'fotoalbum', path: '/fotogalerie' },
+  { label: 'Fotoalbum', anchor: 'fotoalbum', path: routes.list.galleries },
   { label: 'Historie', anchor: 'historie', path: '/historie-klubu' },
   { label: 'Lidé v klubu', anchor: 'lide', path: null },
   { label: 'Partneři', anchor: 'sponzori', path: '/sponzori' },
@@ -56,11 +58,11 @@ export const HERO = {
 /** Tabulka VČHL — základní část 2025/26 (top 5, spravuje ahl.cz). */
 export const STANDINGS = {
   seasonLabel: 'základní část 2025/26',
-  ourTeam: 'HC Čestice',
+  ourTeam: CLUB_NAME,
   fullTableUrl: 'https://www.ahl.cz/soutez/vychodoceska_hokejova_liga/tabulky/',
   rows: [
     { pos: 1, team: 'HC Skuteč', games: 18, points: 49 },
-    { pos: 2, team: 'HC Čestice', games: 18, points: 38 },
+    { pos: 2, team: CLUB_NAME, games: 18, points: 38 },
     { pos: 3, team: 'HC Baroni Opočno', games: 18, points: 36 },
     { pos: 4, team: 'HC Spartak Choceň B', games: 18, points: 34 },
     { pos: 5, team: 'Rebels Polička', games: 18, points: 27 },
@@ -186,7 +188,7 @@ export const HISTORY_PAGE = {
     headline: 'Historické fotky a archivy sezón',
     perex: 'Družstva z 60. let, stavba ledu, archiv výsledků od sezóny 2015/16.',
     label: 'Otevřít fotoalbum',
-    href: '/fotogalerie',
+    href: routes.list.galleries,
   },
   fallbackMilestones: [
     {
@@ -332,6 +334,5 @@ export const FOOTER = {
       ],
     },
   ],
-  copyright: `© ${new Date().getFullYear()} HC Čestice — TJ Sokol Čestice`,
   league: 'Východočeská hokejová liga',
 } as const

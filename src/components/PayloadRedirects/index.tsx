@@ -1,6 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation'
 import type React from 'react'
 
+import { collectionDocPath } from '@/lib/routes'
 import type { Page, Post } from '@/payload-types'
 import { getCachedDocument } from '@/server/getDocument'
 import { getCachedRedirects } from '@/server/getRedirects'
@@ -9,11 +10,6 @@ interface Props {
   disableNotFound?: boolean
   url: string
 }
-
-// URL prefix cílové kolekce — články žijí na /aktuality, ne /posts.
-// Díky mapě jde legacy redirect (reference na dokument) jedním hopem na finální URL.
-const collectionPrefix = (relationTo: string): string =>
-  relationTo === 'pages' ? '' : relationTo === 'posts' ? '/aktuality' : `/${relationTo}`
 
 /**
  * SSR redirecty z kolekce `redirects` (plní je legacy import z eStránek).
@@ -43,15 +39,16 @@ export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }
       const id = redirectItem.to?.reference?.value
 
       const document = (await getCachedDocument(collection, id)()) as Page | Post
-      redirectUrl = `${collectionPrefix(redirectItem.to?.reference?.relationTo ?? '')}/${
-        document?.slug
-      }`
+      // Legacy redirect (reference na dokument) jde jedním hopem na finální
+      // URL — články žijí na /aktuality, ne /posts.
+      redirectUrl = collectionDocPath(redirectItem.to?.reference?.relationTo ?? '', document?.slug)
     } else {
-      redirectUrl = `${collectionPrefix(redirectItem.to?.reference?.relationTo ?? '')}/${
+      redirectUrl = collectionDocPath(
+        redirectItem.to?.reference?.relationTo ?? '',
         typeof redirectItem.to?.reference?.value === 'object'
           ? redirectItem.to?.reference?.value?.slug
-          : ''
-      }`
+          : '',
+      )
     }
 
     if (redirectUrl) permanentRedirect(redirectUrl)

@@ -1,16 +1,18 @@
 import React from 'react'
 
 import type { ProductPhoto } from '@/landing/features/products/photos'
+import { CLUB_NAME } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
+import { routes } from '@/lib/routes'
 import type { Product } from '@/payload-types'
 
 /** `Product` + `Offer` JSON-LD — objednávky běží e-mailem, ne košíkem, proto
  *  `Offer` bez `url` na checkout; `availability` je pak hlavní signál. */
 export function ProductJsonLd({ product, photos }: { product: Product; photos: ProductPhoto[] }) {
   const baseUrl = getServerSideURL()
-  const path = `/produkty/${product.slug}`
+  const path = routes.product(product.slug)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -28,7 +30,7 @@ export function ProductJsonLd({ product, photos }: { product: Product; photos: P
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       url: `${baseUrl}${path}`,
-      seller: { '@type': 'Organization', name: 'HC Čestice' },
+      seller: { '@type': 'Organization', name: CLUB_NAME },
     },
   }
 

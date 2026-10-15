@@ -2,11 +2,12 @@ import Image from 'next/image'
 import React from 'react'
 
 import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
 import { PageTitle } from '@/landing/ui/Heading'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
+import { articleTrail } from './articleTrail'
 import { AuthorMeta } from './AuthorMeta'
-import { Breadcrumbs } from './Breadcrumbs'
 import { CategoryBadge } from './CategoryBadge'
 import { TitleParts } from './HeroTitle'
 
@@ -34,9 +35,9 @@ export function HeroPhoto({ article }: { article: ArticleDetail }) {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[56%] [mask-image:linear-gradient(transparent,#000_62%)] backdrop-blur-[6px] backdrop-saturate-[.85]" />
 
         <Breadcrumbs
-          badge={article.badge}
           className="absolute top-6 left-[clamp(1.125rem,3vw,2.75rem)] z-2"
           tone="photo"
+          trail={articleTrail(article.badge)}
         />
 
         <div className="absolute inset-x-[clamp(1.125rem,3vw,3rem)] bottom-10 z-2">

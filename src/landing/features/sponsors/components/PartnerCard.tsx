@@ -7,19 +7,7 @@ import type { Sponsor } from '@/landing/features/sponsors/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-
-/**
- * Monogram partnera bez loga — iniciály prvních dvou slov názvu
- * („CIMIEL s.r.o." → „CS"). Záměrně jiné pravidlo než `initials`
- * na soupisce, kde se zkratky s tečkou zahazují.
- */
-const monogram = (name: string): string =>
-  name
-    .split(' ')
-    .slice(0, 2)
-    .map((word) => word[0] ?? '')
-    .join('')
-    .toUpperCase()
+import { initials } from '@/lib/teamName'
 
 type ContactLink = {
   external: boolean
@@ -111,7 +99,7 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
           // Obrysový monogram — dekorativní placeholder bez loga, stejně jako
           // watermarky necháváme velikost beze změny.
           <Numeral aria-hidden className="text-club/35 select-none text-stroke" size="lg">
-            {monogram(sponsor.name)}
+            {initials(sponsor.name)}
           </Numeral>
         )}
       </div>

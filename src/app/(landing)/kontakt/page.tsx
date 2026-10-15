@@ -7,6 +7,7 @@ import { ContactHeader } from '@/landing/features/contact/components/ContactHead
 import { ContactMap } from '@/landing/features/contact/components/ContactMap'
 import { ContactPanel } from '@/landing/features/contact/components/ContactPanel'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
 
@@ -32,7 +33,7 @@ export default async function KontaktPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Kontakt | HC Čestice',
+  title: brandTitle('Kontakt'),
   description:
     'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám na hccestice@seznam.cz nebo přes formulář.',
   alternates: { canonical: '/kontakt' },

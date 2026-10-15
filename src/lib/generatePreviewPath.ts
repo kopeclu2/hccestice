@@ -1,14 +1,10 @@
 import { PayloadRequest, CollectionSlug } from 'payload'
 
 import { PreviewSearchParams } from '@/app/(landing)/next/preview/route'
-
-const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
-  posts: '/aktuality',
-  pages: '',
-}
+import { collectionDocPath, routes } from '@/lib/routes'
 
 type Props = {
-  collection: keyof typeof collectionPrefixMap
+  collection: Extract<CollectionSlug, 'pages' | 'posts'>
   slug: string
   req: PayloadRequest
 }
@@ -23,9 +19,7 @@ export const generatePreviewPath = ({ collection, slug }: Props) => {
 
   // Domovská stránka žije na `/` (landing routa), ne na `/home`
   const path =
-    collection === 'pages' && slug === 'home'
-      ? '/'
-      : `${collectionPrefixMap[collection]}/${encodedSlug}`
+    collection === 'pages' ? routes.page(encodedSlug) : collectionDocPath(collection, encodedSlug)
 
   const encodedParams = new URLSearchParams({
     path,

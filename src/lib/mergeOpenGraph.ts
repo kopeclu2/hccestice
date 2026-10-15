@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 
+import { CLUB_LOGO, CLUB_NAME, SITE_NAME } from './club'
 import { getServerSideURL } from './getURL'
 
 /**
  * Záložní OG obrázek pro dokumenty bez vlastní `meta.image`.
  * Sdílí ho i `generateMeta`, aby fallback žil na jednom místě.
  */
-export const OG_FALLBACK_IMAGE = '/logo-cestice.png'
+export const OG_FALLBACK_IMAGE = CLUB_LOGO
 
 /**
  * Výchozí Open Graph pro celý web. `generateMeta` přepíše `title`,
@@ -20,8 +21,8 @@ export const OG_FALLBACK_IMAGE = '/logo-cestice.png'
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
   locale: 'cs_CZ',
-  siteName: 'HC Čestice',
-  title: 'HC Čestice — TJ Sokol Čestice',
+  siteName: SITE_NAME,
+  title: `${CLUB_NAME} — TJ Sokol Čestice`,
   description:
     'Vesnický hokej ve Východočeské hokejové lize. Zápasy, výsledky, soupiska a fotky z Čestic.',
   images: [

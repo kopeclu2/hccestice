@@ -1,7 +1,9 @@
 import React from 'react'
 
 import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
+import { buildListUrl } from '@/landing/lib/listUrl'
 import { PillLink } from '@/landing/ui/PillLink'
+import { routes } from '@/lib/routes'
 
 /**
  * Filtr typů článků — pilulkové odkazy, stav filtru žije v URL (`?typ=`).
@@ -20,7 +22,7 @@ export function TypeFilters({ activeType }: { activeType: string | null }) {
         return (
           <PillLink
             aria-current={active ? 'true' : undefined}
-            href={key ? `/aktuality?typ=${key}#seznam` : '/aktuality#seznam'}
+            href={buildListUrl(routes.list.posts, { filters: { typ: key }, hash: 'seznam' })}
             key={label}
             selected={active}
             size="sm"

@@ -1,18 +1,16 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
-import { getPayload } from 'payload'
-import React, { cache } from 'react'
+import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { RenderLandingBlocks } from '@/landing/blocks/render'
 import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
+import { HomeJsonLd } from '@/landing/features/pages/components/HomeJsonLd'
+import { fetchPageBySlug } from '@/landing/features/pages/data'
 import { LandingFooter } from '@/landing/layout/LandingFooter'
-import type { SiteLinks } from '@/landing/types'
 import { PageCanvas } from '@/landing/ui/PageCanvas'
+import { CLUB_NAME } from '@/lib/club'
 import { generateMeta } from '@/lib/generateMeta'
-import { getServerSideURL } from '@/lib/getURL'
-import { serializeJsonLd } from '@/lib/jsonLd'
-import configPromise from '@payload-config'
 
 /**
  * ISR pojistka — obsah se reviduje i bez zásahu v adminu. Změny home
@@ -34,7 +32,7 @@ export const revalidate = 600
 export default async function LandingPage() {
   const { isEnabled: draft } = await draftMode()
   const [page, siteConfig, site] = await Promise.all([
-    queryHomePage(),
+    fetchPageBySlug('home'),
     fetchSiteConfig(),
     fetchSite(),
   ])
@@ -56,112 +54,8 @@ export default async function LandingPage() {
 
       <LandingFooter content={mapFooter(siteConfig)} site={site} />
 
-      <StructuredData site={site} />
+      <HomeJsonLd site={site} />
     </PageCanvas>
-  )
-}
-
-/** Home dokument z kolekce Pages (draft-aware, cache per request). */
-const queryHomePage = cache(async () => {
-  const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'pages',
-    draft,
-    limit: 1,
-    pagination: false,
-    overrideAccess: draft,
-    where: { slug: { equals: 'home' } },
-    depth: 2,
-  })
-
-  return result.docs?.[0] ?? null
-})
-
-/**
- * JSON-LD (schema.org SportsTeam + WebSite) pro vyhledávače.
- *
- * `sameAs` jde ze `siteConfig` (ne natvrdo), aby změna profilu na sítích
- * byla otázkou administrace. `address` nese plnou poštovní adresu spolku —
- * dřív tu byla jen obec a PSČ, což byla navíc nekonzistentní kombinace
- * (`Čestice` + `517 41`, ale to PSČ patří Kostelci nad Orlicí).
- *
- * `WebSite` je bez `potentialAction`/`SearchAction` **záměrně**: web
- * nemá veřejné vyhledávací pole (kolekce `search` je interní index pro
- * `/llms.txt`), takže by šlo o nepravdivá strukturovaná data.
- */
-function StructuredData({ site }: { site: SiteLinks }) {
-  const baseUrl = getServerSideURL()
-
-  const team = {
-    '@context': 'https://schema.org',
-    '@type': 'SportsTeam',
-    name: 'HC Čestice',
-    alternateName: 'TJ Sokol Čestice',
-    sport: 'Ice Hockey',
-    // Rok založení oddílu ledního hokeje při TJ Sokol — první milník
-    // timeline na `/historie-klubu`. Sedmdesát let existence je pro klub
-    // téhle velikosti nejsilnější signál důvěryhodnosti, jaký má.
-    foundingDate: '1954',
-    url: baseUrl,
-    logo: `${baseUrl}/logo-cestice.png`,
-    email: site.email,
-    ...(([site.facebook, site.instagram].filter(Boolean) as string[]).length
-      ? { sameAs: [site.facebook, site.instagram].filter(Boolean) }
-      : {}),
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Čestice 112',
-      addressLocality: 'Kostelec nad Orlicí',
-      addressRegion: 'Královéhradecký kraj',
-      postalCode: '517 41',
-      addressCountry: 'CZ',
-    },
-    location: {
-      '@type': 'Place',
-      name: 'Zimní stadion Rychnov nad Kněžnou',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Javornická 1648',
-        addressLocality: 'Rychnov nad Kněžnou',
-        postalCode: '516 01',
-        addressCountry: 'CZ',
-      },
-    },
-    // Spádová oblast pro nábor. Sídlo spolku je v Česticích, ale hraje se
-    // v Rychnově — bez `areaServed` nemá vyhledávač jak poznat, že klub
-    // obsluhuje celý okres a ne jen obec z poštovní adresy.
-    areaServed: {
-      '@type': 'AdministrativeArea',
-      name: 'okres Rychnov nad Kněžnou',
-    },
-    memberOf: {
-      '@type': 'SportsOrganization',
-      name: 'Východočeská hokejová liga',
-    },
-  }
-
-  const website = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'HC Čestice',
-    url: baseUrl,
-    inLanguage: 'cs-CZ',
-    publisher: { '@type': 'SportsTeam', name: 'HC Čestice' },
-  }
-
-  return (
-    <>
-      <script
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(team) }}
-        type="application/ld+json"
-      />
-      <script
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(website) }}
-        type="application/ld+json"
-      />
-    </>
   )
 }
 
@@ -171,7 +65,7 @@ const FALLBACK_META: Metadata = {
     'Hokejový klub HC Čestice (TJ Sokol Čestice) hraje Východočeskou hokejovou ligu. Zápasy, výsledky, tréninky, fotoalbum a nábor nových hráčů i mládeže.',
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'HC Čestice — malý klub, velká sezóna',
+    title: `${CLUB_NAME} — malý klub, velká sezóna`,
     description:
       'Historické 3. místo v play-off VČHL 2025/26. Přijď na led — trénujeme dvakrát týdně v Rychnově nad Kněžnou.',
     locale: 'cs_CZ',
@@ -184,12 +78,12 @@ const FALLBACK_META: Metadata = {
     card: 'summary_large_image',
     description:
       'Historické 3. místo v play-off VČHL 2025/26. Přijď na led — trénujeme dvakrát týdně v Rychnově nad Kněžnou.',
-    title: 'HC Čestice — malý klub, velká sezóna',
+    title: `${CLUB_NAME} — malý klub, velká sezóna`,
   },
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await queryHomePage()
+  const page = await fetchPageBySlug('home')
   if (!page?.meta?.title) return FALLBACK_META
   return { ...FALLBACK_META, ...(await generateMeta({ doc: page })) }
 }
