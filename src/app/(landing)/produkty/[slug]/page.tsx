@@ -9,6 +9,7 @@ import { fetchProductBySlug, fetchProductSlugs } from '@/landing/features/produc
 import { collectPhotos } from '@/landing/features/products/photos'
 import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { routes } from '@/lib/routes'
 
 export const revalidate = 600
 
@@ -57,7 +58,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const product = await fetchProductBySlug(decodeURIComponent(slug))
   if (!product) return { title: 'Produkt nenalezen | HC Čestice' }
   return {
-    alternates: { canonical: `/produkty/${product.slug}` },
+    alternates: { canonical: routes.product(product.slug) },
     title: `${product.name} — ${product.price} Kč | HC Čestice merch`,
     description:
       product.description ?? `${product.name} z klubové nabídky HC Čestice. Objednávky e-mailem.`,

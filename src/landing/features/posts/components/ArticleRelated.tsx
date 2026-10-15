@@ -7,6 +7,7 @@ import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { routes } from '@/lib/routes'
 
 /**
  * Sekce „Mohlo by tě zajímat" — tři karty souvisejících článků
@@ -38,7 +39,7 @@ export function ArticleRelated({
             </SectionTitle>
           </div>
           <div className="hidden flex-1 md:block" />
-          <PillLink href="/aktuality" size="sm" variant="outline">
+          <PillLink href={routes.list.posts} size="sm" variant="outline">
             Všechny aktuality ↗
           </PillLink>
         </div>

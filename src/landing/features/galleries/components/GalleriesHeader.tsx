@@ -4,6 +4,7 @@ import { SeasonFilters, type SeasonPill } from '@/landing/features/matches/compo
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
 import { countLabel } from '@/lib/plural'
+import { routes } from '@/lib/routes'
 
 /**
  * Hlavička výpisu fotogalerií: drobečky, titulek s lime zvýrazněním, perex,
@@ -26,7 +27,7 @@ export function GalleriesHeader({
           activeSlug={activeSlug}
           allLabel="Vše"
           anchor="#seznam"
-          basePath="/fotogalerie"
+          basePath={routes.list.galleries}
           maxVisible={6}
           seasons={seasons}
         />

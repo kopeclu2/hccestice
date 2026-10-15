@@ -13,6 +13,7 @@
  */
 
 import type { NavItem } from '@/landing/features/navigation/types'
+import { routes } from '@/lib/routes'
 
 /**
  * Fallback hlavní navigace — použije se, když je v CMS prázdná.
@@ -31,13 +32,13 @@ import type { NavItem } from '@/landing/features/navigation/types'
  * kde na stránce co je.
  */
 export const FALLBACK_NAV: NavItem[] = [
-  { label: 'Aktuality', anchor: 'aktuality', path: '/aktuality' },
+  { label: 'Aktuality', anchor: 'aktuality', path: routes.list.posts },
   { label: 'Sezóna', anchor: 'sezona', path: null },
-  { label: 'Zápasy', anchor: null, path: '/zapasy' },
+  { label: 'Zápasy', anchor: null, path: routes.list.matches },
   { label: 'Soupiska', anchor: null, path: '/soupiska' },
   { label: 'Tréninky', anchor: 'treninky', path: '/treninky' },
   { label: 'O klubu', anchor: 'klub', path: null },
-  { label: 'Fotoalbum', anchor: 'fotoalbum', path: '/fotogalerie' },
+  { label: 'Fotoalbum', anchor: 'fotoalbum', path: routes.list.galleries },
   { label: 'Historie', anchor: 'historie', path: '/historie-klubu' },
   { label: 'Lidé v klubu', anchor: 'lide', path: null },
   { label: 'Partneři', anchor: 'sponzori', path: '/sponzori' },
@@ -186,7 +187,7 @@ export const HISTORY_PAGE = {
     headline: 'Historické fotky a archivy sezón',
     perex: 'Družstva z 60. let, stavba ledu, archiv výsledků od sezóny 2015/16.',
     label: 'Otevřít fotoalbum',
-    href: '/fotogalerie',
+    href: routes.list.galleries,
   },
   fallbackMilestones: [
     {

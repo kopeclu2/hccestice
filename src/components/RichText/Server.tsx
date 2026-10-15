@@ -9,6 +9,7 @@ import { DownloadsBlockComponent } from '@/landing/blocks/Downloads/Component'
 import { GalleryEmbedBlockComponent } from '@/landing/blocks/GalleryEmbed/Component'
 import { GalleryLinkBlockComponent } from '@/landing/blocks/GalleryLink/Component'
 import { relId } from '@/landing/lib/payload'
+import { collectionDocPath } from '@/lib/routes'
 import type {
   CtaBannerBlockType,
   DownloadsBlock as DownloadsBlockProps,
@@ -30,9 +31,6 @@ type ServerNodeTypes =
   | SerializedBlockNode<
       CtaBannerBlockType | GalleryEmbedBlockProps | GalleryLinkBlockProps | DownloadsBlockProps
     >
-
-/** Cesta na podstránku podle kolekce — `pages` nemá vlastní prefix, žije na `/[slug]`. */
-const RELATION_PREFIX: Partial<Record<string, string>> = { posts: '/aktuality' }
 
 /**
  * Konvertor pro `RelationshipFeature` (nástroj „Relace" v editoru) —
@@ -63,7 +61,7 @@ async function RelationshipConverter({ node }: { node: { relationTo: string; val
   const doc =
     typeof value === 'object' && value ? (value as { slug?: string; title?: string }) : null
   if (!doc?.slug) return null
-  const href = `${RELATION_PREFIX[relationTo] ?? ''}/${doc.slug}`
+  const href = collectionDocPath(relationTo, doc.slug)
   return (
     <a className="font-semibold text-club underline underline-offset-2" href={href}>
       {doc.title ?? doc.slug}

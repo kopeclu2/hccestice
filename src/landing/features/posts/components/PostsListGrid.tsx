@@ -7,6 +7,7 @@ import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { CardGrid } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PillLink } from '@/landing/ui/PillLink'
+import { routes } from '@/lib/routes'
 
 /**
  * Výpis článků — pravidelná mřížka, na mobilu jeden sloupec.
@@ -90,14 +91,14 @@ function PostsListEmpty({ activeType }: { activeType: string | null }) {
         <>
           <PillLink
             arrowIcon={<X strokeWidth={2.5} />}
-            href="/aktuality#seznam"
+            href={`${routes.list.posts}#seznam`}
             size="md"
             variant="dark"
             withArrow
           >
             Zrušit filtr
           </PillLink>
-          <PillLink href="/zapasy" size="md" variant="outline">
+          <PillLink href={routes.list.matches} size="md" variant="outline">
             Zápasy
           </PillLink>
         </>

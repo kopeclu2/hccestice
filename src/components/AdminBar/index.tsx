@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { getClientSideURL } from '@/lib/getURL'
+import { collectionBySegment } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 import './index.scss'
@@ -29,13 +30,13 @@ const collectionLabels = {
 type CollectionKey = keyof typeof collectionLabels
 
 /**
- * Mapa první URL části → slug kolekce v Payloadu. Cesty se jmenují česky,
- * kolekce anglicky, takže se nedají odvodit jedna z druhé: `/aktuality/{slug}`
- * je kolekce `posts`. Dřív se segment bral jako slug kolekce přímo, takže se
- * po přejmenování `/posts` na `/aktuality` u článků nabízela `pages`.
+ * Kolekce z první části URL (`/aktuality/{slug}` je `posts`). Cesty se jmenují
+ * česky, kolekce anglicky, takže je mapuje `collectionBySegment`. Kolekce bez
+ * popisku lišta nenabízí a spadne se na `pages`.
  */
-const ROUTE_TO_COLLECTION: Record<string, CollectionKey> = {
-  aktuality: 'posts',
+const collectionFromSegment = (segment: string): CollectionKey => {
+  const collection = collectionBySegment[segment]
+  return collection && collection in collectionLabels ? (collection as CollectionKey) : 'pages'
 }
 
 const Title: React.FC = () => <span>Administrace</span>
@@ -47,7 +48,7 @@ export const AdminBar: React.FC<{
   const segments = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
   // segments[0] je route group („(landing)"), vlastní cesta začíná na [1]
-  const collection: CollectionKey = ROUTE_TO_COLLECTION[segments?.[1] ?? ''] ?? 'pages'
+  const collection = collectionFromSegment(segments?.[1] ?? '')
   const router = useRouter()
 
   const onAuthChange = React.useCallback((user: PayloadMeUser) => {

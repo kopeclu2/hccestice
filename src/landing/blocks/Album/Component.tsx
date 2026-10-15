@@ -16,6 +16,7 @@ import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
+import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { LandingAlbumBlock } from '@/payload-types'
 
@@ -157,7 +158,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <PillLink href="/fotogalerie" size="md" variant="dark" withArrow>
+          <PillLink href={routes.list.galleries} size="md" variant="dark" withArrow>
             Celé fotoalbum
           </PillLink>
         </div>

@@ -25,6 +25,7 @@ import { generateMeta } from '@/lib/generateMeta'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
+import { routes } from '@/lib/routes'
 import type { Post } from '@/payload-types'
 
 /** ISR pojistka; publikace revaliduje okamžitě (hook `revalidatePost`). */
@@ -51,7 +52,7 @@ export default async function ArticlePage({ params }: Args) {
   const { isEnabled: draft } = await draftMode()
 
   const post = await fetchPostBySlug(slug, draft)
-  if (!post) return <PayloadRedirects url={`/aktuality/${slug}`} />
+  if (!post) return <PayloadRedirects url={routes.post(slug)} />
 
   const article = toArticleDetail(
     post,
@@ -128,7 +129,7 @@ function StructuredData({
       name: 'HC Čestice',
       logo: { '@type': 'ImageObject', url: `${baseUrl}/logo-cestice.png` },
     },
-    mainEntityOfPage: `${baseUrl}/aktuality/${slug}`,
+    mainEntityOfPage: `${baseUrl}${routes.post(slug)}`,
   }
 
   return (
@@ -149,6 +150,6 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     ...meta,
     description: meta.description ?? post.excerpt ?? undefined,
-    alternates: { canonical: `/aktuality/${slug}` },
+    alternates: { canonical: routes.post(slug) },
   }
 }

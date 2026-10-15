@@ -11,6 +11,7 @@ import { PageTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 import { AuthorMeta } from './AuthorMeta'
@@ -38,7 +39,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
         obdoby je pořád lepší než 58 % článků bez drobečkových dat.
       */}
       <BreadcrumbsJsonLd
-        trail={[{ href: '/aktuality', label: 'Aktuality' }, { label: article.badge }]}
+        trail={[{ href: routes.list.posts, label: 'Aktuality' }, { label: article.badge }]}
       />
       <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
         {article.photo && (

@@ -15,6 +15,7 @@ import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import { formatLongDate } from '@/lib/datetime'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
+import { routes } from '@/lib/routes'
 
 /** ISR pojistka — galerie nemají revalidační hook, obnoví se samy. */
 export const revalidate = 600
@@ -37,7 +38,7 @@ export default async function GalleryDetailPage({ params }: Args) {
   const slug = decodeURIComponent(rawSlug)
 
   const gallery = await fetchGalleryBySlug(slug)
-  if (!gallery) return <PayloadRedirects url={`/fotogalerie/${slug}`} />
+  if (!gallery) return <PayloadRedirects url={routes.gallery(slug)} />
 
   const photos: GalleryPhoto[] = (gallery.photos ?? [])
     .map((row) => ({
@@ -75,7 +76,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title: `${gallery.title} | Fotoalbum HC Čestice`,
     description: `Fotogalerie ${gallery.title} — ${gallery.photos?.length ?? 0} fotek.`,
-    alternates: { canonical: `/fotogalerie/${slug}` },
+    alternates: { canonical: routes.gallery(slug) },
     openGraph: cover
       ? { images: [{ url: `${getServerSideURL()}${getMediaUrl(cover.url, cover.updatedAt)}` }] }
       : undefined,

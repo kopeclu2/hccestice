@@ -8,6 +8,7 @@ import { Highlight } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { PuckTrailArc } from '@/landing/ui/PuckTrail'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { routes } from '@/lib/routes'
 
 /**
  * 404 podle handoffu „HC Cestice Systemove Stranky" — obří obrysový kód
@@ -45,10 +46,10 @@ export default function NotFound() {
           <PillLink href="/" size="lg" variant="dark" withArrow>
             Zpět na hlavní stránku
           </PillLink>
-          <PillLink href="/aktuality" size="md" variant="outline">
+          <PillLink href={routes.list.posts} size="md" variant="outline">
             Aktuality
           </PillLink>
-          <PillLink href="/zapasy" size="md" variant="outline">
+          <PillLink href={routes.list.matches} size="md" variant="outline">
             Rozlosování
           </PillLink>
         </div>

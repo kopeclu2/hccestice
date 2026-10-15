@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Badge } from '@/landing/ui/Badge'
 import { PillLink } from '@/landing/ui/PillLink'
+import { routes } from '@/lib/routes'
 
 /** Štítky článku (kategorie) + návrat na výpis aktualit. */
 export function TagRow({ tags }: { tags: string[] }) {
@@ -13,7 +14,7 @@ export function TagRow({ tags }: { tags: string[] }) {
         </Badge>
       ))}
       <div className="hidden flex-1 md:block" />
-      <PillLink href="/aktuality" size="sm" variant="outline">
+      <PillLink href={routes.list.posts} size="sm" variant="outline">
         ← Zpět na aktuality
       </PillLink>
     </div>

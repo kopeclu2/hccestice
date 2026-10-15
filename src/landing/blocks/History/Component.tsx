@@ -10,11 +10,12 @@ import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
+import { routes } from '@/lib/routes'
 import type { LandingHistoryBlock } from '@/payload-types'
 
 /** Interní routy, na které sekce odkazuje (v CMS se edituje jen text tlačítek). */
 const HISTORY_HREF = '/historie-klubu'
-const PHOTOS_HREF = '/fotogalerie'
+const PHOTOS_HREF = routes.list.galleries
 
 /** Block data → view-model (fallbacky na content.ts). */
 function mapHistory(block: LandingHistoryBlock): HistoryContent {
