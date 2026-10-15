@@ -1,58 +1,30 @@
 'use client'
 
-import React from 'react'
+import { COUNTDOWN_LIVE_TEXT, useCountdown } from './useCountdown'
 
-/**
- * Živý odpočet do úvodního buly (dny / hod / min / sek).
- *
- * Hodnoty se počítají až po mountu (na serveru čas neznáme přesně a
- * lišil by se od klienta — hydration mismatch), do té doby se zobrazí
- * „--". Po vypršení cíle (buly už proběhla) odpočet nahradí text, že zápas
- * probíhá — řada nul by tvrdila, že se teprve začíná. Stránka je
- * prerenderovaná, takže tohle musí rozhodnout klient; server vždy kreslí
- * „--".
- */
 /** Číslice odpočtu; pod 360 px o stupeň menší (viz komentář u řádku). */
 const DIGITS =
   'text-[clamp(1.5rem,2.6vw,2.625rem)] font-extrabold tracking-tight max-[22.5rem]:text-2xl'
 
+/**
+ * Živý odpočet do úvodního buly (dny / hod / min / sek).
+ *
+ * Logiku (čas až po mountu, „--" ze serveru, text po vypršení cíle) drží
+ * `useCountdown`; tahle komponenta řeší jen vzhled.
+ */
 export function Countdown({ targetISO }: { targetISO: string }) {
-  const [remainingMs, setRemainingMs] = React.useState<number | null>(null)
+  const { units, live } = useCountdown(targetISO)
 
-  React.useEffect(() => {
-    const target = new Date(targetISO).getTime()
-    const tick = () => setRemainingMs(Math.max(0, target - Date.now()))
-    tick()
-    const interval = setInterval(tick, 1_000)
-    return () => clearInterval(interval)
-  }, [targetISO])
-
-  if (remainingMs === 0) {
+  if (live) {
     return (
       <div className="mt-2.5 flex items-center gap-2.5 text-white" role="status">
         <span className="size-2 flex-none rounded-full bg-lime shadow-ring-lime" />
         <span className="text-[clamp(1.125rem,1.8vw,1.625rem)] font-extrabold tracking-tight text-balance">
-          Zápas právě probíhá nebo čeká na výsledek
+          {COUNTDOWN_LIVE_TEXT}
         </span>
       </div>
     )
   }
-
-  const pad = (value: number) => String(value).padStart(2, '0')
-  const units: Array<{ label: string; value: string }> =
-    remainingMs === null
-      ? [
-          { label: 'dní', value: '--' },
-          { label: 'hod', value: '--' },
-          { label: 'min', value: '--' },
-          { label: 'sek', value: '--' },
-        ]
-      : [
-          { label: 'dní', value: pad(Math.floor(remainingMs / 86_400_000)) },
-          { label: 'hod', value: pad(Math.floor(remainingMs / 3_600_000) % 24) },
-          { label: 'min', value: pad(Math.floor(remainingMs / 60_000) % 60) },
-          { label: 'sek', value: pad(Math.floor(remainingMs / 1_000) % 60) },
-        ]
 
   return (
     /* `flex-wrap` a nižší spodní hranice clampu: čtyři jednotky se na 320px
