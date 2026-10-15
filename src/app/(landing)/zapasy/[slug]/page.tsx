@@ -53,11 +53,11 @@ const readSlug = async ({ params }: Args): Promise<string | null> => {
 
 /**
  * `sizes` fotky reportáže kopírují layout stránky: s časovou osou je karta
- * v pravém sloupci mřížky (0.85fr z ~1320 px), bez ní je jediná a má
- * strop `lg:max-w-[48rem]` — viz `MatchReportCard` a mřížku níž.
+ * v pravém sloupci mřížky (0.85fr z ~1320 px); bez ní je karta přes celou
+ * šířku hlavičky a fotka v ní od `md` zabírá polovinu (`wide`).
  */
 const REPORT_SIZES_SPLIT = '(max-width: 1023px) 100vw, 40vw'
-const REPORT_SIZES_SINGLE = '(max-width: 1023px) 100vw, 48rem'
+const REPORT_SIZES_WIDE = '(max-width: 767px) 100vw, 50vw'
 
 /** Cesta zpět do výpisu na sezónu zápasu (a jeho sekci). */
 const listHref = (match: MatchDetail): string => {
@@ -126,10 +126,10 @@ export default async function MatchDetailPage(args: Args) {
         >
           {/* Levý sloupec je průběh zápasu, pravý reportáž a galerie.
               Prázdný sloupec se nevykreslí vůbec, aby mřížka nenechala díru;
-              osa bez reportáže dostane stejný strop šířky jako samotná
-              reportáž, jinak by se řádky roztáhly přes 1320 px. */}
+              samotný blok jde přes celou šířku hlavičky nad ním (strop šířky
+              tu dřív nechával polovinu stránky prázdnou). */}
           {hasTimeline && (
-            <div className={cn('min-w-0', !split && 'lg:max-w-[min(100%,48rem)]')}>
+            <div className="min-w-0">
               <MatchTimeline
                 goalsOurs={match.goalsOurs}
                 opponentName={opponentName}
@@ -138,14 +138,13 @@ export default async function MatchDetailPage(args: Args) {
               />
             </div>
           )}
-          {/* Bez osy (starší sezóny) zbývá jen jeden sloupec — bez stropu šířky
-              by se karta reportáže roztáhla přes celých 1320 px. */}
           {hasAside && (
-            <div className={cn('min-w-0', !split && 'lg:max-w-[min(100%,48rem)]')}>
+            <div className="min-w-0">
               <MatchReportCard
                 gallery={match.gallery}
                 report={match.report}
-                sizes={split ? REPORT_SIZES_SPLIT : REPORT_SIZES_SINGLE}
+                sizes={split ? REPORT_SIZES_SPLIT : REPORT_SIZES_WIDE}
+                wide={!split}
               />
             </div>
           )}
