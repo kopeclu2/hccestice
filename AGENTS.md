@@ -970,6 +970,29 @@ Stejný rádius a rámeček má forma i tabulka (`StandingsPanel`) — dřív
 každý blok jel na jiném (`rounded-row`, `rounded-card`). Tmavé panely
 (nejbližší zápas, hlavička detailu) zůstávají `rounded-section`.
 
+### Zalamování dlouhých názvů (15. 10. 2026)
+
+Názvy týmů („SK Divočáci Žamberk", „HC Aloha Lanškroun") a údaje pod nimi
+se na 320 px dřív trhaly uprostřed. Platí proto tyhle sdílené díly a nový
+výpis zápasu by je měl použít místo vlastního řetězce:
+
+| díl | co řeší |
+|---|---|
+| `components/TeamPair.tsx` | „domácí × hosté": tým je nedělitelný celek, láme se za „×"; `stack` dá na mobilu každý tým na vlastní řádek. `splitMatchTitle` rozdělí titulek zápasu |
+| `components/MatchMeta.tsx` | ztišený řádek údajů oddělených „·" — láme se mezi údaji, tečka nikdy nevisí na kraji řádku |
+| `components/DotEyebrow.tsx` | popisek s lime tečkou (nejbližší zápas, hlavička detailu, hero reportáže) |
+| `zapasy/MatchRow.tsx` | společná karta, mřížka, datum a titulek řádků `ResultsList` i `FixtureList` |
+
+Fáze soutěže z AHL („VČHL 2.ročník - ZČ") se pro web formátuje jen
+v `matchFormat.ts`: `formatCompetition()` → „VČHL 2. ročník · Základní
+část", `phaseLabel()` rozepisuje zkratky (ZČ, ČF, SF, F, O 3.). Změna
+formátu popisků mění obsah cache výpisu, proto šly klíče `season-*`
+o verzi nahoru, i když se tvar dat nezměnil.
+
+`MatchScoreboard` je mřížka `1fr | skóre | 1fr`, takže skóre stojí
+uprostřed bez ohledu na délku jmen; na mobilu je nahoře logo | skóre |
+logo a jména pod logy. Je sdílený s hero reportáže.
+
 ## Metadata a JSON-LD
 
 `generateMetadata` bere OG obrázek z fotky reportáže (`getMediaUrl`

@@ -15,13 +15,15 @@ import { Numeral } from './Numeral'
  * (`zapas/MatchHeader`). Obsah stojí v rodiči (tmavý panel), tahle
  * komponenta vrací jen dva sourozence: řádek tým · skóre · tým a pod ním
  * třetiny — proto fragment, ne vlastní obal. Rodič tak drží svůj rytmus
- * odsazení a hero zůstává pixel po pixelu stejné.
+ * odsazení. Rozvržení je pro obě místa stejné — oprava zalamování dlouhých
+ * jmen týmů platí i pro hero reportáže.
  *
  * Skóre i třetiny jsou v pořadí domácí : hosté; zvýrazněný (lime) je
  * vítězný tým, takže stačí `weWon` a `weAreHome`.
  *
  * `logos` jsou volitelné a bez nich se nevykreslí nic navíc — hero
- * reportáže logo nikdy nemělo.
+ * reportáže logo nikdy nemělo. Když loga přijdou, ale jedno chybí
+ * (soupeř bez znaku), nahradí ho monogram, aby tabule zůstala souměrná.
  */
 export function MatchScoreboard({
   scoreboard,
@@ -33,20 +35,34 @@ export function MatchScoreboard({
   >
   logos?: { home: Photo | null; away: Photo | null }
 }) {
+  const hasLogos = Boolean(logos && (logos.home || logos.away))
+
   return (
     <>
-      <div className="my-[clamp(1.75rem,3vw,2.75rem)] flex flex-wrap items-center justify-center gap-[clamp(1.25rem,4vw,3.5rem)] text-center">
-        <div className="min-w-30 flex-1 text-right">
-          {logos && <TeamLogo className="ml-auto" logo={logos.home} />}
-          <div className="text-[clamp(1.125rem,2vw,1.875rem)] font-extrabold tracking-[-0.02em]">
-            {scoreboard.homeName}
-          </div>
-          <div className="mt-1 text-caption font-semibold text-white/55">Domácí</div>
-        </div>
+      {/* Mřížka 1fr | skóre | 1fr drží skóre přesně uprostřed, ať je jméno
+          domácích jakkoli dlouhé — dřív se v `flex-wrap` řádku na mobilu
+          domácí zarovnali doprava nad skóre a hosté doleva pod něj.
+
+          Pod `md` je to trojice jako v aplikacích: logo | skóre | logo
+          v prvním řádku, jména (na střed, smí se zalomit) ve druhém, takže
+          dvouřádkové „HC Aloha Lanškroun" neposune loga ani skóre. Týmové
+          obaly jsou tam `contents`, aby jejich děti mohly sedět v řádcích
+          mřížky. Bez log (hero reportáže) zůstane v prvním řádku jen skóre —
+          jména vedle něj se na 320 px tlačila do „sn“. Od
+          `md` je tým zase jeden sloupec: logo nad jménem, domácí zarovnaní
+          ke skóre zprava, hosté zleva. */}
+      <div className="my-[clamp(1.75rem,3vw,2.75rem)] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-3 gap-y-3 min-[22.5rem]:gap-x-4 md:gap-x-[clamp(1.25rem,4vw,3.5rem)]">
+        <Team
+          hasLogos={hasLogos}
+          label="Domácí"
+          logo={logos?.home ?? null}
+          name={scoreboard.homeName}
+          side="home"
+        />
 
         <Numeral
           as="div"
-          className="max-md:text-numeral-2xl flex flex-none items-baseline gap-3.5"
+          className="relative col-start-2 row-start-1 flex items-baseline gap-2.5 max-md:text-[clamp(2.5rem,12vw,3rem)] md:gap-3.5"
           size="score"
         >
           <span className={cn(scoreboard.weWon && scoreboard.weAreHome && 'text-lime')}>
@@ -55,27 +71,28 @@ export function MatchScoreboard({
           {/* Dvě tečky, ne text „:" — Archivo kreslí dvojtečku jako dva
               hranaté body, které v drobném řezu na tmavém pozadí čtou
               jako náhodné čtverečky, ne jako oddělovač skóre. */}
-          <span className="flex flex-col items-center gap-2.5 self-center">
-            <span className="bg-white/30 size-2 rounded-full" />
-            <span className="bg-white/30 size-2 rounded-full" />
+          <span className="flex flex-col items-center gap-1.5 self-center md:gap-2.5">
+            <span className="bg-white/30 size-1.5 rounded-full md:size-2" />
+            <span className="bg-white/30 size-1.5 rounded-full md:size-2" />
           </span>
           <span className={cn(scoreboard.weWon && !scoreboard.weAreHome && 'text-lime')}>
             {scoreboard.awayScore}
           </span>
+          {/* Mimo tok (`absolute`), aby „sn" neposouvalo číslice ze středu. */}
           {scoreboard.suffix && (
-            <span className="self-start text-[.3em] font-bold text-white/60">
+            <span className="absolute top-0 left-full ml-1 text-[.3em] font-bold text-white/60 md:ml-1.5">
               {scoreboard.suffix}
             </span>
           )}
         </Numeral>
 
-        <div className="min-w-30 flex-1 text-left">
-          {logos && <TeamLogo logo={logos.away} />}
-          <div className="text-[clamp(1.125rem,2vw,1.875rem)] font-extrabold tracking-[-0.02em]">
-            {scoreboard.awayName}
-          </div>
-          <div className="mt-1 text-caption font-semibold text-white/55">Hosté</div>
-        </div>
+        <Team
+          hasLogos={hasLogos}
+          label="Hosté"
+          logo={logos?.away ?? null}
+          name={scoreboard.awayName}
+          side="away"
+        />
       </div>
 
       {scoreboard.thirds.length > 0 && (
@@ -101,16 +118,88 @@ export function MatchScoreboard({
 }
 
 /**
- * Logo týmu nad názvem. Dekorativní (`alt=""`): jméno týmu stojí hned pod
- * ním jako text, čtečka by ho jinak četla dvakrát. Bez loga se nekreslí
- * nic — zápasy se soupeřem bez nahraného znaku nesmí mít prázdnou díru.
+ * Jeden tým tabule: logo, jméno a popisek strany. Na mobilu `contents`
+ * (viz komentář u mřížky), od `md` sloupec zarovnaný ke skóre.
  */
-function TeamLogo({ className, logo }: { className?: string; logo: Photo | null }) {
-  if (!logo) return null
+function Team({
+  side,
+  name,
+  label,
+  logo,
+  hasLogos,
+}: {
+  side: 'home' | 'away'
+  name: string
+  label: string
+  logo: Photo | null
+  hasLogos: boolean
+}) {
+  const home = side === 'home'
+  const column = home ? 'col-start-1' : 'col-start-3'
+
+  return (
+    <div
+      className={cn(
+        'row-start-1 max-md:contents md:flex md:min-w-0 md:flex-col',
+        column,
+        home ? 'md:items-end' : 'md:items-start',
+      )}
+    >
+      {hasLogos && (
+        <div className={cn('row-start-1 flex justify-center md:mb-3 md:block', column)}>
+          <TeamLogo logo={logo} name={name} />
+        </div>
+      )}
+      <div
+        className={cn(
+          'min-w-0 text-center',
+          home ? 'md:text-right' : 'md:text-left',
+          column,
+          'row-start-2 max-md:self-start',
+        )}
+      >
+        {/* `break-words`: jediné slovo širší než sloupec (320 px) se radši
+            zlomí, než aby přeteklo pod skóre. */}
+        <div className="text-meta leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-body md:text-[clamp(1.125rem,2vw,1.875rem)]">
+          {name}
+        </div>
+        <div className="mt-1 text-caption font-semibold text-white/55">{label}</div>
+      </div>
+    </div>
+  )
+}
+
+/** Klubové předpony, které v monogramu nic neříkají („HC Zdar" → „Z"). */
+const PREFIXES = new Set(['HC', 'HK', 'SK', 'TJ', 'HHK', 'ZH'])
+
+const monogram = (name: string): string => {
+  const words = name.split(/\s+/).filter(Boolean)
+  const word = words.find((item) => !PREFIXES.has(item.toUpperCase())) ?? words[0] ?? '?'
+  return word.charAt(0).toUpperCase()
+}
+
+/**
+ * Logo týmu nad názvem. Dekorativní (`alt=""`): jméno týmu stojí hned pod
+ * ním jako text, čtečka by ho jinak četla dvakrát.
+ *
+ * Soupeř bez nahraného znaku dostane obrysový kroužek s monogramem — bez
+ * něj by na jedné straně tabule chybělo logo a jména by nelícovala.
+ */
+function TeamLogo({ logo, name }: { logo: Photo | null; name: string }) {
+  if (!logo) {
+    return (
+      <span
+        aria-hidden
+        className="grid size-12 place-items-center rounded-full border border-white/24 text-lead font-extrabold text-white/70 md:size-16 md:text-panel-title"
+      >
+        {monogram(name)}
+      </span>
+    )
+  }
   return (
     <Image
       alt=""
-      className={cn('mb-2.5 size-12 rounded-full bg-white/90 object-contain p-1 md:size-16', className)}
+      className="size-12 rounded-full bg-white/90 object-contain p-1 md:size-16"
       height={64}
       src={getMediaUrl(logo.url, logo.updatedAt)}
       width={64}

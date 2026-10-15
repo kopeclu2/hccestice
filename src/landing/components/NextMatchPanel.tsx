@@ -4,8 +4,10 @@ import { cn } from '@/utilities/ui'
 
 import { Countdown } from '../blocks/Hero/Countdown'
 import { CardTitle } from './Heading'
-import { Eyebrow } from './Kicker'
+import { DotEyebrow } from './DotEyebrow'
+import { MatchMeta } from './MatchMeta'
 import { StretchedLink, stretchHost } from './StretchedLink'
+import { splitMatchTitle, TeamPair } from './TeamPair'
 
 /**
  * Tmavý panel nejbližšího zápasu s živým odpočtem.
@@ -69,11 +71,12 @@ export function NextMatchPanel({
   const wide = layout === 'wide'
 
   return (
-    /* p-6 na mobilu: 32px odsazení sebralo z 320px šířky pětinu a
-       countdown se do zbytku nevešel. */
+    /* p-4.5 na mobilu (tři stupně odsazení jako ostatní panely, viz
+       AGENTS.md → Responzivita): s 24–32 px se na 320px displeji odpočet
+       nevešel a „sek" padala na vlastní řádek. */
     <div
       className={cn(
-        'bg-contrast relative overflow-hidden p-6 text-on-contrast md:p-8 lg:p-12',
+        'bg-contrast relative overflow-hidden p-4.5 text-on-contrast md:p-8 lg:p-12',
         href && stretchHost,
         radius === 'card' ? 'rounded-card' : 'rounded-section',
       )}
@@ -86,20 +89,26 @@ export function NextMatchPanel({
         )}
       >
         <div>
-          <div className="flex items-center gap-2.5">
-            <span className="bg-lime shadow-ring-lime size-2 rounded-full" />
-            <Eyebrow tone="lime">{kicker}</Eyebrow>
-          </div>
+          <DotEyebrow>{kicker}</DotEyebrow>
           <CardTitle as={titleAs} className="mt-2 leading-tight text-white" size="lg">
             {/* `-inset-*` = odsazení panelu, aby klikací byl i jeho okraj. */}
             <StretchedLink
-              className="decoration-lime underline-offset-6 hover:underline after:-inset-6 md:after:-inset-8 lg:after:-inset-12"
+              className="decoration-lime underline-offset-6 hover:underline after:-inset-4.5 md:after:-inset-8 lg:after:-inset-12"
               href={href ?? null}
             >
-              {title}
+              <PanelTitle title={title} />
             </StretchedLink>
           </CardTitle>
-          {subtitle && <div className="text-meta text-white/65">{subtitle}</div>}
+          {/* Řetězec „VČHL 2. ročník · Základní část · Žamberk" se láme mezi
+              údaji, ne uvnitř nich a bez visící tečky (`MatchMeta`). */}
+          {typeof subtitle === 'string' ? (
+            <MatchMeta
+              className="mt-1.5 text-meta font-normal text-white/65"
+              items={subtitle.split(' · ')}
+            />
+          ) : (
+            subtitle && <div className="mt-1.5 text-meta text-white/65">{subtitle}</div>
+          )}
           {meta}
         </div>
 
@@ -112,4 +121,14 @@ export function NextMatchPanel({
       </div>
     </div>
   )
+}
+
+/**
+ * Titulek „domácí × hosté" se láme za „×", ne uvnitř názvu týmu — na 320 px
+ * jinak vznikalo „HC Čestice × HC / Skuteč". Titulek, který dvojici týmů
+ * nenese (vlastní text volajícího), projde beze změny.
+ */
+function PanelTitle({ title }: { title: React.ReactNode }) {
+  const teams = typeof title === 'string' ? splitMatchTitle(title) : null
+  return teams ? <TeamPair away={teams.away} home={teams.home} /> : <>{title}</>
 }

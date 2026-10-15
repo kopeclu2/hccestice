@@ -4,15 +4,16 @@ import { cn } from '@/utilities/ui'
 
 import { Badge } from '../components/Badge'
 import { EmptyState } from '../components/EmptyState'
-import { Eyebrow } from '../components/Kicker'
 import { MoreLink } from '../components/MoreLink'
 import { Numeral } from '../components/Numeral'
 import { Pagination } from '../components/Pagination'
 import { PillLink } from '../components/PillLink'
-import { StretchedLink, stretchHost } from '../components/StretchedLink'
+import { stretchHost } from '../components/StretchedLink'
 import { OUTCOME_BADGE } from '../components/outcome'
 import type { ResultRow } from '../types'
 
+import { MatchMeta } from '../components/MatchMeta'
+import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen } from './MatchRow'
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 
 /**
@@ -76,69 +77,48 @@ export function ResultsList({
           třetinami.
         </EmptyState>
       ) : (
-        <ol className="border-line-soft divide-line-soft mt-5 divide-y overflow-hidden rounded-tile border bg-surface">
+        <ol className={cn(MATCH_LIST, 'mt-5')}>
           {rows.map((row) => {
             const badge = OUTCOME_BADGE[row.outcome]
             return (
               <li
                 className={cn(
-                  'hover:bg-chip/40 flex flex-wrap items-center gap-y-3 gap-x-4 px-4.5 py-3.5 transition-colors md:px-6 md:py-4 lg:px-7 lg:py-4.5',
+                  MATCH_ROW,
                   // Karta má `overflow-hidden`, takže obrys uvnitř, ne vně řádku.
                   stretchHost,
                   'has-[[data-stretched]:focus-visible]:-outline-offset-2',
                 )}
                 key={row.id}
               >
-                {/* Na mobilu datum a fáze vedle sebe v samostatném řádku:
-                    do desktopových 64 px se „ČTVRTFINÁLE" ani „O 3. místo"
-                    nevejde a sloupeček se lisoval do dvou–tří řádků, vedle
-                    kterých zbyl pruh prázdna přes celou šířku karty.
+                <MatchWhen date={row.dateLabel} dateTime={row.startDate} />
 
-                    Od `md` je sloupec 96 px, ne 64 px jako v handoffu. Handoff
-                    do něj sází „18. KOLO", naše data „Čtvrtfinále" a „O 3.
-                    místo" — ty se do 64 px nevejdou ani s prostrkáním podle
-                    designu, přetékaly do názvu zápasu a u „O 3. místo" navíc
-                    zvedaly řádek ze 44 na 68 px. Je to vědomá odchylka od
-                    handoffu ve prospěch delších českých názvů fází. Šířku
-                    sdílí s rozlosováním, takže oba výpisy lícují. */}
-                <div className="flex w-full items-baseline gap-2.5 md:w-24 md:flex-none md:block">
-                  <div className="text-meta font-extrabold tabular-nums">{row.dateLabel}</div>
-                  <Eyebrow className="md:mt-0.5" tight tone="dark">
-                    {row.stage}
-                  </Eyebrow>
+                <div className="min-w-0">
+                  <MatchRowTitle away={row.awayName} home={row.homeName} href={row.href} />
+                  {/* Fáze a místo jsou ztišený běžný text, stejně jako
+                      v rozlosování — dřív byla fáze prostrkaný uppercase
+                      ve sloupci data a „1.ROČNÍK - 2. SF" se v něm lámalo
+                      do tří řádků. */}
+                  <MatchMeta className="mt-1" items={[row.stage, row.venue]} />
                 </div>
 
-                {/* min-w-40: na mobilu se titulek nelisuje do sloupečku, badge se skóre
-                    se místo toho zalomí na druhý řádek (handoff: data-m-wrap) */}
-                <div className="min-w-40 flex-1">
-                  <div className="text-body font-bold tracking-[-0.01em] text-pretty">
-                    {/* Celý řádek je klikací (stretched link na titulku). */}
-                    <StretchedLink href={row.href}>{row.title}</StretchedLink>
-                  </div>
-                  {/* Místo zápasu je v handoffu běžný text (11px, semibold),
-                      ne uppercase eyebrow — z „RYCHNOV NAD KNĚŽNOU" byl
-                      prostrkaný uppercase přes půl karty, který přebíjel
-                      samotný název zápasu nad sebou. */}
-                  {row.venue && (
-                    <div className="text-faint mt-0.5 text-eyebrow font-semibold">{row.venue}</div>
-                  )}
+                {/* Mobil: skóre nad štítkem (sloupec je úzký a název má víc
+                    místa), od `md` štítek a skóre vedle sebe. Skóre má
+                    pevnou minimální šířku, aby štítky v řádcích lícovaly. */}
+                <div className="flex flex-col-reverse items-end gap-1.5 md:flex-row md:items-center md:gap-4">
+                  <Badge className="flex-none" variant={badge.variant}>
+                    {badge.label}
+                    {badge.note && <span className="sr-only"> {badge.note}</span>}
+                  </Badge>
+                  <Numeral className="min-w-14 flex-none text-right" size="xs">
+                    {row.score}
+                    {row.suffix && <span className="text-faint text-meta"> {row.suffix}</span>}
+                  </Numeral>
                 </div>
 
-                <Badge className="flex-none md:ml-auto" variant={badge.variant}>
-                  {badge.label}
-                  {badge.note && <span className="sr-only"> {badge.note}</span>}
-                </Badge>
-
-                <Numeral className="ml-auto min-w-13 flex-none text-right md:ml-0" size="xs">
-                  {row.score}
-                  {row.suffix && <span className="text-faint text-meta"> {row.suffix}</span>}
-                </Numeral>
-
-                {/* Střelci jedou na vlastním řádku přes celou šířku karty
-                    (`basis-full`); od `md` odsazení srovnané se sloupcem
-                    názvu zápasu (96 px datum + mezera 16 px). */}
+                {/* Střelci přes celou šířku karty; od `md` odsazení srovnané
+                    se sloupcem názvu (96 px datum + mezera 16 px). */}
                 {showScorers && row.scorers && (
-                  <p className="text-faint basis-full text-caption font-semibold text-pretty md:pl-28">
+                  <p className="text-faint col-span-full text-caption font-semibold text-pretty md:col-start-2">
                     <span className="text-ink font-bold">Střelci:</span> {row.scorers}
                   </p>
                 )}

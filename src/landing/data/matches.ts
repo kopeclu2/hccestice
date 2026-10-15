@@ -19,6 +19,7 @@ import type {
 import { formatDateTime, matchPath, postPath, toPhoto } from './format'
 import { resolveReport } from './matchDetail'
 import {
+  formatCompetition,
   matchOutcome,
   matchScore,
   matchTitle,
@@ -150,7 +151,8 @@ export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<Ma
 
 /*
  * Klíče tagovaných cache nesou verzi tvaru (`v2` = výsledek má `href` na detail
- * zápasu, `v3` = výsledek `otLoss`). `unstable_cache` skládá klíč jen z těchto řetězců a argumentů, takže
+ * zápasu, `v3` = výsledek `otLoss`, o verzi výš = čitelné fáze VČHL „Základní část"
+ * místo „2.ročník - ZČ"). `unstable_cache` skládá klíč jen z těchto řetězců a argumentů, takže
  * entry uložená před změnou tvaru by bez nového klíče žila až do `revalidate`
  * (hodina) bez odkazů. Tag (`matches-list`) zůstává, takže hook zápasů
  * invaliduje i nové entry.
@@ -176,7 +178,7 @@ const loadSeasonFixtures = unstable_cache(
 
     return docs.map((match, index) => toFixtureCard(match, index === 0))
   },
-  ['season-fixtures', 'v2'],
+  ['season-fixtures', 'v3'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
@@ -228,7 +230,7 @@ const loadSeasonResults = unstable_cache(
       totalDocs: result.totalDocs,
     }
   },
-  ['season-results', 'v3'],
+  ['season-results', 'v4'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
@@ -262,7 +264,7 @@ const loadSeasonForm = unstable_cache(
       summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss + counts.otLoss}× prohra${ot}`,
     }
   },
-  ['season-form', 'v3'],
+  ['season-form', 'v4'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
@@ -283,7 +285,7 @@ export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardDa
     id: match.id,
     status: match.status,
     dateLabel: formatDateTime(match.date),
-    competition: match.competition ?? null,
+    competition: formatCompetition(match.competition),
     venue: match.venue ?? null,
     home: Boolean(match.home),
     opponentName: opponent?.name ?? 'Soupeř',

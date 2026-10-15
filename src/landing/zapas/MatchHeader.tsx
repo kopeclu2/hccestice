@@ -4,12 +4,14 @@ import React from 'react'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { Badge } from '../components/Badge'
+import { DotEyebrow } from '../components/DotEyebrow'
 import { CardTitle } from '../components/Heading'
 import { Eyebrow } from '../components/Kicker'
 import { MatchScoreboard } from '../components/MatchScoreboard'
 import { NextMatchPanel } from '../components/NextMatchPanel'
 import { Numeral } from '../components/Numeral'
 import { OUTCOME_BADGE } from '../components/outcome'
+import { formatCompetition } from '../data/matchFormat'
 import type { MatchDetail, Photo } from '../types'
 
 const SUFFIX_NOTE = { pp: 'po prodloužení', sn: 'po nájezdech' } as const
@@ -32,12 +34,13 @@ export function MatchHeader({ match }: { match: MatchDetail }) {
   return <PlayedHeader match={match} />
 }
 
-const kicker = (match: MatchDetail): string => match.competition ?? 'VČHL'
+/** „VČHL 2. ročník · Základní část“, ne surový text z AHL („2.ročník - ZČ“). */
+const kicker = (match: MatchDetail): string => formatCompetition(match.competition) ?? 'VČHL'
 
 /** Řádek údajů pod skóre / názvem: kdy, kde, jak to dopadlo. */
 function Facts({ children }: { children: React.ReactNode }) {
   return (
-    <dl className="grid grid-cols-[repeat(auto-fit,minmax(min(11rem,100%),1fr))] gap-x-8 gap-y-4">
+    <dl className="grid grid-cols-[repeat(auto-fit,minmax(min(11rem,100%),1fr))] gap-x-8 gap-y-3.5 md:gap-y-4">
       {children}
     </dl>
   )
@@ -63,10 +66,7 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
     <div className="bg-contrast relative overflow-hidden rounded-section px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
       <div className="hatch absolute inset-0 opacity-40" />
       <div className="relative">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <span className="bg-lime size-2 flex-none rounded-full shadow-ring-lime" />
-          <Eyebrow tone="lime">{kicker(match)}</Eyebrow>
-        </div>
+        <DotEyebrow>{kicker(match)}</DotEyebrow>
 
         {hasScore ? (
           <>
