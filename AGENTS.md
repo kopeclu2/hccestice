@@ -948,6 +948,20 @@ s `report = post.id`.
   `lineup` je proto v `select` záměrně vynechaná (nejdelší pole, jinak by se
   serializovalo do cache).
 
+- **Hlavička** má pět vzhledů a volí ho správce v adminu: **Nastavení
+  webu → Vzhled hlavičky detailu zápasu** (`siteConfig.matchHeaderVariant`:
+  `classic` = původní `MatchHeader`, `arena`, `editorial`, `split`, `app`;
+  rozhodnutí uživatele 15. 10. 2026). Přepíná `MatchHeaderByVariant`
+  (`landing/zapas/header-variants/index.tsx`), katalog všech vedle sebe
+  je `/vzory/hlavicka-zapasu` (noindex). Zrušený zápas má vždy `classic`
+  (`CanceledHeader`). Uložení nastavení invaliduje tag `site-config`, který
+  detail čte (i přes `SubpageShell`), takže se změna projeví hned i na
+  prerenderovaných detailech. Varianty A a D dopočítávají sloupce P a SN
+  ze skóre (ukládají se jen tři třetiny) a zkratky týmů (`POL`, `ČES`)
+  odvozují z názvu — dva soupeři mohou vyjít stejně. Sloupec přidává
+  migrace `20261015_085423_match_header_variant` (aditivní, default
+  `classic`), **před buildem**.
+
 Blok bez dat se nevykreslí. Odehraný zápas bez branek, trestů i statistiky
 ukáže pod hlavičkou poznámku „Podrobný zápis z utkání není k dispozici"
 a případnou kartu reportáže a odkaz na galerii (`match.gallery`, `depth: 2`
