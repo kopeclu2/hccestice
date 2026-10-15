@@ -1,12 +1,8 @@
-import { revalidateTag } from 'next/cache'
-import type { GlobalAfterChangeHook } from 'payload'
+import { createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
-export const revalidateFooter: GlobalAfterChangeHook = ({ doc, req: { payload, context } }) => {
-  if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating footer`)
-
-    revalidateTag('global_footer', 'max')
-  }
-
-  return doc
-}
+export const revalidateFooter = createRevalidateHooks({
+  label: 'patičku',
+  tags: [CACHE_TAGS.globalFooter],
+  profile: 'max',
+}).afterChange

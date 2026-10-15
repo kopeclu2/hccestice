@@ -1,5 +1,5 @@
-import { revalidateTag } from 'next/cache'
-import type { GlobalAfterChangeHook } from 'payload'
+import { createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
 /**
  * Přepínač režimu údržby platí pro **celý** veřejný web — včetně detailů
@@ -19,13 +19,8 @@ import type { GlobalAfterChangeHook } from 'payload'
  * expiroval okamžitě taky, ale jde volat jen ze Server Action — admin
  * ukládá přes REST route handler, kde vyhodí `E872`.
  */
-export const revalidateMaintenance: GlobalAfterChangeHook = ({
-  doc,
-  req: { payload, context },
-}) => {
-  if (context.disableRevalidate) return doc
-
-  payload.logger.info('Revaliduji režim údržby (tag maintenance)')
-  revalidateTag('maintenance', { expire: 0 })
-  return doc
-}
+export const revalidateMaintenance = createRevalidateHooks({
+  label: 'režim údržby',
+  tags: [CACHE_TAGS.maintenance],
+  profile: { expire: 0 },
+}).afterChange

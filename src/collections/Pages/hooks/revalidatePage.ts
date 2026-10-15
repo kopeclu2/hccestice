@@ -1,56 +1,57 @@
-import { revalidatePath, revalidateTag } from 'next/cache'
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 
+import { applyRevalidation, createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 import { pingIndexNow } from '@/lib/indexNow'
+import { routes } from '@/lib/routes'
 
 import type { Page } from '../../../payload-types'
+
+/** Crawlerské feedy — stale-while-revalidate stačí. */
+const PAGE_REVALIDATION = {
+  tags: [CACHE_TAGS.pagesSitemap, CACHE_TAGS.llmsTxt],
+  profile: 'max',
+} as const
+
+/**
+ * Cesty, které stránka ovlivňuje. Blok „Tréninky" na homu nese stejná data
+ * jako samostatná stránka /treninky (viz `landing/features/trainings/data.ts`)
+ * — bez druhé revalidace by tam změna z adminu čekala na ISR (10 min), ne na
+ * uložení.
+ */
+const pagePaths = (slug: string | null | undefined): string[] =>
+  slug === 'home' ? [routes.home, '/treninky'] : [routes.page(slug)]
 
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
   previousDoc,
   req: { payload, context },
 }) => {
-  if (!context.disableRevalidate) {
-    if (doc._status === 'published') {
-      const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
+  if (context.disableRevalidate) return doc
 
-      payload.logger.info(`Revalidating page at path: ${path}`)
+  if (doc._status === 'published') {
+    const paths = pagePaths(doc.slug)
 
-      revalidatePath(path)
-      // Blok „Tréninky" na homu nese stejná data jako samostatná stránka
-      // /treninky (viz `landing/data/trainings.ts`) — bez druhé revalidace
-      // by tam změna z adminu čekala na ISR (10 min), ne na uložení.
-      if (doc.slug === 'home') revalidatePath('/treninky')
-      revalidateTag('pages-sitemap', 'max')
-      revalidateTag('llms-txt', 'max')
-      // Nová/upravená stránka se má dostat do Bingu a Seznamu dřív, než ji
-      // znovu najde crawler — ne až při dalším průchodu `pages-sitemap.xml`.
-      pingIndexNow(doc.slug === 'home' ? [path, '/treninky'] : [path], payload.logger)
-    }
-
-    // If the page was previously published, we need to revalidate the old path
-    if (previousDoc?._status === 'published' && doc._status !== 'published') {
-      const oldPath = previousDoc.slug === 'home' ? '/' : `/${previousDoc.slug}`
-
-      payload.logger.info(`Revalidating old page at path: ${oldPath}`)
-
-      revalidatePath(oldPath)
-      if (previousDoc.slug === 'home') revalidatePath('/treninky')
-      revalidateTag('pages-sitemap', 'max')
-      revalidateTag('llms-txt', 'max')
-    }
+    applyRevalidation(payload.logger, { ...PAGE_REVALIDATION, label: 'stránku', paths })
+    // Nová/upravená stránka se má dostat do Bingu a Seznamu dřív, než ji
+    // znovu najde crawler — ne až při dalším průchodu `pages-sitemap.xml`.
+    pingIndexNow(paths, payload.logger)
   }
-  return doc
-}
 
-export const revalidateDelete: CollectionAfterDeleteHook<Page> = ({ doc, req: { context } }) => {
-  if (!context.disableRevalidate) {
-    const path = doc?.slug === 'home' ? '/' : `/${doc?.slug}`
-    revalidatePath(path)
-    if (doc?.slug === 'home') revalidatePath('/treninky')
-    revalidateTag('pages-sitemap', 'max')
-    revalidateTag('llms-txt', 'max')
+  // Odpublikovaná stránka: stará cesta musí zmizet z cache
+  if (previousDoc?._status === 'published' && doc._status !== 'published') {
+    applyRevalidation(payload.logger, {
+      ...PAGE_REVALIDATION,
+      label: 'starou stránku',
+      paths: pagePaths(previousDoc.slug),
+    })
   }
 
   return doc
 }
+
+export const revalidateDelete = createRevalidateHooks<Page>({
+  ...PAGE_REVALIDATION,
+  label: 'smazanou stránku',
+  paths: (doc) => pagePaths(doc?.slug),
+}).afterDelete
