@@ -13,6 +13,7 @@
  */
 
 import type { NavItem } from '@/landing/features/navigation/types'
+import { CLUB_NAME } from '@/lib/club'
 import { routes } from '@/lib/routes'
 
 /**
@@ -57,11 +58,11 @@ export const HERO = {
 /** Tabulka VČHL — základní část 2025/26 (top 5, spravuje ahl.cz). */
 export const STANDINGS = {
   seasonLabel: 'základní část 2025/26',
-  ourTeam: 'HC Čestice',
+  ourTeam: CLUB_NAME,
   fullTableUrl: 'https://www.ahl.cz/soutez/vychodoceska_hokejova_liga/tabulky/',
   rows: [
     { pos: 1, team: 'HC Skuteč', games: 18, points: 49 },
-    { pos: 2, team: 'HC Čestice', games: 18, points: 38 },
+    { pos: 2, team: CLUB_NAME, games: 18, points: 38 },
     { pos: 3, team: 'HC Baroni Opočno', games: 18, points: 36 },
     { pos: 4, team: 'HC Spartak Choceň B', games: 18, points: 34 },
     { pos: 5, team: 'Rebels Polička', games: 18, points: 27 },
@@ -333,6 +334,5 @@ export const FOOTER = {
       ],
     },
   ],
-  copyright: `© ${new Date().getFullYear()} HC Čestice — TJ Sokol Čestice`,
   league: 'Východočeská hokejová liga',
 } as const

@@ -9,6 +9,7 @@ import { Numeral } from '@/landing/ui/Numeral'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
+import { CLUB_NAME } from '@/lib/club'
 import { serializeJsonLd } from '@/lib/jsonLd'
 import { cn } from '@/lib/utils'
 import type { LandingTrainingsBlock } from '@/payload-types'
@@ -152,7 +153,7 @@ function TrainingsJsonLd({ rows }: { rows: TrainingSlot[] }) {
 
   const byVenue = new Map<string, typeof parsed>()
   for (const slot of parsed) {
-    const key = slot.venue ?? 'HC Čestice'
+    const key = slot.venue ?? CLUB_NAME
     byVenue.set(key, [...(byVenue.get(key) ?? []), slot])
   }
 

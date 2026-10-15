@@ -9,6 +9,7 @@ import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight, Kicker } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
+import { CLUB_LOGO } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 /**
@@ -97,7 +98,7 @@ function PersonTile({ person }: { person: PersonCard }) {
           aria-hidden
           className="absolute top-4 left-4.5 size-18.5 opacity-18 grayscale"
           height={74}
-          src="/logo-cestice.png"
+          src={CLUB_LOGO}
           width={74}
         />
         <div className="absolute top-4.5 right-4.5 text-eyebrow font-bold tracking-[0.26em] text-club/35 uppercase [writing-mode:vertical-rl]">

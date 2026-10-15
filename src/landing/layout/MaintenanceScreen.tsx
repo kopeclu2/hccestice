@@ -9,6 +9,7 @@ import { PageTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { PuckTrailLine } from '@/landing/ui/PuckTrail'
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 
 /**
  * Údržbová stránka podle handoffu „HC Cestice Systemove Stranky".
@@ -49,13 +50,7 @@ export function MaintenanceScreen({
         {/* `rounded-full`: `/logo-cestice.png` má neprůhledné bílé pozadí, takže
             by na paper podkladu vykreslilo bílý blok 76×76 kolem kruhového
             loga. Kruh čtverec vyplňuje celý, odřezání rohů tedy nic neubere. */}
-        <Image
-          alt="HC Čestice"
-          className="rounded-full"
-          height={76}
-          src="/logo-cestice.png"
-          width={76}
-        />
+        <Image alt={CLUB_NAME} className="rounded-full" height={76} src={CLUB_LOGO} width={76} />
 
         <Badge caps className="mt-6.5" size="md" variant="lime">
           Plánovaná údržba
@@ -87,7 +82,7 @@ export function MaintenanceScreen({
           </PillLink>
         </div>
 
-        <ErrorMeta className="mt-12">HC Čestice · TJ Sokol · VČHL</ErrorMeta>
+        <ErrorMeta className="mt-12">{CLUB_NAME} · TJ Sokol · VČHL</ErrorMeta>
       </div>
     </main>
   )

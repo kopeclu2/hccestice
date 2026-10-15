@@ -8,6 +8,7 @@ import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 /**
  * Interní náhled prázdných stavů — tři varianty z handoffu „HC Cestice
@@ -151,7 +152,7 @@ function Demo({ caption, children }: { caption: string; children: React.ReactNod
 }
 
 export const metadata: Metadata = {
-  title: 'Prázdné stavy — interní náhled | HC Čestice',
+  title: brandTitle('Prázdné stavy — interní náhled'),
   description: 'Interní přehled prázdných stavů (EmptyState) pro výpisy webu HC Čestice.',
   robots: { index: false, follow: false },
 }

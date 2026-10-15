@@ -1,6 +1,7 @@
 import React from 'react'
 
 import type { ProductPhoto } from '@/landing/features/products/photos'
+import { CLUB_NAME } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
@@ -29,7 +30,7 @@ export function ProductJsonLd({ product, photos }: { product: Product; photos: P
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       url: `${baseUrl}${path}`,
-      seller: { '@type': 'Organization', name: 'HC Čestice' },
+      seller: { '@type': 'Organization', name: CLUB_NAME },
     },
   }
 

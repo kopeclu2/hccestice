@@ -10,6 +10,7 @@ import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
 
@@ -90,7 +91,7 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   const { page, type } = readParams(await searchParams)
 
   return {
-    title: 'Aktuality | HC Čestice',
+    title: brandTitle('Aktuality'),
     description:
       'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.',
     alternates: { canonical: page > 1 ? listPath(page, type) : '/aktuality' },

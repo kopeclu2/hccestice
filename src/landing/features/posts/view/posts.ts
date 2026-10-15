@@ -8,6 +8,7 @@ import {
 } from '@/landing/features/posts/view/text'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import type { Photo } from '@/landing/types'
+import { CLUB_NAME } from '@/lib/club'
 import { formatFullDate, formatLongDate } from '@/lib/datetime'
 import { htmlPlainText, snippet, dropTitleEcho, looksLikeProse, echoesTitle } from '@/lib/plainText'
 import { linkOrNull, routes } from '@/lib/routes'
@@ -82,7 +83,7 @@ const toArticleAuthor = (post: Post): ArticleAuthor => {
   const person = typeof post.authorPerson === 'object' ? post.authorPerson : null
   // Fallback na uživatele z pole Autoři (jméno, portrét, e-mail z kolekce users)
   const user = post.populatedAuthors?.[0] ?? null
-  const name = person?.name ?? user?.name ?? 'HC Čestice'
+  const name = person?.name ?? user?.name ?? CLUB_NAME
   return {
     name,
     initials: initialsOf(name) || 'HC',

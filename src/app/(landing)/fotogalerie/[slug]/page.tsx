@@ -12,6 +12,8 @@ import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/features/galler
 import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
+import { brandTitle } from '@/lib/brandTitle'
+import { CLUB_NAME } from '@/lib/club'
 import { formatLongDate } from '@/lib/datetime'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
@@ -70,11 +72,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
   const gallery = await fetchGalleryBySlug(slug)
-  if (!gallery) return { title: 'Galerie nenalezena | HC Čestice' }
+  if (!gallery) return { title: brandTitle('Galerie nenalezena') }
 
   const cover = uploadToPhoto(gallery.cover)
   return {
-    title: `${gallery.title} | Fotoalbum HC Čestice`,
+    title: `${gallery.title} | Fotoalbum ${CLUB_NAME}`,
     description: `Fotogalerie ${gallery.title} — ${gallery.photos?.length ?? 0} fotek.`,
     alternates: { canonical: routes.gallery(slug) },
     openGraph: cover

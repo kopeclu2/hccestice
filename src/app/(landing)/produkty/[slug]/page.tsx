@@ -9,6 +9,8 @@ import { fetchProductBySlug, fetchProductSlugs } from '@/landing/features/produc
 import { collectPhotos } from '@/landing/features/products/photos'
 import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { CLUB_NAME } from '@/lib/club'
 import { routes } from '@/lib/routes'
 
 export const revalidate = 600
@@ -56,11 +58,11 @@ export default async function ProductDetailPage({ params }: Args) {
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
   const product = await fetchProductBySlug(decodeURIComponent(slug))
-  if (!product) return { title: 'Produkt nenalezen | HC Čestice' }
+  if (!product) return { title: brandTitle('Produkt nenalezen') }
   return {
     alternates: { canonical: routes.product(product.slug) },
-    title: `${product.name} — ${product.price} Kč | HC Čestice merch`,
+    title: `${product.name} — ${product.price} Kč | ${CLUB_NAME} merch`,
     description:
-      product.description ?? `${product.name} z klubové nabídky HC Čestice. Objednávky e-mailem.`,
+      product.description ?? `${product.name} z klubové nabídky ${CLUB_NAME}. Objednávky e-mailem.`,
   }
 }

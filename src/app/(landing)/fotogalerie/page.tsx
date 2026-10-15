@@ -9,6 +9,7 @@ import { fetchGallerySeasons, seasonShortLabel } from '@/landing/features/matche
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
 
@@ -76,7 +77,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
   )
 }
 
-const TITLE = 'Fotoalbum | HC Čestice'
+const TITLE = brandTitle('Fotoalbum')
 const DESCRIPTION =
   'Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase.'
 

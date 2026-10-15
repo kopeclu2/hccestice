@@ -21,6 +21,8 @@ import type { ArticleDetail } from '@/landing/features/posts/types'
 import { toArticleDetail } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PillLink } from '@/landing/ui/PillLink'
+import { brandTitle } from '@/lib/brandTitle'
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { generateMeta } from '@/lib/generateMeta'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
@@ -126,8 +128,8 @@ function StructuredData({
     author: { '@type': 'Person', name: article.author.name },
     publisher: {
       '@type': 'SportsTeam',
-      name: 'HC Čestice',
-      logo: { '@type': 'ImageObject', url: `${baseUrl}/logo-cestice.png` },
+      name: CLUB_NAME,
+      logo: { '@type': 'ImageObject', url: `${baseUrl}${CLUB_LOGO}` },
     },
     mainEntityOfPage: `${baseUrl}${routes.post(slug)}`,
   }
@@ -144,7 +146,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
   const post = await fetchPostBySlug(slug, false)
-  if (!post) return { title: 'Článek nenalezen | HC Čestice' }
+  if (!post) return { title: brandTitle('Článek nenalezen') }
 
   const meta = await generateMeta({ collection: 'posts', doc: post })
   return {

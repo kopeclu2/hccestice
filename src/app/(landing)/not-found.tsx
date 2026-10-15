@@ -8,6 +8,7 @@ import { Highlight } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { PuckTrailArc } from '@/landing/ui/PuckTrail'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 import { routes } from '@/lib/routes'
 
 /**
@@ -61,6 +62,6 @@ export default function NotFound() {
 }
 
 export const metadata: Metadata = {
-  title: 'Stránka nenalezena | HC Čestice',
+  title: brandTitle('Stránka nenalezena'),
   robots: { index: false, follow: true },
 }

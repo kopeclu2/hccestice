@@ -4,6 +4,7 @@ import React from 'react'
 import { fetchMaintenance } from '@/landing/data/maintenance'
 import { fetchSite } from '@/landing/data/site'
 import { MaintenanceScreen } from '@/landing/layout/MaintenanceScreen'
+import { brandTitle } from '@/lib/brandTitle'
 
 /**
  * Náhled údržbové stránky s texty z adminu — aby si správce mohl ověřit,
@@ -19,6 +20,6 @@ export default async function UdrzbaPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Údržba | HC Čestice',
+  title: brandTitle('Údržba'),
   robots: { index: false, follow: false },
 }

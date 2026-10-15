@@ -8,6 +8,7 @@ import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'
 import { Watermark } from '@/landing/ui/Watermark'
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 /**
@@ -182,10 +183,10 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
               aria-hidden
               className="rounded-full"
               height={28}
-              src="/logo-cestice.png"
+              src={CLUB_LOGO}
               width={28}
             />
-            {`© ${new Date().getFullYear()} HC Čestice — TJ Sokol Čestice`}
+            {`© ${new Date().getFullYear()} ${CLUB_NAME} — TJ Sokol Čestice`}
           </span>
 
           {/*

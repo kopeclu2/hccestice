@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { cn } from '@/lib/utils'
 
 /**
@@ -37,7 +38,7 @@ export function LogoTab({ className, href = '#home' }: { className?: string; hre
           d="M-9 0 L209 0 Q200 0 196.8 7.3 L178.3 50 Q174 60 164 60 L36 60 Q26 60 21.7 50 L3.2 7.3 Q0 0 -9 0 Z"
         />
       </svg>
-      <Image alt="HC Čestice" className="relative" height={32} src="/logo-cestice.png" width={32} />
+      <Image alt={CLUB_NAME} className="relative" height={32} src={CLUB_LOGO} width={32} />
       <span className="relative text-xs font-bold tracking-[0.1em] whitespace-nowrap transition-colors group-hover:text-club">
         HC ČESTICE
       </span>

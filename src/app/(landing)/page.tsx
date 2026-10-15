@@ -9,6 +9,7 @@ import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
 import { LandingFooter } from '@/landing/layout/LandingFooter'
 import type { SiteLinks } from '@/landing/types'
 import { PageCanvas } from '@/landing/ui/PageCanvas'
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { generateMeta } from '@/lib/generateMeta'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
@@ -97,7 +98,7 @@ function StructuredData({ site }: { site: SiteLinks }) {
   const team = {
     '@context': 'https://schema.org',
     '@type': 'SportsTeam',
-    name: 'HC Čestice',
+    name: CLUB_NAME,
     alternateName: 'TJ Sokol Čestice',
     sport: 'Ice Hockey',
     // Rok založení oddílu ledního hokeje při TJ Sokol — první milník
@@ -105,7 +106,7 @@ function StructuredData({ site }: { site: SiteLinks }) {
     // téhle velikosti nejsilnější signál důvěryhodnosti, jaký má.
     foundingDate: '1954',
     url: baseUrl,
-    logo: `${baseUrl}/logo-cestice.png`,
+    logo: `${baseUrl}${CLUB_LOGO}`,
     email: site.email,
     ...(([site.facebook, site.instagram].filter(Boolean) as string[]).length
       ? { sameAs: [site.facebook, site.instagram].filter(Boolean) }
@@ -145,10 +146,10 @@ function StructuredData({ site }: { site: SiteLinks }) {
   const website = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'HC Čestice',
+    name: CLUB_NAME,
     url: baseUrl,
     inLanguage: 'cs-CZ',
-    publisher: { '@type': 'SportsTeam', name: 'HC Čestice' },
+    publisher: { '@type': 'SportsTeam', name: CLUB_NAME },
   }
 
   return (
@@ -171,7 +172,7 @@ const FALLBACK_META: Metadata = {
     'Hokejový klub HC Čestice (TJ Sokol Čestice) hraje Východočeskou hokejovou ligu. Zápasy, výsledky, tréninky, fotoalbum a nábor nových hráčů i mládeže.',
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'HC Čestice — malý klub, velká sezóna',
+    title: `${CLUB_NAME} — malý klub, velká sezóna`,
     description:
       'Historické 3. místo v play-off VČHL 2025/26. Přijď na led — trénujeme dvakrát týdně v Rychnově nad Kněžnou.',
     locale: 'cs_CZ',
@@ -184,7 +185,7 @@ const FALLBACK_META: Metadata = {
     card: 'summary_large_image',
     description:
       'Historické 3. místo v play-off VČHL 2025/26. Přijď na led — trénujeme dvakrát týdně v Rychnově nad Kněžnou.',
-    title: 'HC Čestice — malý klub, velká sezóna',
+    title: `${CLUB_NAME} — malý klub, velká sezóna`,
   },
 }
 

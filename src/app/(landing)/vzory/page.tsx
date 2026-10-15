@@ -11,6 +11,7 @@ import {
   type PatternVariant,
 } from '@/landing/ui/PatternBackground'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 import { cn } from '@/lib/utils'
 
 export const revalidate = 600
@@ -187,7 +188,7 @@ function DemoCard({
 }
 
 export const metadata: Metadata = {
-  title: 'Vzory pozadí — interní galerie | HC Čestice',
+  title: brandTitle('Vzory pozadí — interní galerie'),
   description: 'Interní přehled vzorů pozadí (PatternBackground) pro sekce webu HC Čestice.',
   robots: { index: false, follow: false },
 }

@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/nextjs'
 import React, { useEffect } from 'react'
 
 import { LANDING_COLORS } from '@/landing/tokens'
+import { CLUB_NAME } from '@/lib/club'
 
 /**
  * Poslední záchranná síť: chyba v **root layoutu** samotném. Běžné chyby
@@ -45,7 +46,7 @@ export default function GlobalError({
           textAlign: 'center',
         }}
       >
-        <title>Chyba serveru | HC Čestice</title>
+        <title>{`Chyba serveru | ${CLUB_NAME}`}</title>
         <div style={{ maxWidth: '28rem' }}>
           <div
             style={{
@@ -77,7 +78,7 @@ export default function GlobalError({
               color: LANDING_COLORS['faint-dark'],
             }}
           >
-            Web HC Čestice se nepodařilo načíst. Zkuste to prosím za chvíli znovu.
+            Web {CLUB_NAME} se nepodařilo načíst. Zkuste to prosím za chvíli znovu.
           </p>
           <button
             onClick={() => retry()}
