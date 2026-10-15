@@ -1,3 +1,5 @@
+import { fold } from '@/lib/fold'
+
 export { isOurTeam } from './ourTeam'
 
 // Přípony AHL u hráčů (JUN = junior, S = senior, SDor = senior dorost…).
@@ -39,12 +41,7 @@ function splitName(raw: string, order: NameOrder): Parts {
  */
 export function normalizeName(raw: string, order: NameOrder = 'last-first'): string {
   const { first, last } = splitName(raw, order)
-  return `${first} ${last}`
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim()
+  return fold(`${first} ${last}`, { collapseSpaces: true })
 }
 
 /** „Sajdl, Lukáš" → „Lukáš Sajdl" (bez přípon, s diakritikou). */

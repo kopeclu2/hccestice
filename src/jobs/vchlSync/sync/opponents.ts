@@ -1,21 +1,14 @@
+import { fold } from '@/lib/fold'
+import { stripClubPrefix } from '@/lib/teamName'
 import type { Opponent } from '@/payload-types'
 
 import type { SyncContext } from './ctx'
 
 /** Klíč pro porovnání názvů týmů: bez diakritiky, velikosti písmen a interpunkce. */
-export function foldTeam(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-}
+export const foldTeam = (s: string): string => fold(s, { alnumOnly: true })
 
-/** „HC Polička B" a „Polička B" jsou pro AHL tentýž tým. */
-export function stripClubPrefix(folded: string): string {
-  return folded.replace(/^(hc|sk|zh|tj|hk)\s+/, '')
-}
+// Seed skript `seed-opponent-logos-ahl` ho importuje odsud.
+export { stripClubPrefix }
 
 /**
  * Most z historického importu zápasů (seed skripty už v repu nejsou):
@@ -37,7 +30,7 @@ const LEGACY_ALIASES: Record<string, string> = {
   'hc spartak chocen b': 'HC Choceň B',
 }
 
-/** Všechny klíče, pod kterými lze soupeře poznat (název, aliasy, bez předpon). */
+/** Všechny klíče, pod kterými lze soupeře poznat (název, aliasy, bez předpon: „HC Polička B" a „Polička B" jsou pro AHL tentýž tým). */
 export function opponentKeys(opp: Pick<Opponent, 'name' | 'aliases'>): Set<string> {
   const keys = new Set<string>()
   for (const raw of [opp.name, ...(opp.aliases ?? []).map((a) => a.name)]) {

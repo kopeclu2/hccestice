@@ -1,7 +1,7 @@
 import { AhlParseError } from '../errors'
 import type { AhlStandingRow } from '../types'
 
-import { paramFromHref, parseDocument, requireInt, text } from './dom'
+import { paramFromHref, parseDocument, parseScorePair, requireInt, text } from './dom'
 
 const PAGE = 'tabulky'
 
@@ -34,7 +34,7 @@ export function parseStandings(html: string): AhlStandingRow[] {
     const team = text(link ?? tr.querySelector('td.tabulka_team'))
     if (!team) throw new AhlParseError(PAGE, `řádek ${i + 1}: prázdný název týmu`)
 
-    const score = cell('tabulka_bilance').match(/^(\d+)\s*:\s*(\d+)/)
+    const score = parseScorePair(cell('tabulka_bilance'))
     if (!score) throw new AhlParseError(PAGE, `řádek ${i + 1}: skóre „${cell('tabulka_bilance')}"`)
 
     return {
@@ -46,8 +46,8 @@ export function parseStandings(html: string): AhlStandingRow[] {
       otWins: requireInt(cell('tabulka_prodlouzeni'), PAGE, 'VP'),
       otLosses: requireInt(cell('tabulka_remizy'), PAGE, 'R'),
       losses: requireInt(cell('tabulka_prohry'), PAGE, 'P'),
-      goalsFor: +score[1],
-      goalsAgainst: +score[2],
+      goalsFor: score.home,
+      goalsAgainst: score.away,
       points: requireInt(cell('tabulka_body'), PAGE, 'B'),
     }
   })
