@@ -22,10 +22,9 @@ const SPECIAL: Record<NonNullable<ArticleGoal['special']>, { label: string; titl
 const MAJOR_MINUTES = 5
 
 /**
- * Řádek osy: čas · ikona · obsah · stav. Stav po brance má vlastní sloupec
- * vpravo, takže jména střelců, trestaných a soupeře začínají ve všech
- * řádcích na stejné svislici (dřív stav stál před jménem jen u branek
- * a asistence pod ním lícovaly se stavem, ne se jménem).
+ * Řádek osy: čas · ikona · obsah. Stav po brance stojí před jménem
+ * (`EventScore` uvnitř obsahu), ne ve vlastním sloupci u pravého okraje —
+ * v širokém panelu byl od jména daleko a oko ho k řádku nepřiřadilo.
  *
  * `items-start` + výška `h-5.5` u času, ikony a stavu = první řádek obsahu
  * (`leading-5.5`): u víceřádkových řádků (dlouhé jméno, asistence, důvod
@@ -36,7 +35,7 @@ const MAJOR_MINUTES = 5
  * vzalo jménům čtvrtinu šířky; pruh tam proto přesahuje řádky.
  */
 const ROW =
-  'grid grid-cols-[2.25rem_1.25rem_minmax(0,1fr)_auto] items-start gap-x-2 py-3 md:grid-cols-[3.25rem_2rem_minmax(0,1fr)_auto] md:gap-x-4 md:px-4'
+  'grid grid-cols-[2.25rem_1.25rem_minmax(0,1fr)] items-start gap-x-2 py-3 md:grid-cols-[3.25rem_2rem_minmax(0,1fr)] md:gap-x-4 md:px-4'
 
 /** Buňka zarovnaná na první řádek obsahu. */
 const CELL = 'flex h-5.5 items-center'
@@ -45,8 +44,8 @@ const CELL = 'flex h-5.5 items-center'
  * Časová osa zápasu ve stylu Livesportu, ale jen se stranou HC Čestice:
  * pruh třetiny se skóre úseku, pod ním události v pořadí, jak šly.
  *
- * - **Náš gól** — tmavý puk, střelec, pod ním PP/OS/SN a asistence,
- *   vpravo stav v lime pilulce.
+ * - **Náš gól** — tmavý puk, stav v lime pilulce, střelec a PP/OS/SN,
+ *   pod nimi asistence.
  * - **Gól soupeře** — světlý puk, název soupeře a tlumený stav, bez jmen
  *   hráčů (rozhodnutí uživatele 14. 10. 2026; jména ve view-modelu ani
  *   nejsou). Je tu jen proto, aby byl vidět průběh skóre.
@@ -132,9 +131,6 @@ function TimelineRow({ event, opponentName }: { event: MatchTimelineEvent; oppon
       <div className="min-w-0">
         <EventBody event={event} opponentName={opponentName} />
       </div>
-      <span className={cn(CELL, 'justify-end')}>
-        <EventScore event={event} />
-      </span>
     </li>
   )
 }
@@ -166,11 +162,19 @@ function EventIcon({ event }: { event: MatchTimelineEvent }) {
 function EventScore({ event }: { event: MatchTimelineEvent }) {
   if (event.type !== 'goal' || !event.score) return null
   return event.ours ? (
-    <Badge aria-hidden className="px-2 py-0.5 tabular-nums" size="sm" variant="lime">
+    <Badge
+      aria-hidden
+      className="min-w-11 flex-none justify-center px-2 py-0.5 tabular-nums"
+      size="sm"
+      variant="lime"
+    >
       {event.score}
     </Badge>
   ) : (
-    <span aria-hidden className="text-faint px-2 text-caption font-extrabold tabular-nums">
+    <span
+      aria-hidden
+      className="text-faint inline-flex h-5.5 min-w-11 flex-none items-center justify-center text-caption font-extrabold tabular-nums"
+    >
       {event.score}
     </span>
   )
@@ -196,11 +200,14 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
     // Jméno soupeře se smí zalomit — výpustka („HC Aloha Lan…“) ho na
     // 320 px usekla v polovině. Pro čtečku ho nahrazuje „Gól soupeře“.
     return (
-      <div className="text-faint text-body leading-5.5 font-bold text-pretty break-words">
+      <div className="text-faint flex items-start gap-x-2 text-body leading-5.5 font-bold">
         <span className="sr-only">
           {event.score ? `Gól soupeře, stav ${event.score}` : 'Gól soupeře'}
         </span>
-        <span aria-hidden>{opponentName}</span>
+        <EventScore event={event} />
+        <span aria-hidden className="min-w-0 text-pretty break-words">
+          {opponentName}
+        </span>
       </div>
     )
   }
@@ -208,37 +215,43 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
   const special = event.special ? SPECIAL[event.special] : null
   return (
     <>
-      {/* Jméno a štítek PP/OS/SN jsou dvě položky flexu: štítek stojí za
-          jménem a na další řádek spadne celý, jen když se vedle nevejde —
-          nikdy neutrhne příjmení. */}
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="text-body leading-5.5 min-w-0 font-extrabold text-pretty break-words">
-          <span className="sr-only">
-            {event.score ? `Gól HC Čestice, stav ${event.score}: ` : 'Gól HC Čestice: '}
-          </span>
-          {event.scorer}
-        </span>
-        {special && (
-          <Badge
-            className="px-2 py-0.5"
-            size="xs"
-            variant={event.special === 'sn' ? 'outline' : 'chip'}
-          >
-            {/* Zkratka je pro oko, celé slovo pro čtečku — `title` čtečky
-                většinou nečtou a na dotykovém displeji není vidět vůbec. */}
-            <span aria-hidden>{special.label}</span>
-            <span className="sr-only">{special.title}</span>
-          </Badge>
-        )}
-      </div>
-      {event.assists.length > 0 && (
-        <div className="text-faint mt-0.5 text-caption font-semibold text-pretty break-words">
-          <span className="sr-only">Asistence: </span>
-          <span aria-hidden>(</span>
-          {event.assists.join(', ')}
-          <span aria-hidden>)</span>
+      {/* Stav před jménem; asistence lícují se jménem, ne se stavem. Jméno
+          a štítek PP/OS/SN jsou dvě položky flexu: štítek stojí za jménem
+          a na další řádek spadne celý, jen když se vedle nevejde — nikdy
+          neutrhne příjmení. */}
+      <div className="flex items-start gap-x-2">
+        <EventScore event={event} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-body leading-5.5 min-w-0 font-extrabold text-pretty break-words">
+              <span className="sr-only">
+                {event.score ? `Gól HC Čestice, stav ${event.score}: ` : 'Gól HC Čestice: '}
+              </span>
+              {event.scorer}
+            </span>
+            {special && (
+              <Badge
+                className="px-2 py-0.5"
+                size="xs"
+                variant={event.special === 'sn' ? 'outline' : 'chip'}
+              >
+                {/* Zkratka je pro oko, celé slovo pro čtečku — `title` čtečky
+                    většinou nečtou a na dotykovém displeji není vidět vůbec. */}
+                <span aria-hidden>{special.label}</span>
+                <span className="sr-only">{special.title}</span>
+              </Badge>
+            )}
+          </div>
+          {event.assists.length > 0 && (
+            <div className="text-faint mt-0.5 text-caption font-semibold text-pretty break-words">
+              <span className="sr-only">Asistence: </span>
+              <span aria-hidden>(</span>
+              {event.assists.join(', ')}
+              <span aria-hidden>)</span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </>
   )
 }

@@ -932,6 +932,15 @@ s `report = post.id`.
     když chybí, a u prodloužení vždy, se spočítá z branek úseku. Nájezdy
     skóre nemají.
   - Řazení je stabilní podle času, při shodném čase branka před trestem.
+- **Souhrn** (`MatchSummary`, `buildMatchSummary` v
+  `data/matchSummary.ts`) — pravý sloupec vedle osy, pod případnou
+  reportáží: kanadské body (G / A / B), počet gólů v PP / OS a tresty po
+  hráčích. Rozhodnutí uživatele 15. 10. 2026: osa přes celou šířku 1320 px
+  měla stav po gólu daleko od jména, takže zůstává ve sloupci
+  `1.5fr | 1fr` a vedle ní stojí souhrn. Počítá se z osy **při vykreslení**,
+  ne v cache (klíč `match-detail` se neměnil). Rozhodující nájezd (`SN`) se
+  do bodů nepočítá. Samotná reportáž bez osy (archiv) je vodorovná karta
+  přes celou šířku (`MatchReportCard wide`).
 - **Statistika se na detailu nezobrazuje** (rozhodnutí uživatele
   14. 10. 2026). Data (`stats.*Ours` / `*Opp`) se dál synchronizují
   a view-model je nese kvůli rozhodnutí o `missingProtocol`.
