@@ -713,55 +713,41 @@
 }
 
 :root {
-  --background: oklch(100% 0 0deg);
-  --foreground: oklch(14.5% 0 0deg);
-  --card: oklch(96.5% 0.005 265deg);
-  --card-foreground: oklch(14.5% 0 0deg);
-  --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(14.5% 0 0deg);
-  --primary: oklch(20.5% 0 0deg);
-  --primary-foreground: oklch(98.5% 0 0deg);
-  --secondary: oklch(97% 0 0deg);
-  --secondary-foreground: oklch(20.5% 0 0deg);
-  --muted: oklch(97% 0 0deg);
-  --muted-foreground: oklch(55.6% 0 0deg);
-  --accent: oklch(97% 0 0deg);
-  --accent-foreground: oklch(20.5% 0 0deg);
-  --destructive: oklch(57.7% 0.245 27.325deg);
-  /* Dřív shodná s --destructive → červený text na červeném pozadí. */
-  --destructive-foreground: oklch(98.5% 0 0deg);
-  --border: oklch(92.2% 0 0deg);
-  --input: oklch(92.2% 0 0deg);
-  --ring: oklch(70.8% 0 0deg);
-  --success: oklch(78% 0.08 200deg);
-  --warning: oklch(89% 0.1 75deg);
-  --error: oklch(75% 0.15 25deg);
-}
-
-[data-theme='dark'] {
-  --background: oklch(14.5% 0 0deg);
-  --foreground: oklch(98.5% 0 0deg);
-  --card: oklch(17% 0 0deg);
-  --card-foreground: oklch(98.5% 0 0deg);
-  --popover: oklch(14.5% 0 0deg);
-  --popover-foreground: oklch(98.5% 0 0deg);
-  --primary: oklch(98.5% 0 0deg);
-  --primary-foreground: oklch(20.5% 0 0deg);
-  --secondary: oklch(26.9% 0 0deg);
-  --secondary-foreground: oklch(98.5% 0 0deg);
-  --muted: oklch(26.9% 0 0deg);
-  --muted-foreground: oklch(70.8% 0 0deg);
-  --accent: oklch(26.9% 0 0deg);
-  --accent-foreground: oklch(98.5% 0 0deg);
-  --destructive: oklch(39.6% 0.141 25.723deg);
-  /* Stejný problém jako ve světlém režimu — červená na tmavě červené. */
-  --destructive-foreground: oklch(98.5% 0 0deg);
-  --border: oklch(26.9% 0 0deg);
-  --input: oklch(26.9% 0 0deg);
-  --ring: oklch(43.9% 0 0deg);
-  --success: oklch(28% 0.1 200deg);
-  --warning: oklch(35% 0.08 70deg);
-  --error: oklch(45% 0.1 25deg);
+  /*
+   * shadcn vrstva (`components/ui`, šablonové bloky Form/Banner/Code) je
+   * napojená na klubovou paletu — žádné samostatné šedé oklch hodnoty.
+   * Jsou to aliasy na `--ds-*` a značkové tokeny, takže tmavý režim
+   * (`[data-theme='dark']` výš) se přenáší sám a nepotřebuje druhý blok.
+   * Názvy zůstávají shadcn (`--background`, `--primary`…), aby `shadcn add`
+   * umělo komponenty napojit bez zásahu.
+   *
+   * `primary` je `club-dark`, ne `club`: bílý text na `club` (#5e9e46) má
+   * jen ~3,4:1, na `club-dark` ~5,1:1 (AA). `ring` je naopak `club` — u
+   * prstence stačí 3:1 pro netextové prvky a `lime` (~2:1 na bílé) by nestačil.
+   */
+  --background: var(--ds-paper);
+  --foreground: var(--ds-ink);
+  --card: var(--ds-surface);
+  --card-foreground: var(--ds-ink);
+  --popover: var(--ds-surface);
+  --popover-foreground: var(--ds-ink);
+  --primary: var(--color-club-dark);
+  --primary-foreground: var(--color-on-contrast);
+  --secondary: var(--ds-chip);
+  --secondary-foreground: var(--ds-ink);
+  --muted: var(--ds-chip);
+  /* `dim`, ne `faint`: placeholder a popisky na `paper` potřebují AA. */
+  --muted-foreground: var(--ds-dim);
+  --accent: var(--ds-tint);
+  --accent-foreground: var(--ds-ink);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-on-contrast);
+  --border: var(--ds-line-mid);
+  --input: var(--ds-line);
+  --ring: var(--color-club);
+  --success: var(--color-club);
+  --warning: var(--color-penalty);
+  --error: var(--color-danger);
 }
 
 @theme inline {
@@ -794,7 +780,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply flex min-h-[100vh] flex-col bg-background text-foreground;
+    @apply flex min-h-screen flex-col bg-background text-foreground;
   }
 }
 
