@@ -4,6 +4,8 @@ import { utcToPragueLocal } from '@/jobs/vchlSync/time'
 import { matchSlug, uniqueSlug } from '@/lib/matchSlug'
 import { slugifyCs } from '@/lib/slugifyCs'
 
+import { resolveOpponent } from './resolveOpponent'
+
 /**
  * Slug zápasu (`/zapasy/<slug>`) se vytvoří **jednou**: dokud dokument slug
  * nemá. Pozdější přeložení zápasu ani přejmenování soupeře ho nemění, aby
@@ -33,23 +35,11 @@ export const generateMatchSlug: CollectionBeforeChangeHook = async ({ data, orig
   const { day } = utcToPragueLocal(date)
 
   // Soupeř: update nemusí nést `opponent`, relace může být i populovaná.
-  const rawOpponent = data.opponent ?? originalDoc?.opponent
-  let opponentSlug: string | null = null
-  if (rawOpponent) {
-    try {
-      const opp = await req.payload.findByID({
-        collection: 'opponents',
-        id: typeof rawOpponent === 'object' ? rawOpponent.id : rawOpponent,
-        depth: 0,
-        req,
-      })
-      // Pojistka: slug soupeře má být už čistý, ale zapsat ho do URL bez
-      // kontroly by znamenalo spoléhat na jinou kolekci.
-      opponentSlug = opp?.slug ? slugifyCs(opp.slug) : null
-    } catch {
-      /* neexistující soupeř → slug jen ze dne */
-    }
-  }
+  // Neexistující soupeř dá slug jen ze dne. Pojistka: slug soupeře má být už
+  // čistý, ale zapsat ho do URL bez kontroly by znamenalo spoléhat na jinou
+  // kolekci.
+  const opponent = await resolveOpponent(req, data.opponent ?? originalDoc?.opponent)
+  const opponentSlug = opponent?.slug ? slugifyCs(opponent.slug) : null
 
   const id = originalDoc?.id
   data.slug = await uniqueSlug(matchSlug(day, opponentSlug), async (slug) => {
