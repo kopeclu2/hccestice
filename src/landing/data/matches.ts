@@ -1,8 +1,8 @@
-import type { Match } from '@/payload-types'
+import type { Match, Media } from '@/payload-types'
 
 import configPromise from '@payload-config'
 import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 import { cache } from 'react'
 
 import type {
@@ -64,43 +64,39 @@ const scheduleFrom = (): string => {
 }
 
 /** Nejbližší naplánovaný zápas (countdown). */
-export const fetchUpcoming = cache(
-  async (): Promise<{ upcoming: UpcomingMatch | null }> => {
-    const payload = await getPayload({ config: configPromise })
-    const { docs } = await payload.find({
-      collection: 'matches',
-      where: {
-        and: [
-          { status: { equals: 'scheduled' } },
-          { date: { greater_than_equal: new Date().toISOString() } },
-        ],
-      },
-      sort: 'date',
-      limit: 1,
-      depth: 1,
-    })
+export const fetchUpcoming = cache(async (): Promise<{ upcoming: UpcomingMatch | null }> => {
+  const payload = await getPayload({ config: configPromise })
+  const { docs } = await payload.find({
+    collection: 'matches',
+    where: {
+      and: [
+        { status: { equals: 'scheduled' } },
+        { date: { greater_than_equal: new Date().toISOString() } },
+      ],
+    },
+    sort: 'date',
+    limit: 1,
+    depth: 1,
+  })
 
-    const [next] = docs
-    return { upcoming: next ? toUpcoming(next) : null }
-  },
-)
+  const [next] = docs
+  return { upcoming: next ? toUpcoming(next) : null }
+})
 
 /** Poslední výsledek (hero). */
-export const fetchPlayed = cache(
-  async (): Promise<{ lastResult: LastResult | null }> => {
-    const payload = await getPayload({ config: configPromise })
-    const { docs } = await payload.find({
-      collection: 'matches',
-      where: { status: { equals: 'played' } },
-      sort: '-date',
-      limit: 1,
-      depth: 1,
-    })
+export const fetchPlayed = cache(async (): Promise<{ lastResult: LastResult | null }> => {
+  const payload = await getPayload({ config: configPromise })
+  const { docs } = await payload.find({
+    collection: 'matches',
+    where: { status: { equals: 'played' } },
+    sort: '-date',
+    limit: 1,
+    depth: 1,
+  })
 
-    const [last] = docs
-    return { lastResult: last ? toLastResult(last) : null }
-  },
-)
+  const [last] = docs
+  return { lastResult: last ? toLastResult(last) : null }
+})
 
 /** Seznam zápasů pro widget — výsledky (se skóre) nebo rozpis. */
 export const fetchMatchRows = cache(
@@ -158,6 +154,39 @@ export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<Ma
  * invaliduje i nové entry.
  */
 
+/**
+ * Doplní zápasům populované logo soupeře. Výpisy jedou na `depth: 1`, kde je
+ * `opponent.logo` jen id — `depth: 2` by ale rozbalil i sezónu, reportáž
+ * a hráče v sestavě. Jeden dotaz na `media` pro celou stránku je levnější.
+ */
+const withOpponentLogos = async <T extends Match>(payload: Payload, docs: T[]): Promise<T[]> => {
+  const ids = [
+    ...new Set(
+      docs.flatMap((doc) =>
+        typeof doc.opponent === 'object' && typeof doc.opponent?.logo === 'number'
+          ? [doc.opponent.logo]
+          : [],
+      ),
+    ),
+  ]
+  if (ids.length === 0) return docs
+  const { docs: media } = await payload.find({
+    collection: 'media',
+    where: { id: { in: ids } },
+    limit: ids.length,
+    depth: 0,
+    pagination: false,
+    // `url` je virtuální pole skládané z `filename` — bez něj vyjde prázdné.
+    select: { url: true, filename: true, alt: true, width: true, height: true, updatedAt: true },
+  })
+  const byId = new Map(media.map((item) => [item.id, item as Media]))
+  return docs.map((doc) =>
+    typeof doc.opponent === 'object' && typeof doc.opponent?.logo === 'number'
+      ? { ...doc, opponent: { ...doc.opponent, logo: byId.get(doc.opponent.logo) ?? null } }
+      : doc,
+  )
+}
+
 /** Rozlosování sezóny — celé, od nejbližšího zápasu (pás karet na /zapasy). */
 const loadSeasonFixtures = unstable_cache(
   async (seasonId: number, from: string): Promise<FixtureCard[]> => {
@@ -176,14 +205,16 @@ const loadSeasonFixtures = unstable_cache(
       depth: 1,
     })
 
-    return docs.map((match, index) => toFixtureCard(match, index === 0))
+    const withLogos = await withOpponentLogos(payload, docs)
+    return withLogos.map((match, index) => toFixtureCard(match, index === 0))
   },
-  ['season-fixtures', 'v3'],
+  // v5: řádky nesou znaky týmů a den v týdnu
+  ['season-fixtures', 'v5'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 
-export const fetchSeasonFixtures = cache(
-  async (seasonId: number): Promise<FixtureCard[]> => loadSeasonFixtures(seasonId, scheduleFrom()),
+export const fetchSeasonFixtures = cache(async (seasonId: number): Promise<FixtureCard[]> =>
+  loadSeasonFixtures(seasonId, scheduleFrom()),
 )
 
 /** Odehrané zápasy sezóny po stranách (výpis na /zapasy, 6 na stranu). */
@@ -222,15 +253,17 @@ const loadSeasonResults = unstable_cache(
       populate: { players: { name: true } },
     })
 
+    const docs = await withOpponentLogos(payload, result.docs as Match[])
     return {
       // `select` zúžil dokument; `toResultRow` čte jen vybraná pole.
-      rows: result.docs.map((doc) => toResultRow(doc as Match)),
+      rows: docs.map((doc) => toResultRow(doc)),
       page: result.page ?? 1,
       totalPages: result.totalPages,
       totalDocs: result.totalDocs,
     }
   },
-  ['season-results', 'v4'],
+  // v6: řádky nesou znaky týmů a den v týdnu
+  ['season-results', 'v6'],
   { tags: [CACHE_TAGS.matches], revalidate: 3600 },
 )
 

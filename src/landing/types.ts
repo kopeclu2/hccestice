@@ -139,40 +139,52 @@ export type MatchSchemaFields = {
 }
 
 /** Karta rozlosování na /zapasy. */
-export type FixtureCard = MatchSchemaFields & {
-  id: number
-  /** „Doma" / „Venku" — pilulka v rohu karty. */
-  kind: string
-  /** Kolo nebo fáze soutěže, např. „19. kolo". */
-  stage: string
-  /** „7. 2." */
-  dateLabel: string
-  timeLabel: string
-  title: string
-  venue: string | null
-  /** Nejbližší zápas — lime tečka „Nejbližší". */
-  isNext: boolean
-  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
-  href: string | null
+/** Znaky týmů v pořadí domácí / hosté; null = soupeř bez loga (monogram). */
+export type TeamLogos = {
+  homeLogo: Photo | null
+  awayLogo: Photo | null
 }
 
+export type FixtureCard = MatchSchemaFields &
+  TeamLogos & {
+    id: number
+    /** „so" — zkratka dne v týdnu nad datem. */
+    weekdayLabel: string
+    /** „Doma" / „Venku" — pilulka v rohu karty. */
+    kind: string
+    /** Kolo nebo fáze soutěže, např. „19. kolo". */
+    stage: string
+    /** „7. 2." */
+    dateLabel: string
+    timeLabel: string
+    title: string
+    venue: string | null
+    /** Nejbližší zápas — lime tečka „Nejbližší". */
+    isNext: boolean
+    /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+    href: string | null
+  }
+
 /** Řádek výpisu odehraných zápasů na /zapasy. */
-export type ResultRow = MatchSchemaFields & {
-  id: number
-  /** „15. 3." */
-  dateLabel: string
-  stage: string
-  title: string
-  venue: string | null
-  /** Skóre v pořadí domácí : hosté. */
-  score: string
-  suffix: '' | 'sn' | 'pp'
-  outcome: Outcome
-  /** Naši střelci bez nájezdů, „Sajdl 2, Vacek"; null = zápis chybí. */
-  scorers: string | null
-  /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
-  href: string | null
-}
+export type ResultRow = MatchSchemaFields &
+  TeamLogos & {
+    id: number
+    /** „so" — zkratka dne v týdnu nad datem. */
+    weekdayLabel: string
+    /** „15. 3." */
+    dateLabel: string
+    stage: string
+    title: string
+    venue: string | null
+    /** Skóre v pořadí domácí : hosté. */
+    score: string
+    suffix: '' | 'sn' | 'pp'
+    outcome: Outcome
+    /** Naši střelci bez nájezdů, „Sajdl 2, Vacek"; null = zápis chybí. */
+    scorers: string | null
+    /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
+    href: string | null
+  }
 
 /** Čtvereček formy (posledních 5 zápasů) i s obsahem tooltipu. */
 export type FormSquare = {

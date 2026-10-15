@@ -90,10 +90,20 @@ export function ResultsList({
                 )}
                 key={row.id}
               >
-                <MatchWhen date={row.dateLabel} dateTime={row.startDate} />
+                <MatchWhen
+                  date={row.dateLabel}
+                  dateTime={row.startDate}
+                  weekday={row.weekdayLabel}
+                />
 
                 <div className="min-w-0">
-                  <MatchRowTitle away={row.awayName} home={row.homeName} href={row.href} />
+                  <MatchRowTitle
+                    away={row.awayName}
+                    awayLogo={row.awayLogo}
+                    home={row.homeName}
+                    homeLogo={row.homeLogo}
+                    href={row.href}
+                  />
                   {/* Fáze a místo jsou ztišený běžný text, stejně jako
                       v rozlosování — dřív byla fáze prostrkaný uppercase
                       ve sloupci data a „1.ROČNÍK - 2. SF" se v něm lámalo

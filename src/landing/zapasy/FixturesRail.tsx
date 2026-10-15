@@ -208,10 +208,17 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
             date={fixture.dateLabel}
             dateTime={fixture.startDate}
             time={fixture.timeLabel}
+            weekday={fixture.weekdayLabel}
           />
 
           <div className="min-w-0">
-            <MatchRowTitle away={fixture.awayName} home={fixture.homeName} href={fixture.href} />
+            <MatchRowTitle
+              away={fixture.awayName}
+              awayLogo={fixture.awayLogo}
+              home={fixture.homeName}
+              homeLogo={fixture.homeLogo}
+              href={fixture.href}
+            />
             <MatchMeta className="mt-1 lg:hidden" items={[fixture.stage, fixture.venue]} />
           </div>
 

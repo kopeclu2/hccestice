@@ -30,6 +30,10 @@ export const formatDateTime = (iso: string): string =>
   })
 
 /** „ne 8. 3." */
+/** „so" — zkratka dne v týdnu (Europe/Prague). */
+export const formatWeekday = (iso: string): string =>
+  new Date(iso).toLocaleDateString(CZECH_LOCALE, { weekday: 'short', timeZone: TIMEZONE })
+
 export const formatWeekdayDay = (iso: string): string =>
   new Date(iso).toLocaleDateString(CZECH_LOCALE, {
     weekday: 'short',

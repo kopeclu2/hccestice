@@ -1,6 +1,6 @@
 import type { Match } from '@/payload-types'
 
-import type { Outcome } from '../types'
+import type { Outcome, Photo } from '../types'
 
 /**
  * Čisté popisky zápasu (název, skóre, výsledek, štítek soutěže) bez jediného
@@ -13,6 +13,15 @@ export const opponentName = (match: Match): string =>
   typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
 
 export const CLUB_NAME = 'HC Čestice'
+
+/** Logo klubu — stejný soubor jako v navigaci a na kartě zápasu. */
+export const CLUB_LOGO: Photo = {
+  url: '/logo-cestice.png',
+  alt: CLUB_NAME,
+  width: 200,
+  height: 200,
+  updatedAt: null,
+}
 
 /** „HC Čestice × Soupeř" v pořadí domácí × hosté. */
 export const matchTitle = (match: Match): string =>
@@ -88,7 +97,9 @@ export const formatCompetition = (raw: string | null | undefined): string | null
  */
 export const phaseLabel = (match: Match): string => {
   const raw = (match.competition ?? '').trim()
-  const ahlPhase = raw.includes(' - ') ? expandAhlPhase(raw.slice(raw.lastIndexOf(' - ') + 3)) : null
+  const ahlPhase = raw.includes(' - ')
+    ? expandAhlPhase(raw.slice(raw.lastIndexOf(' - ') + 3))
+    : null
   if (ahlPhase) return ahlPhase
 
   const competition = raw.replace(/^VČHL\s*(play-off\s*)?/i, '').trim()
@@ -124,7 +135,8 @@ export const scorersLabel = (match: Pick<Match, 'goals'>): string | null => {
     const player = typeof goal.scorer === 'object' && goal.scorer ? goal.scorer : null
     const name = goal.scorerName ?? player?.name
     if (!name) continue
-    const key = typeof goal.scorer === 'number' ? `id:${goal.scorer}` : (player ? `id:${player.id}` : name)
+    const key =
+      typeof goal.scorer === 'number' ? `id:${goal.scorer}` : player ? `id:${player.id}` : name
     const entry = tally.get(key)
     if (entry) entry.count += 1
     else tally.set(key, { name, count: 1 })

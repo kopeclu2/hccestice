@@ -1041,6 +1041,15 @@ půlený úhlopříčkou s písmenem P. Mapa štítků je jedna,
 `landing/components/outcome.ts`, sdílí ji `ResultsList` i `MatchHeader`.
 Výhra po prodloužení zůstává `win` (suffix `pp`/`sn` u skóre ji odliší).
 
+Řádky výpisu mají **znaky týmů a čitelné datum** (rozhodnutí uživatele
+15. 10. 2026): `MatchRowTitle` kreslí `Crest` u každého týmu, `MatchWhen`
+den v týdnu + datum `md:text-lg` + čas. Logo soupeře se načítá v
+`withOpponentLogos` (`data/matches.ts`) jedním dotazem na `media` pro celou
+stránku — výpisy jedou na `depth: 1` (`depth: 2` by rozbalil i sezónu,
+reportáž a sestavu). V `select` musí být `filename`: `url` je virtuální pole
+z něj složené, bez něj vyjde prázdné. Fetchery bez loga (`depth: 1`)
+dostanou `null` a řádek ukáže monogram.
+
 Odehrané zápasy (`ResultsList`) i rozlosování (`FixturesRail` →
 `FixtureList`) jsou **jedna karta s řádky oddělenými linkou**
 (`rounded-tile border-line-soft`), se stejnými sloupci, takže lícují.

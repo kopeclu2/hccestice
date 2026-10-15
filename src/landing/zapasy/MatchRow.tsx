@@ -2,6 +2,8 @@ import React from 'react'
 
 import { StretchedLink } from '../components/StretchedLink'
 import { TeamPair } from '../components/TeamPair'
+import type { Photo } from '../types'
+import { Crest } from '../zapas/header-variants/shared'
 
 /**
  * Společné díly řádku zápasu pro rozlosování (`FixturesRail` → `FixtureList`)
@@ -23,46 +25,91 @@ export const MATCH_LIST =
 export const MATCH_ROW =
   'hover:bg-chip/40 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-4.5 py-3.5 transition-colors md:grid-cols-[6rem_minmax(0,1fr)_auto] md:gap-y-2 md:px-6 md:py-4 lg:px-7 lg:py-4.5'
 
-/** Datum (a čas) — na mobilu v řádku nad názvem, od `md` sloupec vlevo. */
+/**
+ * Datum zápasu — musí jít přečíst na první pohled (rozhodnutí uživatele
+ * 15. 10. 2026): den v týdnu, výrazné datum, čas zvlášť.
+ *
+ * - Mobil: jeden řádek nad názvem — „SO 18. 10. · 16:30".
+ * - Od `md` sloupec vlevo: den v týdnu, pod ním datum `text-lg`, pod ním čas.
+ */
 export function MatchWhen({
   date,
+  weekday,
   time,
   dateTime,
 }: {
+  /** „18. 10." */
   date: string
+  /** „so" */
+  weekday: string
   time?: string | null
   /** ISO začátku zápasu pro `<time>`. */
   dateTime: string
 }) {
   return (
     <time
-      className="col-span-2 flex items-baseline gap-2 tabular-nums md:col-span-1 md:block"
+      className="col-span-2 flex items-baseline gap-x-2 tabular-nums md:col-span-1 md:flex-col md:gap-0.5"
       dateTime={dateTime}
     >
-      <span className="block text-sm font-bold">{date}</span>
-      {time && <span className="text-faint block text-xs font-semibold md:mt-0.5">{time}</span>}
+      <span className="text-faint text-xs font-semibold tracking-wider uppercase">{weekday}</span>
+      <span className="text-base leading-tight font-bold tracking-[-0.01em] md:text-lg">
+        {date}
+      </span>
+      {time && (
+        <span className="text-ink-soft text-sm font-semibold">
+          <span aria-hidden className="text-faint md:hidden">
+            ·{' '}
+          </span>
+          {time}
+        </span>
+      )}
     </time>
   )
 }
 
+/** Tým se znakem — znak je dekorace, jméno stojí vedle jako text. */
+function TeamWithCrest({ name, logo }: { name: string; logo: Photo | null }) {
+  return (
+    <span className="inline-flex max-w-full items-center gap-2 align-middle">
+      <Crest
+        className="size-6 md:size-7"
+        logo={logo}
+        monogramClassName="text-xs"
+        name={name}
+        sizes="28px"
+        tone="light"
+      />
+      <span className="min-w-0">{name}</span>
+    </span>
+  )
+}
+
 /**
- * Název zápasu jako odkaz přes celý řádek. Na mobilu týmy pod sebou — dlouhé
- * dvojice („HC Čestice × SK Divočáci Žamberk") se jinak lámaly uprostřed
- * názvu týmu.
+ * Název zápasu se znaky týmů jako odkaz přes celý řádek. Na mobilu týmy pod
+ * sebou — dlouhé dvojice („HC Čestice × SK Divočáci Žamberk") se jinak
+ * lámaly uprostřed názvu týmu.
  */
 export function MatchRowTitle({
   home,
   away,
+  homeLogo,
+  awayLogo,
   href,
 }: {
   home: string
   away: string
+  homeLogo: Photo | null
+  awayLogo: Photo | null
   href: string | null
 }) {
   return (
-    <div className="text-sm md:text-base leading-snug font-semibold tracking-[-0.01em] text-pretty">
+    <div className="text-sm leading-snug font-semibold tracking-[-0.01em] text-pretty md:text-base">
       <StretchedLink href={href}>
-        <TeamPair away={away} home={home} layout="stack" />
+        <TeamPair
+          away={<TeamWithCrest logo={awayLogo} name={away} />}
+          home={<TeamWithCrest logo={homeLogo} name={home} />}
+          layout="stack"
+        />
       </StretchedLink>
     </div>
   )
