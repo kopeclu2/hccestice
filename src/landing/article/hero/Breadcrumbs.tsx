@@ -17,7 +17,7 @@ const linkClass: Record<BreadcrumbTone, string> = {
 const currentClass: Record<BreadcrumbTone, string> = {
   photo: 'text-lime',
   panel: 'text-lime',
-  light: 'text-club-dark font-bold',
+  light: 'text-club-dark font-semibold',
 }
 
 /** Drobečková navigace hero: Domů / Aktuality / kategorie článku. */
@@ -36,7 +36,7 @@ export function Breadcrumbs({
   return (
     <div
       className={cn(
-        'flex items-center gap-2 text-caption font-semibold',
+        'flex items-center gap-2 text-xs font-medium',
         tone === 'light' && 'text-faint',
         className,
       )}

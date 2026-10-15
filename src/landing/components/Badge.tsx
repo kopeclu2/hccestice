@@ -24,33 +24,33 @@ import { cn } from '@/utilities/ui'
 const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowrap', {
   variants: {
     variant: {
-      lime: 'bg-lime text-ink font-extrabold',
-      chip: 'bg-chip text-ink font-extrabold',
-      muted: 'bg-chip text-ink-soft font-extrabold',
-      loss: 'bg-loss text-loss-ink font-extrabold',
+      lime: 'bg-lime text-ink font-bold',
+      chip: 'bg-chip text-ink font-bold',
+      muted: 'bg-chip text-ink-soft font-bold',
+      loss: 'bg-loss text-loss-ink font-bold',
       split:
-        'bg-[linear-gradient(90deg,var(--color-loss)_50%,var(--color-win)_50%)] text-loss-ink font-extrabold',
-      club: 'bg-club text-white font-extrabold',
-      outline: 'border-line text-ink-soft border font-bold',
+        'bg-[linear-gradient(90deg,var(--color-loss)_50%,var(--color-win)_50%)] text-loss-ink font-bold',
+      club: 'bg-club text-white font-bold',
+      outline: 'border-line text-ink-soft border font-semibold',
       /** Bílý štítek na tmavé ploše / v zelené kartě. */
-      light: 'bg-surface text-ink font-extrabold',
+      light: 'bg-surface text-ink font-bold',
       /**
        * Průsvitný tmavý štítek přes fotku (počet fotek v galerii, třetiny
        * u výsledku). Musí být čitelný na libovolném snímku, proto blur.
        */
-      glass: 'bg-pine-deep/62 text-white font-bold backdrop-blur-[0.5rem]',
+      glass: 'bg-pine-deep/62 text-white font-semibold backdrop-blur-[0.5rem]',
       /** Obrys na tmavé ploše — protipól `outline`. */
-      glassOutline: 'border-white/40 text-white border font-bold',
+      glassOutline: 'border-white/40 text-white border font-semibold',
     },
     size: {
       /** Drobný štítek v hustých výpisech (11px text). */
       xs: 'px-3 py-1.25 text-eyebrow',
       /** Základní štítek u karet a řádků. */
-      sm: 'px-3 py-1.25 text-caption',
+      sm: 'px-3 py-1.25 text-xs',
       /** Volnější štítek v textových sekcích. */
-      md: 'px-4 py-1.75 text-caption',
+      md: 'px-4 py-1.75 text-xs',
       /** Štítek v rytmu pilulek (`PillLink size="sm"`) — kontakty, adresy. */
-      lg: 'px-4.5 py-2.25 text-meta',
+      lg: 'px-4.5 py-2.25 text-sm',
     },
     /**
      * Uppercase varianta (kategorie článku). Prostrkání je jemnější než

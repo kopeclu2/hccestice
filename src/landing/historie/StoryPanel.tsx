@@ -30,7 +30,7 @@ export function StoryPanel() {
           </span>
           {story.headlineEnd}
         </CardTitle>
-        <p className="relative mt-3 max-w-140 text-meta leading-[1.6] text-white/80 text-pretty">
+        <p className="relative mt-3 max-w-140 text-sm leading-[1.6] text-white/80 text-pretty">
           {story.text}
         </p>
       </div>

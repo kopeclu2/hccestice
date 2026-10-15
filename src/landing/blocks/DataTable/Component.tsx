@@ -79,7 +79,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
           </CardTitle>
         )}
         <div className="rounded-card bg-surface p-4.5 md:p-6.5 lg:p-8">
-          <Table className="text-body">
+          <Table className="text-sm md:text-base">
             {header && (
               <TableHeader>
                 <TableRow className="border-line-soft hover:bg-transparent">
@@ -99,7 +99,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
                   <TableRow
                     className={cn(
                       'border-line-soft hover:bg-tint-hover',
-                      highlighted && 'bg-tint font-extrabold hover:bg-tint',
+                      highlighted && 'bg-tint font-bold hover:bg-tint',
                     )}
                     key={rowIndex}
                   >
@@ -113,9 +113,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
               })}
             </TableBody>
             {block.caption && (
-              <TableCaption className="text-faint text-left text-caption">
-                {block.caption}
-              </TableCaption>
+              <TableCaption className="text-faint text-left text-xs">{block.caption}</TableCaption>
             )}
           </Table>
         </div>

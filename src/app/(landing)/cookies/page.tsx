@@ -31,7 +31,7 @@ export default async function CookiesPage() {
     <SubpageShell>
       <SectionShell spacing="header">
         <PageTitle size="sm">Ochrana osobních údajů a cookies</PageTitle>
-        <p className="mt-3 text-caption text-dim">Naposledy aktualizováno 10. 9. 2026</p>
+        <p className="mt-3 text-xs text-dim">Naposledy aktualizováno 10. 9. 2026</p>
       </SectionShell>
 
       <SectionShell spacing="content">
@@ -39,9 +39,8 @@ export default async function CookiesPage() {
           <h2>Kdo je správcem osobních údajů</h2>
           <p>
             Správcem osobních údajů je <strong>TJ Sokol Čestice, z. s.</strong>, provozovatel
-            hokejového klubu HC Čestice a tohoto webu. V otázkách ochrany osobních údajů nás
-            můžete kontaktovat na{' '}
-            <a href={`mailto:${site.email}`}>{site.email}</a>.
+            hokejového klubu HC Čestice a tohoto webu. V otázkách ochrany osobních údajů nás můžete
+            kontaktovat na <a href={`mailto:${site.email}`}>{site.email}</a>.
           </p>
 
           <h2>Jaké cookies web používá</h2>
@@ -60,8 +59,8 @@ export default async function CookiesPage() {
           <h3>Nezbytné cookies</h3>
           <p>
             Zajišťují základní funkčnost webu. Nelze je vypnout, protože bez nich web nefunguje
-            správně — právním základem je oprávněný zájem provozovatele na chodu webu
-            (čl. 6 odst. 1 písm. f GDPR), souhlas se pro ně nevyžaduje.
+            správně — právním základem je oprávněný zájem provozovatele na chodu webu (čl. 6 odst. 1
+            písm. f GDPR), souhlas se pro ně nevyžaduje.
           </p>
           <table>
             <thead>
@@ -95,10 +94,9 @@ export default async function CookiesPage() {
             <>
               <h3>Analytické cookies</h3>
               <p>
-                Používáme je jen s vaším souhlasem k anonymizovanému měření návštěvnosti
-                (Google Analytics 4), abychom věděli, které stránky lidi zajímají. Souhlas lze
-                kdykoli odvolat — data ze štítku pak přestanou odcházet a existující cookies se
-                smažou.
+                Používáme je jen s vaším souhlasem k anonymizovanému měření návštěvnosti (Google
+                Analytics 4), abychom věděli, které stránky lidi zajímají. Souhlas lze kdykoli
+                odvolat — data ze štítku pak přestanou odcházet a existující cookies se smažou.
               </p>
               <table>
                 <thead>
@@ -132,20 +130,20 @@ export default async function CookiesPage() {
           <h3>Kontaktní a objednávkový formulář</h3>
           <p>
             Údaje, které nám pošlete formulářem (jméno, e-mail, případně telefon a zpráva),
-            zpracováváme jen za účelem vyřízení vašeho dotazu nebo objednávky — právním základem
-            je jednání o smlouvě, případně náš oprávněný zájem na vyřízení dotazu
-            (čl. 6 odst. 1 písm. b a f GDPR). Zprávu doručujeme prostřednictvím e-mailové služby
-            (Resend, nebo SMTP dle konfigurace) a uchováváme ji jen po dobu nezbytnou k vyřízení
-            a případné dokumentaci komunikace.
+            zpracováváme jen za účelem vyřízení vašeho dotazu nebo objednávky — právním základem je
+            jednání o smlouvě, případně náš oprávněný zájem na vyřízení dotazu (čl. 6 odst. 1 písm.
+            b a f GDPR). Zprávu doručujeme prostřednictvím e-mailové služby (Resend, nebo SMTP dle
+            konfigurace) a uchováváme ji jen po dobu nezbytnou k vyřízení a případné dokumentaci
+            komunikace.
           </p>
 
           <h3>Monitoring chyb (Sentry)</h3>
           <p>
-            Pro včasné odhalení technických chyb webu používáme službu Sentry (Functional
-            Software, Inc., USA). Ve výchozím nastavení neodesílá IP adresy ani jiné osobní údaje
-            z požadavků — zaznamenává jen technické informace o chybě (typ, zprávu, kód).
-            Nejde o sledování návštěvníků, proto toto zpracování nevyžaduje souhlas; provádíme
-            ho na základě oprávněného zájmu na bezchybném chodu webu.
+            Pro včasné odhalení technických chyb webu používáme službu Sentry (Functional Software,
+            Inc., USA). Ve výchozím nastavení neodesílá IP adresy ani jiné osobní údaje z požadavků
+            — zaznamenává jen technické informace o chybě (typ, zprávu, kód). Nejde o sledování
+            návštěvníků, proto toto zpracování nevyžaduje souhlas; provádíme ho na základě
+            oprávněného zájmu na bezchybném chodu webu.
           </p>
 
           <h2>Vaše práva</h2>
@@ -157,12 +155,15 @@ export default async function CookiesPage() {
             <li>omezení zpracování,</li>
             <li>přenositelnost údajů,</li>
             <li>vznesení námitky proti zpracování založenému na oprávněném zájmu,</li>
-            <li>kdykoli odvolat souhlas s analytickými cookies, aniž je tím dotčena zákonnost zpracování před odvoláním.</li>
+            <li>
+              kdykoli odvolat souhlas s analytickými cookies, aniž je tím dotčena zákonnost
+              zpracování před odvoláním.
+            </li>
           </ul>
           <p>
-            Svá práva můžete uplatnit na <a href={`mailto:${site.email}`}>{site.email}</a>. Pokud
-            se domníváte, že vaše osobní údaje zpracováváme v rozporu s právními předpisy, máte
-            právo podat stížnost u Úřadu pro ochranu osobních údajů (uoou.cz).
+            Svá práva můžete uplatnit na <a href={`mailto:${site.email}`}>{site.email}</a>. Pokud se
+            domníváte, že vaše osobní údaje zpracováváme v rozporu s právními předpisy, máte právo
+            podat stížnost u Úřadu pro ochranu osobních údajů (uoou.cz).
           </p>
         </div>
       </SectionShell>

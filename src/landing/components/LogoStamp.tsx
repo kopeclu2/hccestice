@@ -39,7 +39,7 @@ export function LogoStamp({
     >
       <Image alt="HC Čestice" height={34} src="/logo-cestice.png" width={34} />
       <span className="leading-tight">
-        <span className="block text-meta font-extrabold tracking-tight">HC ČESTICE</span>
+        <span className="block text-sm font-bold tracking-tight">HC ČESTICE</span>
         <Eyebrow className="block" tone={glass ? 'white' : 'faint'}>
           TJ Sokol · VČHL
         </Eyebrow>

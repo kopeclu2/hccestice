@@ -66,12 +66,7 @@ export function ErrorMeta({
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
       <span className={cn('h-0.5 w-5.5 flex-none', tone === 'dark' ? 'bg-lime' : 'bg-club')} />
-      <span
-        className={cn(
-          'text-caption font-semibold',
-          tone === 'dark' ? 'text-white/50' : 'text-faint',
-        )}
-      >
+      <span className={cn('text-xs font-medium', tone === 'dark' ? 'text-white/50' : 'text-faint')}>
         {children}
       </span>
     </div>

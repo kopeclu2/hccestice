@@ -75,7 +75,7 @@ export function EmptyState({
       </CardTitle>
 
       {children && (
-        <p className="text-ink-soft mt-3 max-w-110 text-body leading-[1.55] text-pretty">
+        <p className="text-ink-soft mt-3 max-w-110 text-sm md:text-base leading-[1.55] text-pretty">
           {children}
         </p>
       )}

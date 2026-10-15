@@ -152,7 +152,7 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
           a bez zalomení ho `overflow-hidden` karty odřízne */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
         <Badge variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}>{fixture.kind}</Badge>
-        <span className="text-caption font-bold opacity-65">{fixture.stage}</span>
+        <span className="text-xs font-semibold opacity-65">{fixture.stage}</span>
         <div className="flex-1" />
         {fixture.isNext && (
           <Eyebrow className="flex items-center gap-1.75" tone="club">
@@ -170,12 +170,10 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
 
       <div className="mt-3 flex items-baseline gap-2.5">
         <Numeral size="md">{fixture.dateLabel}</Numeral>
-        <span className="text-meta font-bold opacity-70">{fixture.timeLabel}</span>
+        <span className="text-sm font-semibold opacity-70">{fixture.timeLabel}</span>
       </div>
 
-      {fixture.venue && (
-        <div className="mt-1 text-caption font-semibold opacity-65">{fixture.venue}</div>
-      )}
+      {fixture.venue && <div className="mt-1 text-xs font-medium opacity-65">{fixture.venue}</div>}
     </article>
   )
 }
@@ -206,7 +204,11 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
           )}
           key={fixture.id}
         >
-          <MatchWhen date={fixture.dateLabel} dateTime={fixture.startDate} time={fixture.timeLabel} />
+          <MatchWhen
+            date={fixture.dateLabel}
+            dateTime={fixture.startDate}
+            time={fixture.timeLabel}
+          />
 
           <div className="min-w-0">
             <MatchRowTitle away={fixture.awayName} home={fixture.homeName} href={fixture.href} />
@@ -214,16 +216,13 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
           </div>
 
           <div className="hidden min-w-0 lg:block">
-            <div className="text-ink-soft text-meta font-semibold text-pretty">
+            <div className="text-ink-soft text-sm font-medium text-pretty">
               {fixture.venue ?? '—'}
             </div>
-            <div className="text-faint mt-0.5 text-caption font-semibold">{fixture.stage}</div>
+            <div className="text-faint mt-0.5 text-xs font-medium">{fixture.stage}</div>
           </div>
 
-          <Badge
-            className="justify-self-end"
-            variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}
-          >
+          <Badge className="justify-self-end" variant={fixture.kind === 'Doma' ? 'lime' : 'chip'}>
             {fixture.kind}
           </Badge>
         </li>
@@ -264,7 +263,7 @@ function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
           <Numeral className="text-white" size="2xl">
             {fixture.dateLabel}
           </Numeral>
-          <span className="text-numeral-sm font-extrabold text-white/70">{fixture.timeLabel}</span>
+          <span className="text-2xl font-extrabold text-white/70">{fixture.timeLabel}</span>
         </div>
       }
       radius="section"

@@ -111,15 +111,15 @@ export function ResultsList({
                   </Badge>
                   <Numeral className="min-w-14 flex-none text-right" size="xs">
                     {row.score}
-                    {row.suffix && <span className="text-faint text-meta"> {row.suffix}</span>}
+                    {row.suffix && <span className="text-faint text-sm"> {row.suffix}</span>}
                   </Numeral>
                 </div>
 
                 {/* Střelci přes celou šířku karty; od `md` odsazení srovnané
                     se sloupcem názvu (96 px datum + mezera 16 px). */}
                 {showScorers && row.scorers && (
-                  <p className="text-faint col-span-full text-caption font-semibold text-pretty md:col-start-2">
-                    <span className="text-ink font-bold">Střelci:</span> {row.scorers}
+                  <p className="text-faint col-span-full text-xs font-medium text-pretty md:col-start-2">
+                    <span className="text-ink font-semibold">Střelci:</span> {row.scorers}
                   </p>
                 )}
               </li>

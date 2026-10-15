@@ -507,6 +507,51 @@ variant je na `/vzory/prazdne-stavy`.
 - `tests/e2e/frontend.e2e.spec.ts` je nedotčená Payload šablona a padá už
   dnes — regresní síť pro navigaci neexistuje.
 
+# Typografie — standardní škála Tailwindu
+
+Od 15. 10. 2026 jede celý web na **výchozích velikostech písma Tailwindu**
+(`text-xs` 12, `text-sm` 14, `text-base` 16, `text-lg` 18, `text-xl` 20,
+`text-2xl` 24, `text-3xl` 30, `text-4xl` 36, `text-5xl` 48) s responzivními
+prefixy, ne na vlastních px tokenech. Rozhodnutí uživatele: tokeny z
+handoffu (13/15/17/21/26 px…) se k sobě nehodily a mezi stránkami se
+míchaly.
+
+Převod udělal skript jedna ku jedné (nejbližší krok):
+
+| dřív | teď |
+|---|---|
+| `text-caption` 12 | `text-xs` |
+| `text-meta` 13 | `text-sm` |
+| `text-body` 15 | `text-sm md:text-base` |
+| `text-lead` 17 | `text-lg` |
+| `text-card-title` 21 | `text-xl` |
+| `text-panel-title` 26 / `-lg` 30 | `text-2xl` / `text-3xl` |
+| `text-section-title` 28 / `-md` 34 / `-lg` 38 | `text-3xl` / `text-4xl` / `text-4xl` |
+| `text-claim` 32 / `-lg` 52 | `text-3xl` / `text-5xl` |
+| `text-numeral-xs…2xl` 19–48 | `text-xl` … `text-5xl` |
+
+- **Tučnost** běžného textu je o stupeň lehčí než v handoffu (rozhodnutí
+  uživatele 15. 10. 2026 — web působil těžce a široce): text do
+  `text-lg` má `font-bold` / `font-semibold` / `font-medium` místo
+  `extrabold` / `bold` / `semibold`. `font-extrabold` patří nadpisům
+  (`Heading.tsx`), skóre a číslům (`Numeral.tsx`) a jménům týmů v tabuli;
+  tlačítka (`pill.ts`) mají `font-bold`.
+- Výjimky, které zůstávají tokeny: `text-eyebrow` (11px mikro-label
+  verzálkami, Tailwind krok nemá) a `text-watermark-*` (dekorativní
+  obrysové nápisy 110–260 px).
+- Staré tokeny hlídá pravidlo `no-legacy-font-token` v
+  `scripts/check-tokens.mjs`. V `globals.css` jsou pořád definované, protože
+  je ještě používá rozpracovaná `LandingFooter.tsx` (výjimka v pravidle);
+  po jejím převodu je jde smazat i z `@theme` a z registru twMerge
+  (`src/utilities/ui.ts`).
+- Výchozí velikosti Tailwindu nesou i `line-height`. Kde na řádkování
+  závisí zarovnání (časová osa zápasu: `h-5 md:h-6` = řádek
+  `text-sm` / `md:text-base`), musí se měnit spolu.
+- `cn('text-sm md:text-base', className)` s jinou velikostí v `className`
+  ponechá `md:text-base` (twMerge maže jen stejnou variantu). Komponenta,
+  která velikost přebírá z props, má mít základní velikost bez
+  responzivního prefixu, nebo ho přebít i v props.
+
 # Responzivita — tři stupně, ne dva
 
 Handoffy v `design_*/` jsou kreslené pro **1440px**. `md:` (768px) proto
@@ -962,13 +1007,15 @@ s `report = post.id`.
   migrace `20261015_085423_match_header_variant` (aditivní, default
   `classic`), **před buildem**.
 
-- **Typografie detailu** (15. 10. 2026) má čtyři role, které od `lg`
-  o stupeň rostou: nadpis panelu 21 → 26 px (`md:`), hlavní text
-  (jména, hodnoty, perex) `text-body` → `text-lead`, vedlejší text (časy,
-  asistence, popisky, čísla tabulek) `text-caption` → `text-meta`,
-  `Eyebrow` 11 px beze změny. Tabulka rolí je v komentáři `MatchPanel`;
-  nový blok detailu ji má dodržet. Varianty hlavičky A–D mají vlastní
-  typografii a tahle škála se jich netýká.
+- **Typografie detailu** jede na **standardní škále Tailwindu**, ne na
+  vlastních px tokenech (rozhodnutí uživatele 15. 10. 2026 — tokeny
+  15/17/13 px se k sobě nehodily a desktop působil přerostle): nadpis
+  panelu `text-xl md:text-2xl`, hlavní text (jména, hodnoty, perex)
+  `text-sm md:text-base`, vedlejší text (časy, asistence, popisky)
+  `text-xs`, týmy v hlavičce `text-base md:text-xl lg:text-2xl`. Tabulka
+  rolí je v komentáři `MatchPanel`; nový blok detailu ji má dodržet.
+  `Eyebrow` a `Badge` mají vlastní velikosti. Varianty hlavičky A–D mají
+  vlastní typografii a tahle škála se jich netýká.
 
 Blok bez dat se nevykreslí. Odehraný zápas bez branek, trestů i statistiky
 ukáže pod hlavičkou poznámku „Podrobný zápis z utkání není k dispozici"

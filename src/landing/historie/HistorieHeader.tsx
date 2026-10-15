@@ -55,7 +55,7 @@ export function HistorieHeader() {
             </SectionTitle>
             <div
               className={cn(
-                'mt-1 text-caption font-semibold',
+                'mt-1 text-xs font-medium',
                 stat.tone === 'dark' ? 'text-white/60' : 'text-faint',
               )}
             >

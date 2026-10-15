@@ -29,7 +29,7 @@ export async function ProductCardBlockComponent({ block }: { block: ProductCardB
           )}
           <ProductTile ctaLabel="Objednat e-mailem" email={site.email} product={product} />
           {!product.available && (
-            <p className="text-faint mt-3 text-center text-meta font-semibold">
+            <p className="text-faint mt-3 text-center text-sm font-medium">
               Momentálně mimo nabídku.
             </p>
           )}

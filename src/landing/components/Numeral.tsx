@@ -18,18 +18,18 @@ import { cn } from '@/utilities/ui'
 const numeralVariants = cva('font-extrabold tabular-nums', {
   variants: {
     size: {
-      /** Skóre v řádku výsledků — 19px. */
-      xs: 'text-numeral-xs tracking-[-0.02em]',
-      /** Den v měsíci u mini karty — 22px. */
-      sm: 'text-numeral-sm leading-none tracking-[-0.02em]',
-      /** Datum v rozpisu zápasů — 26px. */
-      md: 'text-numeral-md tracking-[-0.03em]',
+      /** Skóre v řádku výsledků — 20px. */
+      xs: 'text-xl tracking-[-0.02em]',
+      /** Den v měsíci u mini karty — 24px. */
+      sm: 'text-2xl leading-none tracking-[-0.02em]',
+      /** Datum v rozpisu zápasů — 24px. */
+      md: 'text-2xl tracking-[-0.03em]',
       /** Číslo dresu, monogram sponzora — 30px. */
-      lg: 'text-numeral-lg tracking-[-0.03em]',
+      lg: 'text-3xl tracking-[-0.03em]',
       /** Hodnota ve statistické kartě — 36px. */
-      xl: 'text-numeral-xl leading-tight tracking-[-0.03em]',
+      xl: 'text-4xl leading-tight tracking-[-0.03em]',
       /** Skóre karty zápasu, velká statistika sekce — 48px. */
-      '2xl': 'text-numeral-2xl leading-none tracking-[-0.04em]',
+      '2xl': 'text-5xl leading-none tracking-[-0.04em]',
       /** Skóre v hero zápasu — plynulé, jediný fluidní případ na webu. */
       score: 'text-[clamp(3.5rem,7vw,6.75rem)] leading-none tracking-[-0.04em]',
     },

@@ -113,10 +113,7 @@ export function ContactForm({
             Díky za zprávu!
           </CardTitle>
           <p
-            className={cn(
-              'relative mt-2 text-meta',
-              tone === 'dark' ? 'text-white/70' : 'text-dim',
-            )}
+            className={cn('relative mt-2 text-sm', tone === 'dark' ? 'text-white/70' : 'text-dim')}
           >
             Ozveme se co nejdřív — obvykle do pár dní. Když to spěchá, zavolejte komukoli ze sekce
             Lidé v klubu.
@@ -172,7 +169,7 @@ export function ContactForm({
           </div>
 
           <fieldset className="mt-4">
-            <legend className={cn('mb-1.5 text-caption font-semibold', labelClass)}>
+            <legend className={cn('mb-1.5 text-xs font-medium', labelClass)}>
               Čeho se to týká
             </legend>
             <div className="flex flex-wrap gap-2">
@@ -214,7 +211,7 @@ export function ContactForm({
           </Field>
 
           {serverError && (
-            <p className={cn('mt-3 text-meta font-semibold', errorClass)} role="alert">
+            <p className={cn('mt-3 text-sm font-medium', errorClass)} role="alert">
               {serverError}
             </p>
           )}
@@ -263,14 +260,14 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <Label className={cn('mb-1.5 text-caption font-semibold', labelClasses[tone])} htmlFor={id}>
+      <Label className={cn('mb-1.5 text-xs font-medium', labelClasses[tone])} htmlFor={id}>
         {label} <span aria-hidden="true">*</span>
       </Label>
       {children}
       {error && (
         <p
           className={cn(
-            'mt-1.5 text-caption font-semibold',
+            'mt-1.5 text-xs font-medium',
             tone === 'dark' ? 'text-danger-soft' : 'text-danger',
           )}
           id={`${id}-error`}

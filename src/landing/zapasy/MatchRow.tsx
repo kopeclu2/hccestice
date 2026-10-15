@@ -39,10 +39,8 @@ export function MatchWhen({
       className="col-span-2 flex items-baseline gap-2 tabular-nums md:col-span-1 md:block"
       dateTime={dateTime}
     >
-      <span className="block text-meta font-extrabold">{date}</span>
-      {time && (
-        <span className="text-faint block text-caption font-bold md:mt-0.5">{time}</span>
-      )}
+      <span className="block text-sm font-bold">{date}</span>
+      {time && <span className="text-faint block text-xs font-semibold md:mt-0.5">{time}</span>}
     </time>
   )
 }
@@ -62,7 +60,7 @@ export function MatchRowTitle({
   href: string | null
 }) {
   return (
-    <div className="text-body leading-snug font-bold tracking-[-0.01em] text-pretty">
+    <div className="text-sm md:text-base leading-snug font-semibold tracking-[-0.01em] text-pretty">
       <StretchedLink href={href}>
         <TeamPair away={away} home={home} layout="stack" />
       </StretchedLink>

@@ -56,9 +56,9 @@ export const pillVariants = cva(
        */
       size: {
         /** Kompaktní pilulka do hustých výpisů — 36px. */
-        xs: 'h-9 gap-2 px-3.5 text-meta [&_svg]:size-3.5',
+        xs: 'h-9 gap-2 px-3.5 text-sm [&_svg]:size-3.5',
         /** Navigace, filtry, proklik na plnou stránku — 44px mobil, 40px desktop. */
-        sm: 'h-11 px-4.5 text-meta md:h-10 [&_svg]:size-3.5',
+        sm: 'h-11 px-4 text-sm md:h-10 xl:px-3.5 [&_svg]:size-3.5',
         /** CTA sekcí — 44px. */
         md: 'h-11 px-6 text-sm [&_svg]:size-3.5',
         /** Hlavní CTA (hero, odeslání formuláře) — 50px. */

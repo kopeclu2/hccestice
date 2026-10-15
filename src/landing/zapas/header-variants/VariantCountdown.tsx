@@ -62,8 +62,8 @@ export function VariantCountdown({
     return (
       <p
         className={cn(
-          'flex items-center gap-2 font-bold text-balance',
-          look === 'tiles' ? 'text-lead text-white' : 'text-ink text-meta',
+          'flex items-center gap-2 font-semibold text-balance',
+          look === 'tiles' ? 'text-lg text-white' : 'text-ink text-sm',
           className,
         )}
         role="status"
@@ -77,7 +77,7 @@ export function VariantCountdown({
   if (look === 'inline') {
     const [days, ...clock] = units
     return (
-      <p className={cn('font-mono text-meta font-semibold tabular-nums', className)}>
+      <p className={cn('font-mono text-sm font-medium tabular-nums', className)}>
         <span className="sr-only">Do začátku zbývá </span>
         {days!.value}
         <span className="text-faint"> d </span>
@@ -94,8 +94,8 @@ export function VariantCountdown({
             className="flex min-w-0 flex-1 flex-col px-2.5 first:pl-0 last:pr-0 md:px-5"
             key={unit.label}
           >
-            <dt className="text-faint order-2 text-caption font-semibold">{unit.label}</dt>
-            <dd className="text-ink text-numeral-lg leading-none font-extrabold tracking-[-0.03em] md:text-numeral-2xl">
+            <dt className="text-faint order-2 text-xs font-medium">{unit.label}</dt>
+            <dd className="text-ink text-3xl leading-none font-extrabold tracking-[-0.03em] md:text-5xl">
               {unit.value}
             </dd>
           </div>
@@ -111,12 +111,12 @@ export function VariantCountdown({
           className="border-white/10 flex flex-col items-center rounded-field border bg-pine-deep/70 px-1 py-2 md:py-3"
           key={unit.label}
         >
-          <dt className="order-2 mt-1 text-eyebrow font-bold tracking-[0.12em] text-white/50 uppercase">
+          <dt className="order-2 mt-1 text-eyebrow font-semibold tracking-[0.12em] text-white/50 uppercase">
             {unit.label}
           </dt>
           <dd
             className={cn(
-              'font-mono text-numeral-sm leading-none font-bold md:text-numeral-lg',
+              'font-mono text-2xl leading-none font-bold md:text-3xl',
               index === units.length - 1 ? 'text-lime' : 'text-white',
             )}
           >

@@ -115,7 +115,7 @@ export function ArticleCard({
           <Badge size="xs" variant="lime">
             {card.tag}
           </Badge>
-          <div className="text-faint text-caption font-bold">{card.dateLabel}</div>
+          <div className="text-faint text-xs font-semibold">{card.dateLabel}</div>
         </div>
         {/* `min-h-[2lh]` drží u varianty s náhledem dva řádky i pro krátký
             titulek: bez toho začíná úryvek na každé kartě v jiné výšce.
@@ -134,7 +134,7 @@ export function ArticleCard({
         {(hasMedia || card.excerpt) && (
           <p
             className={cn(
-              'text-faint mt-2.5 text-body leading-[1.5] text-pretty',
+              'text-faint mt-2.5 text-sm md:text-base leading-[1.5] text-pretty',
               /* Featured karta stojí ve svém řádku sama, takže se nemá k čemu
                  zarovnávat — `min-h` by pod krátkým perexem udělalo prázdno. */
               featured

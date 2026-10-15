@@ -71,14 +71,14 @@ function HistoryView({ content }: { content: HistoryContent }) {
           <PillLink href={PHOTOS_HREF} variant="outline" withArrow>
             {content.photosCtaLabel}
           </PillLink>
-          <span className="text-faint text-meta font-semibold">{content.metaLine}</span>
+          <span className="text-faint text-sm font-medium">{content.metaLine}</span>
         </div>
       </Reveal>
 
       <div className="mt-14 grid grid-cols-1 items-center gap-[clamp(1.5rem,4vw,4rem)] md:grid-cols-[1.15fr_0.85fr]">
         <Reveal>
           {/* perex i doplňkový odstavec drží stejnou škálu jako hlavičky podstránek */}
-          <p className="text-ink-soft text-lead leading-[1.55] text-pretty">{content.lead}</p>
+          <p className="text-ink-soft text-lg leading-[1.55] text-pretty">{content.lead}</p>
           <p className="text-dim mt-4 leading-relaxed text-pretty">{content.text}</p>
 
           <div className="mt-6.5 flex flex-wrap items-center gap-2">
@@ -104,7 +104,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
                 {content.quoteEnd}
               </CardTitle>
             </blockquote>
-            <figcaption className="text-faint border-contrast mt-5 max-w-80 border-t-2 pt-4 text-meta font-semibold">
+            <figcaption className="text-faint border-contrast mt-5 max-w-80 border-t-2 pt-4 text-sm font-medium">
               {content.quoteSource}
             </figcaption>
           </figure>

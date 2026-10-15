@@ -43,12 +43,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
 
   return (
     <SectionShell>
-      <div
-        className={cn(
-          'grid grid-cols-1 gap-5',
-          CARD_COLUMNS[columns] ?? 'md:grid-cols-2',
-        )}
-      >
+      <div className={cn('grid grid-cols-1 gap-5', CARD_COLUMNS[columns] ?? 'md:grid-cols-2')}>
         {cards.map((card, index) => {
           const tile = (
             <PhotoTile
@@ -63,7 +58,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
                 </TileBadge>
               )}
               {card.caption && (
-                <div className="absolute inset-x-4 bottom-4 text-body leading-normal font-semibold text-white">
+                <div className="absolute inset-x-4 bottom-4 text-sm md:text-base leading-normal font-medium text-white">
                   {card.caption}
                 </div>
               )}

@@ -62,16 +62,14 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
             {/* Kicker je od zformátované soutěže delší („… · VČHL 2. ročník ·
                 Základní část"), tečka proto drží první řádek (`DotEyebrow`). */}
             <DotEyebrow className="min-w-0 flex-1">{scoreboard.kicker}</DotEyebrow>
-            <span className="hidden flex-none text-caption font-semibold text-white/60 md:block">
+            <span className="hidden flex-none text-xs font-medium text-white/60 md:block">
               {scoreboard.metaLine}
             </span>
           </div>
 
           <MatchScoreboard scoreboard={scoreboard} />
 
-          {scoreboard.goals.length > 0 && (
-            <GoalTimeline goals={scoreboard.goals} />
-          )}
+          {scoreboard.goals.length > 0 && <GoalTimeline goals={scoreboard.goals} />}
 
           {/* Detail zápasu je jediné místo s tresty a statistikou; timeline
               tu je jen výřez. Odkaz stojí pod ním, ne v hlavičce panelu —
@@ -140,7 +138,7 @@ function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
             className="grid grid-cols-[3rem_1fr_auto] items-baseline gap-x-3 py-2.5 md:grid-cols-[3.5rem_1fr_auto] md:gap-x-4"
             key={index}
           >
-            <span className="text-caption font-bold text-white/60 tabular-nums">{goal.time}</span>
+            <span className="text-xs font-semibold text-white/60 tabular-nums">{goal.time}</span>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span
@@ -152,10 +150,7 @@ function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
                 />
                 <span className="sr-only">{goal.ours ? 'Gól Čestic: ' : 'Gól soupeře: '}</span>
                 <span
-                  className={cn(
-                    'text-meta font-extrabold',
-                    goal.ours ? 'text-white' : 'text-white/65',
-                  )}
+                  className={cn('text-sm font-bold', goal.ours ? 'text-white' : 'text-white/65')}
                 >
                   {goal.scorer}
                 </span>
@@ -171,14 +166,14 @@ function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
                 )}
               </div>
               {goal.assists.length > 0 && (
-                <div className="mt-0.5 pl-4 text-caption font-semibold text-white/55 text-pretty">
+                <div className="mt-0.5 pl-4 text-xs font-medium text-white/55 text-pretty">
                   <span className="sr-only">Asistence: </span>
                   {goal.assists.join(', ')}
                 </div>
               )}
             </div>
             {goal.score && (
-              <span className="text-meta font-extrabold text-white/80 tabular-nums">
+              <span className="text-sm font-bold text-white/80 tabular-nums">
                 <span className="sr-only">Stav </span>
                 {goal.score}
               </span>

@@ -90,7 +90,7 @@ function StatsView({ stats }: { stats: StatsContent }) {
                 <Numeral className={cn(!dark && stat.accent && 'text-club-dark')} size="2xl">
                   {stat.value}
                 </Numeral>
-                <div className={cn('mt-1 text-meta', dark ? 'text-white/60' : 'text-faint')}>
+                <div className={cn('mt-1 text-sm', dark ? 'text-white/60' : 'text-faint')}>
                   {stat.label}
                 </div>
               </div>

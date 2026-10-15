@@ -131,7 +131,7 @@ function Board({
             {match.awayScore}
           </LedBox>
           {match.suffix && (
-            <span className="bg-lime text-ink z-1 col-span-2 col-start-2 row-start-1 translate-y-1/2 self-end justify-self-center rounded-full px-2 py-0.5 font-mono text-eyebrow font-bold tracking-[0.12em] uppercase md:px-2.5 md:text-caption">
+            <span className="bg-lime text-ink z-1 col-span-2 col-start-2 row-start-1 translate-y-1/2 self-end justify-self-center rounded-full px-2 py-0.5 font-mono text-eyebrow font-semibold tracking-[0.12em] uppercase md:px-2.5 md:text-xs">
               {match.suffix}
             </span>
           )}
@@ -174,7 +174,7 @@ function TeamCrest({
     <div className={cn('row-start-1 rounded-full', className)}>
       <Crest
         className={cn(
-          'size-13 text-lead min-[25rem]:size-16 md:size-22 md:p-1.5 lg:p-2 md:text-numeral-lg lg:size-28 lg:text-numeral-xl',
+          'size-13 text-lg min-[25rem]:size-16 md:size-22 md:p-1.5 lg:p-2 md:text-3xl lg:size-28 lg:text-4xl',
           lit && 'ring-lime ring-offset-contrast ring-2 ring-offset-3 md:ring-offset-4',
         )}
         logo={logo}
@@ -188,10 +188,10 @@ function TeamCrest({
 function TeamName({ className, name, side }: { className?: string; name: string; side: string }) {
   return (
     <div className={cn('row-start-2 min-w-0 self-start md:mx-[clamp(0rem,1vw,1rem)]', className)}>
-      <div className="text-meta leading-tight font-extrabold tracking-[0.02em] text-balance break-words uppercase md:text-lead lg:text-card-title">
+      <div className="text-sm leading-tight font-extrabold tracking-[0.02em] text-balance break-words uppercase md:text-lg lg:text-xl">
         {name}
       </div>
-      <div className="mt-1 text-eyebrow font-bold tracking-[0.16em] text-white/45 uppercase">
+      <div className="mt-1 text-eyebrow font-semibold tracking-[0.16em] text-white/45 uppercase">
         {side}
       </div>
     </div>
@@ -244,21 +244,21 @@ function PeriodTable({
 
   return (
     <div className="mx-auto mt-9 max-w-120 md:mt-12">
-      <table className="w-full table-fixed border-collapse font-mono text-meta tabular-nums md:text-body">
+      <table className="w-full table-fixed border-collapse font-mono text-sm tabular-nums md:text-base">
         <caption className="sr-only">Skóre po třetinách</caption>
         <thead>
           <tr className="text-eyebrow tracking-[0.12em] text-white/45 uppercase">
-            <th className="w-[26%] pb-2 text-left font-bold" scope="col">
+            <th className="w-[26%] pb-2 text-left font-semibold" scope="col">
               <span className="sr-only">Tým</span>
             </th>
             {columns.map((column) => (
-              <th className="pb-2 font-bold" key={column.label} scope="col">
+              <th className="pb-2 font-semibold" key={column.label} scope="col">
                 <abbr className="no-underline" title={column.title}>
                   {column.label}
                 </abbr>
               </th>
             ))}
-            <th className="text-lime pb-2 font-bold" scope="col">
+            <th className="text-lime pb-2 font-semibold" scope="col">
               <abbr className="no-underline" title="Celkem">
                 Σ
               </abbr>
@@ -268,7 +268,7 @@ function PeriodTable({
         <tbody>
           {rows.map((row) => (
             <tr className="border-white/10 border-t" key={row.side}>
-              <th className="py-2.5 text-left font-bold text-white md:py-3" scope="row">
+              <th className="py-2.5 text-left font-semibold text-white md:py-3" scope="row">
                 <span aria-hidden>{teamCode(row.name)}</span>
                 <span className="sr-only">{row.name}</span>
               </th>
@@ -279,7 +279,7 @@ function PeriodTable({
               ))}
               <td
                 className={cn(
-                  'py-2.5 text-center font-bold md:py-3',
+                  'py-2.5 text-center font-semibold md:py-3',
                   winner === row.side ? 'text-lime' : 'text-white',
                 )}
               >
@@ -316,7 +316,7 @@ function Facts({ match, scheduled }: { match: MatchDetail; scheduled: boolean })
               <Badge size="sm" variant={outcome.variant}>
                 {outcome.label}
               </Badge>
-              {note && <span className="text-meta font-semibold text-white/60">{note}</span>}
+              {note && <span className="text-sm font-medium text-white/60">{note}</span>}
             </span>
           </Fact>
         )
@@ -339,7 +339,9 @@ function Fact({
       <dt>
         <Eyebrow tone="white">{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-body font-bold text-white [overflow-wrap:anywhere]">{children}</dd>
+      <dd className="mt-1 text-sm md:text-base font-semibold text-white [overflow-wrap:anywhere]">
+        {children}
+      </dd>
     </div>
   )
 }

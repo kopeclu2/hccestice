@@ -55,7 +55,7 @@ export function Pagination({
         compact ? 'mt-4' : 'mt-11 border-t border-line-mid pt-7',
       )}
     >
-      <span className="text-faint text-meta font-semibold">
+      <span className="text-faint text-sm font-medium">
         Strana {page} z {totalPages}
       </span>
       <div className="hidden flex-1 sm:block" />
@@ -86,7 +86,7 @@ export function Pagination({
 
         {(compact ? [] : pageItems(page, totalPages)).map((item, index) =>
           item === '…' ? (
-            <span className="text-faint px-1 text-meta font-bold" key={`gap-${index}`}>
+            <span className="text-faint px-1 text-sm font-semibold" key={`gap-${index}`}>
               …
             </span>
           ) : item === page ? (

@@ -62,8 +62,8 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
     >
       {activeSeasonLabel ? (
         <>
-          Fotogalerie ze sezóny <strong className="font-bold">{activeSeasonLabel}</strong> se teprve
-          plní. Máte fotky ze zápasů? Pošlete nám je, rádi je zveřejníme.
+          Fotogalerie ze sezóny <strong className="font-semibold">{activeSeasonLabel}</strong> se
+          teprve plní. Máte fotky ze zápasů? Pošlete nám je, rádi je zveřejníme.
         </>
       ) : (
         <>
@@ -106,7 +106,7 @@ function GalleryCardTile({ card }: { card: GalleryCard }) {
       </div>
       {/* flex-1 + mt-auto v CardCta: odkaz drží u spodní hrany i u kratších titulků */}
       <div className="flex flex-1 flex-col px-2.5 pt-4">
-        <div className="text-faint text-caption font-bold">{card.dateLabel}</div>
+        <div className="text-faint text-xs font-semibold">{card.dateLabel}</div>
         <CardTitle className="mt-2 line-clamp-3" size="sm">
           {card.title}
         </CardTitle>

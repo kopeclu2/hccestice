@@ -77,7 +77,8 @@ export function StandingsPanel({
   const rows = limit ? trimRows(standings.rows, limit) : standings.rows
   // Výřez na home page (`limit`) zůstává ve čtyřech sloupcích; rozšíření
   // se kreslí, jen když ho mají všechny řádky (ručně vedené sezóny nemají).
-  const extended = !limit && rows.length > 0 && rows.every((row) => row.wins != null && row.goalsFor != null)
+  const extended =
+    !limit && rows.length > 0 && rows.every((row) => row.wins != null && row.goalsFor != null)
   const gridCols = extended ? GRID_EXTENDED : GRID_BASE
 
   return (
@@ -123,11 +124,21 @@ export function StandingsPanel({
               <span className="text-center">Z</span>
               {extended && (
                 <>
-                  <span className={EXTRA} title="Výhry">V</span>
-                  <span className={EXTRA} title="Výhry v prodloužení / na nájezdy">VP</span>
-                  <span className={EXTRA} title="Prohry v prodloužení / na nájezdy">PP</span>
-                  <span className={EXTRA} title="Prohry">P</span>
-                  <span className={EXTRA} title="Skóre">Skóre</span>
+                  <span className={EXTRA} title="Výhry">
+                    V
+                  </span>
+                  <span className={EXTRA} title="Výhry v prodloužení / na nájezdy">
+                    VP
+                  </span>
+                  <span className={EXTRA} title="Prohry v prodloužení / na nájezdy">
+                    PP
+                  </span>
+                  <span className={EXTRA} title="Prohry">
+                    P
+                  </span>
+                  <span className={EXTRA} title="Skóre">
+                    Skóre
+                  </span>
                 </>
               )}
               <span className="text-right">B</span>
@@ -147,7 +158,7 @@ export function StandingsPanel({
               >
                 <span
                   className={cn(
-                    'text-meta font-extrabold tabular-nums',
+                    'text-sm font-bold tabular-nums',
                     ours ? 'text-club' : 'text-faint-dark',
                   )}
                 >
@@ -158,37 +169,35 @@ export function StandingsPanel({
                     // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
                     // neříkalo, kdo to je. Delší název udělá řádek o kus
                     // vyšší, čísla zůstanou na středu (`items-center`).
-                    'min-w-0 text-meta leading-snug tracking-[-0.01em] text-pretty break-words',
-                    ours ? 'font-extrabold' : 'font-semibold',
+                    'min-w-0 text-sm leading-snug tracking-[-0.01em] text-pretty break-words',
+                    ours ? 'font-bold' : 'font-medium',
                   )}
                 >
                   {row.team}
                 </span>
-                <span className="text-faint text-center text-meta font-semibold tabular-nums">
+                <span className="text-faint text-center text-sm font-medium tabular-nums">
                   {row.games}
                 </span>
                 {extended && (
                   <>
-                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
                       {row.wins ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
                       {row.otWins ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
                       {row.otLosses ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
                       {row.losses ?? 0}
                     </span>
-                    <span className={cn(EXTRA, 'text-faint text-meta font-semibold tabular-nums')}>
+                    <span className={cn(EXTRA, 'text-faint text-sm font-medium tabular-nums')}>
                       {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
                     </span>
                   </>
                 )}
-                <span className="text-right text-meta font-extrabold tabular-nums">
-                  {row.points}
-                </span>
+                <span className="text-right text-sm font-bold tabular-nums">{row.points}</span>
               </div>
             )
           })}

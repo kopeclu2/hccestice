@@ -42,9 +42,9 @@ export default async function WidgetCatalogPage() {
           Všech {total} widgetů, které lze v adminu vložit na stránku (Stránky → Content → Add
           Layout). U každého: co dělá, odkud bere obsah, jak ho nastavit — a živá ukázka.
         </p>
-        <p className="text-faint mx-auto mt-3 max-w-150 text-meta">
+        <p className="text-faint mx-auto mt-3 max-w-150 text-sm">
           Sekce homepage (Hero, Aktuality, Sezóna…) tu nejsou — ty vidíš na{' '}
-          <Link className="text-club font-bold" href="/">
+          <Link className="text-club font-semibold" href="/">
             úvodní stránce
           </Link>
           .
@@ -56,7 +56,7 @@ export default async function WidgetCatalogPage() {
           <div className="border-line border-b pb-6">
             <SectionTitle>
               {category.title}
-              <span className="text-faint ml-3 text-lead font-semibold">
+              <span className="text-faint ml-3 text-lg font-medium">
                 {category.widgets.length}×
               </span>
             </SectionTitle>
@@ -86,11 +86,11 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
           </Badge>
         </div>
         <p className="mt-2 max-w-200 leading-relaxed text-white/85">{widget.description}</p>
-        <dl className="mt-5 grid gap-4 text-meta md:grid-cols-2">
+        <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2">
           <div className="flex gap-3">
             <Database className="text-lime mt-0.5 size-4.5 flex-none" strokeWidth={2.25} />
             <div>
-              <dt className="text-eyebrow font-extrabold tracking-[0.16em] text-white/60 uppercase">
+              <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
                 Odkud bere obsah
               </dt>
               <dd className="mt-0.5 text-white/85">{widget.dataSource}</dd>
@@ -99,7 +99,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
           <div className="flex gap-3">
             <MousePointerClick className="text-lime mt-0.5 size-4.5 flex-none" strokeWidth={2.25} />
             <div>
-              <dt className="text-eyebrow font-extrabold tracking-[0.16em] text-white/60 uppercase">
+              <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
                 Jak použít v adminu
               </dt>
               <dd className="mt-0.5 text-white/85">{widget.usage}</dd>

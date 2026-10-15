@@ -43,13 +43,13 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
         <TitleParts
           accent="lime-box"
           highlight={article.titleHighlight}
-          highlightClassName="font-extrabold px-3"
+          highlightClassName="font-bold px-3"
           title={article.title}
         />
       </PageTitle>
 
       {article.excerpt && (
-        <p className="text-ink-soft mt-6.5 max-w-160 text-lead leading-relaxed text-pretty">
+        <p className="text-ink-soft mt-6.5 max-w-160 text-lg leading-relaxed text-pretty">
           {article.excerpt}
         </p>
       )}

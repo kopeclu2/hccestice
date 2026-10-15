@@ -57,14 +57,14 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           <table className="mt-3 w-full border-collapse tabular-nums md:mt-4">
             <caption className="sr-only">{played ? 'Skóre po třetinách' : 'Týmy zápasu'}</caption>
             <thead>
-              <tr className="text-faint text-eyebrow font-bold tracking-[0.08em] uppercase">
-                <th className="pb-1.5 text-left font-bold" scope="col">
+              <tr className="text-faint text-eyebrow font-semibold tracking-[0.08em] uppercase">
+                <th className="pb-1.5 text-left font-semibold" scope="col">
                   <span className="sr-only">Tým</span>
                 </th>
                 {columns.map((column) => (
                   <th
                     className={cn(
-                      'w-6 pb-1.5 text-center font-bold max-[22.5rem]:hidden md:w-9',
+                      'w-6 pb-1.5 text-center font-semibold max-[22.5rem]:hidden md:w-9',
                       (column.label === 'SN' || column.label === 'P') && 'text-club',
                     )}
                     key={column.label}
@@ -75,7 +75,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </abbr>
                   </th>
                 ))}
-                <th className="w-10 pb-1.5 text-right font-bold md:w-14" scope="col">
+                <th className="w-10 pb-1.5 text-right font-semibold md:w-14" scope="col">
                   {played ? (
                     <abbr className="no-underline" title="Celkem">
                       Σ
@@ -95,7 +95,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     <th className="py-2 pr-2 text-left md:py-2.5" scope="row">
                       <span className="flex items-center gap-2.5 md:gap-3">
                         <Crest
-                          className="size-7 text-caption md:size-9 md:text-meta"
+                          className="size-7 text-xs md:size-9 md:text-sm"
                           logo={row.logo}
                           name={row.name}
                           sizes="36px"
@@ -103,14 +103,14 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                         />
                         <span
                           className={cn(
-                            'min-w-0 text-meta leading-tight text-balance break-words md:text-lead',
-                            lost ? 'text-ink-soft font-semibold' : 'font-extrabold',
+                            'min-w-0 text-sm leading-tight text-balance break-words md:text-lg',
+                            lost ? 'text-ink-soft font-medium' : 'font-bold',
                           )}
                         >
                           {row.name}
                           <span
                             aria-hidden
-                            className="text-faint ml-1.5 text-eyebrow font-bold tracking-[0.08em] whitespace-nowrap uppercase"
+                            className="text-faint ml-1.5 text-eyebrow font-semibold tracking-[0.08em] whitespace-nowrap uppercase"
                           >
                             {row.side === 'home' ? 'D' : 'H'}
                           </span>
@@ -122,7 +122,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </th>
                     {columns.map((column) => (
                       <td
-                        className="text-faint py-2 text-center text-meta font-semibold max-[22.5rem]:hidden md:py-2.5 md:text-body"
+                        className="text-faint py-2 text-center text-sm font-medium max-[22.5rem]:hidden md:py-2.5 md:text-base"
                         key={column.label}
                       >
                         {column[row.side]}
@@ -130,7 +130,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     ))}
                     <td
                       className={cn(
-                        'py-2 text-right text-numeral-sm leading-none font-extrabold md:py-2.5 md:text-numeral-lg',
+                        'py-2 text-right text-2xl leading-none font-extrabold md:py-2.5 md:text-3xl',
                         lost && 'text-faint',
                         !played && 'text-inactive',
                       )}
@@ -144,10 +144,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           </table>
 
           {columns.length > 0 && (
-            <p
-              aria-hidden
-              className="text-faint mt-2 text-caption font-semibold min-[22.5rem]:hidden"
-            >
+            <p aria-hidden className="text-faint mt-2 text-xs font-medium min-[22.5rem]:hidden">
               {columns
                 .map(
                   (column) =>
@@ -177,7 +174,7 @@ function Status({ match }: { match: MatchDetail }) {
     return (
       <span className="bg-tint text-club inline-flex items-center gap-2 rounded-full px-3 py-1">
         <span aria-hidden className="bg-lime shadow-ring-lime size-1.5 rounded-full" />
-        <VariantCountdown className="text-caption" look="inline" targetISO={match.kickoffISO} />
+        <VariantCountdown className="text-xs" look="inline" targetISO={match.kickoffISO} />
       </span>
     )
   }
@@ -197,9 +194,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
     <dl className="border-line-soft bg-tint-hover grid grid-cols-2 content-center gap-x-5 gap-y-3 border-t px-4 py-4 md:grid-cols-4 md:px-6 lg:grid-cols-2 lg:border-t-0 lg:border-l lg:px-7 lg:py-6">
       <Fact label="Datum">
         {match.dateLabel}
-        {day && (
-          <span className="text-faint block text-caption font-semibold capitalize">{day}</span>
-        )}
+        {day && <span className="text-faint block text-xs font-medium capitalize">{day}</span>}
       </Fact>
       <Fact label="Buly">{match.timeLabel}</Fact>
       <Fact label="Místo">{match.venue ?? '—'}</Fact>
@@ -208,7 +203,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
           <Badge size="xs" variant={outcome.variant}>
             {outcome.label}
           </Badge>
-          {note && <span className="text-faint mt-1 block text-caption font-semibold">{note}</span>}
+          {note && <span className="text-faint mt-1 block text-xs font-medium">{note}</span>}
         </Fact>
       ) : (
         <Fact label="Strana">
@@ -227,7 +222,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tight>{label}</Eyebrow>
       </dt>
-      <dd className="mt-0.5 text-meta font-bold [overflow-wrap:anywhere]">{children}</dd>
+      <dd className="mt-0.5 text-sm font-semibold [overflow-wrap:anywhere]">{children}</dd>
     </div>
   )
 }

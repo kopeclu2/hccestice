@@ -26,7 +26,7 @@ export function MatchMeta({
   if (list.length === 0) return null
 
   return (
-    <div className={cn('text-faint overflow-hidden text-caption font-semibold', className)}>
+    <div className={cn('text-faint overflow-hidden text-xs font-medium', className)}>
       <div className="-ml-3 flex flex-wrap">
         {list.map((item, index) => (
           <span

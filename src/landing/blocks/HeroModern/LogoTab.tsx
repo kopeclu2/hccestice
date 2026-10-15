@@ -38,7 +38,7 @@ export function LogoTab({ className, href = '#home' }: { className?: string; hre
         />
       </svg>
       <Image alt="HC Čestice" className="relative" height={32} src="/logo-cestice.png" width={32} />
-      <span className="text-caption group-hover:text-club relative font-extrabold tracking-[0.1em] whitespace-nowrap transition-colors">
+      <span className="text-xs group-hover:text-club relative font-bold tracking-[0.1em] whitespace-nowrap transition-colors">
         HC ČESTICE
       </span>
     </Link>

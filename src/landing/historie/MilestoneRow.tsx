@@ -47,7 +47,7 @@ export function MilestoneRow({ milestone, index }: { milestone: Milestone; index
           <CardTitle className="leading-[1.15] text-pretty" size="lg">
             {milestone.title}
           </CardTitle>
-          <p className="text-dim mt-2.5 max-w-130 text-body leading-[1.65] text-pretty">
+          <p className="text-dim mt-2.5 max-w-130 text-sm md:text-base leading-[1.65] text-pretty">
             {milestone.text}
           </p>
         </div>

@@ -145,7 +145,7 @@ function Half({
     >
       <Crest
         className={cn(
-          'size-12 text-lead min-[25rem]:size-14 md:size-20 md:p-1.5 md:text-numeral-lg lg:size-24 lg:p-2',
+          'size-12 text-lg min-[25rem]:size-14 md:size-20 md:p-1.5 md:text-3xl lg:size-24 lg:p-2',
           'md:col-start-1 md:row-start-1 md:mb-4 md:self-start',
           !home && 'md:col-start-2 md:justify-self-end',
         )}
@@ -166,7 +166,7 @@ function Half({
         </Eyebrow>
         <div
           className={cn(
-            'mt-1 text-body leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[25rem]:text-lead md:text-card-title lg:text-panel-title-lg',
+            'mt-1 text-sm leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[25rem]:text-lg md:text-xl lg:text-3xl',
             text.name,
           )}
         >
@@ -200,7 +200,7 @@ function Half({
  */
 function Seal({ label }: { label: string | null }) {
   return (
-    <span className="bg-contrast text-lime ring-surface absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full font-mono text-caption font-bold uppercase ring-4 md:size-14 md:text-meta">
+    <span className="bg-contrast text-lime ring-surface absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full font-mono text-xs font-semibold uppercase ring-4 md:size-14 md:text-sm">
       {label ?? <span className="bg-lime shadow-ring-lime size-2 rounded-full" />}
     </span>
   )
@@ -219,7 +219,7 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
           {competitionLabel(match)}
         </Eyebrow>
         <MatchMeta
-          className="text-ink mt-1.5 text-meta font-bold md:text-body"
+          className="text-ink mt-1.5 text-sm font-semibold md:text-base"
           items={[
             day
               ? `${day.charAt(0).toUpperCase()}${day.slice(1)} ${match.dateLabel}`

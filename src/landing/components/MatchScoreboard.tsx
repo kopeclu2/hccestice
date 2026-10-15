@@ -58,7 +58,7 @@ export function MatchScoreboard({
           jména vedle něj se na 320 px tlačila do „sn“. Od
           `md` je tým zase jeden sloupec: logo nad jménem, domácí zarovnaní
           ke skóre zprava, hosté zleva. */}
-      <div className="my-[clamp(1.75rem,3vw,2.75rem)] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-3 gap-y-3 min-[22.5rem]:gap-x-4 md:gap-x-[clamp(1.25rem,4vw,3.5rem)]">
+      <div className="my-[clamp(1.75rem,3vw,2.75rem)] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 min-[22.5rem]:gap-x-4 md:gap-x-[clamp(1.25rem,4vw,3.5rem)]">
         <Team
           hasLogos={hasLogos}
           label="Domácí"
@@ -167,10 +167,10 @@ function Team({
       >
         {/* `break-words`: jediné slovo širší než sloupec (320 px) se radši
             zlomí, než aby přeteklo pod skóre. */}
-        <div className="text-body leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-lead md:text-[clamp(1.25rem,2vw,1.875rem)]">
+        <div className="text-sm leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-base md:text-xl lg:text-2xl">
           {name}
         </div>
-        <div className="mt-1 text-caption font-semibold text-white/55 lg:text-meta">{label}</div>
+        <div className="mt-1 text-xs font-medium text-white/55">{label}</div>
       </div>
     </div>
   )
@@ -197,7 +197,7 @@ function TeamLogo({ logo, name }: { logo: Photo | null; name: string }) {
     return (
       <span
         aria-hidden
-        className="grid size-12 place-items-center rounded-full border border-white/24 text-lead font-extrabold text-white/70 md:size-16 md:text-panel-title"
+        className="grid size-12 place-items-center rounded-full border border-white/24 text-lg font-extrabold text-white/70 md:size-16 md:text-2xl"
       >
         {monogram(name)}
       </span>
