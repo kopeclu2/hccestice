@@ -2,12 +2,13 @@ import Image from 'next/image'
 import React from 'react'
 
 import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
+import { articleTrail } from './articleTrail'
 import { AuthorMeta } from './AuthorMeta'
-import { Breadcrumbs } from './Breadcrumbs'
 import { TitleParts } from './HeroTitle'
 
 /**
@@ -23,7 +24,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mx-auto mt-6 grid max-w-[97.5rem] items-center gap-[clamp(1.75rem,4vw,4rem)] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-13 lg:mt-16 lg:grid-cols-[1.05fr_.95fr]">
       <div>
-        <Breadcrumbs badge={article.badge} className="mb-5" tone="light" />
+        <Breadcrumbs className="mb-5" tone="light" trail={articleTrail(article.badge)} />
         <Kicker>{article.badge}</Kicker>
         <PageTitle balance="pretty" className="mt-4.5" size="sm">
           <TitleParts accent="lime-box" highlight={article.titleHighlight} title={article.title} />

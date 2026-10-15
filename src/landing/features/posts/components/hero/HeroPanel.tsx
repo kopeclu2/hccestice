@@ -2,12 +2,13 @@ import Image from 'next/image'
 import React from 'react'
 
 import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Watermark } from '@/landing/ui/Watermark'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
+import { articleTrail } from './articleTrail'
 import { AuthorMeta } from './AuthorMeta'
-import { Breadcrumbs } from './Breadcrumbs'
 import { CategoryBadge } from './CategoryBadge'
 
 /**
@@ -29,7 +30,7 @@ export function HeroPanel({ article }: { article: ArticleDetail }) {
 
         <div className="relative grid items-end gap-[clamp(1.75rem,4vw,4rem)] lg:grid-cols-[1.15fr_.85fr]">
           <div>
-            <Breadcrumbs badge={article.badge} className="mb-5.5" tone="panel" />
+            <Breadcrumbs className="mb-5.5" tone="panel" trail={articleTrail(article.badge)} />
             <CategoryBadge>{article.badge}</CategoryBadge>
             <PageTitle balance="pretty" className="mt-4.5 text-white" size="sm">
               {article.title}

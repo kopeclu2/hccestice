@@ -1,11 +1,12 @@
 import React from 'react'
 
 import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Watermark } from '@/landing/ui/Watermark'
 
+import { articleTrail } from './articleTrail'
 import { AuthorMeta } from './AuthorMeta'
-import { Breadcrumbs } from './Breadcrumbs'
 import { CategoryBadge } from './CategoryBadge'
 import { TitleParts } from './HeroTitle'
 
@@ -25,7 +26,7 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
         HC ČESTICE
       </Watermark>
 
-      <Breadcrumbs badge={article.badge} className="mb-5.5" tone="light" />
+      <Breadcrumbs className="mb-5.5" tone="light" trail={articleTrail(article.badge)} />
 
       <div className="flex flex-wrap items-center gap-x-4.5 gap-y-3">
         <CategoryBadge>{article.badge}</CategoryBadge>
