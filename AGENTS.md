@@ -16,8 +16,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 | `layout/` | kostra stránek: `SubpageShell`, navigace, patička, údržba |
 | `blocks/` | CMS bloky (`Component.tsx` + `config.ts`) a `render.tsx`; blok neimportuje jiný blok |
 | `features/<doména>/` | `matches`, `posts`, `galleries`, `roster`, `history`, `contact`, `sponsors`, `trainings`, `products`, `navigation` |
-| `data/` | jen průřezové fetchery: `site`, `tags`, `maintenance`, `session`, `landingSlugs` |
-| `lib/` | pomocníky nad Payload dokumenty a formáty: `dates`, `paths`, `media`, `payload`, `text` |
+| `data/` | průřezové fetchery (`site`, `maintenance`, `session`, `landingSlugs`) a infrastruktura datové vrstvy: `query` (`cachedQuery`, `getPayloadClient`), `tags` (`CACHE_TAGS`) |
+| `lib/` | pomocníky nad Payload dokumenty: `media`, `payload`. Obecné helpery (`routes`, `datetime`, `plural`, `fold`, `teamName`, `club`, `errors`) jsou v `src/lib/` |
 | `types.ts` | sdílené jádro view-modelů (`Photo`, `PersonCard`, `SiteLinks`, obsah hero a patičky) |
 
 Uvnitř feature: `components/` (prezentace), `data` (fetchery, `server-only`),

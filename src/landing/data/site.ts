@@ -1,7 +1,5 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { CLUB_EMAIL, FOOTER } from '@/landing/content'
@@ -10,7 +8,9 @@ import { arrayOr } from '@/landing/lib/payload'
 import type { FooterContent, PersonCard, SiteLinks } from '@/landing/types'
 import { stripTracking } from '@/lib/stripTracking'
 import type { Person, SiteConfig } from '@/payload-types'
-import configPromise from '@payload-config'
+
+import { cachedQuery, getPayloadClient } from './query'
+import { CACHE_TAGS } from './tags'
 
 /** Global `siteConfig` (kontakty, sítě, patička) + kolekce Lidé. */
 
@@ -29,16 +29,13 @@ import configPromise from '@payload-config'
  * `export const revalidate = 600` na stránkách nebyl žádná pojistka —
  * regenerace by si vzala tutéž roční cache entry.
  */
-const loadSiteConfig = unstable_cache(
+export const fetchSiteConfig = cachedQuery(
   async (): Promise<SiteConfig> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     return payload.findGlobal({ slug: 'siteConfig', depth: 1 })
   },
-  ['site-config'],
-  { tags: ['site-config'], revalidate: 3600 },
+  { key: 'site-config', tags: [CACHE_TAGS.siteConfig] },
 )
-
-export const fetchSiteConfig = cache(async (): Promise<SiteConfig> => loadSiteConfig())
 
 /**
  * Kontakty a sociální sítě (odvozeno ze `siteConfig`).
@@ -77,13 +74,13 @@ export function mapFooter(site: SiteConfig): FooterContent {
 
 /** Osoba pro kontaktní kartu. */
 export const fetchPerson = cache(async (personId: number): Promise<Person | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   return payload.findByID({ collection: 'people', id: personId, depth: 1 })
 })
 
 /** Všichni lidé v klubu dle pořadí — realizační tým na /soupiska. */
 export const fetchAllPeople = cache(async (): Promise<PersonCard[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({ collection: 'people', sort: 'order', limit: 0, depth: 1 })
   return docs.map(toPersonCard).filter((person): person is PersonCard => Boolean(person))
 })
