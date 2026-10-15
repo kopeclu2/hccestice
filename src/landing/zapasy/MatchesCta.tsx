@@ -8,7 +8,7 @@ export function MatchesCta() {
   return (
     <CtaStrip
       headline="Přijď na zimák fandit."
-      perex="Vstup na domácí zápasy je zdarma. Buben s sebou."
+      perex="Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou. Buben s sebou."
       tone="club"
       watermark="HCČ"
     >

@@ -350,7 +350,6 @@ export const CONTACT_PAGE = {
  * uvádí u `location` „Javornická 1648", ale mapový podnik na téhle pozici má
  * „U Stadionu 1648". Dokud se nepotvrdí, která je správně, míří mapa na název
  * stadionu a město — ten se trefuje spolehlivě a nešíří možná chybnou ulici.
- * Pilulka o vstupu zdarma odpovídá CTA na `/zapasy` (`zapasy/MatchesCta.tsx`).
  */
 export const CONTACT_MAP = {
   title: 'Kde nás najdete',
@@ -358,7 +357,8 @@ export const CONTACT_MAP = {
   address: '516 01 Rychnov nad Kněžnou',
   /** Query pro embed i pro proklik do navigace — jeden zdroj, ať míří stejně. */
   query: 'Zimní stadion Rychnov nad Kněžnou, 516 01 Rychnov nad Kněžnou',
-  pills: ['Zimní stadion Rychnov nad Kněžnou', 'Vstup na domácí zápasy zdarma'] as const,
+  // Vstup na zápasy zdarma není — pilulka s tím tvrzením byla odebrána (15. 10. 2026).
+  pills: ['Zimní stadion Rychnov nad Kněžnou'] as const,
 } as const
 
 export const FOOTER = {
