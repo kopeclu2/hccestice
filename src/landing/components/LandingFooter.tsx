@@ -1,3 +1,4 @@
+import { Facebook, Instagram } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -15,6 +16,14 @@ import { Watermark } from './Watermark'
  * Footer — zelená plocha s fotkou stadionu v overlay, headline
  * „Uvidíme se na zimáku.", CTA + sítě, sloupce odkazů a © řádek.
  */
+/**
+ * Sociální sítě v patičce: na mobilu jen kulatá ikona (s textem se
+ * „Napiš nám" + Facebook + Instagram na 320–390 px nevešly na řádek
+ * a pilulky se zalamovaly), od `md` ikona s názvem. Název zůstává
+ * v `sr-only`, takže odkaz má přístupné jméno i jako ikona.
+ */
+const SOCIAL_PILL = 'gap-2 max-md:w-11 max-md:justify-center max-md:px-0 max-md:[&_svg]:size-4.5'
+
 export function LandingFooter({ content, site }: { content: FooterContent; site: SiteLinks }) {
   return (
     /**
@@ -80,30 +89,37 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
               {content.headline}
             </SectionTitle>
             <p className="mt-4 mb-6.5 max-w-115 text-white/85">{content.perex}</p>
-            <div className="flex flex-wrap gap-2.5">
-              <PillLink href="#kontakt" variant="light" withArrow>
+            {/* Pod 360 px je řádek široký 236 px: „Napiš nám" (141) + dvě ikony
+                (2 × 44) + mezery 2 × 10 se nevejdou, proto užší mezera a levý
+                okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
+            <div className="flex flex-wrap gap-2.5 max-[22.5rem]:gap-2">
+              <PillLink className="max-[22.5rem]:pl-3.5" href="#kontakt" variant="light" withArrow>
                 Napiš nám
               </PillLink>
               {site.facebook && (
                 <PillLink
+                  className={SOCIAL_PILL}
                   href={site.facebook}
                   rel="noreferrer"
                   size="md"
                   target="_blank"
                   variant="inverse"
                 >
-                  Facebook
+                  <Facebook aria-hidden />
+                  <span className="max-md:sr-only">Facebook</span>
                 </PillLink>
               )}
               {site.instagram && (
                 <PillLink
+                  className={SOCIAL_PILL}
                   href={site.instagram}
                   rel="noreferrer"
                   size="md"
                   target="_blank"
                   variant="inverse"
                 >
-                  Instagram
+                  <Instagram aria-hidden />
+                  <span className="max-md:sr-only">Instagram</span>
                 </PillLink>
               )}
             </div>
