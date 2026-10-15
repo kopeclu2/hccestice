@@ -1,98 +1,41 @@
-import { unstable_cache } from 'next/cache'
-import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
-
 import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
-import config from '@payload-config'
+import { CACHE_TAGS } from '@/landing/data/tags'
+import { routes } from '@/lib/routes'
 
-const getPagesSitemap = unstable_cache(
-  async () => {
-    const payload = await getPayload({ config })
-    const SITE_URL =
-      process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
+import { sitemapRoute } from '../sitemapRoute'
 
-    const results = await payload.find({
-      collection: 'pages',
-      overrideAccess: false,
-      draft: false,
-      depth: 0,
-      limit: 1000,
-      pagination: false,
-      where: {
-        _status: {
-          equals: 'published',
-        },
-      },
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    })
+/**
+ * Ručně psané landing routy — v kolekci `pages` nemají dokument, takže je
+ * nelze odvodit z dat.
+ *
+ * Dřív tu byly i `/search` a `/posts` ze Payload šablony: první dnes vrací
+ * 404 a druhá 308 na `/aktuality`. Sitemapa, která inzeruje 404, je chyba
+ * v Search Console, a redirect v sitemapě Google reportuje zvlášť.
+ * Naopak `/zapasy` tu vůbec nebylo, i když je to veřejná stránka.
+ *
+ * `/vzory` a `/widgety` sem nepatří — to jsou interní katalogy (noindex).
+ *
+ * `lastmod` u nich záměrně **není** (viz `sitemapRoute`): všech sedm URL by
+ * jinak hlásilo změnu při každém requestu, s identickým timestampem.
+ */
+const STATIC_PATHS = [
+  '/soupiska',
+  routes.list.matches,
+  routes.list.posts,
+  routes.list.galleries,
+  '/sponzori',
+  '/historie-klubu',
+  '/treninky',
+] as const
 
-    const dateFallback = new Date().toISOString()
-
-    /**
-     * Ručně psané landing routy — v kolekci `pages` nemají dokument, takže je
-     * nelze odvodit z dat.
-     *
-     * Dřív tu byly i `/search` a `/posts` ze Payload šablony: první dnes vrací
-     * 404 a druhá 308 na `/aktuality`. Sitemapa, která inzeruje 404, je chyba
-     * v Search Console, a redirect v sitemapě Google reportuje zvlášť.
-     * Naopak `/zapasy` tu vůbec nebylo, i když je to veřejná stránka.
-     *
-     * `/vzory` a `/widgety` sem nepatří — to jsou interní katalogy (noindex).
-     */
-    /**
-     * `lastmod` tu záměrně **není**. Podle sitemap protokolu je volitelný,
-     * a dosazovat sem `new Date()` znamenalo, že těchto šest URL hlásilo
-     * změnu při **každém** requestu na sitemapu — bez ohledu na to, že se
-     * obsah neměnil. Google tak dostával falešný signál a mezi sebou
-     * nerozlišitelné časy (všech šest mělo identický timestamp).
-     * Vynechat ho je korektnější než lhát.
-     */
-    const defaultSitemap = [
-      { loc: `${SITE_URL}/soupiska` },
-      { loc: `${SITE_URL}/zapasy` },
-      { loc: `${SITE_URL}/aktuality` },
-      { loc: `${SITE_URL}/fotogalerie` },
-      { loc: `${SITE_URL}/sponzori` },
-      { loc: `${SITE_URL}/historie-klubu` },
-      { loc: `${SITE_URL}/treninky` },
-    ]
-
-    const sitemap = results.docs
-      ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          // Landing podstránky mají vlastní route (přebíjí [slug]) a jsou
-          // ve výčtu výše — legacy dokument se stejným slugem by URL zdvojil.
-          .filter((page) => !LANDING_SLUGS.has(page.slug as string))
-          .map((page) => {
-            return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-            }
-          })
-      : []
-
-    return [...defaultSitemap, ...sitemap]
-  },
-  ['pages-sitemap'],
-  {
-    tags: ['pages-sitemap'],
-    // Pojistka pod tagem — bez ní má `unstable_cache` TTL jeden rok.
-    revalidate: 86400,
-  },
-)
-
-export async function GET() {
-  const sitemap = await getPagesSitemap()
-
-  // Route handlery jsou od Next 15 dynamické by default, takže se handler
-  // spustí na každý request — cachovaná je jen jeho datová část. Bez téhle
-  // hlavičky by odpověď neměla `Cache-Control` vůbec.
-  return getServerSideSitemap(sitemap, {
-    'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
-  })
-}
+export const GET = sitemapRoute({
+  collection: 'pages',
+  tag: CACHE_TAGS.pagesSitemap,
+  path: routes.page,
+  published: true,
+  limit: 1000,
+  // Landing podstránky mají vlastní route (přebíjí [slug]) a jsou ve výčtu
+  // výše — legacy dokument se stejným slugem by URL zdvojil.
+  excludeSlugs: LANDING_SLUGS,
+  staticPaths: STATIC_PATHS,
+})
