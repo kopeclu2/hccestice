@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { ErrorCode, ErrorMeta } from '@/landing/ui/ErrorCode'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { PuckTrailArc } from '@/landing/ui/PuckTrail'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
@@ -44,15 +45,15 @@ export default function NotFound() {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-2.5">
-          <PillLink href="/" size="lg" variant="dark" withArrow>
-            Zpět na hlavní stránku
-          </PillLink>
-          <PillLink href={routes.list.posts} size="md" variant="outline">
-            Aktuality
-          </PillLink>
-          <PillLink href={routes.list.matches} size="md" variant="outline">
-            Rozlosování
-          </PillLink>
+          <Button asChild size="lg" variant="dark" withArrow>
+            <Link href="/">Zpět na hlavní stránku</Link>
+          </Button>
+          <Button asChild size="md" variant="outline">
+            <Link href={routes.list.posts}>Aktuality</Link>
+          </Button>
+          <Button asChild size="md" variant="outline">
+            <Link href={routes.list.matches}>Rozlosování</Link>
+          </Button>
         </div>
 
         <ErrorMeta className="mt-14">Chyba 404 · Stránka nenalezena</ErrorMeta>

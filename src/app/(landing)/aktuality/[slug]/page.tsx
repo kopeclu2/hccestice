@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
+import Link from 'next/link'
 import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { Button } from '@/components/ui/button'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { fetchMatchSlugForPost } from '@/landing/features/matches/data/matchDetail'
 import { ArticleBody } from '@/landing/features/posts/components/ArticleBody'
@@ -20,7 +22,6 @@ import {
 } from '@/landing/features/posts/data/posts'
 import { toArticleDetail } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { PillLink } from '@/landing/ui/PillLink'
 import { brandTitle } from '@/lib/brandTitle'
 import { generateMeta } from '@/lib/generateMeta'
 import { routes } from '@/lib/routes'
@@ -75,9 +76,9 @@ export default async function ArticlePage({ params }: Args) {
         {/* Hero E (zápasový výsledek) odkaz na detail nese sám, tady by byl dvakrát. */}
         {article.matchHref && article.variant !== 'zapas' && (
           <div className="mt-10">
-            <PillLink href={article.matchHref} size="md" variant="outline" withArrow>
-              Detail zápasu
-            </PillLink>
+            <Button asChild size="md" variant="outline" withArrow>
+              <Link href={article.matchHref}>Detail zápasu</Link>
+            </Button>
           </div>
         )}
         <TagRow tags={article.tags} />

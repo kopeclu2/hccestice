@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Hlavička stránky partnerů: watermark „DÍKY", drobečky, titulek s lime
@@ -21,9 +22,9 @@ export function SponsorsHeader({
   return (
     <PageHeader
       filters={
-        <PillLink href="/#kontakt" variant="dark" withArrow>
-          Chci podpořit klub
-        </PillLink>
+        <Button asChild variant="dark" withArrow>
+          <Link href="/#kontakt">Chci podpořit klub</Link>
+        </Button>
       }
       meta={count}
       metaClassName="text-faint text-sm font-medium"

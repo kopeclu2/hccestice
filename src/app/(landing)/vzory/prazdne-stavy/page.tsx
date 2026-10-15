@@ -1,12 +1,13 @@
 import { X } from 'lucide-react'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
 
@@ -52,18 +53,18 @@ export default function EmptyStatesPage() {
             <EmptyState
               actions={
                 <>
-                  <PillLink
+                  <Button
+                    asChild
                     arrowIcon={<X strokeWidth={2.5} />}
-                    href="/aktuality#seznam"
                     size="md"
                     variant="dark"
                     withArrow
                   >
-                    Zrušit filtr
-                  </PillLink>
-                  <PillLink href="/zapasy" size="md" variant="outline">
-                    Zápasy
-                  </PillLink>
+                    <Link href="/aktuality#seznam">Zrušit filtr</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/zapasy">Zápasy</Link>
+                  </Button>
                 </>
               }
               icon="search"
@@ -78,12 +79,12 @@ export default function EmptyStatesPage() {
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                    Sledovat aktuality
-                  </PillLink>
-                  <PillLink href="/zapasy#odehrane" size="md" variant="outline">
-                    Odehrané zápasy
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/aktuality">Sledovat aktuality</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/zapasy#odehrane">Odehrané zápasy</Link>
+                  </Button>
                 </>
               }
               icon="schedule"
@@ -99,12 +100,12 @@ export default function EmptyStatesPage() {
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/#kontakt" size="md" variant="dark" withArrow>
-                    Poslat fotky
-                  </PillLink>
-                  <PillLink href="/fotogalerie#seznam" size="md" variant="outline">
-                    Starší sezóny
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/#kontakt">Poslat fotky</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/fotogalerie#seznam">Starší sezóny</Link>
+                  </Button>
                 </>
               }
               icon="photos"
@@ -121,9 +122,9 @@ export default function EmptyStatesPage() {
             <div className="rounded-card bg-surface p-4.5 md:p-6 lg:p-9">
               <EmptyState
                 actions={
-                  <PillLink href="/zapasy" size="sm" variant="dark" withArrow>
-                    Všechny zápasy
-                  </PillLink>
+                  <Button asChild size="sm" variant="dark" withArrow>
+                    <Link href="/zapasy">Všechny zápasy</Link>
+                  </Button>
                 }
                 frame="bare"
                 icon="schedule"

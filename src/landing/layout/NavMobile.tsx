@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 import { createPortal } from 'react-dom'
 
+import { Button } from '@/components/ui/button'
 import { isNavItemActive, navHref } from '@/landing/features/navigation/navHref'
 import type { NavItem } from '@/landing/features/navigation/types'
-import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
 /**
@@ -103,7 +103,7 @@ export function NavMobile({
       {/*
        * `size-11 md:size-10`: burger je do `nav` jediná cesta k navigaci,
        * takže 40px tap target byl pod hranicí 44px, kterou kvůli témuž
-       * pravidlu drží všechny pilulky (`pill.ts`). Desktop zůstává na 40px.
+       * pravidlu drží všechny pilulky (`components/ui/button`). Desktop zůstává na 40px.
        *
        * Skleněná varianta má `bg-pine-deep/32` a `border-on-contrast-ghost`, ne
        * `bg-on-contrast-glass` s `border-on-contrast-line`. Bílá průsvitka na bílé bílou
@@ -180,15 +180,11 @@ export function NavMobile({
 
             {ctaHref && ctaLabel && (
               <div className="mx-auto mt-7 w-full max-w-160">
-                <PillLink
-                  href={ctaHref}
-                  onClick={() => setOpen(false)}
-                  size="lg"
-                  variant="lime"
-                  withArrow
-                >
-                  {ctaLabel}
-                </PillLink>
+                <Button asChild size="lg" variant="lime" withArrow>
+                  <Link href={ctaHref} onClick={() => setOpen(false)}>
+                    {ctaLabel}
+                  </Link>
+                </Button>
               </div>
             )}
           </div>,

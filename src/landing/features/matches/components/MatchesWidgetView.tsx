@@ -1,11 +1,12 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { MatchRow } from '@/landing/features/matches/types'
 import { sideLabel } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle } from '@/landing/ui/Heading'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { StretchedLink, stretchHost } from '@/landing/ui/StretchedLink'
@@ -33,9 +34,9 @@ export function MatchesWidgetView({
                vypadal jako karta v kartě. */
             <EmptyState
               actions={
-                <PillLink href="/zapasy" size="sm" variant="dark" withArrow>
-                  Všechny zápasy
-                </PillLink>
+                <Button asChild size="sm" variant="dark" withArrow>
+                  <Link href="/zapasy">Všechny zápasy</Link>
+                </Button>
               }
               frame="bare"
               icon="schedule"

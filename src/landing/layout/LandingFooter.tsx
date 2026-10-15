@@ -3,10 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { FooterContent, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Watermark } from '@/landing/ui/Watermark'
 import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
@@ -92,34 +92,24 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
                 (2 × 44) + mezery 2 × 10 se nevejdou, proto užší mezera a levý
                 okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
             <div className="flex flex-wrap gap-2.5 max-3xs:gap-2">
-              <PillLink className="max-3xs:pl-3.5" href="#kontakt" variant="light" withArrow>
-                Napiš nám
-              </PillLink>
+              <Button asChild className="max-3xs:pl-3.5" variant="light" withArrow>
+                <Link href="#kontakt">Napiš nám</Link>
+              </Button>
               {site.facebook && (
-                <PillLink
-                  className={SOCIAL_PILL}
-                  href={site.facebook}
-                  rel="noreferrer"
-                  size="md"
-                  target="_blank"
-                  variant="inverse"
-                >
-                  <Facebook aria-hidden />
-                  <span className="max-md:sr-only">Facebook</span>
-                </PillLink>
+                <Button asChild className={SOCIAL_PILL} size="md" variant="inverse">
+                  <Link href={site.facebook} rel="noreferrer" target="_blank">
+                    <Facebook aria-hidden />
+                    <span className="max-md:sr-only">Facebook</span>
+                  </Link>
+                </Button>
               )}
               {site.instagram && (
-                <PillLink
-                  className={SOCIAL_PILL}
-                  href={site.instagram}
-                  rel="noreferrer"
-                  size="md"
-                  target="_blank"
-                  variant="inverse"
-                >
-                  <Instagram aria-hidden />
-                  <span className="max-md:sr-only">Instagram</span>
-                </PillLink>
+                <Button asChild className={SOCIAL_PILL} size="md" variant="inverse">
+                  <Link href={site.instagram} rel="noreferrer" target="_blank">
+                    <Instagram aria-hidden />
+                    <span className="max-md:sr-only">Instagram</span>
+                  </Link>
+                </Button>
               )}
             </div>
           </div>
@@ -127,7 +117,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           {/*
            * Sloupce odkazů: `gap-1` + `py-1.5` na odkazu, ne `gap-2` bez
            * paddingu. Řádek `text-sm` je vysoký 20px, takže tap target
-           * byl proti zbytku webu (44px, viz `pill.ts`) poloviční. Padding
+           * byl proti zbytku webu (44px, viz `components/ui/button`) poloviční. Padding
            * plochu zvětší na ~32px, aniž by se řádkování rozjelo — mezera
            * mezi odkazy zůstává 8px jako dřív. Na desktopu, kde se klika
            * myší, se padding ruší a rozestupy jsou přesně jako v handoffu.

@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { fetchAlbumGalleries } from '@/landing/features/galleries/data'
 import type { GalleryCard } from '@/landing/features/galleries/types'
 import { uploadToPhoto } from '@/landing/lib/media'
@@ -12,7 +14,6 @@ import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { PhotoTile, TileArrow } from '@/landing/ui/PhotoTile'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
@@ -155,9 +156,9 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <PillLink href={routes.list.galleries} size="md" variant="dark" withArrow>
-            Celé fotoalbum
-          </PillLink>
+          <Button asChild size="md" variant="dark" withArrow>
+            <Link href={routes.list.galleries}>Celé fotoalbum</Link>
+          </Button>
         </div>
       </Reveal>
 
@@ -272,9 +273,9 @@ function AlbumEmpty() {
       /* jen jedna cesta dál — „Celé fotoalbum" už stojí v hlavičce sekce
          a bez alb by vedlo na stejně prázdný výpis */
       actions={
-        <PillLink href="/#kontakt" size="md" variant="dark" withArrow>
-          Poslat fotky
-        </PillLink>
+        <Button asChild size="md" variant="dark" withArrow>
+          <Link href="/#kontakt">Poslat fotky</Link>
+        </Button>
       }
       icon="photos"
       title="Fotoalbum se teprve plní"

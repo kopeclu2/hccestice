@@ -3,10 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { uploadToPhoto } from '@/landing/lib/media'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle } from '@/landing/ui/Heading'
-import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { linkOrNull, routes } from '@/lib/routes'
 import type { Product } from '@/payload-types'
@@ -73,9 +73,11 @@ export function ProductTile({
         <p className="mt-2 text-xs font-medium text-faint">⚠ {product.orderNote}</p>
       )}
       <div className="flex-1" />
-      <PillLink className="mt-4 self-start" href={mailto} size="sm" variant="dark">
-        <Mail strokeWidth={2.5} /> {ctaLabel}
-      </PillLink>
+      <Button asChild className="mt-4 self-start" size="sm" variant="dark">
+        <Link href={mailto}>
+          <Mail strokeWidth={2.5} /> {ctaLabel}
+        </Link>
+      </Button>
     </article>
   )
 }

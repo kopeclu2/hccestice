@@ -1,7 +1,8 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
-import { PillLink } from '@/landing/ui/PillLink'
 import { routes } from '@/lib/routes'
 
 /**
@@ -17,9 +18,9 @@ export function ContactCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href={routes.list.matches} variant="light" withArrow>
-        Rozpis zápasů
-      </PillLink>
+      <Button asChild variant="light" withArrow>
+        <Link href={routes.list.matches}>Rozpis zápasů</Link>
+      </Button>
     </CtaStrip>
   )
 }

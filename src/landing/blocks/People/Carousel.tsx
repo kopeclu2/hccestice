@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { PersonCard } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -49,22 +50,18 @@ export function PeopleCarousel({ people, intro }: { people: PersonCard[]; intro:
           {intro}
         </p>
         <div className="flex gap-2">
-          <button
+          <Button
             aria-label="Předchozí"
-            className="grid size-10.5 place-items-center rounded-full border border-line bg-surface transition-colors hover:bg-contrast hover:text-on-contrast [&_svg]:size-4"
+            className="bg-surface"
             onClick={() => scrollByCard(-1)}
-            type="button"
+            size="circle"
+            variant="outline"
           >
             <ArrowLeft />
-          </button>
-          <button
-            aria-label="Další"
-            className="grid size-10.5 place-items-center rounded-full bg-contrast text-on-contrast transition-colors hover:bg-club [&_svg]:size-4"
-            onClick={() => scrollByCard(1)}
-            type="button"
-          >
+          </Button>
+          <Button aria-label="Další" onClick={() => scrollByCard(1)} size="circle" variant="dark">
             <ArrowRight />
-          </button>
+          </Button>
         </div>
       </div>
 

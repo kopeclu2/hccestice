@@ -1,7 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
-import { pillVariants } from '@/landing/ui/pill'
-import { PillLink } from '@/landing/ui/PillLink'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 /** Pilulka filtru sezón (slug + krátký label „2025/26"). */
@@ -47,16 +47,14 @@ export function SeasonFilters({
   const activeInRest = rest.some((item) => item.slug === activeSlug)
 
   const pill = ({ slug, label }: (typeof items)[number]) => (
-    <PillLink
-      aria-current={slug === activeSlug ? 'true' : undefined}
-      href={`${basePath}${slug ? `?sezona=${slug}` : ''}${anchor}`}
-      key={label}
-      selected={slug === activeSlug}
-      size="sm"
-      variant="outline"
-    >
-      {label}
-    </PillLink>
+    <Button asChild key={label} selected={slug === activeSlug} size="sm" variant="outline">
+      <Link
+        aria-current={slug === activeSlug ? 'true' : undefined}
+        href={`${basePath}${slug ? `?sezona=${slug}` : ''}${anchor}`}
+      >
+        {label}
+      </Link>
+    </Button>
   )
 
   return (
@@ -66,7 +64,7 @@ export function SeasonFilters({
         <details className="contents" open={activeInRest}>
           <summary
             className={cn(
-              pillVariants({ size: 'sm', variant: 'outline' }),
+              buttonVariants({ size: 'sm', variant: 'outline' }),
               'list-none [&::-webkit-details-marker]:hidden',
             )}
           >

@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Hlavička soupisky: drobečky, titulek s lime ročníkem sezóny, perex,
@@ -20,9 +21,11 @@ export function RosterHeader({
   return (
     <PageHeader
       filters={pills.map((pill) => (
-        <PillLink href={pill.href} key={pill.href} size="sm" variant="outline">
-          {pill.label} <span className="font-medium text-faint">{pill.count}</span>
-        </PillLink>
+        <Button asChild key={pill.href} size="sm" variant="outline">
+          <Link href={pill.href}>
+            {pill.label} <span className="font-medium text-faint">{pill.count}</span>
+          </Link>
+        </Button>
       ))}
       meta={summary}
       perex="A-tým mužů ve Východočeské hokejové lize. Kluci z Čestic a okolních vesnic — žádné přestupy za miliony, jen chuť hrát."

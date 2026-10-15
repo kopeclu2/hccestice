@@ -1,10 +1,11 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 
@@ -70,13 +71,13 @@ export function MatchReportCard({
               </p>
             )}
             <div className="mt-5 flex flex-wrap gap-2.5">
-              <PillLink href={report.href} size="md" variant="dark" withArrow>
-                Číst reportáž
-              </PillLink>
+              <Button asChild size="md" variant="dark" withArrow>
+                <Link href={report.href}>Číst reportáž</Link>
+              </Button>
               {gallery && (
-                <PillLink href={gallery.href} size="md" variant="outline">
-                  Fotogalerie
-                </PillLink>
+                <Button asChild size="md" variant="outline">
+                  <Link href={gallery.href}>Fotogalerie</Link>
+                </Button>
               )}
             </div>
           </div>
@@ -93,9 +94,9 @@ export function MatchReportCard({
             {gallery.title}
           </CardTitle>
           <div className="mt-5">
-            <PillLink href={gallery.href} size="md" variant="dark" withArrow>
-              Otevřít fotogalerii
-            </PillLink>
+            <Button asChild size="md" variant="dark" withArrow>
+              <Link href={gallery.href}>Otevřít fotogalerii</Link>
+            </Button>
           </div>
         </div>
       )}

@@ -1,9 +1,11 @@
+import Link from 'next/link'
 import React from 'react'
+
+import { Button } from '@/components/ui/button'
 
 import { Badge } from './Badge'
 import { SectionTitle } from './Heading'
 import { Highlight } from './Kicker'
-import { PillLink } from './PillLink'
 import { Reveal } from './Reveal'
 import type { SectionShellProps } from './SectionShell'
 import { SectionShell } from './SectionShell'
@@ -84,16 +86,11 @@ export function MapPanel({
               </Badge>
             ))}
             {directionsHref && (
-              <PillLink
-                href={directionsHref}
-                rel="noopener noreferrer"
-                size="sm"
-                target="_blank"
-                variant="club"
-                withArrow
-              >
-                {directionsLabel}
-              </PillLink>
+              <Button asChild size="sm" variant="club" withArrow>
+                <Link href={directionsHref} rel="noopener noreferrer" target="_blank">
+                  {directionsLabel}
+                </Link>
+              </Button>
             )}
           </div>
         )}

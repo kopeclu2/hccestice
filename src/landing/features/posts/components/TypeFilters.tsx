@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { buildListUrl } from '@/landing/lib/listUrl'
-import { PillLink } from '@/landing/ui/PillLink'
 import { routes } from '@/lib/routes'
 
 /**
@@ -20,16 +21,14 @@ export function TypeFilters({ activeType }: { activeType: string | null }) {
       {items.map(({ key, label }) => {
         const active = key === activeType
         return (
-          <PillLink
-            aria-current={active ? 'true' : undefined}
-            href={buildListUrl(routes.list.posts, { filters: { typ: key }, hash: 'seznam' })}
-            key={label}
-            selected={active}
-            size="sm"
-            variant="outline"
-          >
-            {label}
-          </PillLink>
+          <Button asChild key={label} selected={active} size="sm" variant="outline">
+            <Link
+              aria-current={active ? 'true' : undefined}
+              href={buildListUrl(routes.list.posts, { filters: { typ: key }, hash: 'seznam' })}
+            >
+              {label}
+            </Link>
+          </Button>
         )
       })}
     </>

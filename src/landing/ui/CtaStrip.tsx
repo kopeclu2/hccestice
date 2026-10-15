@@ -27,7 +27,7 @@ export type CtaStripProps = {
   perex?: React.ReactNode
   /** Obrysové slovo v pravém dolním rohu pásu (jen zelená varianta: „HCČ"). */
   watermark?: React.ReactNode
-  /** CTA vpravo — jeden nebo víc `PillLink`. */
+  /** CTA vpravo — jeden nebo víc `Button asChild`. */
   children: React.ReactNode
   /**
    * `VariantProps` by tu připustilo i `null` (cva to dovoluje), ale `tone`

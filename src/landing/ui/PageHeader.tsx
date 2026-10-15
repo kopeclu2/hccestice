@@ -43,7 +43,7 @@ export type PageHeaderProps = {
   meta?: React.ReactNode
   /**
    * Třídy obalu `meta`. Default je ztišený text jen na desktopu; sponzoři ho
-   * ukazují i na mobilu a zápasy tam mají `PillLink`, který si styl nese sám —
+   * ukazují i na mobilu a zápasy tam mají `Button`, který si styl nese sám —
    * proto se override nepřičítá k defaultu, ale nahrazuje ho.
    */
   metaClassName?: string

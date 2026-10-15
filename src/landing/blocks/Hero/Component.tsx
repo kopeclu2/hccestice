@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { HERO } from '@/landing/content'
 import { Countdown } from '@/landing/features/matches/components/Countdown'
 import { fetchPlayed, fetchUpcoming } from '@/landing/features/matches/data/matches'
@@ -12,7 +13,6 @@ import type { HeroContent } from '@/landing/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
-import { PillLink } from '@/landing/ui/PillLink'
 import type { LandingHeroBlock } from '@/payload-types'
 
 import { LandingNav } from './Nav'
@@ -93,9 +93,9 @@ function HeroView({
             <p className="mt-4 mb-6.5 max-w-110 text-lg leading-snug text-pretty text-on-contrast-strong">
               {content.intro}
             </p>
-            <PillLink href="#sezona" size="lg" variant="dark" withArrow>
-              {content.ctaLabel}
-            </PillLink>
+            <Button asChild size="lg" variant="dark" withArrow>
+              <Link href="#sezona">{content.ctaLabel}</Link>
+            </Button>
           </div>
 
           {/* Karta zápasu */}

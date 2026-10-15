@@ -1,12 +1,13 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { ResultRow } from '@/landing/features/matches/types'
 import { Badge } from '@/landing/ui/Badge'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { MoreLink } from '@/landing/ui/MoreLink'
 import { Numeral } from '@/landing/ui/Numeral'
 import { Pagination } from '@/landing/ui/Pagination'
-import { PillLink } from '@/landing/ui/PillLink'
 import { stretchHost } from '@/landing/ui/StretchedLink'
 import { cn } from '@/lib/utils'
 
@@ -58,12 +59,12 @@ export function ResultsList({
         <EmptyState
           actions={
             <>
-              <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                Sledovat aktuality
-              </PillLink>
-              <PillLink href="/zapasy#rozlosovani" size="md" variant="outline">
-                Rozlosování
-              </PillLink>
+              <Button asChild size="md" variant="dark" withArrow>
+                <Link href="/aktuality">Sledovat aktuality</Link>
+              </Button>
+              <Button asChild size="md" variant="outline">
+                <Link href="/zapasy#rozlosovani">Rozlosování</Link>
+              </Button>
             </>
           }
           className="mt-5 flex-1 justify-center"

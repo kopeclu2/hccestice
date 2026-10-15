@@ -1,10 +1,11 @@
 import { Check } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
@@ -75,15 +76,15 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
                   ))}
                 </ul>
                 {card.ctaLabel && card.ctaHref && (
-                  <PillLink
+                  <Button
+                    asChild
                     className="mt-6 self-start"
-                    href={card.ctaHref}
                     size="md"
                     variant={highlighted ? 'light' : 'dark'}
                     withArrow
                   >
-                    {card.ctaLabel}
-                  </PillLink>
+                    <Link href={card.ctaHref}>{card.ctaLabel}</Link>
+                  </Button>
                 )}
               </div>
             </Reveal>

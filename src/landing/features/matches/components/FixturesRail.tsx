@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { FixtureCard } from '@/landing/features/matches/types'
 import { type FixturesLayout, pickLayout } from '@/landing/features/matches/view/fixturesLayout'
 import { Badge } from '@/landing/ui/Badge'
@@ -7,7 +9,6 @@ import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
 import { Numeral } from '@/landing/ui/Numeral'
-import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
 import { StretchedLink, stretchHost } from '@/landing/ui/StretchedLink'
 import { cn } from '@/lib/utils'
@@ -266,12 +267,12 @@ function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
     <NextMatchPanel
       actions={
         <div className="mt-6 flex flex-wrap gap-2.5 lg:justify-end">
-          <PillLink href="/kontakt" size="md" variant="lime" withArrow>
-            Jak se dostat na zimák
-          </PillLink>
-          <PillLink href="/zapasy#odehrane" size="md" variant="inverse">
-            Odehrané zápasy
-          </PillLink>
+          <Button asChild size="md" variant="lime" withArrow>
+            <Link href="/kontakt">Jak se dostat na zimák</Link>
+          </Button>
+          <Button asChild size="md" variant="inverse">
+            <Link href="/zapasy#odehrane">Odehrané zápasy</Link>
+          </Button>
         </div>
       }
       kickoffISO={fixture.startDate}

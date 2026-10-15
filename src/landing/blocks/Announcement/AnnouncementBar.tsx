@@ -4,6 +4,7 @@ import { Megaphone, X } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 /**
@@ -44,14 +45,15 @@ export function AnnouncementBar({
         )}
       </p>
       {dismissible && (
-        <button
+        <Button
           aria-label="Zavřít oznámení"
-          className="grid size-7 flex-none cursor-pointer place-items-center rounded-full transition-colors hover:bg-scrim/10 [&_svg]:size-4"
+          className="grid size-7 flex-none place-items-center gap-0 rounded-full hover:bg-scrim/10 hover:text-current [&_svg]:size-4"
           onClick={() => setDismissed(true)}
-          type="button"
+          size="clear"
+          variant="ghost"
         >
           <X strokeWidth={2.5} />
-        </button>
+        </Button>
       )}
     </div>
   )

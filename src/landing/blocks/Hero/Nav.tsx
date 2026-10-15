@@ -1,10 +1,11 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ctaHref, navHref } from '@/landing/features/navigation/data'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
 import { NavMobile } from '@/landing/layout/NavMobile'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Navigace plovoucí přes hero fotku: bílá „známka" s logem vlevo,
@@ -29,17 +30,17 @@ export function LandingNav({ cta, items }: { cta: NavCta; items: NavItem[] }) {
           byla část navigace nedosažitelná a poslední pilulka ustřižená. */}
       <div className="no-scrollbar hidden min-w-0 gap-1.5 overflow-x-auto nav:flex">
         {items.map((item) => (
-          <PillLink href={navHref(item, 'home')} key={item.label} size="sm" variant="glass">
-            {item.label}
-          </PillLink>
+          <Button asChild key={item.label} size="sm" variant="glass">
+            <Link href={navHref(item, 'home')}>{item.label}</Link>
+          </Button>
         ))}
       </div>
 
       <div className="min-w-5 flex-1" />
 
-      <PillLink className="max-md:hidden" href={href} size="md" variant="dark" withArrow>
-        {cta.label}
-      </PillLink>
+      <Button asChild className="max-md:hidden" size="md" variant="dark" withArrow>
+        <Link href={href}>{cta.label}</Link>
+      </Button>
 
       <NavMobile context="home" ctaHref={href} ctaLabel={cta.label} items={items} tone="glass" />
     </nav>

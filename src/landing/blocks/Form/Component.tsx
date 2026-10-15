@@ -181,7 +181,7 @@ export const FormBlock: React.FC<
                 className="h-11 w-full md:h-10 md:w-auto"
                 form={formID}
                 type="submit"
-                variant="default"
+                variant="dark"
               >
                 {submitButtonLabel}
               </Button>

@@ -1,12 +1,13 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ctaHref } from '@/landing/features/navigation/navHref'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
-import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
 import { NavMobile } from './NavMobile'
@@ -67,9 +68,9 @@ export function StickyNav({ items, cta }: { items: NavItem[]; cta: NavCta }) {
 
         <div className="min-w-5 flex-1" />
 
-        <PillLink className="max-md:hidden" href={href} size="md" variant="dark" withArrow>
-          {cta.label}
-        </PillLink>
+        <Button asChild className="max-md:hidden" size="md" variant="dark" withArrow>
+          <Link href={href}>{cta.label}</Link>
+        </Button>
 
         <NavMobile context={context} ctaHref={href} ctaLabel={cta.label} items={items} />
       </nav>

@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { SectionHeadingBlockType } from '@/payload-types'
@@ -24,9 +25,9 @@ export function SectionHeadingBlockComponent({ block }: { block: SectionHeadingB
           </div>
           <div className="flex-1" />
           {block.ctaLabel && block.ctaHref && (
-            <PillLink href={block.ctaHref} size="md" variant="dark" withArrow>
-              {block.ctaLabel}
-            </PillLink>
+            <Button asChild size="md" variant="dark" withArrow>
+              <Link href={block.ctaHref}>{block.ctaLabel}</Link>
+            </Button>
           )}
         </div>
       </Reveal>

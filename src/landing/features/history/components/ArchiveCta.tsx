@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { HISTORY_PAGE } from '@/landing/content'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Tmavý CTA pás pod timeline — odkaz na fotoalbum s archivními fotkami.
@@ -15,9 +16,9 @@ export function ArchiveCta() {
 
   return (
     <CtaStrip className="mt-18 md:mt-24 lg:mt-27.5" headline={cta.headline} perex={cta.perex}>
-      <PillLink href={cta.href} variant="lime" withArrow>
-        {cta.label}
-      </PillLink>
+      <Button asChild variant="lime" withArrow>
+        <Link href={cta.href}>{cta.label}</Link>
+      </Button>
     </CtaStrip>
   )
 }

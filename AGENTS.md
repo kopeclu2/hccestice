@@ -635,7 +635,7 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
   `text-lg` má `font-bold` / `font-semibold` / `font-medium` místo
   `extrabold` / `bold` / `semibold`. `font-extrabold` patří nadpisům
   (`Heading.tsx`), skóre a číslům (`Numeral.tsx`) a jménům týmů v tabuli;
-  tlačítka (`pill.ts`) mají `font-bold`.
+  tlačítka (`components/ui/button`) mají `font-bold`.
 - Výjimky, které zůstávají tokeny: `text-eyebrow` (11px mikro-label
   verzálkami, Tailwind krok nemá) a `text-watermark-*` (dekorativní
   obrysové nápisy 110–260 px).

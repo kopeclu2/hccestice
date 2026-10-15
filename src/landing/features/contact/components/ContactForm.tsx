@@ -5,6 +5,7 @@ import { Check, LoaderCircle } from 'lucide-react'
 import React from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -13,7 +14,6 @@ import { contactSchema, type ContactValues } from '@/landing/features/contact/sc
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { PillButton } from '@/landing/ui/PillButton'
 import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
 import { useRecaptcha } from '@/lib/recaptcha/useRecaptcha'
 import { cn } from '@/lib/utils'
@@ -179,7 +179,7 @@ export function ContactForm({
               {topics.map((topic) => {
                 const isSelected = selectedTopic === topic
                 return (
-                  <PillButton
+                  <Button
                     aria-pressed={isSelected}
                     className={cn(
                       isSelected && 'border-lime bg-lime text-ink hover:bg-lime hover:text-ink',
@@ -190,7 +190,7 @@ export function ContactForm({
                     variant={tone === 'dark' ? 'inverse' : 'outline'}
                   >
                     {topic}
-                  </PillButton>
+                  </Button>
                 )
               })}
             </div>
@@ -219,7 +219,7 @@ export function ContactForm({
             </p>
           )}
 
-          <PillButton
+          <Button
             arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
             /* Bez odsazení se tlačítko lepilo na textarea (~4px) — o stupeň víc
                než rytmus polí (16px), aby se odsadilo od bloku formuláře. */
@@ -231,7 +231,7 @@ export function ContactForm({
             withArrow
           >
             {isSubmitting ? 'Odesílám…' : 'Odeslat zprávu'}
-          </PillButton>
+          </Button>
         </form>
       )}
     </div>

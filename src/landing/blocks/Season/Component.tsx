@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
 import { ResultsList } from '@/landing/features/matches/components/ResultsList'
 import { StandingsPanel } from '@/landing/features/matches/components/StandingsPanel'
@@ -10,7 +12,6 @@ import { relId } from '@/landing/lib/payload'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
@@ -91,12 +92,12 @@ function SeasonView({
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                    Sledovat aktuality
-                  </PillLink>
-                  <PillLink href={`${ZAPASY_HREF}#odehrane`} size="md" variant="outline">
-                    Odehrané zápasy
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/aktuality">Sledovat aktuality</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href={`${ZAPASY_HREF}#odehrane`}>Odehrané zápasy</Link>
+                  </Button>
                 </>
               }
               icon="schedule"

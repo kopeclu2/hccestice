@@ -1,11 +1,12 @@
+import Link from 'next/link'
 import React from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
+import { Button } from '@/components/ui/button'
 import type { StandingsContent } from '@/landing/features/matches/types'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
 const ZAPASY_HREF = '/zapasy'
@@ -24,9 +25,9 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
       {standings.rows.length === 0 ? (
         <EmptyState
           actions={
-            <PillLink href={ZAPASY_HREF} size="sm" variant="dark" withArrow>
-              Rozlosování
-            </PillLink>
+            <Button asChild size="sm" variant="dark" withArrow>
+              <Link href={ZAPASY_HREF}>Rozlosování</Link>
+            </Button>
           }
           frame="bare"
           title="Tabulka zatím neběží"

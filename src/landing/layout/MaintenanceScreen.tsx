@@ -1,13 +1,14 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { MaintenanceState } from '@/landing/data/maintenance'
 import type { SiteLinks } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { ErrorMeta } from '@/landing/ui/ErrorCode'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { PuckTrailLine } from '@/landing/ui/PuckTrail'
 import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 
@@ -68,18 +69,18 @@ export function MaintenanceScreen({
 
         <div className="mt-7.5 flex flex-wrap items-center justify-center gap-2.5">
           {site.facebook && (
-            <PillLink href={site.facebook} size="sm" variant="outline">
-              Facebook
-            </PillLink>
+            <Button asChild size="sm" variant="outline">
+              <Link href={site.facebook}>Facebook</Link>
+            </Button>
           )}
           {site.instagram && (
-            <PillLink href={site.instagram} size="sm" variant="outline">
-              Instagram
-            </PillLink>
+            <Button asChild size="sm" variant="outline">
+              <Link href={site.instagram}>Instagram</Link>
+            </Button>
           )}
-          <PillLink href={`mailto:${site.email}`} size="sm" variant="dark">
-            {site.email}
-          </PillLink>
+          <Button asChild size="sm" variant="dark">
+            <Link href={`mailto:${site.email}`}>{site.email}</Link>
+          </Button>
         </div>
 
         <ErrorMeta className="mt-12">{CLUB_NAME} · TJ Sokol · VČHL</ErrorMeta>

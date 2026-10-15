@@ -2,13 +2,13 @@
 
 import * as Sentry from '@sentry/nextjs'
 import { RotateCcw } from 'lucide-react'
+import Link from 'next/link'
 import React, { useEffect } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ErrorCode, ErrorMeta } from '@/landing/ui/ErrorCode'
 import { PageTitle } from '@/landing/ui/Heading'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
-import { PillButton } from '@/landing/ui/PillButton'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Stránka 500 podle handoffu „HC Cestice Systemove Stranky" — tmavá plocha,
@@ -59,7 +59,7 @@ export default function Error({
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-2.5">
-          <PillButton
+          <Button
             arrowIcon={<RotateCcw strokeWidth={2.5} />}
             onClick={() => retry()}
             size="lg"
@@ -67,10 +67,10 @@ export default function Error({
             withArrow
           >
             Obnovit stránku
-          </PillButton>
-          <PillLink href="/" size="md" variant="inverse">
-            Hlavní stránka
-          </PillLink>
+          </Button>
+          <Button asChild size="md" variant="inverse">
+            <Link href="/">Hlavní stránka</Link>
+          </Button>
         </div>
 
         <ErrorMeta className="mt-14" tone="dark">

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
 import { FormStrip } from '@/landing/features/matches/components/FormStrip'
 import { MatchesCta } from '@/landing/features/matches/components/MatchesCta'
@@ -23,7 +25,6 @@ import type { StandingsContent } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl } from '@/landing/lib/listUrl'
 import { EmptyState } from '@/landing/ui/EmptyState'
-import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { SITE_NAME } from '@/lib/club'
 import { routes } from '@/lib/routes'
@@ -122,12 +123,12 @@ export default async function ZapasyPage({ searchParams }: Args) {
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                    Sledovat aktuality
-                  </PillLink>
-                  <PillLink href="/zapasy#odehrane" size="md" variant="outline">
-                    Odehrané zápasy
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/aktuality">Sledovat aktuality</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/zapasy#odehrane">Odehrané zápasy</Link>
+                  </Button>
                 </>
               }
               icon="schedule"

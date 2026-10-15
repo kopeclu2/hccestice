@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { SiteLinks } from '@/landing/types'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Tmavý CTA pás „Nechceš nic propásnout?" pod výpisem — odkazy na sítě
@@ -17,14 +18,18 @@ export function SocialCta({ site }: { site: SiteLinks }) {
       perex="Sleduj nás na sítích — fotky a výsledky tam letí hned po zápase."
     >
       {site.facebook && (
-        <PillLink href={site.facebook} rel="noreferrer" size="md" target="_blank" variant="inverse">
-          Facebook
-        </PillLink>
+        <Button asChild size="md" variant="inverse">
+          <Link href={site.facebook} rel="noreferrer" target="_blank">
+            Facebook
+          </Link>
+        </Button>
       )}
       {site.instagram && (
-        <PillLink href={site.instagram} rel="noreferrer" target="_blank" variant="lime" withArrow>
-          Instagram
-        </PillLink>
+        <Button asChild variant="lime" withArrow>
+          <Link href={site.instagram} rel="noreferrer" target="_blank">
+            Instagram
+          </Link>
+        </Button>
       )}
     </CtaStrip>
   )

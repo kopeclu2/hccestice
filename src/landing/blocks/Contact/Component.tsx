@@ -1,6 +1,8 @@
 import { ArrowUpRight } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CONTACT } from '@/landing/content'
 import { fetchSite } from '@/landing/data/site'
 import { ContactFormLazy } from '@/landing/features/contact/components/ContactFormLazy'
@@ -10,7 +12,6 @@ import type { SiteLinks } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
@@ -129,8 +130,10 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
  */
 function SocialPill({ href, label }: { href: string; label: string }) {
   return (
-    <PillLink href={href} rel="noreferrer" size="sm" target="_blank" variant="outline" withArrow>
-      {label}
-    </PillLink>
+    <Button asChild size="sm" variant="outline" withArrow>
+      <Link href={href} rel="noreferrer" target="_blank">
+        {label}
+      </Link>
+    </Button>
   )
 }

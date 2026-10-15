@@ -1,10 +1,11 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
 import type { PostCard } from '@/landing/features/posts/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { routes } from '@/lib/routes'
@@ -39,9 +40,9 @@ export function ArticleRelated({
             </SectionTitle>
           </div>
           <div className="hidden flex-1 md:block" />
-          <PillLink href={routes.list.posts} size="sm" variant="outline">
-            Všechny aktuality ↗
-          </PillLink>
+          <Button asChild size="sm" variant="outline">
+            <Link href={routes.list.posts}>Všechny aktuality ↗</Link>
+          </Button>
         </div>
       </Reveal>
 

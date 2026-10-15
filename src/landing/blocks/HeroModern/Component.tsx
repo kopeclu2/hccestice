@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { HERO } from '@/landing/content'
 import { fetchNavCta, fetchNavigation } from '@/landing/features/navigation/data'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
@@ -7,7 +9,6 @@ import { uploadToPhoto } from '@/landing/lib/media'
 import type { HeroModernContent } from '@/landing/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
-import { PillLink } from '@/landing/ui/PillLink'
 import type { LandingHeroModernBlock } from '@/payload-types'
 
 import { HeroModernNav } from './Nav'
@@ -75,9 +76,9 @@ function HeroModernView({
         <div className="relative z-3 px-4.5 pt-70 pb-5.5 md:absolute md:inset-x-hero-inset md:bottom-9 md:p-0">
           <div className="max-w-160">
             {content.cta && (
-              <PillLink href={content.cta.href} size="lg" variant={content.cta.variant} withArrow>
-                {content.cta.label}
-              </PillLink>
+              <Button asChild size="lg" variant={content.cta.variant} withArrow>
+                <Link href={content.cta.href}>{content.cta.label}</Link>
+              </Button>
             )}
             <p className="mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-on-contrast-strong text-shadow-photo">
               {content.intro}

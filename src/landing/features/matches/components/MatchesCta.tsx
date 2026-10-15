@@ -1,7 +1,8 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /** Zelený CTA pás „Přijď na zimák fandit." pod výsledky a tabulkou. */
 export function MatchesCta() {
@@ -12,9 +13,9 @@ export function MatchesCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href="/aktuality" variant="light" withArrow>
-        Zápasové reporty
-      </PillLink>
+      <Button asChild variant="light" withArrow>
+        <Link href="/aktuality">Zápasové reporty</Link>
+      </Button>
     </CtaStrip>
   )
 }

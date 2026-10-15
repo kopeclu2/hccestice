@@ -1,16 +1,15 @@
-import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
+import { ButtonArrow, buttonVariants } from '@/components/ui/button'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { arrowVariants, pillVariants } from '@/landing/ui/pill'
 
 /**
  * Tmavá karta „Volné místo" na konci výpisu partnerů — celá je odkazem
  * na kontakt.
  *
- * Pilulka vpravo je proto `<span>` s třídami přímo z `pillVariants`
+ * Pilulka vpravo je proto `<span>` s třídami přímo z `buttonVariants`
  * (zanořené `<a>` je nevalidní markup) a dekorační „+" je inline element
  * bez negativního z-indexu — `Watermark` má `-z-1` a na tmavém pozadí
  * karty by se skryl pod ním.
@@ -42,11 +41,9 @@ export function PartnerSlotCta() {
         </CardTitle>
       </div>
 
-      <span className={pillVariants({ size: 'md', variant: 'lime', withArrow: true })}>
+      <span className={buttonVariants({ size: 'md', variant: 'lime', withArrow: true })}>
         Ozvěte se nám
-        <span aria-hidden className={arrowVariants({ size: 'md', variant: 'lime' })}>
-          <ArrowUpRight strokeWidth={2.5} />
-        </span>
+        <ButtonArrow size="md" variant="lime" />
       </span>
     </Link>
   )

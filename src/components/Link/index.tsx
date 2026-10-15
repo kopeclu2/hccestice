@@ -6,7 +6,8 @@ import { cn } from '@/lib/utils'
 import type { Page, Post } from '@/payload-types'
 
 type CMSLinkType = {
-  appearance?: 'inline' | ButtonProps['variant']
+  /** `default` a `outline` jsou hodnoty pole `link` z Payloadu (šablonové heroes). */
+  appearance?: 'inline' | 'default' | ButtonProps['variant']
   children?: React.ReactNode
   className?: string
   label?: string | null
@@ -55,8 +56,10 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     )
   }
 
+  const variant = appearance === 'default' ? 'dark' : appearance
+
   return (
-    <Button asChild className={className} size={size} variant={appearance}>
+    <Button asChild className={className} size={size} variant={variant}>
       <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
         {label && label}
         {children && children}

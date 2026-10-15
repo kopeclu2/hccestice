@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CLUB } from '@/landing/content'
 import { uploadToPhoto } from '@/landing/lib/media'
 import type { ClubContent } from '@/landing/types'
@@ -7,7 +9,6 @@ import { DotGrid, PlusMark } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
@@ -68,9 +69,9 @@ function ClubView({ content }: { content: ClubContent }) {
           {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
         </SectionTitle>
         <p className="mt-4 mb-6.5 leading-relaxed text-pretty text-dim">{content.perex}</p>
-        <PillLink href="#kontakt" variant="dark" withArrow>
-          {content.ctaLabel}
-        </PillLink>
+        <Button asChild variant="dark" withArrow>
+          <Link href="#kontakt">{content.ctaLabel}</Link>
+        </Button>
       </Reveal>
 
       <Reveal delay={0.1}>

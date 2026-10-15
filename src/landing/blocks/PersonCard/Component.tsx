@@ -1,6 +1,8 @@
 import { Mail, Phone } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { fetchPerson } from '@/landing/data/site'
 import { toPersonCard } from '@/landing/lib/media'
 import { relId } from '@/landing/lib/payload'
@@ -8,7 +10,6 @@ import type { PersonCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { PersonCardBlock } from '@/payload-types'
@@ -42,18 +43,18 @@ function PersonCardView({ person }: { person: PersonCard }) {
             {person.note && <p className="mt-1 text-sm text-dim">{person.note}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
               {person.phone && (
-                <PillLink
-                  href={`tel:${person.phone.replace(/\s/g, '')}`}
-                  size="xs"
-                  variant="outline"
-                >
-                  <Phone /> {person.phone}
-                </PillLink>
+                <Button asChild size="xs" variant="outline">
+                  <Link href={`tel:${person.phone.replace(/\s/g, '')}`}>
+                    <Phone /> {person.phone}
+                  </Link>
+                </Button>
               )}
               {person.mail && (
-                <PillLink href={`mailto:${person.mail}`} size="xs" variant="club">
-                  <Mail /> {person.mail}
-                </PillLink>
+                <Button asChild size="xs" variant="club">
+                  <Link href={`mailto:${person.mail}`}>
+                    <Mail /> {person.mail}
+                  </Link>
+                </Button>
               )}
             </div>
           </div>

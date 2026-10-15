@@ -1,9 +1,8 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-
-import { pillVariants } from './pill'
-import { PillLink } from './PillLink'
 
 /** Zkrácený výpis čísel stran: první, poslední a aktuální ±1, mezery jako „…". */
 const pageItems = (page: number, totalPages: number): Array<number | '…'> => {
@@ -63,20 +62,16 @@ export function Pagination({
       {/* Tlačítka drží pohromadě jako jedna skupina; zalomit se smí jen v ní. */}
       <div className="flex flex-wrap items-center gap-2">
         {page > 1 ? (
-          <PillLink
-            aria-label="Předchozí strana"
-            className="bg-surface"
-            href={hrefFor(page - 1)}
-            size="circle"
-            variant="outline"
-          >
-            ←
-          </PillLink>
+          <Button asChild className="bg-surface" size="circle" variant="outline">
+            <Link aria-label="Předchozí strana" href={hrefFor(page - 1)}>
+              ←
+            </Link>
+          </Button>
         ) : (
           <span
             aria-hidden
             className={cn(
-              pillVariants({ size: 'circle', variant: 'outline' }),
+              buttonVariants({ size: 'circle', variant: 'outline' }),
               'bg-surface text-inactive',
             )}
           >
@@ -93,7 +88,7 @@ export function Pagination({
             <span
               aria-current="page"
               className={cn(
-                pillVariants({ size: 'circle', variant: 'lime' }),
+                buttonVariants({ size: 'circle', variant: 'lime' }),
                 'border border-lime',
               )}
               key={item}
@@ -101,31 +96,18 @@ export function Pagination({
               {item}
             </span>
           ) : (
-            <PillLink
-              /* Bílá plocha jako u šipek — bez ní byla v jedné skupině část
-                 prvků bílá a část průhledná. Výpustka „…" plochu nemá
-                 záměrně, není to cíl odkazu. */
-              className="bg-surface"
-              href={hrefFor(item)}
-              key={item}
-              size="circle"
-              variant="outline"
-            >
-              {item}
-            </PillLink>
+            <Button asChild className="bg-surface" key={item} size="circle" variant="outline">
+              <Link href={hrefFor(item)}>{item}</Link>
+            </Button>
           ),
         )}
 
         {page < totalPages ? (
-          <PillLink
-            aria-label="Další strana"
-            className="text-lime"
-            href={hrefFor(page + 1)}
-            size="circle"
-            variant="dark"
-          >
-            →
-          </PillLink>
+          <Button asChild className="text-lime" size="circle" variant="dark">
+            <Link aria-label="Další strana" href={hrefFor(page + 1)}>
+              →
+            </Link>
+          </Button>
         ) : (
           /* Neaktivní „další strana" má stejný ztišený outline jako neaktivní
              „předchozí" — v tmavé variantě vypadala jako hlavní akce stránky,
@@ -133,7 +115,7 @@ export function Pagination({
           <span
             aria-hidden
             className={cn(
-              pillVariants({ size: 'circle', variant: 'outline' }),
+              buttonVariants({ size: 'circle', variant: 'outline' }),
               'bg-surface text-inactive',
             )}
           >

@@ -1,10 +1,11 @@
 import { CircleCheck, CircleX, Mail } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CardTitle, PageTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
-import { PillLink } from '@/landing/ui/PillLink'
 import type { Product } from '@/payload-types'
 
 /** Informace o produktu: název, cena, dostupnost, velikosti, objednávka, parametry. */
@@ -62,13 +63,11 @@ export function ProductInfo({ product, email }: { product: Product; email: strin
 
       {product.available && (
         <div>
-          <PillLink
-            className="w-full justify-center py-3.5 [&_svg]:size-4.5"
-            href={mailto}
-            variant="dark"
-          >
-            <Mail strokeWidth={2.5} /> Objednat e-mailem
-          </PillLink>
+          <Button asChild className="w-full justify-center py-3.5 [&_svg]:size-4.5" variant="dark">
+            <Link href={mailto}>
+              <Mail strokeWidth={2.5} /> Objednat e-mailem
+            </Link>
+          </Button>
           <p className="mt-2 text-center text-xs font-medium text-faint">
             {product.orderNote ?? 'V objednávce uveďte název předmětu, velikost a počet kusů.'}
           </p>

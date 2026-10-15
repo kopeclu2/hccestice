@@ -1,11 +1,12 @@
+import Link from 'next/link'
 import React from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
+import { Button } from '@/components/ui/button'
 import type { StandingsContent, StandingsRow } from '@/landing/features/matches/types'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
-import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'
 
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
@@ -98,12 +99,12 @@ export function StandingsPanel({
         <EmptyState
           actions={
             <>
-              <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                Sledovat aktuality
-              </PillLink>
-              <PillLink href="/zapasy#rozlosovani" size="md" variant="outline">
-                Rozlosování
-              </PillLink>
+              <Button asChild size="md" variant="dark" withArrow>
+                <Link href="/aktuality">Sledovat aktuality</Link>
+              </Button>
+              <Button asChild size="md" variant="outline">
+                <Link href="/zapasy#rozlosovani">Rozlosování</Link>
+              </Button>
             </>
           }
           className="mt-5 flex-1 justify-center"

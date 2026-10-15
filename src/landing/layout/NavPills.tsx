@@ -1,11 +1,12 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { isNavItemActive, navHref } from '@/landing/features/navigation/navHref'
 import type { NavItem } from '@/landing/features/navigation/types'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Pill odkazy navigace podstránek s aktivním stavem podle aktuální cesty.
@@ -32,16 +33,17 @@ export function NavPills({ items }: { items: NavItem[] }) {
       {items.map((item) => {
         const active = isNavItemActive(item, pathname)
         return (
-          <PillLink
-            aria-current={active ? 'page' : undefined}
-            className={active ? undefined : 'bg-on-contrast-subtle'}
-            href={navHref(item, 'subpage')}
+          <Button
+            asChild
             key={item.label}
+            className={active ? undefined : 'bg-on-contrast-subtle'}
             size="sm"
             variant={active ? 'dark' : 'outline'}
           >
-            {item.label}
-          </PillLink>
+            <Link aria-current={active ? 'page' : undefined} href={navHref(item, 'subpage')}>
+              {item.label}
+            </Link>
+          </Button>
         )
       })}
     </div>

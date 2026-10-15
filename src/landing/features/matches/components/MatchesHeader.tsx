@@ -1,8 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
 import { PageHeader } from '@/landing/ui/PageHeader'
-import { PillLink } from '@/landing/ui/PillLink'
 
 import { SeasonFilters, type SeasonPill } from './SeasonFilters'
 
@@ -29,15 +30,11 @@ export function MatchesHeader({
       }
       meta={
         fullTableUrl && (
-          <PillLink
-            href={fullTableUrl}
-            rel="noreferrer"
-            size="sm"
-            target="_blank"
-            variant="outline"
-          >
-            Oficiální tabulky VČHL ↗
-          </PillLink>
+          <Button asChild size="sm" variant="outline">
+            <Link href={fullTableUrl} rel="noreferrer" target="_blank">
+              Oficiální tabulky VČHL ↗
+            </Link>
+          </Button>
         )
       }
       /* Pod `md` se pilulka zalomí na vlastní řádek pod filtry sezón. Dřív ji

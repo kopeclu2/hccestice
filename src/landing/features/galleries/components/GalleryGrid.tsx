@@ -1,13 +1,14 @@
 import { Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { GalleryCard } from '@/landing/features/galleries/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardCta, CardGrid, CardShell } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle } from '@/landing/ui/Heading'
-import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { countLabel } from '@/lib/plural'
 import { routes } from '@/lib/routes'
@@ -45,13 +46,13 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
     <EmptyState
       actions={
         <>
-          <PillLink href="/#kontakt" size="md" variant="dark" withArrow>
-            Poslat fotky
-          </PillLink>
+          <Button asChild size="md" variant="dark" withArrow>
+            <Link href="/#kontakt">Poslat fotky</Link>
+          </Button>
           {activeSeasonLabel && (
-            <PillLink href={`${routes.list.galleries}#seznam`} size="md" variant="outline">
-              Starší sezóny
-            </PillLink>
+            <Button asChild size="md" variant="outline">
+              <Link href={`${routes.list.galleries}#seznam`}>Starší sezóny</Link>
+            </Button>
           )}
         </>
       }

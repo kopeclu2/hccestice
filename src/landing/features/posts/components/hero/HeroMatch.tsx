@@ -1,6 +1,8 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { MatchScoreboard } from '@/landing/features/matches/components/MatchScoreboard'
 import type { ArticleGoal } from '@/landing/features/matches/types'
 import type { ArticleDetail } from '@/landing/features/posts/types'
@@ -9,7 +11,6 @@ import { Badge } from '@/landing/ui/Badge'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 
@@ -76,9 +77,9 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
               a skóre. */}
           {article.matchHref && (
             <div className="mt-[clamp(1.25rem,2.5vw,1.75rem)] flex justify-center">
-              <PillLink href={article.matchHref} size="sm" variant="glass" withArrow>
-                Detail zápasu
-              </PillLink>
+              <Button asChild size="sm" variant="glass" withArrow>
+                <Link href={article.matchHref}>Detail zápasu</Link>
+              </Button>
             </div>
           )}
 

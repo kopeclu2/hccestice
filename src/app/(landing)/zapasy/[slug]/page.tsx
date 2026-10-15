@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { MatchJsonLd } from '@/landing/features/matches/components/MatchJsonLd'
 import { MatchReportCard } from '@/landing/features/matches/components/MatchReportCard'
@@ -15,7 +17,6 @@ import { buildMatchSummary } from '@/landing/features/matches/view/matchSummary'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl } from '@/landing/lib/listUrl'
 import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
-import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
 import { SITE_NAME } from '@/lib/club'
@@ -112,9 +113,9 @@ export default async function MatchDetailPage(args: Args) {
             className="mb-0"
             trail={[{ href: routes.list.matches, label: 'Zápasy' }, { label: match.title }]}
           />
-          <PillLink href={listHref(match)} size="sm" variant="outline">
-            ← Všechny zápasy
-          </PillLink>
+          <Button asChild size="sm" variant="outline">
+            <Link href={listHref(match)}>← Všechny zápasy</Link>
+          </Button>
         </div>
       </SectionShell>
 
@@ -171,9 +172,9 @@ export default async function MatchDetailPage(args: Args) {
           tlačítko o kus výš. */}
       {(hasTimeline || hasAside || match.missingProtocol) && (
         <SectionShell spacing="cta">
-          <PillLink href={listHref(match)} size="md" variant="outline">
-            ← Všechny zápasy
-          </PillLink>
+          <Button asChild size="md" variant="outline">
+            <Link href={listHref(match)}>← Všechny zápasy</Link>
+          </Button>
         </SectionShell>
       )}
     </SubpageShell>

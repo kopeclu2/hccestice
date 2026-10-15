@@ -1,10 +1,11 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ctaHref, fetchNavCta, fetchNavigation } from '@/landing/features/navigation/data'
 import { NavMobile } from '@/landing/layout/NavMobile'
 import { NavPills } from '@/landing/layout/NavPills'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Světlá globální navigace podstránek: logo známka vlevo, pilulky odkazů
@@ -28,9 +29,9 @@ export async function ArticleNav() {
 
       <div className="min-w-5 flex-1" />
 
-      <PillLink className="max-md:hidden" href={href} size="md" variant="dark" withArrow>
-        {cta.label}
-      </PillLink>
+      <Button asChild className="max-md:hidden" size="md" variant="dark" withArrow>
+        <Link href={href}>{cta.label}</Link>
+      </Button>
 
       <NavMobile context="subpage" ctaHref={href} ctaLabel={cta.label} items={items} />
     </nav>

@@ -1,8 +1,9 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import type { ArticleAuthor } from '@/landing/features/posts/types'
-import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 /**
@@ -37,9 +38,9 @@ export function AuthorCard({ author }: { author: ArticleAuthor }) {
       </div>
       <div className="flex-1" />
       {author.email && (
-        <PillLink href={`mailto:${author.email}`} size="md" variant="dark" withArrow>
-          Napsat autorovi
-        </PillLink>
+        <Button asChild size="md" variant="dark" withArrow>
+          <Link href={`mailto:${author.email}`}>Napsat autorovi</Link>
+        </Button>
       )}
     </div>
   )

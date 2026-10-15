@@ -1,12 +1,13 @@
 import { ArrowUpRight } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CONTACT } from '@/landing/content'
 import type { SiteLinks } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /**
  * Levý panel stránky `/kontakt`: rychlé údaje vedle tmavé karty s formulářem
@@ -74,8 +75,10 @@ export function ContactInfoPanel({ site }: { site: SiteLinks }) {
 
 function SocialPill({ href, label }: { href: string; label: string }) {
   return (
-    <PillLink href={href} rel="noreferrer" size="sm" target="_blank" variant="outline" withArrow>
-      {label}
-    </PillLink>
+    <Button asChild size="sm" variant="outline" withArrow>
+      <Link href={href} rel="noreferrer" target="_blank">
+        {label}
+      </Link>
+    </Button>
   )
 }

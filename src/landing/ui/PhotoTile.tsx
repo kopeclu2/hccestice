@@ -77,7 +77,7 @@ export function PhotoTile({
  * Kruhová šipka ↗ v rohu fotokarty — vizuální signál, že celá dlaždice je
  * odkaz (mozaika Fotoalba).
  *
- * Nepoužívá `arrowVariants` z `./pill.ts`: ten je odvozený od výšek pilulek
+ * Nepoužívá `buttonArrowVariants` z `components/ui/button`: ten je odvozený od výšek pilulek
  * (největší kruh má 28 px) a jeho barvy jsou vázané na variantu pilulky.
  * Tady jsou průměry 38 a 32 px z handoffu a plocha je vždy bílá.
  */

@@ -11,8 +11,8 @@ import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
 import 'yet-another-react-lightbox/plugins/counter.css'
 
+import { Button } from '@/components/ui/button'
 import type { Photo } from '@/landing/types'
-import { PillButton } from '@/landing/ui/PillButton'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import { LightboxImage } from './LightboxImage'
@@ -70,9 +70,9 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
 
       {visibleCount < photos.length && (
         <div className="mt-8 flex justify-center">
-          <PillButton onClick={() => setVisibleCount((count) => count + BATCH)} variant="dark">
+          <Button onClick={() => setVisibleCount((count) => count + BATCH)} variant="dark">
             Zobrazit další fotky ({photos.length - visibleCount})
-          </PillButton>
+          </Button>
         </div>
       )}
 

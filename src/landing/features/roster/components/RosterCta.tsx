@@ -1,7 +1,8 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { CtaStrip } from '@/landing/ui/CtaStrip'
-import { PillLink } from '@/landing/ui/PillLink'
 
 /** Zelený CTA pás „Chybíš nám tady ty." pod soupiskou. */
 export function RosterCta() {
@@ -12,9 +13,9 @@ export function RosterCta() {
       tone="club"
       watermark="HCČ"
     >
-      <PillLink href="/#kontakt" variant="lime" withArrow>
-        Chci hrát
-      </PillLink>
+      <Button asChild variant="lime" withArrow>
+        <Link href="/#kontakt">Chci hrát</Link>
+      </Button>
     </CtaStrip>
   )
 }

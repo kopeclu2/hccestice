@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 /**
  * Statická pilulka (badge) — štítky u zápasů, výsledků, karet a milníků.
  *
- * Doplňuje `PillLink` (klikací CTA) a `Kicker` (štítek nad nadpisem):
+ * Doplňuje `Button` (klikací CTA) a `Kicker` (štítek nad nadpisem):
  * tady jde o neklikací štítek se stejnými poloměry a rozestupy napříč webem.
  *
  * Varianty odpovídají handoffu:
@@ -48,7 +48,7 @@ const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowr
       sm: 'px-3 py-1.25 text-xs',
       /** Volnější štítek v textových sekcích. */
       md: 'px-4 py-1.75 text-xs',
-      /** Štítek v rytmu pilulek (`PillLink size="sm"`) — kontakty, adresy. */
+      /** Štítek v rytmu pilulek (`Button size="sm"`) — kontakty, adresy. */
       lg: 'px-4.5 py-2.25 text-sm',
     },
     /**

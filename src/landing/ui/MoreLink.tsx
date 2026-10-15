@@ -1,6 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
-import { PillLink } from './PillLink'
+import { Button } from '@/components/ui/button'
 
 /**
  * Proklik z výřezu sekce na její plnou stránku (home page → /zapasy).
@@ -12,8 +13,8 @@ import { PillLink } from './PillLink'
  */
 export function MoreLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <PillLink href={href} size="md" variant="outline" withArrow>
-      {children}
-    </PillLink>
+    <Button asChild size="md" variant="outline" withArrow>
+      <Link href={href}>{children}</Link>
+    </Button>
   )
 }

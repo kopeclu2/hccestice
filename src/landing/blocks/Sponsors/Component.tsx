@@ -1,13 +1,14 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import type { Sponsor } from '@/landing/features/sponsors/types'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
@@ -102,12 +103,12 @@ function SponsorsView({
             <Highlight dot>{titleHighlight}</Highlight>
           </SectionTitle>
           <div className="mt-6.5 flex flex-wrap items-center gap-x-2.5 gap-y-3">
-            <PillLink href="#kontakt" variant="dark" withArrow>
-              {ctaLabel}
-            </PillLink>
-            <PillLink href="/sponzori" variant="outline" withArrow>
-              Všichni partneři
-            </PillLink>
+            <Button asChild variant="dark" withArrow>
+              <Link href="#kontakt">{ctaLabel}</Link>
+            </Button>
+            <Button asChild variant="outline" withArrow>
+              <Link href="/sponzori">Všichni partneři</Link>
+            </Button>
             <span className="text-sm font-medium text-faint">{count}</span>
           </div>
         </div>

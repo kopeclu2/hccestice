@@ -1,12 +1,13 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { HISTORY } from '@/landing/content'
 import type { HistoryContent } from '@/landing/features/history/types'
 import { arrayOr } from '@/landing/lib/payload'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
@@ -65,12 +66,12 @@ function HistoryView({ content }: { content: HistoryContent }) {
         </SectionTitle>
 
         <div className="mt-7.5 flex flex-wrap items-center gap-x-3.5 gap-y-3">
-          <PillLink href={HISTORY_HREF} variant="dark" withArrow>
-            {content.ctaLabel}
-          </PillLink>
-          <PillLink href={PHOTOS_HREF} variant="outline" withArrow>
-            {content.photosCtaLabel}
-          </PillLink>
+          <Button asChild variant="dark" withArrow>
+            <Link href={HISTORY_HREF}>{content.ctaLabel}</Link>
+          </Button>
+          <Button asChild variant="outline" withArrow>
+            <Link href={PHOTOS_HREF}>{content.photosCtaLabel}</Link>
+          </Button>
           <span className="text-sm font-medium text-faint">{content.metaLine}</span>
         </div>
       </Reveal>

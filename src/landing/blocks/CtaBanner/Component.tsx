@@ -1,10 +1,11 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { uploadToPhoto } from '@/landing/lib/media'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { PillLink } from '@/landing/ui/PillLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
@@ -38,9 +39,9 @@ export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }
             <SectionTitle className="mt-1.5 text-pretty">{block.title}</SectionTitle>
             {block.text && <p className="mt-3 text-on-contrast-strong">{block.text}</p>}
             {block.ctaLabel && block.ctaHref && (
-              <PillLink className="mt-6" href={block.ctaHref} variant="light" withArrow>
-                {block.ctaLabel}
-              </PillLink>
+              <Button asChild className="mt-6" variant="light" withArrow>
+                <Link href={block.ctaHref}>{block.ctaLabel}</Link>
+              </Button>
             )}
           </div>
         </div>

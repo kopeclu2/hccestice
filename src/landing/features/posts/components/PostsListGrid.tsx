@@ -1,12 +1,13 @@
 import { X } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
 import type { PostCard } from '@/landing/features/posts/types'
 import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { CardGrid } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
-import { PillLink } from '@/landing/ui/PillLink'
 import { routes } from '@/lib/routes'
 
 /**
@@ -73,9 +74,9 @@ function PostsListEmpty({ activeType }: { activeType: string | null }) {
     return (
       <EmptyState
         actions={
-          <PillLink href="/" size="md" variant="dark" withArrow>
-            Zpátky na úvod
-          </PillLink>
+          <Button asChild size="md" variant="dark" withArrow>
+            <Link href="/">Zpátky na úvod</Link>
+          </Button>
         }
         icon="search"
         title="Zatím tu žádné články nejsou"
@@ -89,18 +90,12 @@ function PostsListEmpty({ activeType }: { activeType: string | null }) {
     <EmptyState
       actions={
         <>
-          <PillLink
-            arrowIcon={<X strokeWidth={2.5} />}
-            href={`${routes.list.posts}#seznam`}
-            size="md"
-            variant="dark"
-            withArrow
-          >
-            Zrušit filtr
-          </PillLink>
-          <PillLink href={routes.list.matches} size="md" variant="outline">
-            Zápasy
-          </PillLink>
+          <Button asChild arrowIcon={<X strokeWidth={2.5} />} size="md" variant="dark" withArrow>
+            <Link href={`${routes.list.posts}#seznam`}>Zrušit filtr</Link>
+          </Button>
+          <Button asChild size="md" variant="outline">
+            <Link href={routes.list.matches}>Zápasy</Link>
+          </Button>
         </>
       }
       icon="search"

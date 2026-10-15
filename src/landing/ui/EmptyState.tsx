@@ -29,7 +29,7 @@ export function EmptyState({
   titleAs = 'h2',
   watermark,
 }: {
-  /** Cesty dál — typicky `PillLink`. Vždy alespoň jedna. */
+  /** Cesty dál — typicky `Button asChild` s odkazem. Vždy alespoň jedna. */
   actions: React.ReactNode
   /** Perex pod nadpisem. */
   children?: React.ReactNode
