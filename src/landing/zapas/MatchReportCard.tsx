@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { cn } from '@/utilities/ui'
 
 import { CardTitle } from '../components/Heading'
 import { Eyebrow } from '../components/Kicker'
@@ -13,27 +14,39 @@ import type { MatchDetail } from '../types'
  * dohromady, protože jsou to dvě cesty od čísel k příběhu zápasu a obě
  * jsou volitelné — bez jedné se vykreslí zbytek, bez obou nic.
  *
+ * `wide` je karta bez časové osy vedle sebe: stojí přes celou šířku
+ * hlavičky, takže od `md` jde fotka doleva a text doprava — na výšku by
+ * fotka v plné šířce 1320 px zabrala celou obrazovku.
+ *
  * `sizes` kopíruje layout stránky, proto ho předává page: do `lg` je karta
- * přes celou šířku, od `lg` buď pravý sloupec mřížky (zhruba 40vw), nebo
- * — bez branek — jediný sloupec se stropem 48rem. Výchozí je varianta se
- * sloupcem.
+ * přes celou šířku, od `lg` pravý sloupec mřížky (zhruba 40vw); `wide` má
+ * fotku od `md` v polovině karty. Výchozí je varianta se sloupcem.
  */
 export function MatchReportCard({
   gallery,
   report,
   sizes = '(max-width: 1023px) 100vw, 40vw',
-}: Pick<MatchDetail, 'gallery' | 'report'> & { sizes?: string }) {
+  wide = false,
+}: Pick<MatchDetail, 'gallery' | 'report'> & { sizes?: string; wide?: boolean }) {
   if (!report && !gallery) return null
 
   return (
     <section
       aria-label="Reportáž a fotky"
-      className="border-line-soft min-w-0 overflow-hidden rounded-tile border bg-surface"
+      className={cn(
+        'border-line-soft min-w-0 overflow-hidden rounded-tile border bg-surface',
+        wide && report?.photo && 'md:grid md:grid-cols-2 md:items-center',
+      )}
     >
       {report && (
         <>
           {report.photo && (
-            <div className="relative aspect-[16/10] w-full md:aspect-[2/1] lg:aspect-[16/10] overflow-hidden bg-chip">
+            <div
+              className={cn(
+                'relative aspect-[16/10] w-full overflow-hidden bg-chip',
+                wide ? 'md:h-full md:min-h-72 md:aspect-auto' : 'md:aspect-[2/1] lg:aspect-[16/10]',
+              )}
+            >
               <Image
                 alt=""
                 className="object-cover"
