@@ -27,7 +27,8 @@ import {
   resolveMatchDate,
   shouldFetchDetail,
 } from '../../src/jobs/vchlSync/sync/matches'
-import { foldTeam, opponentKeys, stripClubPrefix } from '../../src/jobs/vchlSync/sync/opponents'
+import { foldTeam, opponentKeys } from '../../src/jobs/vchlSync/sync/opponents'
+import { stripClubPrefix } from '../../src/lib/teamName'
 
 const fx = (name: string) =>
   readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')

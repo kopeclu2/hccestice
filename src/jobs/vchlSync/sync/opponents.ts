@@ -7,9 +7,6 @@ import type { SyncContext } from './ctx'
 /** Klíč pro porovnání názvů týmů: bez diakritiky, velikosti písmen a interpunkce. */
 export const foldTeam = (s: string): string => fold(s, { alnumOnly: true })
 
-// Seed skript `seed-opponent-logos-ahl` ho importuje odsud.
-export { stripClubPrefix }
-
 /**
  * Most z historického importu zápasů (seed skripty už v repu nejsou):
  * plné názvy ze stránek zápasů → název soupeře v CMS. Při prvním zjištění se

@@ -21,13 +21,8 @@ import { getPayload } from 'payload'
 
 import { AHL_USER_AGENT } from '@/ahl/client'
 import { AHL_BASE_URL } from '@/ahl/urls'
-import {
-  ahlNameKeys,
-  foldTeam,
-  keysIntersect,
-  opponentKeys,
-  stripClubPrefix,
-} from '@/jobs/vchlSync/sync/opponents'
+import { ahlNameKeys, foldTeam, keysIntersect, opponentKeys } from '@/jobs/vchlSync/sync/opponents'
+import { stripClubPrefix } from '@/lib/teamName'
 import config from '@/payload.config'
 
 const DRY = process.argv.includes('--dry')
