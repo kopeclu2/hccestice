@@ -30,7 +30,7 @@ export function VariantCountdown({
       <p
         className={cn(
           'flex items-center gap-2 font-semibold text-balance',
-          look === 'tiles' ? 'text-lg text-white' : 'text-sm text-ink',
+          look === 'tiles' ? 'text-lg text-on-contrast' : 'text-sm text-ink',
           className,
         )}
         role="status"
@@ -62,7 +62,7 @@ export function VariantCountdown({
             key={unit.label}
           >
             <dt className="order-2 text-xs font-medium text-faint">{unit.label}</dt>
-            <dd className="text-3xl leading-none font-extrabold tracking-[-0.03em] text-ink md:text-5xl">
+            <dd className="text-3xl leading-none font-extrabold tracking-heading text-ink md:text-5xl">
               {unit.value}
             </dd>
           </div>
@@ -75,16 +75,16 @@ export function VariantCountdown({
     <dl className={cn('grid grid-cols-4 gap-1.5 tabular-nums md:gap-2.5', className)}>
       {units.map((unit, index) => (
         <div
-          className="flex flex-col items-center rounded-field border border-white/10 bg-pine-deep/70 px-1 py-2 md:py-3"
+          className="flex flex-col items-center rounded-field border border-on-contrast-wash bg-pine-deep/70 px-1 py-2 md:py-3"
           key={unit.label}
         >
-          <dt className="order-2 mt-1 text-eyebrow font-semibold tracking-[0.12em] text-white/50 uppercase">
+          <dt className="order-2 mt-1 text-eyebrow font-semibold tracking-caps-md text-on-contrast-faint uppercase">
             {unit.label}
           </dt>
           <dd
             className={cn(
               'font-mono text-2xl leading-none font-bold md:text-3xl',
-              index === units.length - 1 ? 'text-lime' : 'text-white',
+              index === units.length - 1 ? 'text-lime' : 'text-on-contrast',
             )}
           >
             {unit.value}

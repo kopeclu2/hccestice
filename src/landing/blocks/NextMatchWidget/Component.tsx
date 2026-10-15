@@ -39,7 +39,7 @@ function NextMatchWidgetView({
         ) : (
           <div className="relative overflow-hidden rounded-card bg-contrast p-6 text-on-contrast md:p-8 lg:p-12">
             <div className="absolute inset-0 hatch opacity-40" />
-            <p className="relative text-white/85">
+            <p className="relative text-on-contrast-strong">
               {note ?? 'Žádný zápas není naplánovaný — rozpis nové sezóny připravujeme.'}
             </p>
           </div>

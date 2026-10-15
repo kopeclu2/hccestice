@@ -56,14 +56,14 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           <table className="mt-3 w-full border-collapse tabular-nums md:mt-4">
             <caption className="sr-only">{played ? 'Skóre po třetinách' : 'Týmy zápasu'}</caption>
             <thead>
-              <tr className="text-eyebrow font-semibold tracking-[0.08em] text-faint uppercase">
+              <tr className="text-eyebrow font-semibold tracking-caps-sm text-faint uppercase">
                 <th className="pb-1.5 text-left font-semibold" scope="col">
                   <span className="sr-only">Tým</span>
                 </th>
                 {columns.map((column) => (
                   <th
                     className={cn(
-                      'w-6 pb-1.5 text-center font-semibold max-[22.5rem]:hidden md:w-9',
+                      'w-6 pb-1.5 text-center font-semibold max-3xs:hidden md:w-9',
                       (column.label === 'SN' || column.label === 'P') && 'text-club',
                     )}
                     key={column.label}
@@ -109,7 +109,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                           {row.name}
                           <span
                             aria-hidden
-                            className="ml-1.5 text-eyebrow font-semibold tracking-[0.08em] whitespace-nowrap text-faint uppercase"
+                            className="ml-1.5 text-eyebrow font-semibold tracking-caps-sm whitespace-nowrap text-faint uppercase"
                           >
                             {row.side === 'home' ? 'D' : 'H'}
                           </span>
@@ -121,7 +121,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </th>
                     {columns.map((column) => (
                       <td
-                        className="py-2 text-center text-sm font-medium text-faint max-[22.5rem]:hidden md:py-2.5 md:text-base"
+                        className="py-2 text-center text-sm font-medium text-faint max-3xs:hidden md:py-2.5 md:text-base"
                         key={column.label}
                       >
                         {column[row.side]}
@@ -143,7 +143,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           </table>
 
           {columns.length > 0 && (
-            <p aria-hidden className="mt-2 text-xs font-medium text-faint min-[22.5rem]:hidden">
+            <p aria-hidden className="mt-2 text-xs font-medium text-faint 3xs:hidden">
               {columns
                 .map(
                   (column) =>

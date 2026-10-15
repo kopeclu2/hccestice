@@ -48,7 +48,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
                 <Numeral
                   as="div"
                   className={cn(
-                    'rounded-2xl px-5 py-2.5 md:text-5xl',
+                    'rounded-icon px-5 py-2.5 md:text-5xl',
                     match.won ? 'bg-lime text-ink' : 'bg-chip text-ink',
                   )}
                   size="xl"

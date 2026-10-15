@@ -97,8 +97,8 @@ export function HeaderSplit({ match, titleAs = 'h1' }: HeaderVariantProps) {
 }
 
 const TEXT: Record<Fill, { name: string; label: string; score: string }> = {
-  club: { name: 'text-white', label: 'text-white/75', score: 'text-white' },
-  contrast: { name: 'text-white', label: 'text-white/60', score: 'text-lime' },
+  club: { name: 'text-on-contrast', label: 'text-on-contrast-soft', score: 'text-on-contrast' },
+  contrast: { name: 'text-on-contrast', label: 'text-on-contrast-subtle', score: 'text-lime' },
   surface: { name: 'text-ink', label: 'text-faint', score: 'text-ink/35' },
   tint: { name: 'text-ink', label: 'text-faint', score: 'text-club' },
   paper: { name: 'text-ink', label: 'text-faint', score: 'text-ink' },
@@ -134,7 +134,7 @@ function Half({
   return (
     <div
       className={cn(
-        'grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 px-4.5 min-[25rem]:gap-x-4',
+        'grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 px-4.5 2xs:gap-x-4',
         home ? 'pt-6 pb-9' : 'pt-9 pb-6',
         'md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-x-6 md:py-9',
         home ? 'md:pr-14 md:pl-8 lg:pr-24 lg:pl-12' : 'md:pr-8 md:pl-14 lg:pr-12 lg:pl-24',
@@ -144,7 +144,7 @@ function Half({
     >
       <TeamCrest
         className={cn(
-          'size-12 text-lg min-[25rem]:size-14 md:size-20 md:p-1.5 md:text-3xl lg:size-24 lg:p-2',
+          'size-12 text-lg 2xs:size-14 md:size-20 md:p-1.5 md:text-3xl lg:size-24 lg:p-2',
           'md:col-start-1 md:row-start-1 md:mb-4 md:self-start',
           !home && 'md:col-start-2 md:justify-self-end',
         )}
@@ -165,7 +165,7 @@ function Half({
         </Eyebrow>
         <div
           className={cn(
-            'mt-1 text-sm leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[25rem]:text-lg md:text-xl lg:text-3xl',
+            'mt-1 text-sm leading-tight font-extrabold tracking-subheading text-balance break-words 2xs:text-lg md:text-xl lg:text-3xl',
             text.name,
           )}
         >
@@ -180,7 +180,7 @@ function Half({
       {score !== null && (
         <div
           className={cn(
-            'text-[clamp(2.75rem,13vw,4rem)] leading-[0.8] font-extrabold tracking-[-0.05em] tabular-nums md:row-span-2 md:row-start-1 md:self-end md:text-[clamp(4.5rem,9vw,8.5rem)]',
+            'text-score-split leading-[0.8] font-extrabold tracking-tighter tabular-nums md:row-span-2 md:row-start-1 md:self-end md:text-score-split-lg',
             home ? 'md:col-start-2' : 'md:col-start-1',
             scoreText,
           )}

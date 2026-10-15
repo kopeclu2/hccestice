@@ -144,7 +144,7 @@ function EventIcon({ event }: { event: MatchTimelineEvent }) {
     return (
       <span
         className={cn(
-          'inline-grid h-5 min-w-4 place-items-center rounded-sm px-0.75 text-eyebrow font-bold tabular-nums',
+          'inline-grid h-5 min-w-4 place-items-center rounded-tag px-0.75 text-eyebrow font-bold tabular-nums',
           event.minutes != null && event.minutes >= MAJOR_MINUTES
             ? 'bg-danger text-on-contrast'
             : 'bg-penalty text-penalty-ink',

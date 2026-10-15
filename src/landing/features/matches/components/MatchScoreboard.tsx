@@ -58,7 +58,7 @@ export function MatchScoreboard({
           jména vedle něj se na 320 px tlačila do „sn“. Od
           `md` je tým zase jeden sloupec: logo nad jménem, domácí zarovnaní
           ke skóre zprava, hosté zleva. */}
-      <div className="my-[clamp(1.75rem,3vw,2.75rem)] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 min-[22.5rem]:gap-x-4 md:gap-x-[clamp(1.25rem,4vw,3.5rem)]">
+      <div className="my-[clamp(1.75rem,3vw,2.75rem)] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 gap-y-3 3xs:gap-x-4 md:gap-x-[clamp(1.25rem,4vw,3.5rem)]">
         <Team
           hasLogos={hasLogos}
           label="Domácí"
@@ -69,7 +69,7 @@ export function MatchScoreboard({
 
         <Numeral
           as="div"
-          className="relative col-start-2 row-start-1 flex items-baseline gap-2.5 max-md:text-[clamp(2.5rem,12vw,3rem)] md:gap-3.5"
+          className="relative col-start-2 row-start-1 flex items-baseline gap-2.5 max-md:text-score-board md:gap-3.5"
           size="score"
         >
           <span className={cn(scoreboard.weWon && scoreboard.weAreHome && 'text-lime')}>
@@ -79,15 +79,15 @@ export function MatchScoreboard({
               hranaté body, které v drobném řezu na tmavém pozadí čtou
               jako náhodné čtverečky, ne jako oddělovač skóre. */}
           <span className="flex flex-col items-center gap-1.5 self-center md:gap-2.5">
-            <span className="size-1.5 rounded-full bg-white/30 md:size-2" />
-            <span className="size-1.5 rounded-full bg-white/30 md:size-2" />
+            <span className="size-1.5 rounded-full bg-on-contrast-line md:size-2" />
+            <span className="size-1.5 rounded-full bg-on-contrast-line md:size-2" />
           </span>
           <span className={cn(scoreboard.weWon && !scoreboard.weAreHome && 'text-lime')}>
             {scoreboard.awayScore}
           </span>
           {/* Mimo tok (`absolute`), aby „sn" neposouvalo číslice ze středu. */}
           {scoreboard.suffix && (
-            <span className="absolute top-0 left-full ml-1 text-[.3em] font-bold text-white/60 md:ml-1.5">
+            <span className="absolute top-0 left-full ml-1 text-[.3em] font-bold text-on-contrast-subtle md:ml-1.5">
               {scoreboard.suffix}
             </span>
           )}
@@ -109,7 +109,10 @@ export function MatchScoreboard({
             const winning = scoreboard.weWon && index === scoreboard.thirds.length - 1
             return (
               <Badge
-                className={cn('text-white/70', winning && 'border-lime/40 bg-lime/12 text-lime')}
+                className={cn(
+                  'text-on-contrast-muted',
+                  winning && 'border-lime/40 bg-lime/12 text-lime',
+                )}
                 key={index}
                 size="sm"
                 variant="glassOutline"
@@ -176,10 +179,10 @@ function Team({
       >
         {/* `break-words`: jediné slovo širší než sloupec (320 px) se radši
             zlomí, než aby přeteklo pod skóre. */}
-        <div className="text-sm leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-base md:text-xl lg:text-2xl">
+        <div className="text-sm leading-tight font-extrabold tracking-subheading text-balance break-words 3xs:text-base md:text-xl lg:text-2xl">
           {name}
         </div>
-        <div className="mt-1 text-xs font-medium text-white/55">{label}</div>
+        <div className="mt-1 text-xs font-medium text-on-contrast-subtle">{label}</div>
       </div>
     </div>
   )

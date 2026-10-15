@@ -153,7 +153,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           Handoff to zalamuje na 760px, ale kreslí jen 1440px plochu. */}
       <SectionShell
         className={cn(
-          'grid grid-cols-1 gap-[clamp(1.25rem,3vw,2.5rem)] lg:grid-cols-[1.15fr_0.85fr]',
+          'grid grid-cols-1 gap-split-gap lg:grid-cols-[1.15fr_0.85fr]',
           bothEmpty ? 'items-stretch' : 'items-start',
         )}
         spacing="section"

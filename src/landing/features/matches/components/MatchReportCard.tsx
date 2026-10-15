@@ -42,8 +42,8 @@ export function MatchReportCard({
           {report.photo && (
             <div
               className={cn(
-                'relative aspect-[16/10] w-full overflow-hidden bg-chip',
-                wide ? 'md:aspect-auto md:h-full md:min-h-72' : 'md:aspect-[2/1] lg:aspect-[16/10]',
+                'relative aspect-16/10 w-full overflow-hidden bg-chip',
+                wide ? 'md:aspect-auto md:h-full md:min-h-72' : 'md:aspect-2/1 lg:aspect-16/10',
               )}
             >
               <Image

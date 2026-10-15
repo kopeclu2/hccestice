@@ -135,7 +135,7 @@ function FixturesBody({
     case 'rail':
       return (
         <div
-          className="-mx-[clamp(0.875rem,3vw,2.5rem)] mt-5 no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pt-0.5 pb-2.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] md:mx-0 md:gap-3.5 md:px-0.5"
+          className="-mx-gutter mt-5 no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-gutter pt-0.5 pb-2.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] md:mx-0 md:gap-3.5 md:px-0.5"
           id={RAIL_ID}
         >
           {picked.fixtures.map((fixture) => (
@@ -279,10 +279,12 @@ function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
       layout="wide"
       meta={
         <div className="mt-5 flex flex-wrap items-baseline gap-x-3.5 gap-y-1">
-          <Numeral className="text-white" size="2xl">
+          <Numeral className="text-on-contrast" size="2xl">
             {fixture.dateLabel}
           </Numeral>
-          <span className="text-2xl font-extrabold text-white/70">{fixture.timeLabel}</span>
+          <span className="text-2xl font-extrabold text-on-contrast-muted">
+            {fixture.timeLabel}
+          </span>
         </div>
       }
       radius="section"

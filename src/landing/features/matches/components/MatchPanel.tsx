@@ -49,7 +49,7 @@ export function MatchPanel({
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <CardTitle
           as="h2"
-          className="text-xl leading-tight font-extrabold tracking-[-0.025em] md:text-2xl"
+          className="text-xl leading-tight font-extrabold tracking-tight md:text-2xl"
           id={id}
         >
           {title}

@@ -118,14 +118,14 @@ export default async function MatchHeaderVariantsPage() {
 
   return (
     <SubpageShell hatch={false} surface="paper">
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Hlavička detailu zápasu
         </PageTitle>
         <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
           Čtyři koncepty hlavičky stránky{' '}
-          <code className="rounded bg-chip px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
           současné podoby. Každý je vykreslený nad stejnými zápasy z databáze — po nájezdech, v
           normální hrací době, naplánovaný a soupeř bez znaku.
         </p>
@@ -155,7 +155,7 @@ export default async function MatchHeaderVariantsPage() {
             {samples.map((sample) => (
               <figure className="m-0" data-variant={variant.id} key={sample.slug}>
                 {variant.render({ match: sample.match, titleAs: 'h3' })}
-                <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] text-faint uppercase">
+                <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-widest text-faint uppercase">
                   {sample.caption}
                 </figcaption>
               </figure>

@@ -168,7 +168,7 @@ export function StandingsPanel({
                     // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
                     // neříkalo, kdo to je. Delší název udělá řádek o kus
                     // vyšší, čísla zůstanou na středu (`items-center`).
-                    'min-w-0 text-sm leading-snug tracking-[-0.01em] text-pretty break-words',
+                    'min-w-0 text-sm leading-snug tracking-snug text-pretty break-words',
                     ours ? 'font-bold' : 'font-medium',
                   )}
                 >

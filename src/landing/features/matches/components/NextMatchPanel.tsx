@@ -90,7 +90,7 @@ export function NextMatchPanel({
       >
         <div>
           <DotEyebrow>{kicker}</DotEyebrow>
-          <CardTitle as={titleAs} className="mt-2 leading-tight text-white" size="lg">
+          <CardTitle as={titleAs} className="mt-2 leading-tight text-on-contrast" size="lg">
             {/* `-inset-*` = odsazení panelu, aby klikací byl i jeho okraj. */}
             <StretchedLink
               className="decoration-lime underline-offset-6 after:-inset-4.5 hover:underline md:after:-inset-8 lg:after:-inset-12"
@@ -103,11 +103,11 @@ export function NextMatchPanel({
               údaji, ne uvnitř nich a bez visící tečky (`MatchMeta`). */}
           {typeof subtitle === 'string' ? (
             <MatchMeta
-              className="mt-1.5 text-sm font-normal text-white/65"
+              className="mt-1.5 text-sm font-normal text-on-contrast-muted"
               items={subtitle.split(' · ')}
             />
           ) : (
-            subtitle && <div className="mt-1.5 text-sm text-white/65">{subtitle}</div>
+            subtitle && <div className="mt-1.5 text-sm text-on-contrast-muted">{subtitle}</div>
           )}
           {meta}
         </div>

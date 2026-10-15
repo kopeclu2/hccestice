@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
 const SQUARE_CLASS: Record<Outcome, string> = {
   win: 'bg-win text-win-ink',
   draw: 'bg-draw text-draw-ink',
-  otLoss: 'bg-[linear-gradient(135deg,var(--color-loss)_50%,var(--color-win)_50%)] text-loss-ink',
+  otLoss: 'bg-split-diagonal text-loss-ink',
   loss: 'bg-loss text-loss-ink',
 }
 
@@ -74,7 +74,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
                 <div
                   aria-hidden={square.href ? true : undefined}
                   className={cn(
-                    'pointer-events-none absolute bottom-[calc(100%+0.5rem)] z-5 translate-y-1 rounded-xl bg-contrast px-3.5 py-2 text-center whitespace-nowrap text-on-contrast opacity-0 shadow-tooltip transition-[opacity,transform] duration-150 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100',
+                    'pointer-events-none absolute bottom-[calc(100%+0.5rem)] z-5 translate-y-1 rounded-item bg-contrast px-3.5 py-2 text-center whitespace-nowrap text-on-contrast opacity-0 shadow-tooltip transition-[opacity,transform] duration-150 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100',
                     alignRight ? 'right-0' : 'left-1/2 -translate-x-1/2',
                   )}
                 >
@@ -83,7 +83,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
                     {square.suffix && ` ${square.suffix}`}{' '}
                     <span className="text-lime">· {square.stage}</span>
                   </div>
-                  <div className="mt-0.5 text-eyebrow font-medium text-white/60">
+                  <div className="mt-0.5 text-eyebrow font-medium text-on-contrast-subtle">
                     {square.title} · {square.dateLabel}
                   </div>
                 </div>

@@ -53,9 +53,7 @@ export function MatchWhen({
       dateTime={dateTime}
     >
       <span className="text-xs font-semibold tracking-wider text-faint uppercase">{weekday}</span>
-      <span className="text-base leading-tight font-bold tracking-[-0.01em] md:text-lg">
-        {date}
-      </span>
+      <span className="text-base leading-tight font-bold tracking-snug md:text-lg">{date}</span>
       {time && (
         <span className="text-sm font-semibold text-ink-soft">
           <span aria-hidden className="text-faint md:hidden">
@@ -104,7 +102,7 @@ export function MatchRowTitle({
   href: string | null
 }) {
   return (
-    <div className="text-sm leading-snug font-semibold tracking-[-0.01em] text-pretty md:text-base">
+    <div className="text-sm leading-snug font-semibold tracking-snug text-pretty md:text-base">
       <StretchedLink href={href}>
         <TeamPair
           away={<TeamWithCrest logo={awayLogo} name={away} />}

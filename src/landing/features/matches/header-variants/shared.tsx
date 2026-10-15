@@ -146,7 +146,7 @@ export function SrTitle({
  * sloupce (menší odsazení, těsný popisek).
  */
 const META_ITEM_VALUE = {
-  dark: 'mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-white md:text-base',
+  dark: 'mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-on-contrast md:text-base',
   light: 'mt-1 text-sm font-semibold [overflow-wrap:anywhere] md:text-base',
   compact: 'mt-0.5 text-sm font-semibold [overflow-wrap:anywhere]',
 } as const
@@ -235,8 +235,8 @@ export function SideBadge({
 export function EndBadge({ suffix, look }: { suffix: ScoreSuffix; look: 'dark' | 'light' }) {
   const text = `Konec${suffix ? ` · ${SUFFIX_NOTE[suffix]}` : ''}`
   return look === 'dark' ? (
-    <Badge caps className="gap-2 text-white/80" size="xs" variant="glassOutline">
-      <span aria-hidden className="size-1.5 rounded-full bg-white/60" />
+    <Badge caps className="gap-2 text-on-contrast-soft" size="xs" variant="glassOutline">
+      <span aria-hidden className="size-1.5 rounded-full bg-on-contrast-subtle" />
       {text}
     </Badge>
   ) : (

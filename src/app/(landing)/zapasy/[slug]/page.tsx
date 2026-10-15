@@ -133,7 +133,7 @@ export default async function MatchDetailPage(args: Args) {
       {(hasTimeline || hasAside) && (
         <SectionShell
           className={cn(
-            'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)]',
+            'grid grid-cols-1 items-start gap-split-gap',
             split && 'lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]',
           )}
           spacing="split"
@@ -153,7 +153,7 @@ export default async function MatchDetailPage(args: Args) {
             </div>
           )}
           {hasAside && (
-            <div className="flex min-w-0 flex-col gap-[clamp(1.25rem,3vw,2.5rem)]">
+            <div className="flex min-w-0 flex-col gap-split-gap">
               <MatchReportCard
                 gallery={match.gallery}
                 report={match.report}

@@ -123,7 +123,7 @@ function SeasonView({
           — kotva `#sezona` proto zůstává jen na ní, ne tady. */}
       <SectionShell
         className={cn(
-          'grid grid-cols-1 gap-x-[clamp(1.25rem,3vw,2.5rem)] gap-y-13 lg:grid-cols-[1.15fr_0.85fr]',
+          'grid grid-cols-1 gap-x-split-gap gap-y-13 lg:grid-cols-[1.15fr_0.85fr]',
           bothEmpty ? 'items-stretch' : 'items-start',
         )}
         spacing="split"

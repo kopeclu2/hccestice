@@ -21,17 +21,17 @@ import { cn } from '@/lib/utils'
 export type TeamCrestTone = 'dark' | 'light' | 'club' | 'board'
 
 const MONOGRAM_TONE: Record<TeamCrestTone, string> = {
-  dark: 'border-white/24 text-white/75',
+  dark: 'border-on-contrast-line text-on-contrast-soft',
   light: 'border-line bg-chip text-ink-soft',
-  club: 'border-white/40 bg-white/10 text-white',
-  board: 'border-white/24 font-extrabold text-white/70',
+  club: 'border-on-contrast-ghost bg-on-contrast-wash text-on-contrast',
+  board: 'border-on-contrast-line font-extrabold text-on-contrast-muted',
 }
 
 const LOGO_TONE: Record<TeamCrestTone, string> = {
-  dark: 'bg-white/92 p-1',
+  dark: 'bg-on-contrast-strong p-1',
   light: 'border border-line-soft bg-surface p-0.5',
-  club: 'bg-white/92 p-1',
-  board: 'bg-white/90 p-1',
+  club: 'bg-on-contrast-strong p-1',
+  board: 'bg-on-contrast-strong p-1',
 }
 
 export function TeamCrest({

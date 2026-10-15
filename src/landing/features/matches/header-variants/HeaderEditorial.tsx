@@ -90,7 +90,7 @@ function PlayedSpread({ match }: { match: VariantMatch }) {
       className="mt-6 grid grid-cols-2 items-end gap-x-4 gap-y-5 md:mt-8 lg:mt-10 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-x-10"
     >
       <div className="relative col-span-2 justify-self-center lg:col-span-1 lg:col-start-2 lg:row-start-1">
-        <div className="flex items-start text-[clamp(6.5rem,30vw,14rem)] leading-[0.82] font-extrabold tracking-[-0.06em] tabular-nums select-none">
+        <div className="flex items-start text-score-editorial-lg leading-score font-extrabold tracking-display tabular-nums select-none">
           <Digit filled={winner === 'home'}>{match.homeScore}</Digit>
           <span className="mx-[0.12em] h-[0.07em] w-[0.24em] flex-none self-center bg-club" />
           <Digit filled={winner === 'away'}>{match.awayScore}</Digit>
@@ -163,7 +163,7 @@ function TeamBlock({
       </span>
       <span
         className={cn(
-          'mt-2 text-lg leading-[1.05] font-extrabold tracking-[-0.03em] text-balance break-words min-[25rem]:text-xl md:text-4xl lg:text-4xl',
+          'mt-2 text-lg leading-heading-tight font-extrabold tracking-heading text-balance break-words 2xs:text-xl md:text-4xl lg:text-4xl',
           !won && 'text-ink-soft',
         )}
       >
@@ -184,7 +184,7 @@ function UpcomingSpread({ match }: { match: VariantMatch }) {
       {date && (
         <div
           aria-hidden
-          className="flex items-baseline text-[clamp(5.5rem,24vw,11.5rem)] leading-[0.82] font-extrabold tracking-[-0.06em] tabular-nums select-none"
+          className="flex items-baseline text-score-editorial leading-score font-extrabold tracking-display tabular-nums select-none"
         >
           <span className="text-ink/30 text-stroke">{date.day}</span>
           <span className="text-club">.</span>
@@ -211,7 +211,7 @@ function UpcomingSpread({ match }: { match: VariantMatch }) {
       </div>
       <p
         aria-hidden
-        className="mt-3 max-w-200 text-center text-xl leading-[1.05] font-extrabold tracking-[-0.03em] text-balance md:text-4xl lg:text-4xl"
+        className="mt-3 max-w-200 text-center text-xl leading-heading-tight font-extrabold tracking-heading text-balance md:text-4xl lg:text-4xl"
       >
         {/* Zlom jen za „×", ne uvnitř jména týmu (viz `TeamPair`). */}
         <TeamPair away={match.awayName} home={match.homeName} />

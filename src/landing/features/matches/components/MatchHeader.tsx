@@ -44,7 +44,7 @@ function Facts({ children }: { children: React.ReactNode }) {
 
 function PlayedHeader({ match }: { match: MatchDetail }) {
   return (
-    <div className="relative overflow-hidden rounded-section bg-contrast px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,3.75rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
+    <div className="relative overflow-hidden rounded-section bg-contrast px-panel py-panel-y text-on-contrast max-md:px-4.5 max-md:py-6">
       <div className="absolute inset-0 hatch opacity-40" />
       <div className="relative">
         <DotEyebrow>{competitionLabel(match)}</DotEyebrow>
@@ -72,12 +72,12 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
         ) : (
           // Odehraný zápas bez zapsaného skóre: tabuli není z čeho
           // vykreslit, takže titulek je vidět.
-          <CardTitle as="h1" className="mt-3 leading-tight text-white" size="lg">
+          <CardTitle as="h1" className="mt-3 leading-tight text-on-contrast" size="lg">
             {match.title}
           </CardTitle>
         )}
 
-        <div className="my-[clamp(1.5rem,3vw,2.25rem)] h-px bg-white/16" />
+        <div className="my-[clamp(1.5rem,3vw,2.25rem)] h-px bg-on-contrast-glass" />
 
         <Facts>
           <MetaItem label="Datum">
@@ -88,7 +88,7 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
             <MetaItem label="Výsledek">
               <span className="flex flex-wrap items-center gap-2">
                 <OutcomeBadge
-                  noteClassName="text-xs font-medium text-white/65"
+                  noteClassName="text-xs font-medium text-on-contrast-muted"
                   outcome={match.outcome}
                   suffix={match.suffix}
                 />
@@ -109,10 +109,10 @@ function LogoPair({ away, home }: { away: Photo | null; home: Photo | null }) {
     <div aria-hidden className="mt-5 flex items-center gap-3">
       {logos.map((logo, index) => (
         <React.Fragment key={logo.url}>
-          {index > 0 && <span className="text-white/40">×</span>}
+          {index > 0 && <span className="text-on-contrast-ghost">×</span>}
           <Image
             alt=""
-            className="size-12 rounded-full bg-white/90 object-contain p-1 md:size-14"
+            className="size-12 rounded-full bg-on-contrast-strong object-contain p-1 md:size-14"
             height={56}
             src={getMediaUrl(logo.url, logo.updatedAt)}
             width={56}
@@ -133,10 +133,10 @@ function ScheduledHeader({ match }: { match: MatchDetail }) {
         <>
           <LogoPair away={match.awayLogo} home={match.homeLogo} />
           <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <Numeral className="text-white" size="md">
+            <Numeral className="text-on-contrast" size="md">
               {match.dateLabel}
             </Numeral>
-            <span className="text-sm font-semibold text-white/70">{match.timeLabel}</span>
+            <span className="text-sm font-semibold text-on-contrast-muted">{match.timeLabel}</span>
           </div>
         </>
       }
@@ -159,10 +159,10 @@ function CanceledHeader({ match }: { match: MatchDetail }) {
           </Badge>
           <Eyebrow tone="white">{competitionLabel(match)}</Eyebrow>
         </div>
-        <CardTitle as="h1" className="mt-3 leading-tight text-white" size="lg">
+        <CardTitle as="h1" className="mt-3 leading-tight text-on-contrast" size="lg">
           {match.title}
         </CardTitle>
-        <div className="mt-2 text-sm text-white/65">
+        <div className="mt-2 text-sm text-on-contrast-muted">
           Plánovaný termín: {match.dateLabel} · {match.timeLabel}
           {match.venue ? ` · ${match.venue}` : ''}
         </div>
