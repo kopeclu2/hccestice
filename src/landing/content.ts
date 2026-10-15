@@ -9,7 +9,7 @@
  * nikdy nerozbije.
  *
  * Navigace se spravuje v adminu (Nastavení → Menu); `FALLBACK_NAV` je
- * fallback pro prázdné CMS a zdroj pro `migration/seed-navigation.ts`.
+ * fallback pro prázdné CMS a zdroj pro `scripts/seed/seed-navigation.ts`.
  */
 
 import type { NavItem } from './types'
@@ -22,7 +22,7 @@ import type { NavItem } from './types'
  * pokud sekce nějakou má. Položka bez `anchor` na homepage jako sekce
  * neexistuje, takže i home nav vede přímo na podstránku.
  *
- * Pořadí kopíruje skutečné pořadí bloků na homepage (`migration/seed-home-
+ * Pořadí kopíruje skutečné pořadí bloků na homepage (`scripts/seed/seed-home-
  * landing.ts`): Aktuality → Sezóna → Tréninky → O klubu → Fotoalbum →
  * Historie → Lidé v klubu → Partneři. Položky bez vlastní sekce (Zápasy,
  * Soupiska) jsou zařazené tematicky vedle Sezóny. Dřív menu jelo v jiném

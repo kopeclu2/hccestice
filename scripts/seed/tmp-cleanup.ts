@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 const payload = await getPayload({ config })
 const old = await payload.find({
   collection: 'pages',

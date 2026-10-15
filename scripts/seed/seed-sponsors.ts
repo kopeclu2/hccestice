@@ -8,14 +8,14 @@
  * normalizovaného názvu a doplní se mu jen PRÁZDNÁ pole. Druhý běh proto
  * hlásí „0 aktualizováno".
  *
- * Spuštění: bun --env-file=.env migration/seed-sponsors.ts
- * Výstup jde i do migration/seed-sponsors.log (stdout se v bunu ztrácí).
+ * Spuštění: bun --env-file=.env scripts/seed/seed-sponsors.ts
+ * Výstup jde i do scripts/seed/seed-sponsors.log (stdout se v bunu ztrácí).
  */
 import { writeFileSync } from 'node:fs'
 
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 type SeedSponsor = {
   /** Názvy z původního webu / handoffu, pod kterými může partner být v DB. */
@@ -258,5 +258,5 @@ log(
   `\nSponzoři: +${created} nových, ${updated} aktualizováno, ${unchanged} bez změny, celkem ${total.totalDocs}`,
 )
 
-writeFileSync('migration/seed-sponsors.log', `${lines.join('\n')}\n`)
+writeFileSync('scripts/seed/seed-sponsors.log', `${lines.join('\n')}\n`)
 process.exit(0)

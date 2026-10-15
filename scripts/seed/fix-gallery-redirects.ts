@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs'
 
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 /**
  * Oprava legacy přesměrování z eStránek na fotogalerie.
@@ -31,16 +31,16 @@ import config from '../src/payload.config'
  * skončí bez zápisu.
  *
  * Spuštění:
- *   bunx payload run migration/fix-gallery-redirects.ts            # dry-run
- *   bunx payload run migration/fix-gallery-redirects.ts -- --apply # zápis
+ *   bunx payload run scripts/seed/fix-gallery-redirects.ts            # dry-run
+ *   bunx payload run scripts/seed/fix-gallery-redirects.ts -- --apply # zápis
  *
- * Report jde do `migration/data/fix-gallery-redirects.log` — stdout se
+ * Report jde do `scripts/seed/data/fix-gallery-redirects.log` — stdout se
  * u `payload run` ztrácí.
  */
 
 const APPLY = process.argv.includes('--apply')
 const PREFIX = '/fotogalerie/'
-const LOG_FILE = 'migration/data/fix-gallery-redirects.log'
+const LOG_FILE = 'scripts/seed/data/fix-gallery-redirects.log'
 
 /** Klíč pro párování: jen alfanumerické znaky, takže tečky/pomlčky nehrají roli. */
 const norm = (value: string): string => value.toLowerCase().replace(/[^a-z0-9]+/g, '')

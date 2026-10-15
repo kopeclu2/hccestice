@@ -13,11 +13,11 @@
  * Páruje se podle slugu, ne id — lokální a produkční databáze se liší.
  * Idempotentní: chybějící duplikát se přeskočí.
  *
- * Spuštění: bun --env-file=.env migration/merge-duplicate-opponents.ts [--dry]
+ * Spuštění: bun --env-file=.env scripts/seed/merge-duplicate-opponents.ts [--dry]
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const DRY = process.argv.includes('--dry')
 const ctx = { disableRevalidate: true }

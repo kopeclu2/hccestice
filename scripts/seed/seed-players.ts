@@ -8,7 +8,7 @@
  * Model: hráč = osoba s příznakem „active" (číslo/post se doplní ručně).
  * Idempotentní: existující hráč (dle jména) se přeskočí.
  *
- * Spuštění: bun --env-file=.env migration/seed-players.ts
+ * Spuštění: bun --env-file=.env scripts/seed/seed-players.ts
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url'
 
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const GALLERY_LEGACY_DIR = 100149 // „Hráči-2025"

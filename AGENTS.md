@@ -384,7 +384,7 @@ takže `doc.id` na parametrech reálně je, i když je typ deklaruje jako
 ## Kontaktní formulář
 
 Adresáty i texty drží dokument `forms` v databázi, zakládá je
-`migration/seed-contact-form.ts` (notifikace klubu + potvrzení odesílateli).
+`scripts/seed/seed-contact-form.ts` (notifikace klubu + potvrzení odesílateli).
 Seed umí i **doplnit e-maily existujícímu formuláři** — starší verze je
 neuměla, takže formulář v produkci je bez nich a je nutné seed spustit znovu.
 

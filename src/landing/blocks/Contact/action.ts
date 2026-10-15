@@ -10,7 +10,7 @@ import configPromise from '@payload-config'
 
 import { contactSchema, type ContactResult, type ContactValues } from './schema'
 
-/** Slug formuláře v CMS (zakládá `migration/seed-contact-form.ts`). */
+/** Slug formuláře v CMS (zakládá `scripts/seed/seed-contact-form.ts`). */
 const CONTACT_FORM_TITLE = 'Kontakt — landing page'
 
 /**

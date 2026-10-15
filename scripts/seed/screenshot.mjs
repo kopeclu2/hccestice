@@ -2,7 +2,7 @@
  * Vizuální kontrola landing page — celostránkové screenshoty
  * (desktop 1440, mobil 390) + detekce horizontálního overflow.
  *
- * Spuštění: node migration/screenshot.mjs [url]
+ * Spuštění: node scripts/seed/screenshot.mjs [url]
  */
 import { chromium } from '@playwright/test'
 

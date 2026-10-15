@@ -18,12 +18,12 @@
  * a jeho přidání by znamenalo migraci (v produkci je `push` vypnutý).
  *
  * Spuštění:
- *   bun --env-file=.env migration/seo-cleanup.ts            # dry run
- *   bun --env-file=.env migration/seo-cleanup.ts --apply    # zápis
+ *   bun --env-file=.env scripts/seed/seo-cleanup.ts            # dry run
+ *   bun --env-file=.env scripts/seed/seo-cleanup.ts --apply    # zápis
  *
  * Proti produkci přes tunel (viz scripts/db-tunnel.sh):
  *   DATABASE_URL=postgres://…@127.0.0.1:5433/postgres \
- *     bun migration/seo-cleanup.ts --apply
+ *     bun scripts/seed/seo-cleanup.ts --apply
  *
  * POZOR: zápis do databáze sám o sobě živý web nezmění. Stránky jsou
  * prerenderované a `unstable_cache` má bez `revalidate` TTL jeden rok,
@@ -33,7 +33,7 @@
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const APPLY = process.argv.includes('--apply')
 const ctx = { disableRevalidate: true }

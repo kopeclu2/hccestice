@@ -65,7 +65,7 @@ const eslintConfig = [
     // Jednorázové seed/import skripty spouštěné ručně přes `bun`, ne
     // součást buildu ani runtime aplikace — pracují s volně tvarovanými
     // daty z CMS importu, kde `any` je legitimní.
-    files: ['migration/**'],
+    files: ['scripts/seed/**'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       // seed-home-landing.ts je záměrně zamrzlý historický skript — typ,

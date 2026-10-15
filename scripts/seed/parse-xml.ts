@@ -1,17 +1,17 @@
 /**
  * Parser zálohy eStránky (Backup_*.xml) → normalizované JSON entity.
  *
- * Vstup:  ../../Backup_2026_08_17_05_52_18.xml (databázový dump eStránky)
+ * Vstup:  ../../../Backup_2026_08_17_05_52_18.xml (databázový dump eStránky)
  * Výstup: ./data/*.json (articles, sections, galleries, photos, pictures, files, settings, codes)
  *
- * Spuštění: bun run migration/parse-xml.ts
+ * Spuštění: bun run scripts/seed/parse-xml.ts
  */
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const XML_PATH = path.resolve(__dirname, '../../Backup_2026_08_17_05_52_18.xml')
+const XML_PATH = path.resolve(__dirname, '../../../Backup_2026_08_17_05_52_18.xml')
 const OUT_DIR = path.resolve(__dirname, 'data')
 
 // ---------------------------------------------------------------------------

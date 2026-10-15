@@ -16,11 +16,11 @@
  *
  * Idempotentní: existující home s landing bloky se nepřepíše bez --force.
  *
- * Spuštění: bun --env-file=.env migration/seed-home-landing.ts [--force]
+ * Spuštění: bun --env-file=.env scripts/seed/seed-home-landing.ts [--force]
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const force = process.argv.includes('--force')
 const payload = await getPayload({ config })

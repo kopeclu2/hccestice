@@ -7,11 +7,11 @@
  * další kampaní přecení a zapne. Fotky se linkují z médií (import).
  *
  * Idempotentní (podle názvu). Spuštění:
- * bun --env-file=.env migration/seed-products.ts
+ * bun --env-file=.env scripts/seed/seed-products.ts
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

@@ -6,11 +6,11 @@
  *            („pátek 27. října 2023 19:30").
  *
  * Idempotentní (zápas s navázaným stejným reportem se přeskočí).
- * Spuštění: bun --env-file=.env migration/seed-matches.ts [season-slug]
+ * Spuštění: bun --env-file=.env scripts/seed/seed-matches.ts [season-slug]
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const SEASON_SLUG = process.argv[2] ?? '2023-2024'
 

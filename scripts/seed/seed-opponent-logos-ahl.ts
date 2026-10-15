@@ -15,20 +15,20 @@
  * Zápis jde přes Local API, takže na produkci je nutné spustit proti její
  * databázi i jejímu `public/media` — lokální běh nahraje soubor jen lokálně.
  *
- * Spuštění: bun --env-file=.env migration/seed-opponent-logos-ahl.ts [--dry]
+ * Spuštění: bun --env-file=.env scripts/seed/seed-opponent-logos-ahl.ts [--dry]
  */
 import { getPayload } from 'payload'
 
-import { AHL_USER_AGENT } from '../src/ahl/client'
-import { AHL_BASE_URL } from '../src/ahl/urls'
+import { AHL_USER_AGENT } from '@/ahl/client'
+import { AHL_BASE_URL } from '@/ahl/urls'
 import {
   ahlNameKeys,
   foldTeam,
   keysIntersect,
   opponentKeys,
   stripClubPrefix,
-} from '../src/jobs/vchlSync/sync/opponents'
-import config from '../src/payload.config'
+} from '@/jobs/vchlSync/sync/opponents'
+import config from '@/payload.config'
 
 const DRY = process.argv.includes('--dry')
 const LOGO_SIZE = 'large_200'

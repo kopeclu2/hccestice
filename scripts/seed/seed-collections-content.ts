@@ -6,12 +6,12 @@
  *  3. odpublikování legacy navigačních posts („Úvodní strana…", „Nejbližší zápasy")
  *  4. home bloky přepnout na auto režim (news: fallback foto, stats/mozaika: prázdné = auto)
  *
- * Idempotentní. Spuštění: bun --env-file=.env migration/seed-collections-content.ts
+ * Idempotentní. Spuštění: bun --env-file=.env scripts/seed/seed-collections-content.ts
  */
 import { getPayload } from 'payload'
 
-import { STANDINGS } from '../src/landing/content'
-import config from '../src/payload.config'
+import { STANDINGS } from '@/landing/content'
+import config from '@/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

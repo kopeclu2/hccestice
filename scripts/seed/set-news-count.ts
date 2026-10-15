@@ -5,11 +5,11 @@
  * existující dokument v databázi si drží uloženou hodnotu, takže se musí
  * přepsat zvlášť.
  *
- * Spuštění: bun --env-file=.env migration/set-news-count.ts
+ * Spuštění: bun --env-file=.env scripts/seed/set-news-count.ts
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const COUNT = 5
 

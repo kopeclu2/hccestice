@@ -5,12 +5,12 @@
  *
  * Idempotentní — pole se jen přepíšou, ostatní bloky layoutu zůstanou beze
  * změny. Spuštění:
- * bun --env-file=.env migration/seed-home-history.ts > /tmp/seed-home-history.log 2>&1
+ * bun --env-file=.env scripts/seed/seed-home-history.ts > /tmp/seed-home-history.log 2>&1
  */
 import { getPayload } from 'payload'
 
-import { HISTORY } from '../src/landing/content'
-import config from '../src/payload.config'
+import { HISTORY } from '@/landing/content'
+import config from '@/payload.config'
 
 const payload = await getPayload({ config })
 

@@ -32,5 +32,5 @@ AGENTS.md
 CLAUDE.md
 skills-lock.json
 src/migrations/*.json
-migration/data
+scripts/seed/data
 tests/fixtures

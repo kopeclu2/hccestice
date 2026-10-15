@@ -8,8 +8,8 @@
  * doc (hero varianta `zapas` = výsledková tabule) a doplní `matches.report`.
  *
  * Zdroje:
- *   --source=homepage        migration/data/homepage.json (sezóna 2025-2026)
- *   --source=<legacyId>      článek z migration/data/articles.json (archiv)
+ *   --source=homepage        scripts/seed/data/homepage.json (sezóna 2025-2026)
+ *   --source=<legacyId>      článek z scripts/seed/data/articles.json (archiv)
  *
  * Default je DRY-RUN — zapisuje se jen s `--apply`. Idempotentní podle
  * `legacy.url` (`homepage#zapasid=…`, resp. `homepage:<id>#<slug>`), takže
@@ -22,7 +22,7 @@
  * nebo shoda kolo + soupeř + datum zápasu. Archivní úvodní stránky jsou totiž
  * z většiny jen teasery plných článků, které import.ts už vytvořil.
  *
- * Spuštění: bun --env-file=.env migration/split-homepage-posts.ts \
+ * Spuštění: bun --env-file=.env scripts/seed/split-homepage-posts.ts \
  *             --source=homepage [--apply] [--dump] > /tmp/split-report.txt 2>&1
  * (přes `payload run` NE — ten zahazuje CLI argumenty.)
  */
@@ -32,7 +32,7 @@ import { fileURLToPath } from 'node:url'
 
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA = (name: string) =>

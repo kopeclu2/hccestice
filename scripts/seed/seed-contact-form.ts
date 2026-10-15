@@ -6,12 +6,12 @@
  * odchozí e-maily (starší verze seedu je neuměla), doplní se — jinak zpráva
  * skončí jen v adminu a nikdo se o ní nedozví.
  *
- * Spuštění: bun --env-file=.env migration/seed-contact-form.ts
+ * Spuštění: bun --env-file=.env scripts/seed/seed-contact-form.ts
  */
 import { getPayload } from 'payload'
 
-import { notificationAddress } from '../src/email/config'
-import config from '../src/payload.config'
+import { notificationAddress } from '@/email/config'
+import config from '@/payload.config'
 
 const TITLE = 'Kontakt — landing page'
 

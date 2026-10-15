@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs'
 
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const AUTHOR_ID = 8 // Vladimír Javůrek
 
@@ -52,4 +52,4 @@ for (const doc of docs) {
 }
 
 log.push(`\nCelkem článků: ${docs.length}, aktualizováno: ${updated}, přeskočeno: ${skipped}`)
-writeFileSync('migration/assign-authors.log', log.join('\n'))
+writeFileSync('scripts/seed/assign-authors.log', log.join('\n'))

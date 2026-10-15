@@ -2,11 +2,11 @@
  * Ukázková dynamická stránka /ukazka-sekci — demonstruje skládání
  * stránek z landing + obecných bloků v adminu (layout builder).
  *
- * Spuštění: bun --env-file=.env migration/make-sections-demo.ts
+ * Spuštění: bun --env-file=.env scripts/seed/make-sections-demo.ts
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

@@ -4,12 +4,12 @@
  * fotky se párují na archivní skeny v Media podle názvu souboru.
  *
  * Idempotentní (podle roku + titulku). Spuštění:
- * bun --env-file=.env migration/seed-milestones.ts
+ * bun --env-file=.env scripts/seed/seed-milestones.ts
  */
 import { getPayload } from 'payload'
 
-import { HISTORY_PAGE } from '../src/landing/content'
-import config from '../src/payload.config'
+import { HISTORY_PAGE } from '@/landing/content'
+import config from '@/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

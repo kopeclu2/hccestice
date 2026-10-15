@@ -11,13 +11,13 @@
  * Idempotentní: kontejner se hledá podle `slug` (unique), položky podle
  * `title`. Opakované spuštění existující dokumenty aktualizuje.
  *
- * Spuštění: bun --env-file=.env migration/seed-navigation.ts
+ * Spuštění: bun --env-file=.env scripts/seed/seed-navigation.ts
  */
 import { getPayload } from 'payload'
 
-import { FALLBACK_NAV } from '../src/landing/content'
-import type { NavigationItem } from '../src/payload-types'
-import config from '../src/payload.config'
+import { FALLBACK_NAV } from '@/landing/content'
+import type { NavigationItem } from '@/payload-types'
+import config from '@/payload.config'
 
 const payload = await getPayload({ config })
 const ctx = { disableRevalidate: true }

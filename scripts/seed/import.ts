@@ -7,7 +7,7 @@
  * Idempotentní: existující záznamy (podle legacy markerů) se přeskakují,
  * takže skript lze po přerušení spustit znovu.
  *
- * Spuštění: bun run payload run migration/import.ts
+ * Spuštění: bun run payload run scripts/seed/import.ts
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -15,12 +15,12 @@ import { fileURLToPath } from 'node:url'
 
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA = (name: string) =>
   JSON.parse(fs.readFileSync(path.join(__dirname, 'data', name), 'utf8'))
-const MIRROR = path.resolve(__dirname, '../../ftp_mirror')
+const MIRROR = path.resolve(__dirname, '../../../ftp_mirror')
 
 // „2012-2012" byla překlepová složka pro sezónu 2012-2013
 const SEASON_ALIAS: Record<string, string> = { '2012-2012': '2012-2013' }

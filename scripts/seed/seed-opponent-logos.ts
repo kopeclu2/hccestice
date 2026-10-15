@@ -7,11 +7,11 @@
  *
  * Idempotentní: soupeř s již nastaveným logem se přeskočí.
  *
- * Spuštění: bun --env-file=.env migration/seed-opponent-logos.ts
+ * Spuštění: bun --env-file=.env scripts/seed/seed-opponent-logos.ts
  */
 import { getPayload } from 'payload'
 
-import config from '../src/payload.config'
+import config from '@/payload.config'
 
 // opponents.slug → media.filename
 const LOGO_MAP: Record<string, string> = {
