@@ -1,12 +1,8 @@
-import { revalidateTag } from 'next/cache'
-import type { GlobalAfterChangeHook } from 'payload'
+import { createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
-export const revalidateHeader: GlobalAfterChangeHook = ({ doc, req: { payload, context } }) => {
-  if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating header`)
-
-    revalidateTag('global_header', 'max')
-  }
-
-  return doc
-}
+export const revalidateHeader = createRevalidateHooks({
+  label: 'hlavičku',
+  tags: [CACHE_TAGS.globalHeader],
+  profile: 'max',
+}).afterChange

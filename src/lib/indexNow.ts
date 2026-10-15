@@ -1,3 +1,4 @@
+import { errorMessage } from './errors'
 import { getServerSideURL } from './getURL'
 
 /**
@@ -41,6 +42,6 @@ export const pingIndexNow = (paths: string[], logger?: { warn: (m: string) => vo
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
     method: 'POST',
   }).catch((error: unknown) => {
-    logger?.warn(`IndexNow ping selhal: ${error instanceof Error ? error.message : String(error)}`)
+    logger?.warn(`IndexNow ping selhal: ${errorMessage(error)}`)
   })
 }

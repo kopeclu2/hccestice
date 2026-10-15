@@ -1,68 +1,75 @@
-import { revalidatePath, revalidateTag } from 'next/cache'
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
+import type { CollectionAfterChangeHook } from 'payload'
 
+import { applyRevalidation, createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 import { pingIndexNow } from '@/lib/indexNow'
+import { routes } from '@/lib/routes'
 
 import type { Post } from '../../../payload-types'
+
+/**
+ * Změna článku zasahuje výpis (`posts-list`, redakční obsah → okamžitě)
+ * a crawlerské feedy (sitemapa, `llms.txt` → stale-while-revalidate stačí).
+ */
+const POST_REVALIDATION = {
+  tags: [CACHE_TAGS.posts],
+  profile: { expire: 0 },
+  feeds: [CACHE_TAGS.postsSitemap, CACHE_TAGS.llmsTxt],
+} as const
 
 export const revalidatePost: CollectionAfterChangeHook<Post> = ({
   doc,
   previousDoc,
   req: { payload, context },
 }) => {
-  if (!context.disableRevalidate) {
-    if (doc._status === 'published') {
-      const path = `/aktuality/${doc.slug}`
+  if (context.disableRevalidate) return doc
 
-      payload.logger.info(`Revalidating post at path: ${path}`)
+  if (doc._status === 'published') {
+    const path = routes.post(doc.slug)
 
-      revalidatePath(path)
-      revalidateTag('posts-sitemap', 'max')
-      revalidateTag('llms-txt', 'max')
-      revalidateTag('posts-list', { expire: 0 })
-      // Nový/upravený článek se má dostat do Bingu a Seznamu dřív, než ho
-      // znovu najde crawler — ne až při dalším průchodu `posts-sitemap.xml`.
-      pingIndexNow([path], payload.logger)
-    }
-
-    // If the post was previously published, we need to revalidate the old path
-    if (previousDoc._status === 'published' && doc._status !== 'published') {
-      const oldPath = `/aktuality/${previousDoc.slug}`
-
-      payload.logger.info(`Revalidating old post at path: ${oldPath}`)
-
-      revalidatePath(oldPath)
-      revalidateTag('posts-sitemap', 'max')
-      revalidateTag('llms-txt', 'max')
-      revalidateTag('posts-list', { expire: 0 })
-    }
-
-    // Změna slugu publikovaného článku — stará cesta by jinak zůstala v cache
-    if (
-      doc._status === 'published' &&
-      previousDoc._status === 'published' &&
-      previousDoc.slug &&
-      previousDoc.slug !== doc.slug
-    ) {
-      const oldPath = `/aktuality/${previousDoc.slug}`
-
-      payload.logger.info(`Revalidating renamed post at old path: ${oldPath}`)
-
-      revalidatePath(oldPath)
-    }
+    applyRevalidation(payload.logger, {
+      ...POST_REVALIDATION,
+      label: `článek ${path}`,
+      paths: [path],
+    })
+    // Nový/upravený článek se má dostat do Bingu a Seznamu dřív, než ho
+    // znovu najde crawler — ne až při dalším průchodu `posts-sitemap.xml`.
+    pingIndexNow([path], payload.logger)
   }
-  return doc
-}
 
-export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { context } }) => {
-  if (!context.disableRevalidate) {
-    const path = `/aktuality/${doc?.slug}`
+  // Odpublikovaný článek: stará cesta musí zmizet z cache
+  if (previousDoc._status === 'published' && doc._status !== 'published') {
+    const oldPath = routes.post(previousDoc.slug)
 
-    revalidatePath(path)
-    revalidateTag('posts-sitemap', 'max')
-    revalidateTag('llms-txt', 'max')
-    revalidateTag('posts-list', { expire: 0 })
+    applyRevalidation(payload.logger, {
+      ...POST_REVALIDATION,
+      label: `starý článek ${oldPath}`,
+      paths: [oldPath],
+    })
+  }
+
+  // Změna slugu publikovaného článku — stará cesta by jinak zůstala v cache
+  if (
+    doc._status === 'published' &&
+    previousDoc._status === 'published' &&
+    previousDoc.slug &&
+    previousDoc.slug !== doc.slug
+  ) {
+    const oldPath = routes.post(previousDoc.slug)
+
+    applyRevalidation(payload.logger, {
+      label: `přejmenovaný článek ${oldPath}`,
+      tags: [],
+      profile: POST_REVALIDATION.profile,
+      paths: [oldPath],
+    })
   }
 
   return doc
 }
+
+export const revalidateDelete = createRevalidateHooks<Post>({
+  ...POST_REVALIDATION,
+  label: 'smazaný článek',
+  paths: (doc) => (doc.slug ? [routes.post(doc.slug)] : []),
+}).afterDelete

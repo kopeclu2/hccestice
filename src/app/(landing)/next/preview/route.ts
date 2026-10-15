@@ -1,10 +1,8 @@
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
-import { getPayload } from 'payload'
-import type { PayloadRequest } from 'payload'
 
-import configPromise from '@payload-config'
+import { getPayloadClient } from '@/landing/data/query'
 
 export type PreviewSearchParams = {
   path: string
@@ -12,7 +10,7 @@ export type PreviewSearchParams = {
 }
 
 export async function GET(req: NextRequest): Promise<Response> {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
 
   const { searchParams } = new URL(req.url)
 
@@ -36,10 +34,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   let user
 
   try {
-    const authResult = await payload.auth({
-      req: req as unknown as PayloadRequest,
-      headers: req.headers,
-    })
+    const authResult = await payload.auth({ headers: req.headers })
     user = authResult.user
   } catch (error) {
     payload.logger.error({ err: error }, 'Error verifying token for live preview')

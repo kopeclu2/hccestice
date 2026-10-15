@@ -1,16 +1,15 @@
 import 'server-only'
 
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { getPayloadClient } from '@/landing/data/query'
 import type { Product } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /** Produkty (merch) — fetchery pro widgety Produkty a Karta produktu. */
 
 /** Produkty v nabídce (available), seřazené dle pořadí. */
 export const fetchProducts = cache(async (): Promise<Product[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'products',
     where: { available: { equals: true } },
@@ -23,13 +22,13 @@ export const fetchProducts = cache(async (): Promise<Product[]> => {
 
 /** Jeden produkt (i nedostupný — karta ho může ukázat s upozorněním). */
 export const fetchProduct = cache(async (productId: number): Promise<Product | null> => {
-  const payload = await getPayload({ config: configPromise })
-  return payload.findByID({ collection: 'products', id: productId, depth: 1 })
+  const payload = await getPayloadClient()
+  return payload.findByID({ collection: 'products', id: productId, depth: 1, disableErrors: true })
 })
 
 /** Produkt podle slugu — pro detail stránku /produkty/{slug}. */
 export const fetchProductBySlug = cache(async (slug: string): Promise<Product | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'products',
     where: { slug: { equals: slug } },
@@ -41,7 +40,7 @@ export const fetchProductBySlug = cache(async (slug: string): Promise<Product | 
 
 /** Slugy všech produktů — pro generateStaticParams detailu. */
 export const fetchProductSlugs = cache(async (): Promise<string[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'products',
     limit: 0,

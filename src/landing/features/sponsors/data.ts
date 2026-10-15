@@ -1,18 +1,17 @@
 import 'server-only'
 
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { getPayloadClient } from '@/landing/data/query'
 import type { Sponsor } from '@/landing/features/sponsors/types'
-import { toPhoto } from '@/landing/lib/media'
+import { uploadToPhoto } from '@/landing/lib/media'
 import type { Sponsor as SponsorDoc } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /** Sponzoři — marquee pás, spotlight karta a stránka partnerů. */
 
 /** Aktivní sponzoři pro marquee pás i výpis na /sponzori. */
 export const fetchSponsors = cache(async (): Promise<Sponsor[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'sponsors',
     where: { active: { equals: true } },
@@ -25,7 +24,7 @@ export const fetchSponsors = cache(async (): Promise<Sponsor[]> => {
     id: sponsor.id,
     name: sponsor.name,
     url: sponsor.url ?? null,
-    logo: typeof sponsor.logo === 'object' && sponsor.logo ? toPhoto(sponsor.logo) : null,
+    logo: uploadToPhoto(sponsor.logo),
     person: sponsor.person ?? null,
     address: sponsor.address ?? null,
     phone: sponsor.phone ?? null,
@@ -35,6 +34,6 @@ export const fetchSponsors = cache(async (): Promise<Sponsor[]> => {
 
 /** Sponzor pro spotlight kartu (s logem). */
 export const fetchSponsor = cache(async (sponsorId: number): Promise<SponsorDoc | null> => {
-  const payload = await getPayload({ config: configPromise })
-  return payload.findByID({ collection: 'sponsors', id: sponsorId, depth: 1 })
+  const payload = await getPayloadClient()
+  return payload.findByID({ collection: 'sponsors', id: sponsorId, depth: 1, disableErrors: true })
 })

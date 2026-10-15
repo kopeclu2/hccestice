@@ -1,10 +1,12 @@
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
+import type { Where } from 'payload'
 
 import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
+import { CACHE_TAGS } from '@/landing/data/tags'
+import { CLUB_NAME } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
 import { htmlPlainText, snippet } from '@/lib/plainText'
-import config from '@payload-config'
+import { routes } from '@/lib/routes'
 
 /**
  * `llms.txt` podle konvence llmstxt.org — strukturovaný rozcestník obsahu
@@ -28,12 +30,12 @@ const describe = (raw?: string | null): string => {
   return text ? `: ${text}` : ''
 }
 
-const getLlmsTxt = unstable_cache(
-  async () => {
-    const payload = await getPayload({ config })
+const getLlmsTxt = cachedQuery(
+  async (): Promise<string> => {
+    const payload = await getPayloadClient()
     const SITE_URL = getServerSideURL()
 
-    const published = { _status: { equals: 'published' } } as const
+    const published: Where = { _status: { equals: 'published' } }
     const query = {
       overrideAccess: false,
       draft: false,
@@ -69,9 +71,9 @@ const getLlmsTxt = unstable_cache(
     ])
 
     const lines = [
-      '# HC Čestice',
+      `# ${CLUB_NAME}`,
       '',
-      '> Hokejový klub HC Čestice — aktuality, zápasy, soupiska, fotogalerie a historie klubu.',
+      `> Hokejový klub ${CLUB_NAME} — aktuality, zápasy, soupiska, fotogalerie a historie klubu.`,
       '',
     ]
 
@@ -86,7 +88,7 @@ const getLlmsTxt = unstable_cache(
       .filter((page) => !LANDING_SLUGS.has(page.slug as string))
       .map(
         (page) =>
-          `- [${page.title ?? page.slug}](${SITE_URL}/${page.slug})${describe(page.meta?.description)}`,
+          `- [${page.title ?? page.slug}](${SITE_URL}${routes.page(page.slug)})${describe(page.meta?.description)}`,
       )
 
     if (pageLinks.length) {
@@ -109,7 +111,7 @@ const getLlmsTxt = unstable_cache(
       .slice(0, RECENT_POSTS)
       .map(
         (post) =>
-          `- [${post.title ?? post.slug}](${SITE_URL}/aktuality/${post.slug})${describe(
+          `- [${post.title ?? post.slug}](${SITE_URL}${routes.post(post.slug)})${describe(
             post.excerpt || post.meta?.description,
           )}`,
       )
@@ -118,7 +120,7 @@ const getLlmsTxt = unstable_cache(
       lines.push(
         '## Aktuality',
         '',
-        `Posledních ${postLinks.length} článků; celý archiv je na ${SITE_URL}/aktuality.`,
+        `Posledních ${postLinks.length} článků; celý archiv je na ${SITE_URL}${routes.list.posts}.`,
         '',
         ...postLinks,
         '',
@@ -131,7 +133,7 @@ const getLlmsTxt = unstable_cache(
       .filter((gallery) => Boolean(gallery.slug))
       .map(
         (gallery) =>
-          `- [${gallery.title ?? gallery.slug}](${SITE_URL}/fotogalerie/${gallery.slug})`,
+          `- [${gallery.title ?? gallery.slug}](${SITE_URL}${routes.gallery(gallery.slug)})`,
       )
 
     if (galleryLinks.length) {
@@ -143,10 +145,10 @@ const getLlmsTxt = unstable_cache(
     lines.push(
       '## Sekce webu',
       '',
-      `- [Zápasy](${SITE_URL}/zapasy): rozpis a výsledky zápasů aktuální sezóny.`,
+      `- [Zápasy](${SITE_URL}${routes.list.matches}): rozpis a výsledky zápasů aktuální sezóny.`,
       `- [Soupiska](${SITE_URL}/soupiska): hráči a realizační tým.`,
-      `- [Aktuality](${SITE_URL}/aktuality): výpis všech článků.`,
-      `- [Fotogalerie](${SITE_URL}/fotogalerie): fotky ze zápasů a akcí klubu.`,
+      `- [Aktuality](${SITE_URL}${routes.list.posts}): výpis všech článků.`,
+      `- [Fotogalerie](${SITE_URL}${routes.list.galleries}): fotky ze zápasů a akcí klubu.`,
       `- [Historie klubu](${SITE_URL}/historie-klubu): milníky a lidé klubu.`,
       `- [Sponzoři](${SITE_URL}/sponzori): partneři klubu.`,
       `- [Tréninky](${SITE_URL}/treninky): rozpis ledových hodin.`,
@@ -156,12 +158,8 @@ const getLlmsTxt = unstable_cache(
 
     return lines.join('\n')
   },
-  ['llms-txt'],
-  {
-    tags: ['llms-txt'],
-    // Pojistka pod tagem — bez ní má `unstable_cache` TTL jeden rok.
-    revalidate: 86400,
-  },
+  // Pojistka pod tagem — bez `revalidate` má `unstable_cache` TTL jeden rok.
+  { key: 'llms-txt', tags: [CACHE_TAGS.llmsTxt], revalidate: 86400 },
 )
 
 /**

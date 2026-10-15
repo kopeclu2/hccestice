@@ -1,5 +1,5 @@
-import { revalidateTag } from 'next/cache'
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
+import { createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
 /**
  * Invaliduje `matches-sitemap.xml`, kde figurují detaily zápasů
@@ -15,25 +15,12 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
  *
  * Synchronizace VČHL zapisuje s `context.disableRevalidate` a nové zápasy
  * zakládá ona, proto stejný tag invaliduje i `/internal/revalidate`.
- * Seed/importní skripty posílají `disableRevalidate` taky —
- * `revalidateTag` mimo Next runtime spadne na
- * `Invariant: static generation store missing`.
  */
-const revalidate = (context: Record<string, unknown>) => {
-  if (context.disableRevalidate) return
+const hooks = createRevalidateHooks({
+  label: 'sitemapu zápasů',
+  tags: [CACHE_TAGS.matchesSitemap],
+  profile: 'max',
+})
 
-  revalidateTag('matches-sitemap', 'max')
-}
-
-export const revalidateMatchFeeds: CollectionAfterChangeHook = ({ doc, req: { context } }) => {
-  revalidate(context)
-  return doc
-}
-
-export const revalidateMatchFeedsDelete: CollectionAfterDeleteHook = ({
-  doc,
-  req: { context },
-}) => {
-  revalidate(context)
-  return doc
-}
+export const revalidateMatchFeeds = hooks.afterChange
+export const revalidateMatchFeedsDelete = hooks.afterDelete

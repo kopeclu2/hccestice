@@ -1,10 +1,9 @@
 import 'server-only'
 
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { getPayloadClient } from '@/landing/data/query'
 import type { LandingTrainingsBlock } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /**
  * Rozpis tréninků žije jen jako blok `landingTrainings` v `layout` homepage
@@ -13,7 +12,7 @@ import configPromise from '@payload-config'
  * a homepage sekce vždy zobrazovaly stejná data ze stejného zdroje.
  */
 export const fetchTrainingsBlock = cache(async (): Promise<LandingTrainingsBlock | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
 
   const { docs } = await payload.find({
     collection: 'pages',

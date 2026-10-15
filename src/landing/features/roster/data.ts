@@ -1,14 +1,12 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { PlayerSeasonStat, RosterPlayer } from '@/landing/features/roster/types'
-import { toPhoto } from '@/landing/lib/media'
+import { uploadToPhoto } from '@/landing/lib/media'
 import type { Player } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /** Hráči — fetchery pro soupisky a hráčské karty. */
 
@@ -35,13 +33,13 @@ export function playerToRosterPlayer(player: Player): RosterPlayer {
     name: player.name,
     number: player.number ?? null,
     position: player.position ?? null,
-    photo: typeof player.photo === 'object' && player.photo ? toPhoto(player.photo) : null,
+    photo: uploadToPhoto(player.photo),
   }
 }
 
 /** Soupiska — aktivní hráči (starší záznamy bez příznaku bereme jako aktivní). */
 export const fetchRoster = cache(async (): Promise<RosterPlayer[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'players',
     where: { active: { not_equals: false } },
@@ -88,7 +86,7 @@ export const fetchRosterSections = cache(async (): Promise<RosterSection[]> => {
 
 /** Vybraní hráči (v pořadí výběru). */
 export const fetchPickedPlayers = cache(async (playerIds: number[]): Promise<RosterPlayer[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'players',
     where: { id: { in: playerIds } },
@@ -114,9 +112,9 @@ export const fetchPickedPlayers = cache(async (playerIds: number[]): Promise<Ros
  * Tag `matches` + `revalidate`: viz AGENTS.md „Tři pravidla" — bez
  * `revalidate` má `unstable_cache` TTL rok. Žádné `new Date()` uvnitř.
  */
-const loadPlayerSeasonStats = unstable_cache(
+export const fetchPlayerSeasonStats = cachedQuery(
   async (seasonId: number): Promise<Record<string, PlayerSeasonStat>> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'matches',
       where: { and: [{ season: { equals: seasonId } }, { status: { equals: 'played' } }] },
@@ -140,8 +138,5 @@ const loadPlayerSeasonStats = unstable_cache(
     }
     return stats
   },
-  ['player-season-stats'],
-  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+  { key: 'player-season-stats', tags: [CACHE_TAGS.matches] },
 )
-
-export const fetchPlayerSeasonStats = cache(loadPlayerSeasonStats)
