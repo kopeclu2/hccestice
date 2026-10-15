@@ -63,7 +63,7 @@ function PostFeatureView({
         {tag}
       </TileBadge>
       <div className="absolute inset-x-5.5 bottom-5.5 text-white">
-        <div className="text-xs font-semibold opacity-75">{dateLabel}</div>
+        <div className="text-xs font-medium opacity-75">{dateLabel}</div>
         <CardTitle as="h3" className="mt-1.5 max-w-160 text-pretty text-white" size="lg">
           {title}
         </CardTitle>

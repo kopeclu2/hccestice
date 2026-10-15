@@ -105,7 +105,7 @@ function AktualityEmpty({ activeType }: { activeType: string | null }) {
       icon="search"
       title="Tomuhle filtru nic neodpovídá"
     >
-      V kategorii <strong className="font-bold">{typeLabel}</strong> zatím nejsou žádné články.
+      V kategorii <strong className="font-semibold">{typeLabel}</strong> zatím nejsou žádné články.
       Zkuste jinou kategorii nebo zrušte filtr.
     </EmptyState>
   )

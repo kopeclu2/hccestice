@@ -99,7 +99,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
                   <TableRow
                     className={cn(
                       'border-line-soft hover:bg-tint-hover',
-                      highlighted && 'bg-tint font-extrabold hover:bg-tint',
+                      highlighted && 'bg-tint font-bold hover:bg-tint',
                     )}
                     key={rowIndex}
                   >
@@ -113,9 +113,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
               })}
             </TableBody>
             {block.caption && (
-              <TableCaption className="text-faint text-left text-xs">
-                {block.caption}
-              </TableCaption>
+              <TableCaption className="text-faint text-left text-xs">{block.caption}</TableCaption>
             )}
           </Table>
         </div>

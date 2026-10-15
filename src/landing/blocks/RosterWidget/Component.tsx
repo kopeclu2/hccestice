@@ -47,9 +47,9 @@ export function RosterWidgetView({
                   </TileBadge>
                 )}
               </PhotoTile>
-              <div className="mt-2 text-sm md:text-base font-extrabold">{player.name}</div>
+              <div className="mt-2 text-sm md:text-base font-bold">{player.name}</div>
               {player.position && (
-                <div className="text-faint text-xs font-semibold">
+                <div className="text-faint text-xs font-medium">
                   {POSITION_LABEL[player.position] ?? player.position}
                 </div>
               )}

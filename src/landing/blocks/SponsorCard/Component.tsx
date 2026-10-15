@@ -61,7 +61,7 @@ function SponsorCardView({
                 width={176}
               />
             ) : (
-              <span className="text-lg font-extrabold">{name}</span>
+              <span className="text-lg font-bold">{name}</span>
             )}
           </div>
           <CardTitle as="h3" size="md">
@@ -70,7 +70,7 @@ function SponsorCardView({
           {note && <p className="text-dim max-w-100 leading-relaxed text-pretty">{note}</p>}
           {url && (
             <a
-              className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-bold"
+              className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-semibold"
               href={url}
               rel="noreferrer"
               target="_blank"

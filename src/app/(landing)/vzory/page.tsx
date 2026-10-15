@@ -67,11 +67,11 @@ export default function PatternGalleryPage() {
         </PageTitle>
         <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
           Komponenta{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">PatternBackground</code> —
-          vzor se vkládá jako první potomek do sekce s{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>, obsah nad
-          ním dostane <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>.
-          Volí se vzor (<code className="bg-chip rounded px-1.5 font-mono text-sm">variant</code>
+          <code className="bg-chip rounded px-1.5 font-mono text-sm">PatternBackground</code> — vzor
+          se vkládá jako první potomek do sekce s{' '}
+          <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>, obsah nad ním
+          dostane <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>. Volí
+          se vzor (<code className="bg-chip rounded px-1.5 font-mono text-sm">variant</code>
           ), vytracení (<code className="bg-chip rounded px-1.5 font-mono text-sm">fade</code>) a
           barva (<code className="bg-chip rounded px-1.5 font-mono text-sm">tone</code>).
         </p>
@@ -166,10 +166,10 @@ function DemoCard({
     >
       {children}
       <figcaption className="absolute inset-x-4 bottom-4">
-        <div className={cn('text-sm font-extrabold', dark ? 'text-white' : 'text-ink')}>
+        <div className={cn('text-sm font-bold', dark ? 'text-white' : 'text-ink')}>
           {label}
           {note && (
-            <span className={cn('ml-2 font-semibold', dark ? 'text-white/55' : 'text-faint')}>
+            <span className={cn('ml-2 font-medium', dark ? 'text-white/55' : 'text-faint')}>
               {note}
             </span>
           )}

@@ -35,7 +35,7 @@ export function AnnouncementBar({
       role="status"
     >
       <Megaphone className="size-5 flex-none" strokeWidth={2.25} />
-      <p className="flex-1 text-sm font-bold">
+      <p className="flex-1 text-sm font-semibold">
         {text}
         {linkLabel && linkHref && (
           <Link className="ml-2 underline underline-offset-2" href={linkHref}>

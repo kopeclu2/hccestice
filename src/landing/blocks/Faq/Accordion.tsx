@@ -36,7 +36,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 onClick={() => setOpenIndex(isOpen ? -1 : index)}
                 type="button"
               >
-                <span className="flex-1 font-bold">{item.question}</span>
+                <span className="flex-1 font-semibold">{item.question}</span>
                 <span className="bg-chip grid size-7 flex-none place-items-center rounded-full [&_svg]:size-3.5">
                   {isOpen ? <Minus /> : <Plus />}
                 </span>

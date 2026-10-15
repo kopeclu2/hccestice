@@ -26,7 +26,7 @@ export function SponzoriHeader({
         </PillLink>
       }
       meta={count}
-      metaClassName="text-faint text-sm font-semibold"
+      metaClassName="text-faint text-sm font-medium"
       perex={
         <>
           Led, rozhodčí, doprava, výstroj — vesnický hokej stojí na lidech a firmách z okolí, které

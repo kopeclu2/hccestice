@@ -127,7 +127,7 @@ export default async function MatchHeaderVariantsPage() {
         <nav aria-label="Varianty" className="mt-6 flex flex-wrap justify-center gap-2">
           {VARIANTS.map((variant) => (
             <a
-              className="border-line text-ink-soft hover:bg-chip rounded-full border px-4 py-1.5 text-xs font-semibold"
+              className="border-line text-ink-soft hover:bg-chip rounded-full border px-4 py-1.5 text-xs font-medium"
               href={`#${variant.id}`}
               key={variant.id}
             >
@@ -150,7 +150,7 @@ export default async function MatchHeaderVariantsPage() {
             {samples.map((sample) => (
               <figure className="m-0" data-variant={variant.id} key={sample.slug}>
                 {variant.render({ match: sample.match, titleAs: 'h3' })}
-                <figcaption className="text-faint mt-3 text-center text-eyebrow font-bold tracking-[0.1em] uppercase">
+                <figcaption className="text-faint mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] uppercase">
                   {sample.caption}
                 </figcaption>
               </figure>

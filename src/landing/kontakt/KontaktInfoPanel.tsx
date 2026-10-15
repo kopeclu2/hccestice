@@ -56,7 +56,7 @@ export function KontaktInfoPanel({ site }: { site: SiteLinks }) {
 
       <div className="mt-7 flex flex-wrap gap-2">
         {CONTACT.pills.map((pill) => (
-          <Badge className="font-semibold" key={pill} size="lg" variant="outline">
+          <Badge className="font-medium" key={pill} size="lg" variant="outline">
             {pill}
           </Badge>
         ))}

@@ -36,8 +36,8 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
                 Kanadské body hráčů HC Čestice: góly, asistence a body
               </caption>
               <thead>
-                <tr className="text-faint text-xs font-bold">
-                  <th className="py-1.5 text-left font-bold" scope="col">
+                <tr className="text-faint text-xs font-semibold">
+                  <th className="py-1.5 text-left font-semibold" scope="col">
                     Hráč
                   </th>
                   <th className={NUM} scope="col">
@@ -60,7 +60,7 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
               <tbody className="divide-line-soft divide-y border-line-soft border-t">
                 {points.map((row) => (
                   <tr key={row.name}>
-                    <th className="py-2 pr-2 text-left font-bold break-words" scope="row">
+                    <th className="py-2 pr-2 text-left font-semibold break-words" scope="row">
                       {row.name}
                     </th>
                     <td className={`${NUM} text-ink-soft font-semibold`}>{row.goals}</td>
@@ -91,7 +91,7 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
           <div>
             <h3 className="flex items-baseline justify-between gap-3">
               <Eyebrow tone="club">Tresty</Eyebrow>
-              <span className="text-sm font-extrabold tabular-nums">
+              <span className="text-sm font-bold tabular-nums">
                 {`${penaltyMinutes} `}
                 <span aria-hidden>TM</span>
                 <span className="sr-only">trestných minut celkem</span>
@@ -100,8 +100,8 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
             <ul className="divide-line-soft border-line-soft mt-2 divide-y border-t text-sm md:text-base">
               {penalties.map((row) => (
                 <li className="flex items-baseline justify-between gap-3 py-2" key={row.name}>
-                  <span className="min-w-0 font-bold break-words">{row.name}</span>
-                  <span className="text-ink-soft flex-none font-semibold tabular-nums">
+                  <span className="min-w-0 font-semibold break-words">{row.name}</span>
+                  <span className="text-ink-soft flex-none font-medium tabular-nums">
                     {row.minutes}&nbsp;min
                     {row.count > 1 && <span className="text-faint text-xs"> ({row.count}×)</span>}
                   </span>

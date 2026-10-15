@@ -28,10 +28,7 @@ export function StatCardsBlockComponent({ block }: { block: StatCardsBlockType }
             {item.value}
           </Numeral>
           <div
-            className={cn(
-              'mt-1 text-sm font-semibold',
-              item.dark ? 'text-white/60' : 'text-faint',
-            )}
+            className={cn('mt-1 text-sm font-medium', item.dark ? 'text-white/60' : 'text-faint')}
           >
             {item.label}
           </div>

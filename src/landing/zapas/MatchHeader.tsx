@@ -52,7 +52,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tone="white">{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-sm font-bold text-white [overflow-wrap:anywhere] md:text-base">
+      <dd className="mt-1 text-sm font-semibold text-white [overflow-wrap:anywhere] md:text-base">
         {children}
       </dd>
     </div>
@@ -111,7 +111,7 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
                 <Badge size="sm" variant={outcome.variant}>
                   {outcome.label}
                 </Badge>
-                {note && <span className="text-xs font-semibold text-white/65">{note}</span>}
+                {note && <span className="text-xs font-medium text-white/65">{note}</span>}
               </span>
             </Fact>
           )}
@@ -156,7 +156,7 @@ function ScheduledHeader({ match }: { match: MatchDetail }) {
             <Numeral className="text-white" size="md">
               {match.dateLabel}
             </Numeral>
-            <span className="text-sm font-bold text-white/70">{match.timeLabel}</span>
+            <span className="text-sm font-semibold text-white/70">{match.timeLabel}</span>
           </div>
         </>
       }

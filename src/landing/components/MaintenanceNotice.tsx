@@ -12,7 +12,7 @@ import React from 'react'
  */
 export function MaintenanceNotice() {
   return (
-    <div className="bg-lime text-ink relative z-50 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-xs font-bold">
+    <div className="bg-lime text-ink relative z-50 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-xs font-semibold">
       <span>Režim údržby je zapnutý — návštěvníci vidí údržbovou stránku.</span>
       <Link className="underline underline-offset-2" href="/udrzba">
         Zobrazit ji

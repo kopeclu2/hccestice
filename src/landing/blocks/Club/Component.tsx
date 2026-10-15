@@ -86,7 +86,7 @@ function ClubView({ content }: { content: ClubContent }) {
             sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
           >
             <TileBadge className="top-3.5 left-3.5">{content.stadium.tag}</TileBadge>
-            <div className="absolute bottom-4 left-4 right-15 text-sm md:text-base leading-normal font-semibold text-white">
+            <div className="absolute bottom-4 left-4 right-15 text-sm md:text-base leading-normal font-medium text-white">
               {content.stadium.caption}
             </div>
           </PhotoTile>
@@ -98,7 +98,7 @@ function ClubView({ content }: { content: ClubContent }) {
               sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
             >
               <TileBadge className="top-3 left-3">{content.youth.tag}</TileBadge>
-              <div className="absolute bottom-3.5 left-3.5 text-sm md:text-base font-semibold text-white">
+              <div className="absolute bottom-3.5 left-3.5 text-sm md:text-base font-medium text-white">
                 {content.youth.caption}
               </div>
             </PhotoTile>

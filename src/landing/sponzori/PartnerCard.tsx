@@ -123,10 +123,10 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
             {sponsor.name}
           </CardTitle>
           {sponsor.person && (
-            <div className="text-ink-soft mt-1 text-xs font-bold">{sponsor.person}</div>
+            <div className="text-ink-soft mt-1 text-xs font-semibold">{sponsor.person}</div>
           )}
           {sponsor.address && (
-            <div className="text-dim mt-0.75 text-xs leading-[1.45] font-semibold text-pretty">
+            <div className="text-dim mt-0.75 text-xs leading-[1.45] font-medium text-pretty">
               {sponsor.address}
             </div>
           )}

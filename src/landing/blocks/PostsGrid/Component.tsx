@@ -21,11 +21,7 @@ export async function PostsGridBlockComponent({ block }: { block: PostsGridBlock
     limit: block.limit ?? 6,
   })
   return (
-    <PostsGridView
-      posts={posts}
-      showPhoto={block.showPhoto ?? false}
-      title={block.title ?? null}
-    />
+    <PostsGridView posts={posts} showPhoto={block.showPhoto ?? false} title={block.title ?? null} />
   )
 }
 
@@ -63,7 +59,7 @@ function PostsGridView({
                 <div className="flex-1">
                   <div className="flex items-baseline gap-3">
                     <Eyebrow tone="club">{post.tag}</Eyebrow>
-                    <span className="text-faint text-eyebrow font-semibold">{post.dateLabel}</span>
+                    <span className="text-faint text-eyebrow font-medium">{post.dateLabel}</span>
                   </div>
                   <CardTitle as="h4" className="mt-1" size="xs">
                     {post.title}

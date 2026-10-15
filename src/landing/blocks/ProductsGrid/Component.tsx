@@ -40,7 +40,7 @@ export async function ProductsGridBlockComponent({ block }: { block: ProductsGri
         {block.orderInfo && (
           <div className="bg-club mb-8 flex items-start gap-3.5 rounded-tile px-4.5 py-4 text-white md:px-5 lg:px-5.5 lg:py-4.5">
             <Megaphone className="mt-0.5 size-5 flex-none" strokeWidth={2.25} />
-            <p className="text-sm leading-relaxed font-bold whitespace-pre-line">
+            <p className="text-sm leading-relaxed font-semibold whitespace-pre-line">
               {block.orderInfo}
             </p>
           </div>
@@ -114,13 +114,13 @@ export function ProductTile({
           {(product.sizes ?? []).map((size) => (
             <Badge key={size.id} size="xs" title={size.note ?? undefined} variant="chip">
               {size.label}
-              {size.note && <span className="text-faint font-semibold"> · {size.note}</span>}
+              {size.note && <span className="text-faint font-medium"> · {size.note}</span>}
             </Badge>
           ))}
         </div>
       )}
       {product.orderNote && (
-        <p className="text-faint mt-2 text-xs font-semibold">⚠ {product.orderNote}</p>
+        <p className="text-faint mt-2 text-xs font-medium">⚠ {product.orderNote}</p>
       )}
       <div className="flex-1" />
       <PillLink className="mt-4 self-start" href={mailto} size="sm" variant="dark">

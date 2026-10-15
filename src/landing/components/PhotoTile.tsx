@@ -109,7 +109,7 @@ export function TileBadge({
 }) {
   return (
     <Badge
-      className={cn('absolute', tone === 'white' && 'bg-white/92 font-bold', className)}
+      className={cn('absolute', tone === 'white' && 'bg-white/92 font-semibold', className)}
       size={tone === 'white' ? 'xs' : 'sm'}
       variant={tone === 'white' ? 'chip' : 'lime'}
     >

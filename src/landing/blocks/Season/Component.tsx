@@ -190,25 +190,20 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                 )}
                 key={row.pos}
               >
-                <div className={cn('text-sm font-extrabold', isOurs ? 'text-club-dark' : 'text-faint')}>
+                <div className={cn('text-sm font-bold', isOurs ? 'text-club-dark' : 'text-faint')}>
                   {row.pos}.
                 </div>
-                <div
-                  className={cn(
-                    'text-sm md:text-base',
-                    isOurs ? 'font-extrabold' : 'font-semibold',
-                  )}
-                >
+                <div className={cn('text-sm md:text-base', isOurs ? 'font-bold' : 'font-medium')}>
                   {row.team}
                 </div>
                 <div className="text-faint text-right text-sm">{row.games}</div>
-                <div className="text-right text-sm md:text-base font-extrabold">{row.points}</div>
+                <div className="text-right text-sm md:text-base font-bold">{row.points}</div>
               </div>
             )
           })}
 
           <a
-            className="text-club-dark hover:text-club mt-3.5 inline-block text-sm font-bold"
+            className="text-club-dark hover:text-club mt-3.5 inline-block text-sm font-semibold"
             href={standings.fullTableUrl}
             rel="noreferrer"
             target="_blank"

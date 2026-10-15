@@ -89,7 +89,7 @@ function HeroModernView({
                 proto je výraz i span na jednom řádku. */}
             <PageTitle className="text-shadow-photo text-white" size="hero-sm" weight="normal">
               <span className="block">{content.headlineLight}</span>
-              <span className="block font-extrabold">
+              <span className="block font-bold">
                 {content.headlineBold.replace(/\s*[.!]$/, '')}
                 <span className="text-lime">.</span>
               </span>

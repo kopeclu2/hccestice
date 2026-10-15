@@ -60,7 +60,7 @@ export default async function ProductDetailPage({ params }: Args) {
       />
       <div className="mx-auto max-w-[80rem] pt-10">
         <Link
-          className="text-faint hover:text-club inline-flex items-center gap-2 text-sm font-bold transition-colors [&_svg]:size-4"
+          className="text-faint hover:text-club inline-flex items-center gap-2 text-sm font-semibold transition-colors [&_svg]:size-4"
           href="/produkty-merch"
         >
           <ArrowLeft strokeWidth={2.5} /> Zpět na Produkty merch
@@ -107,11 +107,11 @@ export default async function ProductDetailPage({ params }: Args) {
               </div>
               <div className="mt-3">
                 {product.available ? (
-                  <span className="text-club-dark inline-flex items-center gap-1.5 text-sm font-bold [&_svg]:size-4">
+                  <span className="text-club-dark inline-flex items-center gap-1.5 text-sm font-semibold [&_svg]:size-4">
                     <CircleCheck strokeWidth={2.5} /> V nabídce
                   </span>
                 ) : (
-                  <span className="text-faint inline-flex items-center gap-1.5 text-sm font-bold [&_svg]:size-4">
+                  <span className="text-faint inline-flex items-center gap-1.5 text-sm font-semibold [&_svg]:size-4">
                     <CircleX strokeWidth={2.5} /> Momentálně mimo nabídku
                   </span>
                 )}
@@ -130,13 +130,11 @@ export default async function ProductDetailPage({ params }: Args) {
                 <div className="flex flex-wrap gap-2">
                   {(product.sizes ?? []).map((size) => (
                     <span
-                      className="border-line rounded-xl border bg-surface px-4 py-2 text-sm font-bold"
+                      className="border-line rounded-xl border bg-surface px-4 py-2 text-sm font-semibold"
                       key={size.id}
                     >
                       {size.label}
-                      {size.note && (
-                        <span className="text-faint font-semibold"> · {size.note}</span>
-                      )}
+                      {size.note && <span className="text-faint font-medium"> · {size.note}</span>}
                     </span>
                   ))}
                 </div>
@@ -152,7 +150,7 @@ export default async function ProductDetailPage({ params }: Args) {
                 >
                   <Mail strokeWidth={2.5} /> Objednat e-mailem
                 </PillLink>
-                <p className="text-faint mt-2 text-center text-xs font-semibold">
+                <p className="text-faint mt-2 text-center text-xs font-medium">
                   {product.orderNote ??
                     'V objednávce uveďte název předmětu, velikost a počet kusů.'}
                 </p>
@@ -170,8 +168,8 @@ export default async function ProductDetailPage({ params }: Args) {
                       className="border-line-soft flex items-center justify-between gap-6 border-b py-3 last:border-b-0"
                       key={param.id}
                     >
-                      <dt className="text-faint text-sm font-semibold">{param.label}</dt>
-                      <dd className="text-right text-sm font-bold">{param.value}</dd>
+                      <dt className="text-faint text-sm font-medium">{param.label}</dt>
+                      <dd className="text-right text-sm font-semibold">{param.value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -186,13 +184,7 @@ export default async function ProductDetailPage({ params }: Args) {
 
 /** `Product` + `Offer` JSON-LD — objednávky běží e-mailem, ne košíkem, proto
  *  `Offer` bez `url` na checkout; `availability` je pak hlavní signál. */
-function ProductJsonLd({
-  product,
-  photos,
-}: {
-  product: Product
-  photos: ProductPhoto[]
-}) {
+function ProductJsonLd({ product, photos }: { product: Product; photos: ProductPhoto[] }) {
   const baseUrl = getServerSideURL()
   const path = `/produkty/${product.slug}`
   const jsonLd = {
@@ -200,20 +192,27 @@ function ProductJsonLd({
     '@type': 'Product',
     name: product.name,
     ...(product.description ? { description: product.description } : {}),
-    ...(photos.length ? { image: photos.map((photo) => `${baseUrl}${getMediaUrl(photo.url, photo.updatedAt)}`) } : {}),
+    ...(photos.length
+      ? { image: photos.map((photo) => `${baseUrl}${getMediaUrl(photo.url, photo.updatedAt)}`) }
+      : {}),
     url: `${baseUrl}${path}`,
     offers: {
       '@type': 'Offer',
       priceCurrency: 'CZK',
       price: product.price,
-      availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      availability: product.available
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
       url: `${baseUrl}${path}`,
       seller: { '@type': 'Organization', name: 'HC Čestice' },
     },
   }
 
   return (
-    <script dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} type="application/ld+json" />
+    <script
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      type="application/ld+json"
+    />
   )
 }
 

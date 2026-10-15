@@ -87,7 +87,7 @@ function HeroView({
                 (PageTitle weight="normal"), tučný řádek zvýrazněný uvnitř */}
             <PageTitle className="text-white" size="hero" weight="normal">
               <span className="block">{content.headlineLight}</span>
-              <span className="block font-extrabold">{content.headlineBold}</span>
+              <span className="block font-bold">{content.headlineBold}</span>
             </PageTitle>
             <p className="mt-4 mb-6.5 max-w-110 text-lg leading-snug text-pretty text-white/92">
               {content.intro}
@@ -120,7 +120,7 @@ function HeroView({
                       {lastResult.score}
                       {lastResult.suffix && ` ${lastResult.suffix}`}
                     </span>
-                    <span className="text-xs font-semibold text-white/55">
+                    <span className="text-xs font-medium text-white/55">
                       {lastResult.won ? 'výhra' : 'konečný stav'}
                     </span>
                   </div>

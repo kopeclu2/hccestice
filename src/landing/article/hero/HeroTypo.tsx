@@ -43,7 +43,7 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
         <TitleParts
           accent="lime-box"
           highlight={article.titleHighlight}
-          highlightClassName="font-extrabold px-3"
+          highlightClassName="font-bold px-3"
           title={article.title}
         />
       </PageTitle>

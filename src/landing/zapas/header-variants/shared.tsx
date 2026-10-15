@@ -187,7 +187,7 @@ export function Crest({
       <span
         aria-hidden
         className={cn(
-          'grid flex-none place-items-center rounded-full border font-extrabold',
+          'grid flex-none place-items-center rounded-full border font-bold',
           tone === 'dark' && 'border-white/24 text-white/75',
           tone === 'light' && 'border-line bg-chip text-ink-soft',
           tone === 'club' && 'border-white/40 bg-white/10 text-white',

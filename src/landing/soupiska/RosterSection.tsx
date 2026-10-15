@@ -34,7 +34,7 @@ export function RosterSection({
       <Reveal>
         <div className="border-contrast flex flex-wrap items-baseline gap-x-3.5 gap-y-1 border-b-2 pb-4">
           <SectionTitle size="md">{title}</SectionTitle>
-          <span className="text-club text-sm font-bold">{count}</span>
+          <span className="text-club text-sm font-semibold">{count}</span>
           <div className="flex-1" />
           <Eyebrow className="text-faint/80 hidden md:block" wide>
             {kicker}

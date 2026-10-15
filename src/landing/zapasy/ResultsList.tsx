@@ -118,8 +118,8 @@ export function ResultsList({
                 {/* Střelci přes celou šířku karty; od `md` odsazení srovnané
                     se sloupcem názvu (96 px datum + mezera 16 px). */}
                 {showScorers && row.scorers && (
-                  <p className="text-faint col-span-full text-xs font-semibold text-pretty md:col-start-2">
-                    <span className="text-ink font-bold">Střelci:</span> {row.scorers}
+                  <p className="text-faint col-span-full text-xs font-medium text-pretty md:col-start-2">
+                    <span className="text-ink font-semibold">Střelci:</span> {row.scorers}
                   </p>
                 )}
               </li>

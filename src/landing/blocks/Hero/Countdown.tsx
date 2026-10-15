@@ -64,16 +64,10 @@ export function Countdown({ targetISO }: { targetISO: string }) {
     <div className="mt-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-white tabular-nums max-[22.5rem]:gap-x-2 md:gap-x-3.5">
       {units.map((unit, index) => (
         <span className="flex items-baseline gap-1.5 max-[22.5rem]:gap-1" key={unit.label}>
-          <span
-            className={
-              index === units.length - 1
-                ? `text-lime ${DIGITS}`
-                : DIGITS
-            }
-          >
+          <span className={index === units.length - 1 ? `text-lime ${DIGITS}` : DIGITS}>
             {unit.value}
           </span>
-          <span className="text-xs font-semibold text-white/55">{unit.label}</span>
+          <span className="text-xs font-medium text-white/55">{unit.label}</span>
         </span>
       ))}
     </div>

@@ -32,8 +32,8 @@ export default function EmptyStatesPage() {
           Prázdné stavy
         </PageTitle>
         <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
-          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-sm">EmptyState</code>{' '}
-          — vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
+          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-sm">EmptyState</code> —
+          vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
         </p>
       </header>
 
@@ -68,8 +68,8 @@ export default function EmptyStatesPage() {
               icon="search"
               title="Tomuhle filtru nic neodpovídá"
             >
-              V kategorii <strong className="font-bold">Soupiska</strong> zatím nejsou žádné články.
-              Zkuste jinou kategorii nebo zrušte filtr.
+              V kategorii <strong className="font-semibold">Soupiska</strong> zatím nejsou žádné
+              články. Zkuste jinou kategorii nebo zrušte filtr.
             </EmptyState>
           </Demo>
 
@@ -109,8 +109,8 @@ export default function EmptyStatesPage() {
               icon="photos"
               title="Z této sezóny zatím nemáme fotky"
             >
-              Fotogalerie ze sezóny <strong className="font-bold">2026/27</strong> se teprve plní.
-              Máte fotky ze zápasů? Pošlete nám je, rádi je zveřejníme.
+              Fotogalerie ze sezóny <strong className="font-semibold">2026/27</strong> se teprve
+              plní. Máte fotky ze zápasů? Pošlete nám je, rádi je zveřejníme.
             </EmptyState>
           </Demo>
 
@@ -144,7 +144,7 @@ function Demo({ caption, children }: { caption: string; children: React.ReactNod
   return (
     <figure className="m-0">
       {children}
-      <figcaption className="text-faint mt-3 text-center text-eyebrow font-bold tracking-[0.1em] uppercase">
+      <figcaption className="text-faint mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] uppercase">
         {caption}
       </figcaption>
     </figure>

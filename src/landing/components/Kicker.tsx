@@ -10,7 +10,7 @@ import { cn } from '@/utilities/ui'
  * datumy nad nadpisy karet. Jediný zdroj velikosti i trackingu; dřív se
  * psal ručně s pěti různými hodnotami `tracking-[...]`.
  */
-const eyebrowVariants = cva('text-eyebrow font-extrabold tracking-[0.16em] uppercase', {
+const eyebrowVariants = cva('text-eyebrow font-bold tracking-[0.16em] uppercase', {
   variants: {
     tone: {
       lime: 'text-lime',
@@ -73,7 +73,7 @@ export function Kicker({ children, className }: { children: React.ReactNode; cla
   return (
     <span
       className={cn(
-        'inline-block rounded-full border border-line px-4 py-1.5 text-xs font-semibold text-ink-soft',
+        'inline-block rounded-full border border-line px-4 py-1.5 text-xs font-medium text-ink-soft',
         className,
       )}
     >
@@ -90,13 +90,7 @@ export function Kicker({ children, className }: { children: React.ReactNode; cla
  * text vedle sebe dřív nechávalo 8px mezeru z paddingu zvýraznění navíc
  * (`bg-lime slovo. ` čtený jako „slovo .").
  */
-export function Highlight({
-  children,
-  dot = false,
-}: {
-  children: React.ReactNode
-  dot?: boolean
-}) {
+export function Highlight({ children, dot = false }: { children: React.ReactNode; dot?: boolean }) {
   return (
     <>
       <span className="bg-lime box-decoration-clone px-2">{children}</span>

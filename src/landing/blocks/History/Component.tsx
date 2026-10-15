@@ -71,7 +71,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
           <PillLink href={PHOTOS_HREF} variant="outline" withArrow>
             {content.photosCtaLabel}
           </PillLink>
-          <span className="text-faint text-sm font-semibold">{content.metaLine}</span>
+          <span className="text-faint text-sm font-medium">{content.metaLine}</span>
         </div>
       </Reveal>
 
@@ -104,7 +104,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
                 {content.quoteEnd}
               </CardTitle>
             </blockquote>
-            <figcaption className="text-faint border-contrast mt-5 max-w-80 border-t-2 pt-4 text-sm font-semibold">
+            <figcaption className="text-faint border-contrast mt-5 max-w-80 border-t-2 pt-4 text-sm font-medium">
               {content.quoteSource}
             </figcaption>
           </figure>

@@ -42,7 +42,7 @@ export function AuthorMeta({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center gap-x-4.5 gap-y-3 text-sm font-semibold',
+        'flex flex-wrap items-center gap-x-4.5 gap-y-3 text-sm font-medium',
         rowClass[tone],
         className,
       )}
@@ -53,7 +53,7 @@ export function AuthorMeta({
         <span className="flex items-center gap-2.25">
           <span
             className={cn(
-              'grid size-7.5 flex-none place-items-center rounded-full text-eyebrow font-extrabold',
+              'grid size-7.5 flex-none place-items-center rounded-full text-eyebrow font-bold',
               tone === 'light' ? 'bg-contrast text-lime' : 'bg-lime text-ink',
             )}
           >

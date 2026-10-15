@@ -110,12 +110,12 @@ function TrainingsView({
         {standalonePage && (
           <>
             <InfoCard title="Co si vzít">
-              Na první trénink nepotřebuješ vlastní výstroj — na zkoušku ji půjčíme. Zbytek
-              doučíme přímo na ledě.
+              Na první trénink nepotřebuješ vlastní výstroj — na zkoušku ji půjčíme. Zbytek doučíme
+              přímo na ledě.
             </InfoCard>
             <InfoCard title="Kde to je">
-              Trénujeme na zimním stadionu v Rychnově nad Kněžnou — domácí zápasy hrajeme tam
-              stejně jako tréninky.
+              Trénujeme na zimním stadionu v Rychnově nad Kněžnou — domácí zápasy hrajeme tam stejně
+              jako tréninky.
             </InfoCard>
           </>
         )}
@@ -219,10 +219,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
 
       {slot.venue && (
         <div
-          className={cn(
-            'mt-1 text-xs font-semibold',
-            slot.accent ? 'text-faint-dark' : 'text-faint',
-          )}
+          className={cn('mt-1 text-xs font-medium', slot.accent ? 'text-faint-dark' : 'text-faint')}
         >
           {slot.venue}
         </div>

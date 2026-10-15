@@ -200,7 +200,7 @@ function Half({
  */
 function Seal({ label }: { label: string | null }) {
   return (
-    <span className="bg-contrast text-lime ring-surface absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full font-mono text-xs font-bold uppercase ring-4 md:size-14 md:text-sm">
+    <span className="bg-contrast text-lime ring-surface absolute top-1/2 left-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full font-mono text-xs font-semibold uppercase ring-4 md:size-14 md:text-sm">
       {label ?? <span className="bg-lime shadow-ring-lime size-2 rounded-full" />}
     </span>
   )
@@ -219,7 +219,7 @@ function Footer({ match, played }: { match: MatchDetail; played: boolean }) {
           {competitionLabel(match)}
         </Eyebrow>
         <MatchMeta
-          className="text-ink mt-1.5 text-sm font-bold md:text-base"
+          className="text-ink mt-1.5 text-sm font-semibold md:text-base"
           items={[
             day
               ? `${day.charAt(0).toUpperCase()}${day.slice(1)} ${match.dateLabel}`

@@ -530,6 +530,12 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
 | `text-claim` 32 / `-lg` 52 | `text-3xl` / `text-5xl` |
 | `text-numeral-xs…2xl` 19–48 | `text-xl` … `text-5xl` |
 
+- **Tučnost** běžného textu je o stupeň lehčí než v handoffu (rozhodnutí
+  uživatele 15. 10. 2026 — web působil těžce a široce): text do
+  `text-lg` má `font-bold` / `font-semibold` / `font-medium` místo
+  `extrabold` / `bold` / `semibold`. `font-extrabold` patří nadpisům
+  (`Heading.tsx`), skóre a číslům (`Numeral.tsx`) a jménům týmů v tabuli;
+  tlačítka (`pill.ts`) mají `font-bold`.
 - Výjimky, které zůstávají tokeny: `text-eyebrow` (11px mikro-label
   verzálkami, Tailwind krok nemá) a `text-watermark-*` (dekorativní
   obrysové nápisy 110–260 px).

@@ -122,7 +122,7 @@ export default async function MatchDetailPage(args: Args) {
 
       {match.missingProtocol && (
         <SectionShell spacing="split">
-          <p className="border-line-mid text-ink-soft rounded-section border border-dashed bg-surface p-4.5 text-sm md:text-base font-semibold text-pretty md:p-7 lg:p-9">
+          <p className="border-line-mid text-ink-soft rounded-section border border-dashed bg-surface p-4.5 text-sm md:text-base font-medium text-pretty md:p-7 lg:p-9">
             Podrobný zápis z utkání není k dispozici.
           </p>
         </SectionShell>

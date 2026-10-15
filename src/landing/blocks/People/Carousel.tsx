@@ -101,7 +101,7 @@ function PersonTile({ person }: { person: PersonCard }) {
           src="/logo-cestice.png"
           width={74}
         />
-        <div className="text-club/35 absolute top-4.5 right-4.5 text-eyebrow font-extrabold tracking-[0.26em] uppercase [writing-mode:vertical-rl]">
+        <div className="text-club/35 absolute top-4.5 right-4.5 text-eyebrow font-bold tracking-[0.26em] uppercase [writing-mode:vertical-rl]">
           {person.role}
         </div>
 
@@ -122,7 +122,9 @@ function PersonTile({ person }: { person: PersonCard }) {
           title={person.mail ?? person.phone ?? undefined}
         >
           <span>
-            <span className="block text-sm md:text-base font-extrabold tracking-tight">{person.name}</span>
+            <span className="block text-sm md:text-base font-bold tracking-tight">
+              {person.name}
+            </span>
             <Eyebrow className="mt-0.25 block">{person.role}</Eyebrow>
           </span>
           <span className="bg-lime text-ink grid size-8 flex-none place-items-center rounded-full [&_svg]:size-3.5">

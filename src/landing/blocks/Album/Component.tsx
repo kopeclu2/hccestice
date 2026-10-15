@@ -229,7 +229,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
               </Badge>
             )}
             {tile.title && (
-              <div className="text-shadow-photo line-clamp-2 text-xs leading-snug font-bold text-white">
+              <div className="text-shadow-photo line-clamp-2 text-xs leading-snug font-semibold text-white">
                 {tile.title}
               </div>
             )}
@@ -248,7 +248,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
           </CardTitle>
         )}
         {tile.title && tile.span === 'wide' && (
-          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm md:text-base font-bold text-white">
+          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm md:text-base font-semibold text-white">
             {tile.title}
           </div>
         )}

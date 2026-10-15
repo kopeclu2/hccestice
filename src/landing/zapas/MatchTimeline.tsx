@@ -98,7 +98,7 @@ export function MatchTimeline({
             <h3 className="bg-paper rounded-field flex items-center justify-between gap-3 px-3 py-2 md:px-4">
               <Eyebrow tone="club">{period.label}</Eyebrow>
               {period.score && (
-                <span className="text-sm font-extrabold tabular-nums">
+                <span className="text-sm font-bold tabular-nums">
                   <span className="sr-only">skóre </span>
                   {period.score.replace(':', ' : ')}
                 </span>
@@ -123,7 +123,9 @@ export function MatchTimeline({
 function TimelineRow({ event, opponentName }: { event: MatchTimelineEvent; opponentName: string }) {
   return (
     <li className={ROW}>
-      <span className={cn(CELL, 'text-faint text-xs font-bold tabular-nums')}>{event.time}</span>
+      <span className={cn(CELL, 'text-faint text-xs font-semibold tabular-nums')}>
+        {event.time}
+      </span>
       <span aria-hidden className={cn(CELL, 'justify-center')}>
         <EventIcon event={event} />
       </span>
@@ -139,7 +141,7 @@ function EventIcon({ event }: { event: MatchTimelineEvent }) {
     return (
       <span
         className={cn(
-          'inline-grid h-5 min-w-4 place-items-center rounded-sm px-0.75 text-eyebrow font-extrabold tabular-nums',
+          'inline-grid h-5 min-w-4 place-items-center rounded-sm px-0.75 text-eyebrow font-bold tabular-nums',
           event.minutes != null && event.minutes >= MAJOR_MINUTES
             ? 'bg-danger text-on-contrast'
             : 'bg-penalty text-penalty-ink',
@@ -172,7 +174,7 @@ function EventScore({ event }: { event: MatchTimelineEvent }) {
   ) : (
     <span
       aria-hidden
-      className="text-faint inline-flex h-5 min-w-11 flex-none items-center justify-center text-xs font-extrabold tabular-nums md:h-6"
+      className="text-faint inline-flex h-5 min-w-11 flex-none items-center justify-center text-xs font-bold tabular-nums md:h-6"
     >
       {event.score}
     </span>
@@ -183,7 +185,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
   if (event.type === 'penalty') {
     return (
       <>
-        <div className="text-sm font-extrabold text-pretty break-words md:text-base">
+        <div className="text-sm font-bold text-pretty break-words md:text-base">
           <span className="sr-only">
             Trest{event.minutes != null ? ` ${event.minutes} min` : ''}:{' '}
           </span>
@@ -199,7 +201,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
     // Jméno soupeře se smí zalomit — výpustka („HC Aloha Lan…“) ho na
     // 320 px usekla v polovině. Pro čtečku ho nahrazuje „Gól soupeře“.
     return (
-      <div className="text-faint flex items-start gap-x-2 text-sm font-bold md:text-base">
+      <div className="text-faint flex items-start gap-x-2 text-sm font-semibold md:text-base">
         <span className="sr-only">
           {event.score ? `Gól soupeře, stav ${event.score}` : 'Gól soupeře'}
         </span>
@@ -222,7 +224,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
         <EventScore event={event} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="min-w-0 text-sm font-extrabold text-pretty break-words md:text-base">
+            <span className="min-w-0 text-sm font-bold text-pretty break-words md:text-base">
               <span className="sr-only">
                 {event.score ? `Gól HC Čestice, stav ${event.score}: ` : 'Gól HC Čestice: '}
               </span>
@@ -242,7 +244,7 @@ function EventBody({ event, opponentName }: { event: MatchTimelineEvent; opponen
             )}
           </div>
           {event.assists.length > 0 && (
-            <div className="text-faint mt-0.5 text-xs font-semibold text-pretty break-words">
+            <div className="text-faint mt-0.5 text-xs font-medium text-pretty break-words">
               <span className="sr-only">Asistence: </span>
               <span aria-hidden>(</span>
               {event.assists.join(', ')}

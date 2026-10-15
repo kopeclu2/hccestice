@@ -115,7 +115,7 @@ export function ArticleCard({
           <Badge size="xs" variant="lime">
             {card.tag}
           </Badge>
-          <div className="text-faint text-xs font-bold">{card.dateLabel}</div>
+          <div className="text-faint text-xs font-semibold">{card.dateLabel}</div>
         </div>
         {/* `min-h-[2lh]` drží u varianty s náhledem dva řádky i pro krátký
             titulek: bez toho začíná úryvek na každé kartě v jiné výšce.

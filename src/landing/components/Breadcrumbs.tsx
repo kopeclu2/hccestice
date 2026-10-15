@@ -22,7 +22,7 @@ export function Breadcrumbs({ className, trail }: { className?: string; trail: C
   return (
     <nav aria-label="Drobečková navigace" className={cn('mb-5', className)}>
       <BreadcrumbsJsonLd trail={trail} />
-      <ol className="text-faint m-0 flex list-none items-center gap-2 p-0 text-xs font-semibold">
+      <ol className="text-faint m-0 flex list-none items-center gap-2 p-0 text-xs font-medium">
         <li>
           <Link className="text-club-dark hover:text-club transition-colors" href="/">
             Domů
@@ -34,14 +34,11 @@ export function Breadcrumbs({ className, trail }: { className?: string; trail: C
               /
             </span>
             {crumb.href ? (
-              <Link
-                className="text-club-dark hover:text-club transition-colors"
-                href={crumb.href}
-              >
+              <Link className="text-club-dark hover:text-club transition-colors" href={crumb.href}>
                 {crumb.label}
               </Link>
             ) : (
-              <span aria-current="page" className="text-club-dark line-clamp-1 font-bold">
+              <span aria-current="page" className="text-club-dark line-clamp-1 font-semibold">
                 {crumb.label}
               </span>
             )}

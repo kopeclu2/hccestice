@@ -35,7 +35,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
       <Reveal>
         <div className="mx-auto max-w-180 rounded-card bg-surface p-4.5 text-center md:p-7.5 lg:p-10">
           {kicker && <Kicker className="mb-5">{kicker}</Kicker>}
-          <div className="text-faint text-sm font-semibold">
+          <div className="text-faint text-sm font-medium">
             {[match.dateLabel, match.competition, match.venue].filter(Boolean).join(' · ')}
           </div>
 
@@ -56,7 +56,9 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
                 >
                   {match.score}
                   {match.suffix && (
-                    <span className="text-faint ml-1.5 text-sm md:text-base font-bold">{match.suffix}</span>
+                    <span className="text-faint ml-1.5 text-sm md:text-base font-semibold">
+                      {match.suffix}
+                    </span>
                   )}
                 </Numeral>
               ) : (
@@ -75,7 +77,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {match.reportHref && (
                 <Link
-                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-bold"
+                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-semibold"
                   href={match.reportHref}
                 >
                   Reportáž ze zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
@@ -83,7 +85,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
               )}
               {match.href && (
                 <Link
-                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-bold"
+                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-semibold"
                   href={match.href}
                 >
                   Detail zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
@@ -112,7 +114,7 @@ function TeamSide({ logo, name }: { logo: Photo | string | null; name: string })
       ) : (
         <div className="bg-chip size-16 rounded-full md:size-20" />
       )}
-      <div className="text-sm leading-tight font-extrabold md:text-base">{name}</div>
+      <div className="text-sm leading-tight font-bold md:text-base">{name}</div>
     </div>
   )
 }

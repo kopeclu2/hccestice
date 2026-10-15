@@ -57,14 +57,14 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           <table className="mt-3 w-full border-collapse tabular-nums md:mt-4">
             <caption className="sr-only">{played ? 'Skóre po třetinách' : 'Týmy zápasu'}</caption>
             <thead>
-              <tr className="text-faint text-eyebrow font-bold tracking-[0.08em] uppercase">
-                <th className="pb-1.5 text-left font-bold" scope="col">
+              <tr className="text-faint text-eyebrow font-semibold tracking-[0.08em] uppercase">
+                <th className="pb-1.5 text-left font-semibold" scope="col">
                   <span className="sr-only">Tým</span>
                 </th>
                 {columns.map((column) => (
                   <th
                     className={cn(
-                      'w-6 pb-1.5 text-center font-bold max-[22.5rem]:hidden md:w-9',
+                      'w-6 pb-1.5 text-center font-semibold max-[22.5rem]:hidden md:w-9',
                       (column.label === 'SN' || column.label === 'P') && 'text-club',
                     )}
                     key={column.label}
@@ -75,7 +75,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </abbr>
                   </th>
                 ))}
-                <th className="w-10 pb-1.5 text-right font-bold md:w-14" scope="col">
+                <th className="w-10 pb-1.5 text-right font-semibold md:w-14" scope="col">
                   {played ? (
                     <abbr className="no-underline" title="Celkem">
                       Σ
@@ -104,13 +104,13 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                         <span
                           className={cn(
                             'min-w-0 text-sm leading-tight text-balance break-words md:text-lg',
-                            lost ? 'text-ink-soft font-semibold' : 'font-extrabold',
+                            lost ? 'text-ink-soft font-medium' : 'font-bold',
                           )}
                         >
                           {row.name}
                           <span
                             aria-hidden
-                            className="text-faint ml-1.5 text-eyebrow font-bold tracking-[0.08em] whitespace-nowrap uppercase"
+                            className="text-faint ml-1.5 text-eyebrow font-semibold tracking-[0.08em] whitespace-nowrap uppercase"
                           >
                             {row.side === 'home' ? 'D' : 'H'}
                           </span>
@@ -122,7 +122,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </th>
                     {columns.map((column) => (
                       <td
-                        className="text-faint py-2 text-center text-sm font-semibold max-[22.5rem]:hidden md:py-2.5 md:text-base"
+                        className="text-faint py-2 text-center text-sm font-medium max-[22.5rem]:hidden md:py-2.5 md:text-base"
                         key={column.label}
                       >
                         {column[row.side]}
@@ -144,10 +144,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           </table>
 
           {columns.length > 0 && (
-            <p
-              aria-hidden
-              className="text-faint mt-2 text-xs font-semibold min-[22.5rem]:hidden"
-            >
+            <p aria-hidden className="text-faint mt-2 text-xs font-medium min-[22.5rem]:hidden">
               {columns
                 .map(
                   (column) =>
@@ -197,9 +194,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
     <dl className="border-line-soft bg-tint-hover grid grid-cols-2 content-center gap-x-5 gap-y-3 border-t px-4 py-4 md:grid-cols-4 md:px-6 lg:grid-cols-2 lg:border-t-0 lg:border-l lg:px-7 lg:py-6">
       <Fact label="Datum">
         {match.dateLabel}
-        {day && (
-          <span className="text-faint block text-xs font-semibold capitalize">{day}</span>
-        )}
+        {day && <span className="text-faint block text-xs font-medium capitalize">{day}</span>}
       </Fact>
       <Fact label="Buly">{match.timeLabel}</Fact>
       <Fact label="Místo">{match.venue ?? '—'}</Fact>
@@ -208,7 +203,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
           <Badge size="xs" variant={outcome.variant}>
             {outcome.label}
           </Badge>
-          {note && <span className="text-faint mt-1 block text-xs font-semibold">{note}</span>}
+          {note && <span className="text-faint mt-1 block text-xs font-medium">{note}</span>}
         </Fact>
       ) : (
         <Fact label="Strana">
@@ -227,7 +222,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tight>{label}</Eyebrow>
       </dt>
-      <dd className="mt-0.5 text-sm font-bold [overflow-wrap:anywhere]">{children}</dd>
+      <dd className="mt-0.5 text-sm font-semibold [overflow-wrap:anywhere]">{children}</dd>
     </div>
   )
 }

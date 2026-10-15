@@ -75,7 +75,7 @@ export function PageHeader({
   filters,
   id,
   meta,
-  metaClassName = 'text-faint hidden text-sm font-semibold md:block',
+  metaClassName = 'text-faint hidden text-sm font-medium md:block',
   perex,
   perexWidth,
   rowClassName,

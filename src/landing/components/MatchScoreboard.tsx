@@ -170,7 +170,7 @@ function Team({
         <div className="text-sm leading-tight font-extrabold tracking-[-0.02em] text-balance break-words min-[22.5rem]:text-base md:text-xl lg:text-2xl">
           {name}
         </div>
-        <div className="mt-1 text-xs font-semibold text-white/55">{label}</div>
+        <div className="mt-1 text-xs font-medium text-white/55">{label}</div>
       </div>
     </div>
   )
