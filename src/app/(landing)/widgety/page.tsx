@@ -33,7 +33,7 @@ export default async function WidgetCatalogPage() {
   return (
     <SubpageShell hatch={false} surface="paper">
       {/* hlavička katalogu */}
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Příručka pro správce</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Katalog widgetů
@@ -85,24 +85,26 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
             {widget.blockType}
           </Badge>
         </div>
-        <p className="mt-2 max-w-200 leading-relaxed text-white/85">{widget.description}</p>
+        <p className="mt-2 max-w-200 leading-relaxed text-on-contrast-strong">
+          {widget.description}
+        </p>
         <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2">
           <div className="flex gap-3">
             <Database className="mt-0.5 size-4.5 flex-none text-lime" strokeWidth={2.25} />
             <div>
-              <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
+              <dt className="text-eyebrow font-bold tracking-caps-lg text-on-contrast-subtle uppercase">
                 Odkud bere obsah
               </dt>
-              <dd className="mt-0.5 text-white/85">{widget.dataSource}</dd>
+              <dd className="mt-0.5 text-on-contrast-strong">{widget.dataSource}</dd>
             </div>
           </div>
           <div className="flex gap-3">
             <MousePointerClick className="mt-0.5 size-4.5 flex-none text-lime" strokeWidth={2.25} />
             <div>
-              <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
+              <dt className="text-eyebrow font-bold tracking-caps-lg text-on-contrast-subtle uppercase">
                 Jak použít v adminu
               </dt>
-              <dd className="mt-0.5 text-white/85">{widget.usage}</dd>
+              <dd className="mt-0.5 text-on-contrast-strong">{widget.usage}</dd>
             </div>
           </div>
         </dl>

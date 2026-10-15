@@ -71,7 +71,7 @@ export default async function ArticlePage({ params }: Args) {
 
       <ArticleBody post={post} />
 
-      <div className="relative z-1 mx-auto max-w-[51.25rem] px-[clamp(0.875rem,3vw,2.5rem)]">
+      <div className="relative z-1 mx-auto max-w-article px-gutter">
         {/* Hero E (zápasový výsledek) odkaz na detail nese sám, tady by byl dvakrát. */}
         {article.matchHref && article.variant !== 'zapas' && (
           <div className="mt-10">

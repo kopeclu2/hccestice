@@ -38,7 +38,7 @@ export default function NotFound() {
           Puk zajel <Highlight>mimo hřiště</Highlight>
         </PageTitle>
 
-        <p className="mt-4.5 max-w-130 text-lg leading-[1.55] text-pretty text-ink-soft">
+        <p className="mt-4.5 max-w-130 text-lg leading-copy text-pretty text-ink-soft">
           Stránka, kterou hledáte, neexistuje nebo byla přesunuta. Zkuste to z domovské stránky —
           tam se hraje.
         </p>

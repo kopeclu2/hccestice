@@ -82,7 +82,7 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
 function GalleryCardTile({ card }: { card: GalleryCard }) {
   return (
     <CardShell href={card.href} pad="media">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-badge bg-pine">
+      <div className="relative aspect-4/3 overflow-hidden rounded-badge bg-pine">
         {card.cover && (
           <Image
             alt={card.cover.alt}

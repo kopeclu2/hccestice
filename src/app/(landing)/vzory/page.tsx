@@ -60,20 +60,21 @@ const DARK_DEMOS: Array<{ variant: PatternVariant; tone: PatternTone; fade: Patt
 export default function PatternGalleryPage() {
   return (
     <PageCanvas hatch={false} surface="paper">
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Vzory pozadí
         </PageTitle>
         <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
           Komponenta{' '}
-          <code className="rounded bg-chip px-1.5 font-mono text-sm">PatternBackground</code> — vzor
-          se vkládá jako první potomek do sekce s{' '}
-          <code className="rounded bg-chip px-1.5 font-mono text-sm">relative</code>, obsah nad ním
-          dostane <code className="rounded bg-chip px-1.5 font-mono text-sm">relative</code>. Volí
-          se vzor (<code className="rounded bg-chip px-1.5 font-mono text-sm">variant</code>
-          ), vytracení (<code className="rounded bg-chip px-1.5 font-mono text-sm">fade</code>) a
-          barva (<code className="rounded bg-chip px-1.5 font-mono text-sm">tone</code>).
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">PatternBackground</code> —
+          vzor se vkládá jako první potomek do sekce s{' '}
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">relative</code>, obsah nad
+          ním dostane <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">relative</code>
+          . Volí se vzor (
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">variant</code>
+          ), vytracení (<code className="rounded-tag bg-chip px-1.5 font-mono text-sm">fade</code>)
+          a barva (<code className="rounded-tag bg-chip px-1.5 font-mono text-sm">tone</code>).
         </p>
       </header>
 
@@ -166,18 +167,20 @@ function DemoCard({
     >
       {children}
       <figcaption className="absolute inset-x-4 bottom-4">
-        <div className={cn('text-sm font-bold', dark ? 'text-white' : 'text-ink')}>
+        <div className={cn('text-sm font-bold', dark ? 'text-on-contrast' : 'text-ink')}>
           {label}
           {note && (
-            <span className={cn('ml-2 font-medium', dark ? 'text-white/55' : 'text-faint')}>
+            <span
+              className={cn('ml-2 font-medium', dark ? 'text-on-contrast-subtle' : 'text-faint')}
+            >
               {note}
             </span>
           )}
         </div>
         <code
           className={cn(
-            'mt-1.5 inline-block max-w-full overflow-x-auto rounded-lg px-2.5 py-1 font-mono text-eyebrow whitespace-nowrap',
-            dark ? 'bg-white/10 text-lime' : 'bg-chip text-club',
+            'mt-1.5 inline-block max-w-full overflow-x-auto rounded-chip px-2.5 py-1 font-mono text-eyebrow whitespace-nowrap',
+            dark ? 'bg-on-contrast-wash text-lime' : 'bg-chip text-club',
           )}
         >
           {code}

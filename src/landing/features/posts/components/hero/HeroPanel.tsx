@@ -22,17 +22,17 @@ import { CategoryBadge } from './CategoryBadge'
 export function HeroPanel({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mt-3.5">
-      <div className="relative overflow-hidden rounded-section bg-club px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,4vw,4rem)] text-white max-md:px-4.5 max-md:py-6">
-        <Watermark className="-right-12.5 -bottom-17.5 z-0 text-watermark-4xl tracking-[-0.06em] text-white/12">
+      <div className="relative overflow-hidden rounded-section bg-club px-panel py-[clamp(2.25rem,4vw,4rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
+        <Watermark className="-right-12.5 -bottom-17.5 z-0 text-watermark-4xl tracking-display text-on-contrast-wash">
           HCČ
         </Watermark>
         <div className="pointer-events-none absolute inset-0 hatch-white" />
 
-        <div className="relative grid items-end gap-[clamp(1.75rem,4vw,4rem)] lg:grid-cols-[1.15fr_.85fr]">
+        <div className="relative grid items-end gap-hero-gap lg:grid-cols-[1.15fr_.85fr]">
           <div>
             <Breadcrumbs className="mb-5.5" tone="panel" trail={articleTrail(article.badge)} />
             <CategoryBadge>{article.badge}</CategoryBadge>
-            <PageTitle balance="pretty" className="mt-4.5 text-white" size="sm">
+            <PageTitle balance="pretty" className="mt-4.5 text-on-contrast" size="sm">
               {article.title}
             </PageTitle>
             <AuthorMeta

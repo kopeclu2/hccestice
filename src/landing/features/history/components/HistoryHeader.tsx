@@ -25,7 +25,7 @@ export function HistoryHeader() {
       }
       trail={[{ label: HISTORY_PAGE.breadcrumb }]}
       watermark={HISTORY_PAGE.watermark}
-      watermarkClassName="-top-17.5 -right-10 text-watermark-2xl tracking-[-0.06em]"
+      watermarkClassName="-top-17.5 -right-10 text-watermark-2xl tracking-display"
     >
       {/* Čtyři sloupce až od `lg`: na 768px měla karta ~165px a popisky
           („Nejlepší umístění") se lámaly do dvou řádků. */}
@@ -55,7 +55,7 @@ export function HistoryHeader() {
             <div
               className={cn(
                 'mt-1 text-xs font-medium',
-                stat.tone === 'dark' ? 'text-white/60' : 'text-faint',
+                stat.tone === 'dark' ? 'text-on-contrast-subtle' : 'text-faint',
               )}
             >
               {stat.label}

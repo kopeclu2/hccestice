@@ -21,8 +21,8 @@ import { TitleParts } from './HeroTitle'
  */
 export function HeroTypo({ article }: { article: ArticleDetail }) {
   return (
-    <div className="relative z-1 mx-auto mt-6 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] md:mt-13 lg:mt-16">
-      <Watermark className="-top-14 right-0 z-0 text-watermark-3xl tracking-[-0.06em] text-club/13">
+    <div className="relative z-1 mx-auto mt-6 max-w-page px-gutter md:mt-13 lg:mt-16">
+      <Watermark className="-top-14 right-0 z-0 text-watermark-3xl tracking-display text-club/13">
         HC ČESTICE
       </Watermark>
 

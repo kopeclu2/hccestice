@@ -106,7 +106,7 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:contents">
         <div className="min-w-0">
-          <CardTitle as="h3" className="leading-[1.2] tracking-[-0.01em] text-pretty" size="xs">
+          <CardTitle as="h3" className="leading-[1.2] tracking-snug text-pretty" size="xs">
             {sponsor.name}
           </CardTitle>
           {sponsor.person && (

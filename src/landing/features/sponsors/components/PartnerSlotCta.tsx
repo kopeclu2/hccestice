@@ -28,7 +28,7 @@ export function PartnerSlotCta() {
       {/* Dekorativní velký znak „+" — necháváme beze změny stejně jako watermarky. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute right-15 -bottom-11.5 hidden text-watermark-xs leading-none font-extrabold tracking-[-0.06em] text-lime/20 select-none text-stroke md:block"
+        className="pointer-events-none absolute right-15 -bottom-11.5 hidden text-watermark-xs leading-none font-extrabold tracking-display text-lime/20 select-none text-stroke md:block"
       >
         +
       </span>

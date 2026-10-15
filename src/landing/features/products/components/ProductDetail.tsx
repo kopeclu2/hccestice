@@ -22,7 +22,7 @@ export function ProductDetail({
   email: string
 }) {
   return (
-    <div className="mx-auto max-w-[80rem] pt-10">
+    <div className="mx-auto max-w-7xl pt-10">
       <Link
         className="inline-flex items-center gap-2 text-sm font-semibold text-faint transition-colors hover:text-club [&_svg]:size-4"
         href="/produkty-merch"

@@ -40,9 +40,9 @@ export function HeroPhoto({ article }: { article: ArticleDetail }) {
           trail={articleTrail(article.badge)}
         />
 
-        <div className="absolute inset-x-[clamp(1.125rem,3vw,3rem)] bottom-10 z-2">
+        <div className="absolute inset-x-hero-inset bottom-10 z-2">
           <CategoryBadge>{article.badge}</CategoryBadge>
-          <PageTitle balance="pretty" className="mt-4.5 max-w-250 text-white" size="md">
+          <PageTitle balance="pretty" className="mt-4.5 max-w-250 text-on-contrast" size="md">
             <TitleParts
               accent="lime-text"
               highlight={article.titleHighlight}

@@ -20,7 +20,7 @@ export function ProductGallery({
         <div
           className={cn(
             'relative overflow-hidden rounded-panel bg-chip',
-            index === 0 ? 'col-span-3 aspect-[4/3]' : 'aspect-square',
+            index === 0 ? 'col-span-3 aspect-4/3' : 'aspect-square',
           )}
           key={index}
         >
