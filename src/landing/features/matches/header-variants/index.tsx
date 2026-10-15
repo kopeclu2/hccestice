@@ -8,6 +8,7 @@ import { HeaderApp } from './HeaderApp'
 import { HeaderArena } from './HeaderArena'
 import { HeaderEditorial } from './HeaderEditorial'
 import { HeaderSplit } from './HeaderSplit'
+import { isVariantMatch } from './shared'
 
 /** Hodnota pole `siteConfig.matchHeaderVariant` (Nastavení webu v adminu). */
 export type MatchHeaderVariant = NonNullable<SiteConfig['matchHeaderVariant']>
@@ -16,9 +17,8 @@ export type MatchHeaderVariant = NonNullable<SiteConfig['matchHeaderVariant']>
  * Hlavička detailu zápasu podle volby v adminu. `classic` je původní
  * `MatchHeader`; ostatní jsou varianty z katalogu `/vzory/hlavicka-zapasu`.
  *
- * Zrušený zápas má vždy `MatchHeader`: varianty umí zrušení jen štítkem,
- * kdežto původní hlavička ho má propracované (`CanceledHeader`). Neznámá
- * hodnota (např. starší záznam po odebrání varianty) spadne na `classic`.
+ * Zrušený zápas má vždy `MatchHeader` (`CanceledHeader`), varianty ho vůbec
+ * neumí (viz `VariantMatch`). Neznámá hodnota (např. starší záznam po odebrání varianty) spadne na `classic`.
  */
 export function MatchHeaderByVariant({
   match,
@@ -27,7 +27,7 @@ export function MatchHeaderByVariant({
   match: MatchDetail
   variant: MatchHeaderVariant | null | undefined
 }) {
-  if (match.status === 'canceled') return <MatchHeader match={match} />
+  if (!isVariantMatch(match)) return <MatchHeader match={match} />
   switch (variant) {
     case 'arena':
       return <HeaderArena match={match} />

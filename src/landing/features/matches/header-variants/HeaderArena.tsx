@@ -1,14 +1,7 @@
 import React from 'react'
 
-import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
 import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
-import type { MatchDetail } from '@/landing/features/matches/types'
-import {
-  competitionLabel,
-  outcomeNote,
-  SUFFIX_NOTE,
-} from '@/landing/features/matches/view/matchFormat'
-import { Badge } from '@/landing/ui/Badge'
+import { competitionLabel, sideLabel } from '@/landing/features/matches/view/matchFormat'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PatternBackground } from '@/landing/ui/PatternBackground'
@@ -18,9 +11,13 @@ import { cn } from '@/lib/utils'
 import {
   hasScore,
   type HeaderVariantProps,
+  MetaItem,
+  OutcomeBadge,
   periodColumns,
   SrTitle,
-  weekday,
+  StatusBadge,
+  type VariantMatch,
+  weekdayLabel,
   winnerSide,
 } from './shared'
 import { VariantCountdown } from './VariantCountdown'
@@ -44,7 +41,7 @@ export function HeaderArena({ match, titleAs = 'h1' }: HeaderVariantProps) {
       {/* Horní lišta: soutěž vlevo, stav vpravo — jako horní řádek TV grafiky. */}
       <div className="relative flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 border-b border-white/10 px-4.5 py-3.5 md:px-8 lg:px-12 lg:py-4">
         <DotEyebrow className="min-w-0">{competitionLabel(match)}</DotEyebrow>
-        <StatusChip match={match} />
+        <StatusBadge look="dark" match={match} />
       </div>
 
       <div className="relative px-4.5 pt-6 pb-7 md:px-8 md:pt-9 md:pb-10 lg:px-12 lg:pt-12 lg:pb-12">
@@ -69,29 +66,6 @@ export function HeaderArena({ match, titleAs = 'h1' }: HeaderVariantProps) {
   )
 }
 
-function StatusChip({ match }: { match: MatchDetail }) {
-  if (match.status === 'canceled') {
-    return (
-      <Badge size="xs" variant="loss">
-        Zrušeno
-      </Badge>
-    )
-  }
-  if (match.status === 'scheduled') {
-    return (
-      <Badge caps size="xs" variant={match.weAreHome ? 'lime' : 'glassOutline'}>
-        {match.weAreHome ? 'Doma' : 'Venku'}
-      </Badge>
-    )
-  }
-  return (
-    <Badge caps className="gap-2 text-white/80" size="xs" variant="glassOutline">
-      <span aria-hidden className="size-1.5 rounded-full bg-white/60" />
-      Konec{match.suffix ? ` · ${SUFFIX_NOTE[match.suffix]}` : ''}
-    </Badge>
-  )
-}
-
 /**
  * Tabule: znak | skóre | skóre | znak. Čtyři sloupce místo tří, aby pod
  * `md` mohla jména zabrat každé polovinu šířky (domácí sloupce 1–2, hosté
@@ -103,7 +77,7 @@ function Board({
   scheduled,
   winner,
 }: {
-  match: MatchDetail
+  match: VariantMatch
   scheduled: boolean
   winner: ReturnType<typeof winnerSide>
 }) {
@@ -168,7 +142,7 @@ function BoardCrest({
 }: {
   className?: string
   lit: boolean
-  logo: MatchDetail['homeLogo']
+  logo: VariantMatch['homeLogo']
   name: string
 }) {
   return (
@@ -232,7 +206,7 @@ function PeriodTable({
   match,
   winner,
 }: {
-  match: MatchDetail
+  match: VariantMatch
   winner: ReturnType<typeof winnerSide>
 }) {
   const columns = periodColumns(match)
@@ -294,55 +268,33 @@ function PeriodTable({
   )
 }
 
-function Facts({ match, scheduled }: { match: MatchDetail; scheduled: boolean }) {
-  const outcome = match.outcome ? OUTCOME_BADGE[match.outcome] : null
-  const note = outcomeNote(match.outcome, match.suffix)
-  const day = weekday(match.kickoffISO)
+function Facts({ match, scheduled }: { match: VariantMatch; scheduled: boolean }) {
+  const day = weekdayLabel(match.kickoffISO)
 
   return (
     <dl className="relative grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/10 bg-white/4 px-4.5 py-5 md:grid-cols-[repeat(auto-fit,minmax(min(11rem,100%),1fr))] md:gap-x-8 md:px-8 lg:px-12 lg:py-6">
-      <Fact className="col-span-2 md:col-span-1" label="Datum">
-        {day && <span className="text-white/60 capitalize">{day} · </span>}
+      <MetaItem className="col-span-2 md:col-span-1" label="Datum">
+        {day && <span className="text-white/60">{day} · </span>}
         <span className="inline-block">
           {match.dateLabel} · {match.timeLabel}
         </span>
-      </Fact>
-      {match.venue && <Fact label="Místo">{match.venue}</Fact>}
+      </MetaItem>
+      {match.venue && <MetaItem label="Místo">{match.venue}</MetaItem>}
       {scheduled ? (
-        <Fact label="Strana">{match.weAreHome ? 'Doma' : 'Venku'}</Fact>
+        <MetaItem label="Strana">{sideLabel(match.weAreHome)}</MetaItem>
       ) : (
-        outcome && (
-          <Fact label="Výsledek">
+        match.outcome && (
+          <MetaItem label="Výsledek">
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <Badge size="sm" variant={outcome.variant}>
-                {outcome.label}
-              </Badge>
-              {note && <span className="text-sm font-medium text-white/60">{note}</span>}
+              <OutcomeBadge
+                noteClassName="text-sm font-medium text-white/60"
+                outcome={match.outcome}
+                suffix={match.suffix}
+              />
             </span>
-          </Fact>
+          </MetaItem>
         )
       )}
     </dl>
-  )
-}
-
-function Fact({
-  label,
-  children,
-  className,
-}: {
-  label: string
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <div className={cn('min-w-0', className)}>
-      <dt>
-        <Eyebrow tone="white">{label}</Eyebrow>
-      </dt>
-      <dd className="mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-white md:text-base">
-        {children}
-      </dd>
-    </div>
   )
 }

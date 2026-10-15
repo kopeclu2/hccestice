@@ -7,7 +7,10 @@ import { HeaderApp } from '@/landing/features/matches/header-variants/HeaderApp'
 import { HeaderArena } from '@/landing/features/matches/header-variants/HeaderArena'
 import { HeaderEditorial } from '@/landing/features/matches/header-variants/HeaderEditorial'
 import { HeaderSplit } from '@/landing/features/matches/header-variants/HeaderSplit'
-import type { HeaderVariantProps } from '@/landing/features/matches/header-variants/shared'
+import {
+  type HeaderVariantProps,
+  isVariantMatch,
+} from '@/landing/features/matches/header-variants/shared'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
@@ -102,7 +105,9 @@ const loadSamples = async () => {
             homeLogo: match.weAreHome ? match.homeLogo : null,
           }
         : match
-      return { ...sample, match: prepared }
+      // Zrušený zápas varianty neumí (v produkci ho dostane `MatchHeader`),
+      // takže by tu byl k ničemu; ukázky navíc žádný zrušený zápas nemají.
+      return isVariantMatch(prepared) ? { ...sample, match: prepared } : null
     }),
   )
   return loaded.filter((item): item is NonNullable<typeof item> => item !== null)

@@ -1,23 +1,21 @@
 import React from 'react'
 
-import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
 import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
-import type { MatchDetail } from '@/landing/features/matches/types'
-import {
-  competitionLabel,
-  outcomeNote,
-  SUFFIX_NOTE,
-} from '@/landing/features/matches/view/matchFormat'
-import { Badge } from '@/landing/ui/Badge'
+import { competitionLabel } from '@/landing/features/matches/view/matchFormat'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
 import {
   hasScore,
   type HeaderVariantProps,
+  MetaItem,
+  OutcomeBadge,
   periodColumns,
+  SideBadge,
   SrTitle,
-  weekday,
+  StatusBadge,
+  type VariantMatch,
+  weekdayLabel,
   winnerSide,
 } from './shared'
 import { VariantCountdown } from './VariantCountdown'
@@ -163,14 +161,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
 }
 
 /** Stavová pilulka vpravo nahoře — „Konec po nájezdech" / odpočet. */
-function Status({ match }: { match: MatchDetail }) {
-  if (match.status === 'canceled') {
-    return (
-      <Badge size="xs" variant="loss">
-        Zrušeno
-      </Badge>
-    )
-  }
+function Status({ match }: { match: VariantMatch }) {
   if (match.status === 'scheduled') {
     return (
       <span className="inline-flex items-center gap-2 rounded-full bg-tint px-3 py-1 text-club">
@@ -179,51 +170,38 @@ function Status({ match }: { match: MatchDetail }) {
       </span>
     )
   }
-  return (
-    <Badge size="xs" variant="chip">
-      Konec{match.suffix ? ` · ${SUFFIX_NOTE[match.suffix]}` : ''}
-    </Badge>
-  )
+  return <StatusBadge look="light" match={match} />
 }
 
-function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
-  const outcome = played && match.outcome ? OUTCOME_BADGE[match.outcome] : null
-  const note = outcomeNote(match.outcome, match.suffix)
-  const day = weekday(match.kickoffISO)
+function Facts({ match, played }: { match: VariantMatch; played: boolean }) {
+  const day = weekdayLabel(match.kickoffISO)
 
   return (
     <dl className="grid grid-cols-2 content-center gap-x-5 gap-y-3 border-t border-line-soft bg-tint-hover px-4 py-4 md:grid-cols-4 md:px-6 lg:grid-cols-2 lg:border-t-0 lg:border-l lg:px-7 lg:py-6">
-      <Fact label="Datum">
+      <MetaItem label="Datum" look="compact">
         {match.dateLabel}
-        {day && <span className="block text-xs font-medium text-faint capitalize">{day}</span>}
-      </Fact>
-      <Fact label="Buly">{match.timeLabel}</Fact>
-      <Fact label="Místo">{match.venue ?? '—'}</Fact>
-      {outcome ? (
-        <Fact label="Výsledek">
-          <Badge size="xs" variant={outcome.variant}>
-            {outcome.label}
-          </Badge>
-          {note && <span className="mt-1 block text-xs font-medium text-faint">{note}</span>}
-        </Fact>
+        {day && <span className="block text-xs font-medium text-faint">{day}</span>}
+      </MetaItem>
+      <MetaItem label="Buly" look="compact">
+        {match.timeLabel}
+      </MetaItem>
+      <MetaItem label="Místo" look="compact">
+        {match.venue ?? '—'}
+      </MetaItem>
+      {played && match.outcome ? (
+        <MetaItem label="Výsledek" look="compact">
+          <OutcomeBadge
+            noteClassName="mt-1 block text-xs font-medium text-faint"
+            outcome={match.outcome}
+            size="xs"
+            suffix={match.suffix}
+          />
+        </MetaItem>
       ) : (
-        <Fact label="Strana">
-          <Badge size="xs" variant={match.weAreHome ? 'club' : 'chip'}>
-            {match.weAreHome ? 'Doma' : 'Venku'}
-          </Badge>
-        </Fact>
+        <MetaItem label="Strana" look="compact">
+          <SideBadge look="light" size="xs" weAreHome={match.weAreHome} />
+        </MetaItem>
       )}
     </dl>
-  )
-}
-
-function Fact({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="min-w-0">
-      <dt>
-        <Eyebrow tight>{label}</Eyebrow>
-      </dt>
-      <dd className="mt-0.5 text-sm font-semibold [overflow-wrap:anywhere]">{children}</dd>
-    </div>
   )
 }

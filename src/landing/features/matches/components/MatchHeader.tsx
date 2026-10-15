@@ -1,12 +1,9 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { MetaItem, OutcomeBadge } from '@/landing/features/matches/header-variants/shared'
 import type { MatchDetail } from '@/landing/features/matches/types'
-import {
-  competitionLabel,
-  outcomeNote,
-  sideLabel,
-} from '@/landing/features/matches/view/matchFormat'
+import { competitionLabel, sideLabel } from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
@@ -17,7 +14,6 @@ import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import { MatchScoreboard } from './MatchScoreboard'
 import { NextMatchPanel } from './NextMatchPanel'
-import { OUTCOME_BADGE } from './outcome'
 
 /**
  * Hlavička detailu zápasu — tři podoby podle stavu:
@@ -46,22 +42,7 @@ function Facts({ children }: { children: React.ReactNode }) {
   )
 }
 
-function Fact({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="min-w-0">
-      <dt>
-        <Eyebrow tone="white">{label}</Eyebrow>
-      </dt>
-      <dd className="mt-1 text-sm font-semibold [overflow-wrap:anywhere] text-white md:text-base">
-        {children}
-      </dd>
-    </div>
-  )
-}
-
 function PlayedHeader({ match }: { match: MatchDetail }) {
-  const outcome = match.outcome ? OUTCOME_BADGE[match.outcome] : null
-  const note = outcomeNote(match.outcome, match.suffix)
   const hasScore = match.homeScore != null && match.awayScore != null
 
   return (
@@ -101,19 +82,20 @@ function PlayedHeader({ match }: { match: MatchDetail }) {
         <div className="my-[clamp(1.5rem,3vw,2.25rem)] h-px bg-white/16" />
 
         <Facts>
-          <Fact label="Datum">
+          <MetaItem label="Datum">
             {match.dateLabel} · {match.timeLabel}
-          </Fact>
-          {match.venue && <Fact label="Místo">{match.venue}</Fact>}
-          {outcome && (
-            <Fact label="Výsledek">
+          </MetaItem>
+          {match.venue && <MetaItem label="Místo">{match.venue}</MetaItem>}
+          {match.outcome && (
+            <MetaItem label="Výsledek">
               <span className="flex flex-wrap items-center gap-2">
-                <Badge size="sm" variant={outcome.variant}>
-                  {outcome.label}
-                </Badge>
-                {note && <span className="text-xs font-medium text-white/65">{note}</span>}
+                <OutcomeBadge
+                  noteClassName="text-xs font-medium text-white/65"
+                  outcome={match.outcome}
+                  suffix={match.suffix}
+                />
               </span>
-            </Fact>
+            </MetaItem>
           )}
         </Facts>
       </div>
