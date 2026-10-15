@@ -7,6 +7,7 @@ import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { initials } from '@/lib/teamName'
 
 /** Karta na soupisce — hráč (kicker = post, číslo) i člen realizačního týmu (kicker = role). */
 export type RosterCard = {
@@ -22,15 +23,6 @@ export type RosterCard = {
    */
   stats?: { games: number; goals: number; assists: number; pim: number; goalie: boolean } | null
 }
-
-/** Iniciály pro kartu bez fotky — první 2 slova, tituly a „st./ml." se přeskočí. */
-const initials = (name: string): string =>
-  name
-    .split(' ')
-    .filter((word) => word && !word.endsWith('.'))
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
 
 /**
  * Bílá karta hráče dle handoffu „Soupiska": fotka se ztrácí dolů do bílé,
@@ -77,7 +69,7 @@ export function PlayerTile({ card }: { card: RosterCard }) {
             aria-hidden
             className="absolute inset-x-0 top-[30%] -translate-y-1/2 text-center text-[clamp(2.75rem,18vw,6.75rem)] leading-none font-extrabold tracking-[-0.05em] text-club/35 select-none text-stroke md:top-[38%] md:text-[clamp(5rem,8vw,6.75rem)]"
           >
-            {initials(card.name)}
+            {initials(card.name, { skipAbbreviations: true, upper: false })}
           </div>
         </>
       )}

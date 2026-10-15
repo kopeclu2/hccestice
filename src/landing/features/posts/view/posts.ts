@@ -12,6 +12,7 @@ import { CLUB_NAME } from '@/lib/club'
 import { formatFullDate, formatLongDate } from '@/lib/datetime'
 import { htmlPlainText, snippet, dropTitleEcho, looksLikeProse, echoesTitle } from '@/lib/plainText'
 import { linkOrNull, routes } from '@/lib/routes'
+import { initials } from '@/lib/teamName'
 import type { Post } from '@/payload-types'
 
 /** Články — čisté mapování Payload dokumentu na view-modely (karta, detail). */
@@ -71,14 +72,6 @@ export const toPostCard = (post: Post, defaultPhoto: Photo | null = null): PostC
     defaultPhoto,
 })
 
-const initialsOf = (name: string): string =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase() ?? '')
-    .join('')
-
 const toArticleAuthor = (post: Post): ArticleAuthor => {
   const person = typeof post.authorPerson === 'object' ? post.authorPerson : null
   // Fallback na uživatele z pole Autoři (jméno, portrét, e-mail z kolekce users)
@@ -86,7 +79,7 @@ const toArticleAuthor = (post: Post): ArticleAuthor => {
   const name = person?.name ?? user?.name ?? CLUB_NAME
   return {
     name,
-    initials: initialsOf(name) || 'HC',
+    initials: initials(name) || 'HC',
     role: person?.role ?? user?.role ?? null,
     note: person?.note ?? null,
     email: person?.email ?? user?.email ?? null,
