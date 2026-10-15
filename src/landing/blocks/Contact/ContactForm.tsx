@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, LoaderCircle } from 'lucide-react'
 import React from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -58,7 +58,7 @@ export function ContactForm({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<ContactValues>({
@@ -66,7 +66,9 @@ export function ContactForm({
     defaultValues: { name: '', email: '', topic: topics[0] ?? '', message: '' },
   })
 
-  const selectedTopic = watch('topic')
+  // `useWatch` místo `watch()`: ten se nedá bezpečně memoizovat, takže ho
+  // React Compiler u komponenty přeskakoval.
+  const selectedTopic = useWatch({ control, name: 'topic' })
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null)

@@ -25,6 +25,33 @@ const eslintConfig = [
     },
   },
   {
+    // Plugin `import` registruje eslint-config-next jen pro tyto přípony,
+    // takže pravidlo smí platit jen na nich (jinak ESLint hlásí „could not
+    // find plugin"). Nic dalšího se neinstaluje.
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
+    // Soubory v `(payload)` generuje Payload (`DO NOT MODIFY`) a po úpravě
+    // šablony je přepíše zpátky, takže pořadí importů v nich nehlídáme.
+    ignores: ['src/app/(payload)/**'],
+    rules: {
+      // `@/**` je alias na `src/` a `@payload-config` míří na `payload.config.ts`
+      // (oba z `tsconfig#paths`) — bez `pathGroups` by je plugin bral jako externí
+      // balíčky a smíchal s `react`, `next` apod.
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          pathGroups: [
+            { pattern: '@/**', group: 'internal' },
+            { pattern: '@payload-config', group: 'internal' },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+    },
+  },
+  {
     // Payload generuje `up`/`down({ payload, req, ... })` s pevným podpisem
     // podle `MigrateUpArgs`/`MigrateDownArgs` — nevyužité destrukturované
     // parametry tu nejsou chyba, jsou to schéma migrací a `payload

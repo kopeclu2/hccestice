@@ -7,11 +7,10 @@
  * a 32 `text-[Xrem]` — přičemž `#17703a` (klubová zelená) byl ručně přepsaný
  * na sedmi místech, i když `--color-club` existuje.
  *
- * Proč ne ESLint: `bun run lint` je v tomhle repu rozbitý (`FlatCompat`
- * + `eslint-config-next@16` → „Converting circular structure to JSON"),
- * takže by pravidlo bylo mrtvé. `eslint-plugin-tailwindcss` navíc neumí
- * přečíst CSS-first `@theme` z Tailwindu v4, takže by tokeny nevidělo.
- * Tenhle skript navíc kontroluje i `.css`, kam ESLint nedohlédne.
+ * Proč ne ESLint: `eslint-plugin-tailwindcss` neumí přečíst CSS-first
+ * `@theme` z Tailwindu v4, takže by tokeny nevidělo. Tenhle skript navíc
+ * kontroluje i `.css`, kam ESLint nedohlédne. (Dřív byl důvodem i rozbitý
+ * lint kvůli `FlatCompat` + `eslint-config-next@16`; ten je už opravený.)
  *
  * Výjimka: `// token-check-ignore: <důvod>` na stejném nebo předchozím
  * řádku. Důvod je POVINNÝ — prázdný je pořád chyba.
