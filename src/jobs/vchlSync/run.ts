@@ -9,6 +9,7 @@ import {
   vysledkyUrl,
 } from '@/ahl'
 import type { AhlListMatch } from '@/ahl'
+import { errorMessage } from '@/lib/errors'
 
 import { resolveSeasons, resolveTeamId, type SeasonCtx } from './context'
 import { isDue } from './isDue'
@@ -235,7 +236,7 @@ async function executeRun(
     ctx = createSyncContext({ payload, client, trigger, settings, now, teamId, changes })
     await syncAll(ctx)
   } catch (err) {
-    error = err instanceof Error ? err.message : String(err)
+    error = errorMessage(err)
     const stage =
       err instanceof AhlParseError ? 'parse' : err instanceof AhlFetchError ? 'fetch' : 'write'
     const id = captureFailure(

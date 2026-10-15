@@ -1,12 +1,12 @@
 import type { PayloadRequest } from 'payload'
 import { describe, expect, it, vi } from 'vitest'
 
+import { utcToPragueLocal } from '@/lib/datetime'
 import { matchSlug, uniqueSlug, withSlugSuffix } from '@/lib/matchSlug'
 import { slugifyCs } from '@/lib/slugifyCs'
 
 import { generateMatchSlug } from '../../src/hooks/matchSlug'
 import { draftSlug } from '../../src/jobs/vchlSync/sync/draftPost'
-import { utcToPragueLocal } from '../../src/jobs/vchlSync/time'
 
 describe('slugifyCs', () => {
   it('odstraní diakritiku a spojí ne-alfanumerické znaky do jedné pomlčky', () => {

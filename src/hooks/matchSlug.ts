@@ -1,6 +1,6 @@
 import type { CollectionBeforeChangeHook } from 'payload'
 
-import { utcToPragueLocal } from '@/jobs/vchlSync/time'
+import { utcToPragueLocal } from '@/lib/datetime'
 import { matchSlug, uniqueSlug } from '@/lib/matchSlug'
 import { slugifyCs } from '@/lib/slugifyCs'
 

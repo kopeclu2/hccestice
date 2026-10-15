@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/nextjs'
 import type { TaskConfig } from 'payload'
 
+import { TZ } from '@/lib/datetime'
+
 // Frekvence cronu je v Payloadu statická (`schedule.cron` v configu), ale
 // správce chce měnit interval z adminu bez redeploye. Proto cron tiká pevně
 // každých 5 minut a o tom, jestli se opravdu synchronizuje, rozhoduje
@@ -50,7 +52,7 @@ export const vchlSyncTask: TaskConfig<{
         schedule: { type: 'crontab', value: '*/5 * * * *' },
         checkinMargin: 5,
         maxRuntime: 10,
-        timezone: 'Europe/Prague',
+        timezone: TZ,
       },
     )
     // Výstup je malý záměrně — celý diff a varování žijí v `vchl-sync-runs`.

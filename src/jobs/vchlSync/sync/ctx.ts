@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 
 import type { AhlClient } from '@/ahl'
+import { errorMessage } from '@/lib/errors'
 
 import { captureFailure, type VchlStage } from '../sentry'
 import type { VchlChanges, VchlDiffEntry, VchlSettings, VchlTrigger, VchlWarning } from '../types'
@@ -88,7 +89,7 @@ export function createSyncContext(init: SyncContextInit): SyncContext {
       return loose.update({ collection, id, data, depth: 0, context: { disableRevalidate: true } })
     },
     partialFailure(err, stage, where) {
-      ctx.partialErrors.push(err instanceof Error ? err.message : String(err))
+      ctx.partialErrors.push(errorMessage(err))
       const id = captureFailure(err, stage, init.trigger, where)
       if (id) ctx.sentryEventIds.push(id)
     },

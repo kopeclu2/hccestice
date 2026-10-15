@@ -1,11 +1,11 @@
 import type { Payload } from 'payload'
 
 import type { AhlMatchDetail } from '@/ahl'
+import { relId } from '@/landing/lib/payload'
 import { CLUB_NAME } from '@/lib/club'
+import { utcToPragueLocal } from '@/lib/datetime'
 import { slugifyCs } from '@/lib/slugifyCs'
 import type { Match, Post } from '@/payload-types'
-
-import { utcToPragueLocal } from '../time'
 
 import { ourSide } from './matchDetail'
 
@@ -132,9 +132,6 @@ export function buildDraftContent(
     paragraph(text('Doplňte text reportáže…')),
   )
 }
-
-const relId = (v: unknown): number | null =>
-  v == null ? null : typeof v === 'object' ? ((v as { id: number }).id ?? null) : (v as number)
 
 /**
  * Koncept reportáže po zápase (`_status: 'draft'`, vazba `match`, hero

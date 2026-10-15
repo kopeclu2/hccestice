@@ -1,11 +1,12 @@
 import type { AhlListMatch, AhlMatchDetail } from '@/ahl'
 import { isOurTeam } from '@/ahl'
+import { relId } from '@/landing/lib/payload'
+import { pragueLocalToUtc, utcToPragueLocal } from '@/lib/datetime'
 import type { Match } from '@/payload-types'
 
 import type { SeasonCtx } from '../context'
 import { buildPatch } from '../diff'
 import { span } from '../sentry'
-import { pragueLocalToUtc, utcToPragueLocal } from '../time'
 
 import type { SyncContext } from './ctx'
 import {
@@ -63,9 +64,6 @@ export function mergeLists(lists: SeasonLists): ListEntry[] {
   }
   return [...map.values()]
 }
-
-const relId = (v: unknown): number | null =>
-  v == null ? null : typeof v === 'object' ? ((v as { id: number }).id ?? null) : (v as number)
 
 /**
  * Je změna data skutečné přeložení? Zápas založený bez času je v CMS na lokální

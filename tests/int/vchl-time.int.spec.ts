@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { pragueLocalToUtc, utcToPragueLocal } from '../../src/jobs/vchlSync/time'
+import { pragueLocalToUtc, utcToPragueLocal } from '@/lib/datetime'
 
 const utc = (s: string) => pragueLocalToUtc(s).toISOString()
 

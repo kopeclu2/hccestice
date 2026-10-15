@@ -1,17 +1,9 @@
 /** Formátování pro ovládací stránku synchronizace (česky, pražský čas). */
 
+import { formatFullDateTime } from '@/lib/datetime'
 import { plural } from '@/lib/plural'
 
-const dtf = new Intl.DateTimeFormat('cs-CZ', {
-  day: 'numeric',
-  month: 'numeric',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: 'Europe/Prague',
-})
-
-export const fmtDate = (iso?: string | null) => (iso ? dtf.format(new Date(iso)) : '—')
+export const fmtDate = (iso?: string | null) => (iso ? formatFullDateTime(iso) : '—')
 
 export function fmtDuration(startIso?: string | null, endIso?: string | null): string {
   if (!startIso || !endIso) return '—'
