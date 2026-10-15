@@ -1,19 +1,22 @@
+import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
+
+import type { Post } from '@/payload-types'
+
 /** Text z těla článku: doba čtení a prostý text z lexical stromu. */
 
-/** Počet slov v lexical stromu (rekurzivní sběr `text` polí). */
-export const lexicalWordCount = (node: unknown): number => {
-  if (!node || typeof node !== 'object') return 0
-  const record = node as { text?: unknown; children?: unknown; root?: unknown }
-  let count = 0
-  if (typeof record.text === 'string') {
-    count += record.text.split(/\s+/).filter(Boolean).length
-  }
-  if (record.root) count += lexicalWordCount(record.root)
-  if (Array.isArray(record.children)) {
-    for (const child of record.children) count += lexicalWordCount(child)
-  }
-  return count
-}
+type LexicalContent = Post['content'] | undefined
+
+/**
+ * Prostý text z lexical stromu. Odstavce odděluje prázdným řádkem a navazující
+ * textové úseky (tučné slovo uprostřed věty) spojuje bez mezery — vlastní
+ * rekurzivní sběr je dřív rozděloval a nadhodnocoval počet slov.
+ */
+export const lexicalPlainText = (content: LexicalContent): string =>
+  content ? convertLexicalToPlaintext({ data: content }) : ''
+
+/** Počet slov v lexical stromu. */
+export const lexicalWordCount = (content: LexicalContent): number =>
+  lexicalPlainText(content).split(/\s+/).filter(Boolean).length
 
 /** Počet slov v HTML (po odstranění tagů). */
 export const htmlWordCount = (html: string): number =>
@@ -25,16 +28,3 @@ export const htmlWordCount = (html: string): number =>
 /** „4 min čtení" — 200 slov/min, minimálně 1 minuta. */
 export const readingLabel = (words: number): string =>
   `${Math.max(1, Math.round(words / 200))} min čtení`
-
-/** Prostý text z lexical stromu (rekurzivní sběr `text` polí). */
-export const lexicalPlainText = (node: unknown): string => {
-  if (!node || typeof node !== 'object') return ''
-  const record = node as { text?: unknown; children?: unknown; root?: unknown }
-  const parts: string[] = []
-  if (typeof record.text === 'string') parts.push(record.text)
-  if (record.root) parts.push(lexicalPlainText(record.root))
-  if (Array.isArray(record.children)) {
-    for (const child of record.children) parts.push(lexicalPlainText(child))
-  }
-  return parts.filter(Boolean).join(' ')
-}
