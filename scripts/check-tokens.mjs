@@ -15,11 +15,10 @@
  * Výjimka: `// token-check-ignore: <důvod>` na stejném nebo předchozím
  * řádku. Důvod je POVINNÝ — prázdný je pořád chyba.
  *
- * Pravidla mají `severity`: `error` shodí skript (exit 1), `warn` se jen vypíše.
- * `warn` jsou pravidla pro tokeny, na které komponenty teprve přecházejí
- * (bílá/černá, výchozí radiusy, arbitrární rozměry s tokenem, inline `style`);
- * po převodu se přepnou na `error`. `--strict` povýší všechna upozornění na
- * chyby — takhle poznáš, že je převod hotový.
+ * Všechna pravidla jsou `error` (exit 1). Pravidla s `legacyWarn: true`
+ * (bílá/černá, výchozí radiusy, arbitrární rozměry s tokenem, inline `style`)
+ * zůstávají `warn` jen v šablonových pozůstatcích z `LEGACY_TEMPLATE_PATHS`,
+ * které smaže fáze 6 refaktoru. `--strict` povýší i ta upozornění na chyby.
  *
  * Pravidla `no-arbitrary-*` si seznam tokenů čtou z `@theme` v globals.css,
  * takže nový token se začne hlídat sám.
@@ -38,6 +37,19 @@ const TOKENS_FILE = 'src/landing/tokens.ts'
 const SKIP = ['src/payload-types.ts', 'src/payload-generated-schema.ts']
 
 const LANDING = ['src/landing/', 'src/app/(landing)/']
+
+/**
+ * Šablonové pozůstatky Payload website template, které ještě nepřešly na
+ * tokeny. Pravidla s `legacyWarn` tu hlásí jen upozornění, jinde chybu.
+ */
+// TODO(fáze 6): smazat s šablonovými pozůstatky (celé pole i `legacyWarn`)
+const LEGACY_TEMPLATE_PATHS = [
+  'src/heros/',
+  'src/Header/',
+  'src/Footer/',
+  'src/blocks/',
+  'src/globals/Sidebar/',
+]
 
 /** Barvy shadcn vrstvy — v landingu nemají co dělat (viz dvě vrstvy v globals.css). */
 const SHADCN_COLORS =
@@ -67,11 +79,11 @@ const escapeRe = (v) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
  * pokrývá token (nebo výchozí třída Tailwindu). `values` = Map(hodnota → třída
  * bez prefixu); hint se skládá z nalezené hodnoty.
  */
-function arbitraryRule({ name, prefix, values, severity = 'warn', hint, onlyIn }) {
+function arbitraryRule({ name, prefix, values, hint, onlyIn }) {
   const alt = [...values.keys()].map(escapeRe).join('|')
   return {
     name,
-    severity,
+    legacyWarn: true,
     onlyIn,
     re: new RegExp(`(?<![\\w-])-?(?:${prefix})-\\[(${alt})\\](?![\\w-])`, 'g'),
     hintFor: (m) => {
@@ -203,10 +215,18 @@ const RULES = [
     onlyIn: LANDING,
   },
 
-  /* ── upozornění: komponenty na tokeny teprve přecházejí ─────────────── */
+  {
+    name: 'no-pill-import',
+    // `pill.ts`, `PillButton` a `PillLink` splynuly do `components/ui/button`
+    // (`<Button>`, `<Button asChild><Link/></Button>`, `buttonVariants`).
+    re: /from\s+['"][^'"]*\/(?:pill|PillButton|PillLink)['"]|\b(?:PillButton|PillLink|pillVariants)\b/g,
+    hint: 'použij <Button>, <Button asChild><Link …/></Button> nebo buttonVariants z @/components/ui/button',
+  },
+
+  /* ── pravidla `legacyWarn`: v šablonových pozůstatcích jen upozornění ── */
   {
     name: 'no-white-black',
-    severity: 'warn',
+    legacyWarn: true,
     re: /(?<![\w-])(?:text|bg|border|ring|fill|stroke|from|via|to|shadow|outline|divide|placeholder)-(?:white|black)(?:\/\d+)?(?![\w-])/g,
     hintFor: (m) => {
       const [, prop, color, alpha] = m[0].match(/^(\w+)-(white|black)(?:\/(\d+))?$/) ?? []
@@ -219,7 +239,7 @@ const RULES = [
   },
   {
     name: 'no-default-radius',
-    severity: 'warn',
+    legacyWarn: true,
     // Holé `rounded` a výchozí stupně sm–3xl; `full`, `none` a `[50%]` jsou v pořádku.
     re: /(?<![\w-])rounded(?:-(?:t|b|l|r|tl|tr|bl|br|s|e|ss|se|es|ee))?(?:-(?:sm|md|lg|xl|2xl|3xl))?(?![\w\[-])(?!\s*:)/g,
     hint: 'použij --radius-* token (icon 16, item 12, chip 8, tag 4, field 14…)',
@@ -251,7 +271,7 @@ const RULES = [
   }),
   {
     name: 'no-arbitrary-breakpoint',
-    severity: 'warn',
+    legacyWarn: true,
     re: new RegExp(
       `(?<![\\w-])(min|max)-\\[(${[...breakpointValues.keys()].map(escapeRe).join('|')})\\]:`,
       'g',
@@ -263,13 +283,13 @@ const RULES = [
   },
   {
     name: 'no-arbitrary-aspect',
-    severity: 'warn',
+    legacyWarn: true,
     re: /(?<![\w-])aspect-\[(\d+)\/(\d+)\](?![\w-])/g,
     hintFor: (m) => `aspect-${m[1]}/${m[2]}`,
   },
   {
     name: 'style-allowlist',
-    severity: 'warn',
+    legacyWarn: true,
     re: /\bstyle=\{\{/g,
     hint: 'inline style jen v souborech z allowlistu (dynamická hodnota); jinak utility třída',
     exceptPathRe: STYLE_ALLOWLIST,
@@ -330,7 +350,10 @@ for (const file of files) {
           rule: rule.name,
           text: line.trim().slice(0, 100),
           hint: rule.hintFor ? rule.hintFor(match) : rule.hint,
-          severity: rule.severity ?? 'error',
+          severity:
+            rule.legacyWarn && LEGACY_TEMPLATE_PATHS.some((p) => rel.startsWith(p))
+              ? 'warn'
+              : 'error',
         })
       }
     }
@@ -462,9 +485,7 @@ if (!quiet) printFindings(warnings, '⚠')
 printFindings(errors, '✗')
 
 if (warnings.length) {
-  console.log(
-    `\n⚠ ${warnings.length} upozornění (nejsou chyba, komponenty na tokeny teprve přecházejí):`,
-  )
+  console.log(`\n⚠ ${warnings.length} upozornění (šablonové pozůstatky, smaže je fáze 6):`)
   for (const [rule, count] of countByRule(warnings)) {
     console.log(`   ${String(count).padStart(4)}  ${rule}`)
   }

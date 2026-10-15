@@ -84,6 +84,30 @@ v unit testech importovat i fetchery.
 | `landing/data/query` (`cachedQuery`) + `landing/data/tags` (`CACHE_TAGS`) | holé `unstable_cache` a tag zapsaný jako řetězec |
 | `hooks/createRevalidateHooks` (`createRevalidateHooks`, `applyRevalidation`) | ručně psané `afterChange` / `afterDelete` s `revalidateTag` |
 
+## UI primitiva (shadcn)
+
+Jeden systém místo dvou paralelních: `src/components/ui/*` (shadcn, Radix +
+cva, napojené na značku přes proměnné v `globals.css`).
+
+- **Tlačítka a CTA pilulky** jsou `Button` z `components/ui/button`:
+  `<Button variant size withArrow>` pro tlačítko, `<Button asChild><Link …/></Button>`
+  pro odkaz (`Slottable` vloží šipku `withArrow` dovnitř `<a>`), `buttonVariants()`
+  pro holé třídy a `ButtonArrow` pro pilulku, která není button ani odkaz.
+  `pill.ts`, `PillButton` a `PillLink` už neexistují, hlídá to `no-pill-import`
+  v `check-tokens`. `key` v `map()` patří na `<Button asChild>`, ne na `<Link>`.
+- **FAQ** je `Accordion`, **mobilní menu** `Sheet`, **drobečky** `Breadcrumb`.
+  `Sheet` nesmí přijít o overlay ani když je panel přes celou obrazovku: Radix
+  v něm drží zámek scrollu (`RemoveScroll`), proto `overlayClassName="bg-transparent"`.
+- **Formuláře** se skládají z `Field` / `FieldLabel` / `FieldError` a
+  `Controller` z react-hook-form (doporučený vzor shadcn, komponenta `form` se
+  dál nevyvíjí). Vzor je `ContactField` v `ContactForm.tsx`; `ui/field.tsx` je
+  bez `FieldSeparator`. Šablonový blok `landing/blocks/Form/**` zůstal na
+  `register` + vlastních `Error` a `Width` (formBlock nemá v DB žádnou stránku).
+- `shadcn add` generuje starší vzhled s `React.forwardRef`, hardcoded barvami a
+  uvozovkami; po vygenerování kód přepsat podle okolních souborů (tokeny,
+  prettier, `function`) a Radix balíčky držet na jedné verzi, jinak se do
+  bundlu dostanou dvě kopie `react-primitive` a `react-slot`.
+
 ## Pojmenování a styl
 
 - Složky v `src/app/` jsou česky (tvoří URL); identifikátory, komponenty
