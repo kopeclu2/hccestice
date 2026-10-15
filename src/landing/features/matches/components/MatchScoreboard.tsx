@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import React from 'react'
 
 import type { ArticleScoreboard } from '@/landing/features/matches/types'
@@ -6,8 +5,9 @@ import { formatPair } from '@/landing/features/matches/view/matchFormat'
 import type { Photo } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { Numeral } from '@/landing/ui/Numeral'
-import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
+
+import { TeamCrest } from './TeamCrest'
 
 /**
  * Tabule se skóre, týmy a třetinami na tmavé ploše — sdílí ji hero
@@ -154,7 +154,16 @@ function Team({
     >
       {hasLogos && (
         <div className={cn('row-start-1 flex justify-center md:mb-3 md:block', column)}>
-          <TeamLogo logo={logo} name={name} />
+          {/* Dekorace: jméno týmu stojí hned pod znakem jako text. Soupeř bez
+              nahraného znaku dostane kroužek s monogramem — bez něj by na jedné
+              straně tabule chybělo logo a jména by nelícovala. */}
+          <TeamCrest
+            className="size-12 text-lg md:size-16 md:text-2xl"
+            logo={logo}
+            name={name}
+            pixels={64}
+            tone="board"
+          />
         </div>
       )}
       <div
@@ -173,43 +182,5 @@ function Team({
         <div className="mt-1 text-xs font-medium text-white/55">{label}</div>
       </div>
     </div>
-  )
-}
-
-/** Klubové předpony, které v monogramu nic neříkají („HC Zdar" → „Z"). */
-const PREFIXES = new Set(['HC', 'HK', 'SK', 'TJ', 'HHK', 'ZH'])
-
-const monogram = (name: string): string => {
-  const words = name.split(/\s+/).filter(Boolean)
-  const word = words.find((item) => !PREFIXES.has(item.toUpperCase())) ?? words[0] ?? '?'
-  return word.charAt(0).toUpperCase()
-}
-
-/**
- * Logo týmu nad názvem. Dekorativní (`alt=""`): jméno týmu stojí hned pod
- * ním jako text, čtečka by ho jinak četla dvakrát.
- *
- * Soupeř bez nahraného znaku dostane obrysový kroužek s monogramem — bez
- * něj by na jedné straně tabule chybělo logo a jména by nelícovala.
- */
-function TeamLogo({ logo, name }: { logo: Photo | null; name: string }) {
-  if (!logo) {
-    return (
-      <span
-        aria-hidden
-        className="grid size-12 place-items-center rounded-full border border-white/24 text-lg font-extrabold text-white/70 md:size-16 md:text-2xl"
-      >
-        {monogram(name)}
-      </span>
-    )
-  }
-  return (
-    <Image
-      alt=""
-      className="size-12 rounded-full bg-white/90 object-contain p-1 md:size-16"
-      height={64}
-      src={getMediaUrl(logo.url, logo.updatedAt)}
-      width={64}
-    />
   )
 }

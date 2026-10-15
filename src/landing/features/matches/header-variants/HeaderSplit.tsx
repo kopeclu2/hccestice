@@ -2,6 +2,7 @@ import React from 'react'
 
 import { MatchMeta } from '@/landing/features/matches/components/MatchMeta'
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
+import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { competitionLabel, outcomeNote } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
@@ -9,7 +10,6 @@ import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
 import {
-  Crest,
   hasScore,
   type HeaderVariantProps,
   ourSide,
@@ -141,7 +141,7 @@ function Half({
         'lg:py-12',
       )}
     >
-      <Crest
+      <TeamCrest
         className={cn(
           'size-12 text-lg min-[25rem]:size-14 md:size-20 md:p-1.5 md:text-3xl lg:size-24 lg:p-2',
           'md:col-start-1 md:row-start-1 md:mb-4 md:self-start',

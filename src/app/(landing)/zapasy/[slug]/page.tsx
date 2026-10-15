@@ -17,6 +17,7 @@ import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
 import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
+import { SITE_NAME } from '@/lib/club'
 import { formatFullDate } from '@/lib/datetime'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
@@ -188,7 +189,7 @@ export default async function MatchDetailPage(args: Args) {
 export async function generateMetadata(args: Args): Promise<Metadata> {
   const slug = await readSlug(args)
   const match = slug ? await fetchMatchDetail(slug) : null
-  if (!slug || !match) return { title: 'Zápas nenalezen | HC Čestice' }
+  if (!slug || !match) return { title: `Zápas nenalezen | ${SITE_NAME}` }
 
   const title = brandTitle(`${matchHeadline(match)} · ${formatFullDate(match.kickoffISO)}`)
   const description = matchDescription(match)

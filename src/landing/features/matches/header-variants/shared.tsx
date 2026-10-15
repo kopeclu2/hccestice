@@ -1,11 +1,7 @@
-import Image from 'next/image'
 import React from 'react'
 
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { SUFFIX_NOTE } from '@/landing/features/matches/view/matchFormat'
-import type { Photo } from '@/landing/types'
-import { getMediaUrl } from '@/lib/getMediaUrl'
-import { cn } from '@/lib/utils'
 
 /**
  * Sdílená logika variant hlavičky detailu zápasu. Kterou variantu detail
@@ -126,79 +122,6 @@ export const periodColumns = (match: MatchDetail): PeriodColumn[] => {
   const sum = (side: 'home' | 'away') =>
     all.reduce((total, column) => total + (column[side] ?? 0), 0)
   return sum('home') === match.homeScore && sum('away') === match.awayScore ? all : columns
-}
-
-/** Klubové předpony, které v monogramu ani zkratce nic neříkají. */
-const PREFIXES = new Set(['HC', 'HK', 'SK', 'TJ', 'HHK', 'ZH', 'HCM', 'SKP'])
-
-const keyWord = (name: string): string => {
-  const words = name.split(/\s+/).filter(Boolean)
-  return words.find((word) => !PREFIXES.has(word.toUpperCase())) ?? words[0] ?? '?'
-}
-
-/** „HC Zdar" → „Z". */
-export const monogram = (name: string): string => keyWord(name).charAt(0).toUpperCase()
-
-/** Třípísmenná zkratka jako na TV tabuli: „HC Polička B" → „POL". */
-export const teamCode = (name: string): string =>
-  keyWord(name).slice(0, 3).toLocaleUpperCase('cs-CZ')
-
-/**
- * Znak týmu — dekorativní (`alt=""`), jméno stojí vždy vedle jako text.
- * Soupeř bez znaku dostane kroužek s monogramem, aby kompozice zůstala
- * souměrná. Velikost a tón (obrys) řídí volající přes `className`
- * a `tone`. Vnitřní okraj loga je pevný (`p-*`), ne v procentech —
- * procentní padding se počítá ze šířky rodiče, takže v buňce tabulky
- * logo zmizelo.
- */
-export function Crest({
-  logo,
-  name,
-  className,
-  tone = 'dark',
-  sizes = '96px',
-  monogramClassName,
-}: {
-  logo: Photo | null
-  name: string
-  className?: string
-  /** `dark` = na tmavé ploše (bílý podklad loga), `light` = na světlé (rámeček). */
-  tone?: 'dark' | 'light' | 'club'
-  sizes?: string
-  monogramClassName?: string
-}) {
-  if (!logo) {
-    return (
-      <span
-        aria-hidden
-        className={cn(
-          'grid flex-none place-items-center rounded-full border font-bold',
-          tone === 'dark' && 'border-white/24 text-white/75',
-          tone === 'light' && 'border-line bg-chip text-ink-soft',
-          tone === 'club' && 'border-white/40 bg-white/10 text-white',
-          className,
-          monogramClassName,
-        )}
-      >
-        {monogram(name)}
-      </span>
-    )
-  }
-  return (
-    <Image
-      alt=""
-      aria-hidden
-      className={cn(
-        'flex-none rounded-full object-contain',
-        tone === 'light' ? 'border border-line-soft bg-surface p-0.5' : 'bg-white/92 p-1',
-        className,
-      )}
-      height={128}
-      sizes={sizes}
-      src={getMediaUrl(logo.url, logo.updatedAt)}
-      width={128}
-    />
-  )
 }
 
 /** Neviditelný titulek varianty — nese skóre celou větou. */

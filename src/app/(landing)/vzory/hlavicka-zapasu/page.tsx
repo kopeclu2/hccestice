@@ -13,6 +13,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Kicker } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { SITE_NAME } from '@/lib/club'
 
 /**
  * Interní náhled variant hlavičky detailu zápasu (`/zapasy/[slug]`).
@@ -162,7 +163,7 @@ export default async function MatchHeaderVariantsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Hlavička zápasu — interní náhled | HC Čestice',
-  description: 'Interní přehled variant hlavičky detailu zápasu pro web HC Čestice.',
+  title: `Hlavička zápasu — interní náhled | ${SITE_NAME}`,
+  description: `Interní přehled variant hlavičky detailu zápasu pro web ${SITE_NAME}.`,
   robots: { index: false, follow: false },
 }

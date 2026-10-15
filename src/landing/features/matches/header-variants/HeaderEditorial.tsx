@@ -1,16 +1,17 @@
 import React from 'react'
 
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
+import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
 import { TeamPair } from '@/landing/features/matches/components/TeamPair'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { competitionLabel, SUFFIX_NOTE } from '@/landing/features/matches/view/matchFormat'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PatternBackground } from '@/landing/ui/PatternBackground'
+import { CLUB_NAME } from '@/lib/club'
 import { cn } from '@/lib/utils'
 
 import {
-  Crest,
   dayMonth,
   hasScore,
   type HeaderVariantProps,
@@ -65,7 +66,7 @@ function Masthead({ match }: { match: MatchDetail }) {
         </span>
       </div>
       <div className="flex flex-wrap justify-between gap-x-6 border-b border-line py-1.5 text-xs font-medium text-faint">
-        <span>{match.seasonLabel ? `Sezóna ${match.seasonLabel}` : 'HC Čestice'}</span>
+        <span>{match.seasonLabel ? `Sezóna ${match.seasonLabel}` : CLUB_NAME}</span>
         <span>
           {match.status === 'played'
             ? 'Výsledek zápasu'
@@ -153,7 +154,7 @@ function TeamBlock({
       <span
         className={cn('flex items-center gap-2', align === 'end' && 'flex-row-reverse lg:flex-row')}
       >
-        <Crest
+        <TeamCrest
           className="size-8 text-xs md:size-10 md:text-sm"
           logo={logo}
           name={name}
@@ -194,7 +195,7 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
         </div>
       )}
       <div aria-hidden className="mt-4 flex items-center gap-2.5 md:mt-6">
-        <Crest
+        <TeamCrest
           className="size-9 text-sm md:size-11"
           logo={match.homeLogo}
           name={match.homeName}
@@ -202,7 +203,7 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
           tone="light"
         />
         <span className="text-sm font-semibold text-faint">×</span>
-        <Crest
+        <TeamCrest
           className="size-9 text-sm md:size-11"
           logo={match.awayLogo}
           name={match.awayName}
@@ -242,11 +243,11 @@ const standfirst = (match: MatchDetail): string => {
   const opponent = match.weAreHome ? match.awayName : match.homeName
   const place = match.weAreHome ? 'Doma' : 'Venku'
 
-  if (match.status === 'canceled') return `Zápas HC Čestice s týmem ${opponent} se nehraje.`
+  if (match.status === 'canceled') return `Zápas ${CLUB_NAME} s týmem ${opponent} se nehraje.`
   if (match.status === 'scheduled' || !hasScore(match)) {
     return match.weAreHome
-      ? `HC Čestice přivítá na domácím ledě tým ${opponent}.`
-      : `HC Čestice zajíždí na led týmu ${opponent}.`
+      ? `${CLUB_NAME} přivítá na domácím ledě tým ${opponent}.`
+      : `${CLUB_NAME} zajíždí na led týmu ${opponent}.`
   }
 
   const ours = ourSide(match) === 'home' ? match.homeScore : match.awayScore
@@ -255,13 +256,13 @@ const standfirst = (match: MatchDetail): string => {
 
   switch (match.outcome) {
     case 'win':
-      return `${place} HC Čestice porazil tým ${opponent} ${score}.`
+      return `${place} ${CLUB_NAME} porazil tým ${opponent} ${score}.`
     case 'draw':
-      return `${place} HC Čestice remizoval s týmem ${opponent} ${score}.`
+      return `${place} ${CLUB_NAME} remizoval s týmem ${opponent} ${score}.`
     case 'otLoss':
-      return `${place} HC Čestice podlehl týmu ${opponent} ${score} — bod do tabulky ale zůstává.`
+      return `${place} ${CLUB_NAME} podlehl týmu ${opponent} ${score} — bod do tabulky ale zůstává.`
     default:
-      return `${place} HC Čestice podlehl týmu ${opponent} ${score}.`
+      return `${place} ${CLUB_NAME} podlehl týmu ${opponent} ${score}.`
   }
 }
 

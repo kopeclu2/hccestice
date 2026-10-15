@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
+import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import {
   competitionLabel,
@@ -11,15 +12,14 @@ import { Badge } from '@/landing/ui/Badge'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PatternBackground } from '@/landing/ui/PatternBackground'
+import { teamCode } from '@/lib/teamName'
 import { cn } from '@/lib/utils'
 
 import {
-  Crest,
   hasScore,
   type HeaderVariantProps,
   periodColumns,
   SrTitle,
-  teamCode,
   weekday,
   winnerSide,
 } from './shared'
@@ -112,7 +112,7 @@ function Board({
       aria-hidden
       className="grid grid-cols-[minmax(0,1fr)_auto_auto_minmax(0,1fr)] items-center gap-x-1.5 gap-y-3 md:gap-x-3 md:gap-y-4"
     >
-      <TeamCrest
+      <BoardCrest
         className="col-start-1 justify-self-start md:mr-[clamp(0.5rem,3vw,3rem)] md:justify-self-end"
         lit={winner === 'home'}
         logo={match.homeLogo}
@@ -139,7 +139,7 @@ function Board({
         </>
       )}
 
-      <TeamCrest
+      <BoardCrest
         className="col-start-4 row-start-1 justify-self-end md:ml-[clamp(0.5rem,3vw,3rem)] md:justify-self-start"
         lit={winner === 'away'}
         logo={match.awayLogo}
@@ -160,7 +160,7 @@ function Board({
   )
 }
 
-function TeamCrest({
+function BoardCrest({
   className,
   lit,
   logo,
@@ -173,7 +173,7 @@ function TeamCrest({
 }) {
   return (
     <div className={cn('row-start-1 rounded-full', className)}>
-      <Crest
+      <TeamCrest
         className={cn(
           'size-13 text-lg min-[25rem]:size-16 md:size-22 md:p-1.5 md:text-3xl lg:size-28 lg:p-2 lg:text-4xl',
           lit && 'ring-2 ring-lime ring-offset-3 ring-offset-contrast md:ring-offset-4',

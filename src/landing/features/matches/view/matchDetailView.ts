@@ -9,6 +9,7 @@ import type {
   MatchTimelinePeriod,
 } from '@/landing/features/matches/types'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
+import { CLUB_NAME } from '@/lib/club'
 import { formatLongDate, formatTime } from '@/lib/datetime'
 import { htmlPlainText, snippet } from '@/lib/plainText'
 import { linkOrNull, routes } from '@/lib/routes'
@@ -329,7 +330,7 @@ export const matchDescription = (detail: MatchDetail): string => {
   return [
     `Výsledek zápasu ${matchHeadline(detail)}${suffix} (${detail.dateLabel}${place}).`,
     detail.scorers ? `Střelci Čestic: ${detail.scorers}.` : null,
-    detail.penalties.length ? `Tresty HC Čestice: ${detail.penaltyMinutes} min.` : null,
+    detail.penalties.length ? `Tresty ${CLUB_NAME}: ${detail.penaltyMinutes} min.` : null,
   ]
     .filter(Boolean)
     .join(' ')

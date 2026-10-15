@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
+import { TeamCrest } from '@/landing/features/matches/components/TeamCrest'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import {
   competitionLabel,
@@ -12,7 +13,6 @@ import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'
 
 import {
-  Crest,
   hasScore,
   type HeaderVariantProps,
   periodColumns,
@@ -95,7 +95,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                   <tr className="border-t border-line-soft" key={row.side}>
                     <th className="py-2 pr-2 text-left md:py-2.5" scope="row">
                       <span className="flex items-center gap-2.5 md:gap-3">
-                        <Crest
+                        <TeamCrest
                           className="size-7 text-xs md:size-9 md:text-sm"
                           logo={row.logo}
                           name={row.name}

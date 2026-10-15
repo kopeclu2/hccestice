@@ -24,6 +24,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { SITE_NAME } from '@/lib/club'
 import { cn } from '@/lib/utils'
 
 type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }
@@ -170,7 +171,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   )
 }
 
-const TITLE = 'Zápasy a tabulka | HC Čestice'
+const TITLE = `Zápasy a tabulka | ${SITE_NAME}`
 const DESCRIPTION =
   'Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou.'
 
