@@ -15,9 +15,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 | `ui/` | design systém: tlačítka, nadpisy, karty, dekorace — bez znalosti domény |
 | `layout/` | kostra stránek: `SubpageShell`, navigace, patička, údržba |
 | `blocks/` | CMS bloky (`Component.tsx` + `config.ts`) a `render.tsx`; blok neimportuje jiný blok |
-| `features/<doména>/` | `matches`, `posts`, `galleries`, `roster`, `history`, `contact`, `sponsors`, `trainings`, `products`, `navigation` |
+| `features/<doména>/` | `matches`, `posts`, `galleries`, `roster`, `history`, `contact`, `sponsors`, `trainings`, `products`, `navigation`, `pages` (fetcher dokumentu `pages` a JSON-LD home stránky) |
 | `data/` | průřezové fetchery (`site`, `maintenance`, `session`, `landingSlugs`) a infrastruktura datové vrstvy: `query` (`cachedQuery`, `getPayloadClient`), `tags` (`CACHE_TAGS`) |
-| `lib/` | pomocníky nad Payload dokumenty: `media`, `payload`. Obecné helpery (`routes`, `datetime`, `plural`, `fold`, `teamName`, `club`, `errors`) jsou v `src/lib/` |
+| `lib/` | pomocníky nad Payload dokumenty: `media`, `payload`, a `listUrl` (`buildListUrl`). Obecné helpery (`routes`, `datetime`, `plural`, `fold`, `teamName`, `club`, `errors`) jsou v `src/lib/` |
 | `types.ts` | sdílené jádro view-modelů (`Photo`, `PersonCard`, `SiteLinks`, obsah hero a patičky) |
 
 Uvnitř feature: `components/` (prezentace), `data` (fetchery, `server-only`),
@@ -27,6 +27,86 @@ mají `data.ts` a `types.ts` přímo v kořeni. Typy jedné domény žijí v jej
 víc bloků (`MatchesWidgetView`, `StandingsCard`, `RosterWidgetView`,
 `ProductTile`, `Countdown`), patří do `components/` feature, ne do bloku.
 `features/*/components` jsou anglicky; složky v `src/app/` zůstávají česky (URL).
+
+`landing/lib/listUrl.ts` — `buildListUrl(base, { filters, page, pageKey, hash })`
+skládá adresu výpisu: filtry jdou před stránkou, prázdný filtr v adrese není
+a první strana do URL nepatří. Výpis `/zapasy` předává `pageKey: 'strana'`,
+ostatní výpisy mají výchozí `page`. Parametr je v indexu vyhledávačů,
+takže se nepřejmenovává.
+
+`landing/data/query.ts` — `cachedQuery(fn, { key, version, tags, revalidate })`
+je jediná cesta k tagované datové cache (`unstable_cache` pod React `cache()`,
+`revalidate` výchozí 3600 s) a `getPayloadClient()` jediné místo, které volá
+`getPayload`. Klíč a `version` se nemění, dokud se nemění tvar dat; tag je
+povinný (viz „Cache a renderovací režimy").
+
+# Konvence kódu
+
+## Kam co patří
+
+| místo | co v něm je |
+|---|---|
+| `src/lib/` | izomorfní moduly: bez `server-only`, bez importu Payload configu. Smí je importovat klient, admin, hooky, seed skripty i vitest (`routes`, `club`, `teamName`, `fold`, `datetime`, `plural`, `errors`, `jsonLd`, `matchSlug`, `slugifyCs`, `indexNow`, `rateLimit`) |
+| `src/server/` | serverové utility nad Payloadem (`getDocument`, `getRedirects`, `recaptcha/verify`), všechny s `import 'server-only'` |
+| `src/landing/ui`, `layout`, `blocks`, `features`, `data`, `lib` | viz „Struktura `src/landing/`" |
+| `src/hooks/` | hooky kolekcí a globalů; revalidační stavíte přes `createRevalidateHooks` |
+| `src/collections`, `globals`, `fields`, `plugins`, `jobs`, `ahl`, `email`, `endpoints` | Payload config a serverová logika mimo frontend |
+| `scripts/seed/` | jednorázové skripty spouštěné ručně přes `bun`; patří do nich `context: { disableRevalidate: true }` |
+
+## `server-only`
+
+Mají ho moduly, které sahají na Payload nebo `next/headers` a patří jen na
+server: fetchery v `landing/**/data`, `landing/data/*` a `src/server/*`.
+Import z klientské komponenty pak shodí build srozumitelnou chybou místo
+tichého tažení Payload configu do klientského bundlu.
+
+Nemají ho moduly dosažitelné z `payload.config.ts`, ze seed skriptů a z testů
+(např. `lib/indexNow.ts`, `lib/rateLimit.ts`, hooky, `plugins/*`): mimo Next
+runtime `server-only` při importu hodí výjimku, takže by spadl `payload
+migrate`, `generate:types`, seed skripty a `api.int.spec.ts`. Stejně tak
+nemají `server-only` čisté moduly v `view/` a `navHref.ts`, které importují
+klientské komponenty. Ve vitestu je balíček nahrazený stubem
+(`tests/stubs/server-only.ts`, alias ve `vitest.config.mts`), aby šly
+v unit testech importovat i fetchery.
+
+## Sdílené moduly — použij místo vlastní kopie
+
+| modul | použij místo |
+|---|---|
+| `lib/routes` (`routes`, `linkOrNull`, `collectionDocPath`) | skládání `` `/zapasy/${slug}` `` a podobných cest |
+| `landing/lib/listUrl` (`buildListUrl`) | ruční `URLSearchParams` pro filtry a stránkování výpisů |
+| `lib/club` (`CLUB_NAME`, `SITE_NAME`, `CLUB_LOGO`, `CLUB_PREFIXES`) | literály „HC Čestice", cesta k logu a seznamy předpon |
+| `lib/teamName` (`monogram`, `teamCode`, `initials`, `stripClubPrefix`) | vlastní zkratky, iniciály a odstraňování „HC"/„SK" z názvů |
+| `lib/fold` | `normalize('NFD').replace(…)` pro porovnávání a slugy |
+| `lib/datetime` | zakládání `Intl.DateTimeFormat`; datumy jsou v Europe/Prague |
+| `lib/plural` | ruční skloňování počtů |
+| `lib/errors` (`errorMessage`) | `e instanceof Error ? e.message : String(e)` v `catch` |
+| `landing/data/query` (`cachedQuery`) + `landing/data/tags` (`CACHE_TAGS`) | holé `unstable_cache` a tag zapsaný jako řetězec |
+| `hooks/createRevalidateHooks` (`createRevalidateHooks`, `applyRevalidation`) | ručně psané `afterChange` / `afterDelete` s `revalidateTag` |
+
+## Pojmenování a styl
+
+- Složky v `src/app/` jsou česky (tvoří URL); identifikátory, komponenty
+  a soubory v `src/` anglicky.
+- Named exporty. `export default` jen tam, kde ho vyžaduje Next
+  (`page`, `layout`, `route`, `error`, `not-found`, `loading`) nebo Payload;
+  výjimkou zůstává `components/RichText` (obě varianty) a `lib/canUseDOM`.
+- Komponenty jsou deklarace `function`. `const X: React.FC` přežívá jen
+  v `RenderBlocks` (`blocks/render.tsx`) a `FormBlockServer`.
+- Žádné `any`. `eslint-disable` a `@ts-expect-error` jen s důvodem
+  v komentáři (dnes `plugins/index.ts`, `plugins/auditor.ts`, `blocks/Form`
+  a React hooky v klientských komponentech). Kde se typy nedají srovnat,
+  cast má jednořádkový komentář proč.
+- Pořadí importů hlídá ESLint (`import/order`, abecedně, `@/` jako interní).
+
+## Nástroje
+
+- `bun run format` (Prettier, vč. řazení Tailwind tříd), `format:check` v CI.
+- Husky `pre-commit`: `lint-staged` (Prettier + ESLint na staged souborech)
+  a `scripts/check-tokens.mjs` (hlídač design tokenů).
+- CI (`.github/workflows/deploy.yml`): `format:check`, `lint`, `check`
+  (`check:tokens` + `check:types`) a `test:unit`. `test:unit` vynechává
+  `api.int.spec.ts`, který potřebuje Postgres; ten běží jen v `test:int`.
 
 # Navigace landing page
 
@@ -1133,8 +1213,8 @@ Cesty, kterými se tagy expirují:
 
 | změna | cesta |
 |---|---|
-| zápas v adminu | `revalidateLanding` → `LANDING_CACHE_TAGS` (`matches-list`) |
-| zápas ze synchronizace | `/internal/revalidate` → `revalidateLandingNow` (stejné tagy) |
+| zápas v adminu | hook `revalidateLanding` (`hooks/revalidateLanding.ts`) → plán `LANDING_REVALIDATION` s tagy `LANDING_CACHE_TAGS` (`matches-list`) |
+| zápas ze synchronizace | `/internal/revalidate` → `applyRevalidation` (`hooks/createRevalidateHooks.ts`) s týmž plánem `LANDING_REVALIDATION` |
 | soupeř (název, logo, slug) | `Opponents` hooks `afterChange` / `afterDelete` → `revalidateLanding` / `revalidateLandingDelete` (`matches-list`); synchronizace zakládá soupeře s `disableRevalidate` a revaliduje jednou na konci běhu |
 | reportáž (publikace, odpublikování, smazání) | `revalidatePost` / `revalidateDelete` → `posts-list` |
 
