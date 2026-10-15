@@ -30,8 +30,12 @@ const sectionShellVariants = cva(
         landing: 'mt-18 md:mt-28 lg:mt-40',
         /** Lišta hned pod herem (oznámení) — drží se nahoře. */
         bar: 'mt-8 md:mt-10',
-        /** Hlavička podstránky pod navigací. */
-        header: 'mt-14',
+        /**
+         * Hlavička podstránky (drobečky) pod navigací — 24px mobil, 40px
+         * tablet, 56px desktop. Plochých 56px nechávalo na mobilu pod lištou
+         * prázdný pruh vyšší než samotná navigace.
+         */
+        header: 'mt-6 md:mt-10 lg:mt-14',
         /** První obsahový blok po hlavičce podstránky. */
         content: 'mt-12',
         /** Další sekce podstránky — 72px mobil, 96px tablet, 140px desktop. */

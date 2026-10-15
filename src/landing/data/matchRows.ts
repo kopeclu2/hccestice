@@ -8,17 +8,21 @@ import type {
   MatchSchemaFields,
   Outcome,
   ResultRow,
+  TeamLogos,
   UpcomingMatch,
 } from '../types'
 
 import {
   formatDateTime,
+  formatWeekday,
   formatDay,
   formatTime,
   formatWeekdayDay,
   matchPath,
+  uploadToPhoto,
 } from './format'
 import {
+  CLUB_LOGO,
   CLUB_NAME,
   formatCompetition,
   matchOutcome,
@@ -48,6 +52,20 @@ export const schemaFields = (match: Match): MatchSchemaFields => ({
   homeName: match.home ? CLUB_NAME : opponentName(match),
   awayName: match.home ? opponentName(match) : CLUB_NAME,
 })
+
+/**
+ * Znaky v pořadí domácí / hosté. Logo soupeře je jen při populované relaci
+ * `opponent.logo` (fetcher s `depth: 2`); jinde (`depth: 1`) zůstane null
+ * a řádek ukáže monogram.
+ */
+export const teamLogos = (match: Match): TeamLogos => {
+  const opponent = typeof match.opponent === 'object' ? match.opponent : null
+  const opponentLogo = uploadToPhoto(opponent?.logo)
+  return {
+    homeLogo: match.home ? CLUB_LOGO : opponentLogo,
+    awayLogo: match.home ? opponentLogo : CLUB_LOGO,
+  }
+}
 
 /** Odkaz na detail zápasu; zápas bez slugu (dokument z doby před slugy) detail nemá. */
 const hrefOf = (match: Pick<Match, 'slug'>): string | null => matchPath(match.slug)
@@ -82,7 +100,9 @@ export const toLastResult = (match: Match): LastResult => ({
 
 export const toFixtureCard = (match: Match, isNext: boolean): FixtureCard => ({
   ...schemaFields(match),
+  ...teamLogos(match),
   id: match.id,
+  weekdayLabel: formatWeekday(match.date),
   kind: match.home ? 'Doma' : 'Venku',
   stage: phaseLabel(match),
   dateLabel: formatDay(match.date),
@@ -95,7 +115,9 @@ export const toFixtureCard = (match: Match, isNext: boolean): FixtureCard => ({
 
 export const toResultRow = (match: Match): ResultRow => ({
   ...schemaFields(match),
+  ...teamLogos(match),
   id: match.id,
+  weekdayLabel: formatWeekday(match.date),
   dateLabel: formatDay(match.date),
   stage: phaseLabel(match),
   title: matchTitle(match),

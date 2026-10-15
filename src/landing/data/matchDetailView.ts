@@ -8,7 +8,6 @@ import type {
   MatchStatRow,
   MatchTimelineEvent,
   MatchTimelinePeriod,
-  Photo,
 } from '../types'
 
 import {
@@ -22,6 +21,7 @@ import {
 } from './format'
 import { goalName, toGoals } from './matchEvents'
 import {
+  CLUB_LOGO,
   CLUB_NAME,
   matchOutcome,
   matchTitle,
@@ -36,15 +36,6 @@ import { seasonShortLabel } from './seasonLabel'
  * View-model detailu zápasu — čisté funkce bez Payloadu za běhu, aby šly
  * testovat bez databáze (fetchery jsou v `matchDetail.ts`).
  */
-
-/** Logo klubu — stejný soubor jako v navigaci a na kartě zápasu. */
-const CLUB_LOGO: Photo = {
-  url: '/logo-cestice.png',
-  alt: CLUB_NAME,
-  width: 200,
-  height: 200,
-  updatedAt: null,
-}
 
 /* ── Reportáž ────────────────────────────────────────────────────────────── */
 
