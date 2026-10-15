@@ -5,9 +5,8 @@ import { useFormContext } from 'react-hook-form'
 
 import { Checkbox as CheckboxUi } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { Error } from '@/landing/blocks/Form/Error'
+import { Width } from '@/landing/blocks/Form/Width'
 
 export const Checkbox: React.FC<
   CheckboxField & {

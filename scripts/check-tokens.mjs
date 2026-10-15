@@ -101,6 +101,10 @@ const RULES = [
     ),
     hint: 'landing má vlastní paletu; shadcn tokeny patří jen do components/ui a (frontend)',
     onlyIn: LANDING,
+    // Rich-text blok Lexicalu: patří do shadcn vrstvy (`RichText`), ne do
+    // klubového landingu. Do `src/landing/blocks` se přesunul jen kvůli
+    // jednomu stromu bloků.
+    exceptIn: ['src/landing/blocks/Banner/Component.tsx'],
   },
   {
     name: 'no-dark-variant-in-landing',

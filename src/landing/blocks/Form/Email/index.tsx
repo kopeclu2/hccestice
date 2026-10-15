@@ -4,9 +4,8 @@ import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-f
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { Error } from '@/landing/blocks/Form/Error'
+import { Width } from '@/landing/blocks/Form/Width'
 
 export const Email: React.FC<
   EmailField & {

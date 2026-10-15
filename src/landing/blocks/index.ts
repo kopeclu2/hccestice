@@ -48,7 +48,7 @@ import { LandingTrainings } from './Trainings/config'
  * Pořadí = pořadí v admin výběru: sekce homepage → stavební bloky →
  * automatické widgety → výběrové widgety → marketing widgety.
  * Každý blok žije ve své složce: `config.ts` + `Component.tsx`
- * (render mapa je v `src/landing/render.tsx`).
+ * (render mapa je v `src/landing/blocks/render.tsx`).
  */
 export const landingBlocks: Block[] = [
   // sekce homepage

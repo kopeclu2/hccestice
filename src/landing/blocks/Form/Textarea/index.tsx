@@ -4,9 +4,8 @@ import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-f
 
 import { Label } from '@/components/ui/label'
 import { Textarea as TextAreaComponent } from '@/components/ui/textarea'
-
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { Error } from '@/landing/blocks/Form/Error'
+import { Width } from '@/landing/blocks/Form/Width'
 
 export const Textarea: React.FC<
   TextField & {

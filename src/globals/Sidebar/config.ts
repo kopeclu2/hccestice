@@ -1,12 +1,13 @@
 import type { GlobalConfig } from 'payload'
 
+import { RawHtml } from '@/landing/blocks/RawHtml/config'
+
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { AlertBlock } from '../../blocks/AlertBlock/config'
 import { ExternalEmbed } from '../../blocks/ExternalEmbed/config'
 import { MatchWidget } from '../../blocks/MatchWidget/config'
 import { PartnerLinks } from '../../blocks/PartnerLinks/config'
-import { RawHtml } from '../../blocks/RawHtml/config'
 import { SponsorsBlock } from '../../blocks/SponsorsBlock/config'
 import { StandingsTable } from '../../blocks/StandingsTable/config'
 

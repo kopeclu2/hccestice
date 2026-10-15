@@ -11,9 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { Error } from '@/landing/blocks/Form/Error'
+import { Width } from '@/landing/blocks/Form/Width'
 
 export const Select: React.FC<
   SelectField & {

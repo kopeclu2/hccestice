@@ -28,10 +28,11 @@ import {
 } from '@payloadcms/richtext-lexical'
 import type { TextFieldSingleValidation } from 'payload'
 
-import { Banner } from '../blocks/Banner/config'
-import { Code } from '../blocks/Code/config'
-import { MediaBlock } from '../blocks/MediaBlock/config'
-import { YouTube } from '../blocks/YouTube/config'
+import { Banner } from '@/landing/blocks/Banner/config'
+import { Code } from '@/landing/blocks/Code/config'
+import { MediaBlock } from '@/landing/blocks/MediaBlock/config'
+import { YouTube } from '@/landing/blocks/YouTube/config'
+
 import { CtaBannerBlock } from '../landing/blocks/CtaBanner/config'
 import { DataTableBlock } from '../landing/blocks/DataTable/config'
 import { DownloadsWidget } from '../landing/blocks/Downloads/config'

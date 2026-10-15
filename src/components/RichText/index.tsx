@@ -10,13 +10,13 @@ import {
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
-import { YouTubeBlock } from '@/blocks/YouTube/Component'
 import { TEXT_STATE } from '@/fields/textStateColors'
+import { BannerBlock } from '@/landing/blocks/Banner/Component'
+import { CodeBlock, CodeBlockProps } from '@/landing/blocks/Code/Component'
 import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
+import { MediaBlock } from '@/landing/blocks/MediaBlock/Component'
 import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
+import { YouTubeBlock } from '@/landing/blocks/YouTube/Component'
 import { cn } from '@/lib/utils'
 import type {
   BannerBlock as BannerBlockProps,

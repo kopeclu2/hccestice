@@ -287,7 +287,7 @@ Dva odesílací kanály, dvě různé ochrany, protože plugin
 
 | kanál | ochrana |
 |---|---|
-| `blocks/Form` → `POST /api/form-submissions` | plugin, přes `custom.recaptcha` na `formSubmissionOverrides` |
+| `landing/blocks/Form` → `POST /api/form-submissions` | plugin, přes `custom.recaptcha` na `formSubmissionOverrides` |
 | `landing/blocks/Contact` → server action, local API | `verifyRecaptchaToken()` v `action.ts` |
 
 Token si obě komponenty berou z hooku `useRecaptcha()`, který skript Googlu
