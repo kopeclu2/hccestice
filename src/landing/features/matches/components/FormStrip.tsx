@@ -5,6 +5,7 @@ import type { Outcome, TeamForm } from '@/landing/features/matches/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { CLUB_NAME } from '@/lib/club'
 import { cn } from '@/lib/utils'
 
 /**
@@ -34,7 +35,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
     <SectionShell spacing="split">
       <div className="flex flex-wrap items-center gap-x-[clamp(1.125rem,3vw,2.5rem)] gap-y-3 rounded-tile border border-line-soft bg-surface px-5 py-4.5 md:px-6 md:py-5 lg:px-7 lg:py-5.5">
         <div className="min-w-42.5">
-          <Eyebrow>Forma HC Čestice</Eyebrow>
+          <Eyebrow>{`Forma ${CLUB_NAME}`}</Eyebrow>
           <CardTitle className="mt-0.75" size="xs">
             Posledních {form.squares.length}{' '}
             {form.squares.length === 1 ? 'zápas' : form.squares.length <= 4 ? 'zápasy' : 'zápasů'}

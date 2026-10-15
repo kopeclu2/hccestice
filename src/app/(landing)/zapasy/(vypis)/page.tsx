@@ -21,10 +21,12 @@ import {
 } from '@/landing/features/matches/data/seasons'
 import type { StandingsContent } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { buildListUrl } from '@/landing/lib/listUrl'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { SITE_NAME } from '@/lib/club'
+import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }
@@ -35,13 +37,13 @@ const PER_PAGE = 6
  * Cesta výpisu bez `#odehrane` — kotva patří jen do odkazů stránkování v UI,
  * ne do `canonical`. Sdílí ji komponenta (`hrefFor`) i `generateMetadata`.
  */
-const listPath = (page: number, seasonSlug: string | null): string => {
-  const params = new URLSearchParams()
-  if (seasonSlug) params.set('sezona', seasonSlug)
-  if (page > 1) params.set('strana', String(page))
-  const query = params.toString()
-  return `/zapasy${query ? `?${query}` : ''}`
-}
+const listPath = (page: number, seasonSlug: string | null, hash?: string): string =>
+  buildListUrl(routes.list.matches, {
+    filters: { sezona: seasonSlug },
+    page,
+    pageKey: 'strana',
+    hash,
+  })
 
 /**
  * Zápasy a tabulka — handoff „HC Cestice Zapasy".
@@ -95,7 +97,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   // kratším sloupcem (výsledky a tabulka mají typicky jinou přirozenou délku).
   const bothEmpty = results.rows.length === 0 && standings.rows.length === 0
 
-  const hrefFor = (n: number): string => `${listPath(n, activeSeason?.slug ?? null)}#odehrane`
+  const hrefFor = (n: number): string => listPath(n, activeSeason?.slug ?? null, 'odehrane')
 
   return (
     <SubpageShell pattern={{ variant: 'grid', tone: 'club', fade: 'top-right' }}>
@@ -194,7 +196,7 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : '/zapasy' },
+    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : routes.list.matches },
     ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
   }
 }

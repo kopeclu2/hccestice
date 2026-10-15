@@ -60,7 +60,7 @@ export default async function LandingPage() {
 }
 
 const FALLBACK_META: Metadata = {
-  title: 'HC Čestice — hokejový klub | TJ Sokol Čestice',
+  title: `${CLUB_NAME} — hokejový klub | TJ Sokol Čestice`,
   description:
     'Hokejový klub HC Čestice (TJ Sokol Čestice) hraje Východočeskou hokejovou ligu. Zápasy, výsledky, tréninky, fotoalbum a nábor nových hráčů i mládeže.',
   alternates: { canonical: '/' },

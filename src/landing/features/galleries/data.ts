@@ -9,6 +9,7 @@ import type { GalleryCard } from '@/landing/features/galleries/types'
 import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import { formatFullDate } from '@/lib/datetime'
+import { routes, linkOrNull } from '@/lib/routes'
 import type { Gallery, Season } from '@/payload-types'
 
 /** Galerie — fetchery pro mozaiku Fotoalba a widgety Galerie. */
@@ -60,7 +61,7 @@ export const toGalleryCard = (gallery: GalleryCardDoc): GalleryCard => {
     cover:
       uploadToPhoto(gallery.cover) ??
       uploadToPhoto(firstPhoto as Parameters<typeof uploadToPhoto>[0]),
-    href: gallery.slug ? `/fotogalerie/${gallery.slug}` : null,
+    href: linkOrNull(routes.gallery, gallery.slug),
     seasonLabel:
       typeof gallery.season === 'object' && gallery.season
         ? seasonShortLabel(gallery.season)

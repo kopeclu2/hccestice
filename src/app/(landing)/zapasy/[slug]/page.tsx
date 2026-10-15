@@ -13,6 +13,7 @@ import type { MatchDetail } from '@/landing/features/matches/types'
 import { matchDescription, matchHeadline } from '@/landing/features/matches/view/matchDetailView'
 import { buildMatchSummary } from '@/landing/features/matches/view/matchSummary'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { buildListUrl } from '@/landing/lib/listUrl'
 import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
 import { PillLink } from '@/landing/ui/PillLink'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -22,6 +23,7 @@ import { formatFullDate } from '@/lib/datetime'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
+import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 /**
@@ -62,10 +64,11 @@ const REPORT_SIZES_SPLIT = '(max-width: 1023px) 100vw, 38vw'
 const REPORT_SIZES_WIDE = '(max-width: 767px) 100vw, 50vw'
 
 /** Cesta zpět do výpisu na sezónu zápasu (a jeho sekci). */
-const listHref = (match: MatchDetail): string => {
-  const season = match.seasonSlug ? `?sezona=${encodeURIComponent(match.seasonSlug)}` : ''
-  return `/zapasy${season}#${match.status === 'played' ? 'odehrane' : 'rozlosovani'}`
-}
+const listHref = (match: MatchDetail): string =>
+  buildListUrl(routes.list.matches, {
+    filters: { sezona: match.seasonSlug },
+    hash: match.status === 'played' ? 'odehrane' : 'rozlosovani',
+  })
 
 /**
  * Detail zápasu — časová osa ve stylu Livesportu (góly a tresty HC Čestice,
@@ -107,7 +110,7 @@ export default async function MatchDetailPage(args: Args) {
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <Breadcrumbs
             className="mb-0"
-            trail={[{ href: '/zapasy', label: 'Zápasy' }, { label: match.title }]}
+            trail={[{ href: routes.list.matches, label: 'Zápasy' }, { label: match.title }]}
           />
           <PillLink href={listHref(match)} size="sm" variant="outline">
             ← Všechny zápasy
@@ -193,7 +196,7 @@ export async function generateMetadata(args: Args): Promise<Metadata> {
 
   const title = brandTitle(`${matchHeadline(match)} · ${formatFullDate(match.kickoffISO)}`)
   const description = matchDescription(match)
-  const url = `${getServerSideURL()}/zapasy/${slug}`
+  const url = `${getServerSideURL()}${routes.match(slug)}`
 
   // Fotka z reportáže je jediný obrázek, který o zápase něco říká; `getMediaUrl`
   // s `updatedAt` drží verzi v URL (viz AGENTS.md → Média). Bez ní zbývá logo
@@ -211,7 +214,7 @@ export async function generateMetadata(args: Args): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/zapasy/${slug}` },
+    alternates: { canonical: routes.match(slug) },
     openGraph: mergeOpenGraph({ description, images, title, url }),
     twitter: { card: photo ? 'summary_large_image' : 'summary', description, images, title },
   }

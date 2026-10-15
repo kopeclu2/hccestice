@@ -299,7 +299,7 @@ export const toMatchDetail = (match: Match, report: Post | null): MatchDetail =>
     stats,
     scorers: scorersLabel(match),
     report: toReport(report),
-    gallery: album?.slug ? { title: album.title, href: `/fotogalerie/${album.slug}` } : null,
+    gallery: album?.slug ? { title: album.title, href: routes.gallery(album.slug) } : null,
     missingProtocol,
   }
 }
