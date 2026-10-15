@@ -1,9 +1,7 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
-
-import configPromise from '@payload-config'
+import { cachedQuery, getPayloadClient } from './query'
+import { CACHE_TAGS } from './tags'
 
 /** Obsah údržbové stránky — `enabled` rozhoduje, jestli se vůbec zobrazí. */
 export type MaintenanceState = {
@@ -30,10 +28,10 @@ const DEFAULTS = {
  * propagovala, nedostupná databáze by shodila i stránku 500 — a ta má být
  * to poslední, co v takové situaci funguje.
  */
-export const fetchMaintenance = unstable_cache(
+export const fetchMaintenance = cachedQuery(
   async (): Promise<MaintenanceState> => {
     try {
-      const payload = await getPayload({ config: configPromise })
+      const payload = await getPayloadClient()
       const siteConfig = await payload.findGlobal({ slug: 'siteConfig', depth: 0 })
       const maintenance = siteConfig.maintenance
 
@@ -46,6 +44,5 @@ export const fetchMaintenance = unstable_cache(
       return { enabled: false, ...DEFAULTS }
     }
   },
-  ['maintenance'],
-  { tags: ['maintenance'], revalidate: 3600 },
+  { key: 'maintenance', tags: [CACHE_TAGS.maintenance] },
 )

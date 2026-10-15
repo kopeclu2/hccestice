@@ -1,15 +1,13 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { pickReport, toMatchDetail } from '@/landing/features/matches/view/matchDetailView'
 import { relId } from '@/landing/lib/payload'
 import type { Match, Post } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /**
  * Detail zápasu (`/zapasy/[slug]`) — fetchery. Mapování na view-model
@@ -42,7 +40,7 @@ const REPORT_SELECT = {
  * takže žádné místo neodkáže na koncept (jeho URL je 404).
  */
 export const resolveReport = async (match: Match): Promise<Post | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
 
   // `matches.report` bývá populované (depth ≥ 1), ale nespoléhá se na to:
   // číslo se dotáhne, jinak by se publikovaná reportáž tiše ztratila.
@@ -70,7 +68,7 @@ export const resolveReport = async (match: Match): Promise<Post | null> => {
 
 /** Slugy všech zápasů (i naplánovaných a zrušených) — pro `generateStaticParams`. */
 export const fetchMatchSlugs = cache(async (): Promise<string[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
     limit: 0,
@@ -90,9 +88,9 @@ export const fetchMatchSlugs = cache(async (): Promise<string[]> => {
  * `unstable_cache` bez něj žije rok. `new Date()` tu není nikde — nic
  * relativního k „teď" se nepočítá, naplánovaný zápas řeší odpočet na klientu.
  */
-const loadMatchDetail = unstable_cache(
+export const fetchMatchDetail = cachedQuery(
   async (slug: string): Promise<MatchDetail | null> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'matches',
       where: { slug: { equals: slug } },
@@ -142,11 +140,8 @@ const loadMatchDetail = unstable_cache(
   // `v2` = view-model s časovou osou (`timeline`), `v3` = výsledek `otLoss`;
   // stará entry by stránku shodila nebo lhala, takže změna tvaru znamená
   // novou verzi klíče.
-  ['match-detail', 'v3'],
-  { tags: [CACHE_TAGS.matches, CACHE_TAGS.posts], revalidate: 3600 },
+  { key: 'match-detail', version: 'v3', tags: [CACHE_TAGS.matches, CACHE_TAGS.posts] },
 )
-
-export const fetchMatchDetail = cache(loadMatchDetail)
 
 /**
  * Slug zápasu, ke kterému reportáž patří — pro odkaz „Detail zápasu".
@@ -157,7 +152,7 @@ export const fetchMatchDetail = cache(loadMatchDetail)
 export const fetchMatchSlugForPost = cache(async (post: Post): Promise<string | null> => {
   if (typeof post.match === 'object' && post.match) return post.match.slug ?? null
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const matchId = relId(post.match)
   if (matchId) {
     const match = await payload

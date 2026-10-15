@@ -1,12 +1,11 @@
 import 'server-only'
 
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { HISTORY_PAGE } from '@/landing/content'
+import { getPayloadClient } from '@/landing/data/query'
 import type { HistoryEra, Milestone } from '@/landing/features/history/types'
 import { uploadToPhoto } from '@/landing/lib/media'
-import configPromise from '@payload-config'
 
 /** Historie klubu — timeline milníků pro /historie-klubu. */
 
@@ -16,7 +15,7 @@ import configPromise from '@payload-config'
  * žádné milníky, použije se obsah z handoffu (`fallbackMilestones`).
  */
 export const fetchHistoryEras = cache(async (): Promise<HistoryEra[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'milestones',
     sort: ['order', 'year'],

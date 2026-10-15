@@ -1,22 +1,21 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
+import type { Payload } from 'payload'
 import { cache } from 'react'
 
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { GalleryCard } from '@/landing/features/galleries/types'
 import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import { formatFullDate } from '@/lib/datetime'
 import type { Gallery, Season } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /** Galerie — fetchery pro mozaiku Fotoalba a widgety Galerie. */
 
 /** Galerie podle id (s fotkami). */
 export const fetchGallery = cache(async (galleryId: number): Promise<Gallery | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const gallery = await payload.findByID({ collection: 'galleries', id: galleryId, depth: 1 })
   return gallery ?? null
 })
@@ -74,7 +73,7 @@ export const toGalleryCard = (gallery: GalleryCardDoc): GalleryCard => {
 /** Karty galerií pro widget (cover ?? první fotka, počet fotek). */
 export const fetchGalleryCards = cache(
   async (options: { seasonId?: number | null; limit: number }): Promise<GalleryCard[]> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const and: Array<Record<string, unknown>> = [{ date: { exists: true } }]
     if (options.seasonId) and.push({ season: { equals: options.seasonId } })
 
@@ -101,7 +100,7 @@ export const fetchGalleryCards = cache(
  * a tohle běží na nejteplejší stránce webu.
  */
 async function resolveMissingCovers(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Payload,
   cards: GalleryCard[],
 ): Promise<GalleryCard[]> {
   const missing = cards.filter((card) => !card.cover).map((card) => card.id)
@@ -146,7 +145,7 @@ async function resolveMissingCovers(
  */
 export const fetchAlbumGalleries = cache(
   async (options: { limit: number; pinnedId?: number | null }): Promise<GalleryCard[]> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
 
     const [latest, pinned] = await Promise.all([
       payload.find({
@@ -205,13 +204,13 @@ export type GalleriesPage = {
  * Klíč si `unstable_cache` skládá z argumentů, takže se každá kombinace
  * strany a filtru sezóny cachuje zvlášť.
  */
-const queryGalleriesPage = unstable_cache(
+export const fetchGalleriesPage = cachedQuery(
   async (options: {
     page: number
     perPage?: number
     seasonId?: number | null
   }): Promise<GalleriesPage> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const perPage = options.perPage ?? 9
     const seasonAnd = options.seasonId ? [{ season: { equals: options.seasonId } }] : []
 
@@ -258,17 +257,14 @@ const queryGalleriesPage = unstable_cache(
       page,
     }
   },
-  ['galleries-page'],
-  { tags: [CACHE_TAGS.galleries], revalidate: 3600 },
+  { key: 'galleries-page', tags: [CACHE_TAGS.galleries] },
 )
-
-export const fetchGalleriesPage = cache(queryGalleriesPage)
 
 /* ── Detail galerie (/fotogalerie/[slug]) ────────────────────────────────── */
 
 /** Galerie podle slugu, s populovanými fotkami. */
 export const fetchGalleryBySlug = cache(async (slug: string): Promise<Gallery | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'galleries',
     where: { slug: { equals: slug } },
@@ -280,7 +276,7 @@ export const fetchGalleryBySlug = cache(async (slug: string): Promise<Gallery | 
 
 /** Slugy všech galerií — pro generateStaticParams detailu. */
 export const fetchGallerySlugs = cache(async (): Promise<string[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'galleries',
     limit: 0,

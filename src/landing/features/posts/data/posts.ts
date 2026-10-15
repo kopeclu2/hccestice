@@ -1,17 +1,16 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { fetchSiteConfig } from '@/landing/data/site'
+import { CACHE_TAGS } from '@/landing/data/tags'
 import type { PostCard } from '@/landing/features/posts/types'
 import { toPostCard } from '@/landing/features/posts/view/posts'
 import { uploadToPhoto } from '@/landing/lib/media'
 import { relId } from '@/landing/lib/payload'
 import type { Photo } from '@/landing/types'
 import type { Post } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /** Články — fetchery pro Aktuality, widget Články, Vypíchnutý článek a detail. */
 
@@ -23,7 +22,7 @@ export const fetchDefaultPostPhoto = cache(async (): Promise<Photo | null> => {
 
 /** Nejnovější publikované články (novinky + reportáže). */
 export const fetchLatestPosts = cache(async (limit: number): Promise<Post[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'posts',
     where: {
@@ -43,7 +42,7 @@ export const fetchPostCards = cache(
     seasonId?: number | null
     limit: number
   }): Promise<PostCard[]> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const and: Array<Record<string, unknown>> = [{ _status: { equals: 'published' } }]
     and.push(
       options.type ? { type: { equals: options.type } } : { type: { in: ['news', 'report'] } },
@@ -102,14 +101,14 @@ const REST_PAGE_COUNT = 6
  * `revalidate: 3600` je pod tagem jako záchranná síť pro případ, že hook
  * neproběhne (seed s `disableRevalidate`, výjimka při zápisu).
  */
-const queryPostsPage = unstable_cache(
+export const fetchPostsPage = cachedQuery(
   async (options: {
     page: number
     type?: string | null
     /** Zapnuté fotky na kartách (`siteConfig.postsListShowPhoto`). */
     withPhotos?: boolean
   }): Promise<PostsPage> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const and: Array<Record<string, unknown>> = [{ _status: { equals: 'published' } }]
     if (options.type) and.push({ type: { equals: options.type } })
     const where = { and } as never
@@ -153,15 +152,12 @@ const queryPostsPage = unstable_cache(
       featured: page === 1,
     }
   },
-  ['posts-page'],
-  { tags: ['posts-list'], revalidate: 3600 },
+  { key: 'posts-page', tags: [CACHE_TAGS.posts] },
 )
-
-export const fetchPostsPage = cache(queryPostsPage)
 
 /** Článek pro vypíchnutou kartu (s heroImage). */
 export const fetchPost = cache(async (postId: number): Promise<Post | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   return payload.findByID({ collection: 'posts', id: postId, depth: 1 })
 })
 
@@ -169,7 +165,7 @@ export const fetchPost = cache(async (postId: number): Promise<Post | null> => {
 
 /** Slugy publikovaných článků — pro generateStaticParams detailu. */
 export const fetchPostSlugs = cache(async (): Promise<string[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'posts',
     draft: false,
@@ -183,7 +179,7 @@ export const fetchPostSlugs = cache(async (): Promise<string[]> => {
 
 /** Článek podle slugu; `draft` pro live preview v adminu. */
 export const fetchPostBySlug = cache(async (slug: string, draft: boolean): Promise<Post | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'posts',
     draft,
@@ -197,7 +193,7 @@ export const fetchPostBySlug = cache(async (slug: string, draft: boolean): Promi
 
 /** Karty souvisejících článků — ruční výběr, dofiltrování dle kategorií. */
 export const fetchRelatedPostCards = cache(async (post: Post, limit = 3): Promise<PostCard[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
 
   const pickedIds = (post.relatedPosts ?? [])
     .map(relId)

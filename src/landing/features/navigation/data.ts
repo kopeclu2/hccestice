@@ -1,14 +1,13 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { FALLBACK_NAV, HERO } from '@/landing/content'
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { fetchSiteConfig } from '@/landing/data/site'
+import { CACHE_TAGS } from '@/landing/data/tags'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
 import type { NavigationItem } from '@/payload-types'
-import configPromise from '@payload-config'
 
 /** Resolvery cílů jsou v `navHref.ts` (client-safe) — tady jen re-export. */
 export { ctaHref, navHref } from './navHref'
@@ -55,9 +54,9 @@ function toNavItem(doc: NavigationItem): NavItem | null {
  * a čte `orderBy asc`), takže se řídí přetahováním v adminu — pole
  * `order` na položkách je proto skryté a nepoužité.
  */
-const loadNavigation = unstable_cache(
+export const fetchNavigation = cachedQuery(
   async (): Promise<NavItem[]> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'navigation-containers',
       where: { slug: { equals: CONTAINER_SLUG } },
@@ -73,14 +72,8 @@ const loadNavigation = unstable_cache(
 
     return mapped.length > 0 ? mapped : FALLBACK_NAV
   },
-  ['landing-navigation'],
-  // `revalidate` je pojistka pod tagem, ne jeho náhrada — bez něj má
-  // `unstable_cache` TTL jeden rok a selhaný hook by znamenal starou
-  // navigaci až do dalšího deploye.
-  { tags: ['navigation'], revalidate: 3600 },
+  { key: 'landing-navigation', tags: [CACHE_TAGS.navigation] },
 )
-
-export const fetchNavigation = cache(async (): Promise<NavItem[]> => loadNavigation())
 
 /**
  * Tlačítko v navigaci. Blok Hero smí text přebít (`navCtaLabel`), jinak

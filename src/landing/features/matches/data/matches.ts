@@ -1,9 +1,9 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload, type Payload } from 'payload'
+import type { Payload } from 'payload'
 import { cache } from 'react'
 
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type {
   FixtureCard,
@@ -36,7 +36,6 @@ import { toPhoto } from '@/landing/lib/media'
 import { formatDateTime } from '@/lib/datetime'
 import { linkOrNull, routes } from '@/lib/routes'
 import type { Match, Media } from '@/payload-types'
-import configPromise from '@payload-config'
 
 import { resolveReport } from './matchDetail'
 
@@ -68,7 +67,7 @@ const scheduleFrom = (): string => {
 
 /** Nejbližší naplánovaný zápas (countdown). */
 export const fetchUpcoming = cache(async (): Promise<{ upcoming: UpcomingMatch | null }> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
     where: {
@@ -88,7 +87,7 @@ export const fetchUpcoming = cache(async (): Promise<{ upcoming: UpcomingMatch |
 
 /** Poslední výsledek (hero). */
 export const fetchPlayed = cache(async (): Promise<{ lastResult: LastResult | null }> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
     where: { status: { equals: 'played' } },
@@ -109,7 +108,7 @@ export const fetchMatchRows = cache(
     teamId?: number | null
     limit: number
   }): Promise<MatchRow[]> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const and: Array<Record<string, unknown>> = [
       { status: { equals: options.mode === 'results' ? 'played' : 'scheduled' } },
     ]
@@ -132,7 +131,7 @@ export const fetchMatchRows = cache(
 
 /** Vybrané zápasy (v pořadí výběru) → řádky widgetu. */
 export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<MatchRow[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
     where: { id: { in: matchIds } },
@@ -191,9 +190,9 @@ const withOpponentLogos = async <T extends Match>(payload: Payload, docs: T[]): 
 }
 
 /** Rozlosování sezóny — celé, od nejbližšího zápasu (pás karet na /zapasy). */
-const loadSeasonFixtures = unstable_cache(
+const loadSeasonFixtures = cachedQuery(
   async (seasonId: number, from: string): Promise<FixtureCard[]> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'matches',
       where: {
@@ -212,22 +211,20 @@ const loadSeasonFixtures = unstable_cache(
     return withLogos.map((match, index) => toFixtureCard(match, index === 0))
   },
   // v5: řádky nesou znaky týmů a den v týdnu
-  ['season-fixtures', 'v5'],
-  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+  { key: 'season-fixtures', version: 'v5', tags: [CACHE_TAGS.matches] },
 )
 
-export const fetchSeasonFixtures = cache(async (seasonId: number): Promise<FixtureCard[]> =>
-  loadSeasonFixtures(seasonId, scheduleFrom()),
-)
+export const fetchSeasonFixtures = async (seasonId: number): Promise<FixtureCard[]> =>
+  loadSeasonFixtures(seasonId, scheduleFrom())
 
 /** Odehrané zápasy sezóny po stranách (výpis na /zapasy, 6 na stranu). */
-const loadSeasonResults = unstable_cache(
+export const fetchSeasonResults = cachedQuery(
   async (options: {
     seasonId: number
     page: number
     perPage: number
   }): Promise<{ rows: ResultRow[]; page: number; totalPages: number; totalDocs: number }> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const result = await payload.find({
       collection: 'matches',
       where: {
@@ -266,16 +263,13 @@ const loadSeasonResults = unstable_cache(
     }
   },
   // v6: řádky nesou znaky týmů a den v týdnu
-  ['season-results', 'v6'],
-  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+  { key: 'season-results', version: 'v6', tags: [CACHE_TAGS.matches] },
 )
 
-export const fetchSeasonResults = cache(loadSeasonResults)
-
 /** Forma za posledních 5 odehraných zápasů sezóny (zleva nejstarší). */
-const loadSeasonForm = unstable_cache(
+export const fetchSeasonForm = cachedQuery(
   async (seasonId: number): Promise<TeamForm | null> => {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'matches',
       where: {
@@ -300,15 +294,12 @@ const loadSeasonForm = unstable_cache(
       summary: `${counts.win}× výhra · ${counts.draw}× remíza · ${counts.loss + counts.otLoss}× prohra${ot}`,
     }
   },
-  ['season-form', 'v4'],
-  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
+  { key: 'season-form', version: 'v4', tags: [CACHE_TAGS.matches] },
 )
-
-export const fetchSeasonForm = cache(loadSeasonForm)
 
 /** Jeden zápas pro velkou kartu — depth 2 kvůli logu soupeře a reportáži. */
 export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardData | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const match = await payload.findByID({ collection: 'matches', id: matchId, depth: 2 })
   if (!match) return null
 

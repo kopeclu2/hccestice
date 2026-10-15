@@ -1,18 +1,16 @@
 import 'server-only'
 
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
 import { STANDINGS } from '@/landing/content'
+import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { StandingsContent } from '@/landing/features/matches/types'
 import { formatCompetition } from '@/landing/features/matches/view/matchFormat'
 import type { StatsContent } from '@/landing/types'
 import { plural } from '@/lib/plural'
 import type { Season } from '@/payload-types'
-import configPromise from '@payload-config'
 
 import { seasonShortLabel } from './seasonLabel'
 
@@ -32,7 +30,7 @@ export { seasonShortLabel }
  * každé načtení výpisu, včetně stránkování.
  */
 const loadSeasonsWithDocs = async (collection: 'galleries' | 'matches'): Promise<Season[]> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection,
     limit: 0,
@@ -58,27 +56,21 @@ const loadSeasonsWithDocs = async (collection: 'galleries' | 'matches'): Promise
   return seasons
 }
 
-const loadGallerySeasons = unstable_cache(
-  async (): Promise<Season[]> => loadSeasonsWithDocs('galleries'),
-  ['gallery-seasons'],
-  { tags: [CACHE_TAGS.galleries], revalidate: 3600 },
-)
-
-const loadMatchSeasons = unstable_cache(
-  async (): Promise<Season[]> => loadSeasonsWithDocs('matches'),
-  ['match-seasons'],
-  { tags: [CACHE_TAGS.matches], revalidate: 3600 },
-)
-
 /** Sezóny s alespoň jednou galerií, od nejnovější — filtr /fotogalerie. */
-export const fetchGallerySeasons = cache(async (): Promise<Season[]> => loadGallerySeasons())
+export const fetchGallerySeasons = cachedQuery(
+  async (): Promise<Season[]> => loadSeasonsWithDocs('galleries'),
+  { key: 'gallery-seasons', tags: [CACHE_TAGS.galleries] },
+)
 
 /** Sezóny s alespoň jedním zápasem, od nejnovější — filtr /zapasy. */
-export const fetchMatchSeasons = cache(async (): Promise<Season[]> => loadMatchSeasons())
+export const fetchMatchSeasons = cachedQuery(
+  async (): Promise<Season[]> => loadSeasonsWithDocs('matches'),
+  { key: 'match-seasons', tags: [CACHE_TAGS.matches] },
+)
 
 /** Sezóna podle id, jinak aktuální (`isCurrent`). */
 export const fetchSeason = cache(async (seasonId?: number | null): Promise<Season | null> => {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'seasons',
     where: seasonId ? { id: { equals: seasonId } } : { isCurrent: { equals: true } },
@@ -134,7 +126,7 @@ export const fetchAutoStats = cache(
     const season = await fetchSeason(seasonId)
     if (!season) return null
 
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const items: StatsContent['items'] = []
 
     const ourRow = (season.standings?.rows ?? []).find((row) => isOurTeam(row.team))
