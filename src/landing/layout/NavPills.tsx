@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { isNavItemActive, navHref } from '@/landing/data/navHref'
-import type { NavItem } from '@/landing/types'
+import { isNavItemActive, navHref } from '@/landing/features/navigation/navHref'
+import type { NavItem } from '@/landing/features/navigation/types'
 import { PillLink } from '@/landing/ui/PillLink'
 
 /**

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { ContactFormLazy } from '@/landing/blocks/Contact/ContactFormLazy'
 import { CONTACT } from '@/landing/content'
+import { ContactFormLazy } from '@/landing/features/contact/components/ContactFormLazy'
 import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionShell } from '@/landing/ui/SectionShell'
 

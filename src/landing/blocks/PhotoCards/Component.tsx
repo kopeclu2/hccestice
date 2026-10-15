@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { uploadToPhoto } from '@/landing/data/format'
+import { uploadToPhoto } from '@/landing/lib/media'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'

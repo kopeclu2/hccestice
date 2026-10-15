@@ -1,33 +1,12 @@
 /**
- * View-modely landing page.
+ * Sdílené jádro view-modelů landing page — tvary, které používá víc features
+ * a bloků naráz (`Photo`, `PersonCard`, `SiteLinks`, obsah hero/patičky…).
  *
- * Sekce nikdy nesahají přímo na Payload dokumenty — dostávají tyto úzké,
- * již připravené tvary dat (skládají je fetchery a mapovače v `data/*`,
- * viz `data/format.ts`). Díky tomu jsou komponenty
- * čitelné, snadno testovatelné a nezávislé na tvaru CMS.
+ * Sekce nikdy nesahají přímo na Payload dokumenty — dostávají úzké, již
+ * připravené tvary dat. Typy jedné domény žijí vedle ní:
+ * `features/<doména>/types.ts` (fetchery v `data`, mapovače ve `view`,
+ * pomocníky nad dokumenty v `lib/`).
  */
-
-/**
- * Položka hlavní navigace.
- *
- * Rozpojuje tři role, které dřív plnil jediný string `href` v `NAV_LINKS`
- * (cíl odkazu, `id` sekce v DOM, klíč aktivního stavu). Výsledný href se
- * odvozuje podle kontextu renderu — viz `navHref()` v `data/navHref.ts`.
- */
-export type NavItem = {
-  label: string
-  /** `id` sekce na homepage, bez `#`. `null` = sekce na home není. */
-  anchor: string | null
-  /** Cesta na podstránku. `null` = položka žije jen jako kotva na home. */
-  path: string | null
-}
-
-/** Zvýrazněné tlačítko vpravo v navigaci (na home i podstránkách). */
-export type NavCta = {
-  label: string
-  /** `#kotva` nebo `/cesta`; kotva se na podstránkách doplní na `/#kotva`. */
-  href: string
-}
 
 /** Obrázek připravený pro `next/image` (relativní URL z Payload media). */
 export type Photo = {
@@ -41,60 +20,6 @@ export type Photo = {
    * souboru pod stejným názvem by se návštěvníkům neprojevila.
    */
   updatedAt?: string | null
-}
-
-/** Milník timeline na /historie-klubu. */
-export type Milestone = {
-  key: string
-  /** Text kvůli neurčitým letopočtům („70. léta"). */
-  year: string
-  title: string
-  text: string
-  /** Bez fotky se polaroid blok nevykreslí. */
-  photo: Photo | null
-}
-
-/** Éra timeline — sekční nadpis s rozsahem let a svými milníky. */
-export type HistoryEra = {
-  value: string
-  title: string
-  range: string
-  milestones: Milestone[]
-}
-
-/** Sponzor z CMS — marquee pás na homepage i řádková karta na /sponzori. */
-export type Sponsor = {
-  id: number
-  name: string
-  url: string | null
-  logo: Photo | null
-  /** Kontaktní osoba — jen u partnerů, kde ji klub eviduje. */
-  person: string | null
-  address: string | null
-  phone: string | null
-  email: string | null
-}
-
-/** Karta widgetu Galerie a výpisu /fotogalerie. */
-export type GalleryCard = {
-  id: number
-  title: string
-  dateLabel: string
-  photoCount: number
-  cover: Photo | null
-  /** Odkaz na detail (`/fotogalerie/{slug}`); widgety ho nevyplňují. */
-  href?: string | null
-  /** Krátký štítek sezóny („2025/26"); widgety ho nevyplňují. */
-  seasonLabel?: string | null
-}
-
-/** Hráč ve widgetu Soupiska. */
-export type RosterPlayer = {
-  id: number
-  name: string
-  number: number | null
-  position: string | null
-  photo: Photo | null
 }
 
 /** Kontakty a sociální sítě z globalu `siteConfig`. */
@@ -115,14 +40,6 @@ export type PersonCard = {
 }
 
 /* ── Detail článku (/aktuality/[slug]) ───────────────────────────────────── */
-
-/** Statistika hráče za sezónu — součet ze sestav odehraných zápasů. */
-export type PlayerSeasonStat = {
-  games: number
-  goals: number
-  assists: number
-  pim: number
-}
 
 /* ── Detail zápasu (/zapasy/[slug]) ──────────────────────────────────────── */
 
@@ -149,29 +66,6 @@ export type HeroModernContent = Omit<HeroContent, 'ctaLabel'> & {
 export type StatsContent = {
   seasonLabel: string
   items: Array<{ value: string; label: string; accent: boolean }>
-}
-
-/** Jedna ledová hodina v rozpisu tréninků (karta v pásu). */
-export type TrainingSlot = {
-  day: string
-  time: string
-  /** Štítek skupiny („Muži", „Muži + mládež"). Prázdné = bez štítku. */
-  group: string | null
-  /** Místo — z řádku, jinak výchozí místo sekce. */
-  venue: string | null
-  /** Doplňková poznámka pod místem („Od 1. 11.", „Bez brankáře"). */
-  note: string | null
-  /** Zvýrazněná (tmavá) karta s lime štítkem. */
-  accent: boolean
-}
-
-export type TrainingsContent = {
-  kicker: string | null
-  headline: string
-  headlineHighlight: string
-  headlineRest: string
-  perex: string | null
-  rows: TrainingSlot[]
 }
 
 export type ClubContent = {
@@ -212,33 +106,7 @@ export type AlbumTile = {
   key: string
 }
 
-/** Sekce Historie na landingu — vyprávění, pilulky milníků a citát z kroniky. */
-export type HistoryContent = {
-  kicker: string
-  watermark: string
-  headlineStart: string
-  headlineHighlight: string
-  lead: string
-  text: string
-  metaLine: string
-  ctaLabel: string
-  photosCtaLabel: string
-  /** Pilulky milníků; `accent` = lime (nejnovější milník). */
-  chips: Array<{ label: string; accent: boolean }>
-  quoteStart: string
-  quoteHighlight: string
-  quoteEnd: string
-  quoteSource: string
-}
-
 export type FaqItem = { question: string; answer: string }
-
-export type ContactContent = {
-  kicker: string
-  perex: string
-  pills: string[]
-  topics: string[]
-}
 
 export type FooterContent = {
   photo: Photo | null

@@ -3,11 +3,10 @@ import 'server-only'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
-import type { Sponsor } from '@/landing/types'
+import type { Sponsor } from '@/landing/features/sponsors/types'
+import { toPhoto } from '@/landing/lib/media'
 import type { Sponsor as SponsorDoc } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import { toPhoto } from './format'
 
 /** Sponzoři — marquee pás, spotlight karta a stránka partnerů. */
 

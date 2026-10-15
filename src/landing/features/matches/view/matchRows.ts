@@ -1,12 +1,3 @@
-import {
-  formatDateTime,
-  formatWeekday,
-  formatDay,
-  formatTime,
-  formatWeekdayDay,
-  matchPath,
-  uploadToPhoto,
-} from '@/landing/data/format'
 import type {
   FixtureCard,
   FormSquare,
@@ -18,6 +9,15 @@ import type {
   TeamLogos,
   UpcomingMatch,
 } from '@/landing/features/matches/types'
+import {
+  formatDateTime,
+  formatWeekday,
+  formatDay,
+  formatTime,
+  formatWeekdayDay,
+} from '@/landing/lib/dates'
+import { uploadToPhoto } from '@/landing/lib/media'
+import { matchPath } from '@/landing/lib/paths'
 import type { Match } from '@/payload-types'
 
 import {

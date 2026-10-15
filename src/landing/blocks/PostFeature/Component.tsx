@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { formatFullDate, relId, toPhoto } from '@/landing/data/format'
 import { fetchDefaultPostPhoto, fetchPost } from '@/landing/features/posts/data/posts'
 import { POST_TYPE_LABEL, postHref } from '@/landing/features/posts/view/posts'
+import { formatFullDate } from '@/landing/lib/dates'
+import { toPhoto } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
 import type { Photo } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'

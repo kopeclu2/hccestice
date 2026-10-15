@@ -1,23 +1,16 @@
-import {
-  postPath,
-  htmlPlainText,
-  snippet,
-  lexicalPlainText,
-  dropTitleEcho,
-  looksLikeProse,
-  echoesTitle,
-  formatFullDate,
-  toPhoto,
-  uploadToPhoto,
-  htmlWordCount,
-  lexicalWordCount,
-  formatLongDate,
-  readingLabel,
-  matchPath,
-} from '@/landing/data/format'
 import { toScoreboard } from '@/landing/features/matches/view/matchEvents'
 import type { PostCard, ArticleAuthor, ArticleDetail } from '@/landing/features/posts/types'
+import {
+  lexicalPlainText,
+  htmlWordCount,
+  lexicalWordCount,
+  readingLabel,
+} from '@/landing/features/posts/view/text'
+import { formatFullDate, formatLongDate } from '@/landing/lib/dates'
+import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
+import { postPath, matchPath } from '@/landing/lib/paths'
 import type { Photo } from '@/landing/types'
+import { htmlPlainText, snippet, dropTitleEcho, looksLikeProse, echoesTitle } from '@/lib/plainText'
 import type { Post } from '@/payload-types'
 
 /** Články — čisté mapování Payload dokumentu na view-modely (karta, detail). */

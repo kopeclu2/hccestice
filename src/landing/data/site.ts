@@ -5,12 +5,12 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { CLUB_EMAIL, FOOTER } from '@/landing/content'
+import { toPersonCard, uploadToPhoto } from '@/landing/lib/media'
+import { arrayOr } from '@/landing/lib/payload'
 import type { FooterContent, PersonCard, SiteLinks } from '@/landing/types'
 import { stripTracking } from '@/lib/stripTracking'
 import type { Person, SiteConfig } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import { arrayOr, toPersonCard, uploadToPhoto } from './format'
 
 /** Global `siteConfig` (kontakty, sítě, patička) + kolekce Lidé. */
 

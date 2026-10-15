@@ -1,12 +1,3 @@
-import {
-  formatLongDate,
-  formatTime,
-  htmlPlainText,
-  postPath,
-  snippet,
-  toPhoto,
-  uploadToPhoto,
-} from '@/landing/data/format'
 import { seasonShortLabel } from '@/landing/features/matches/data/seasonLabel'
 import type {
   ArticleGoal,
@@ -17,6 +8,10 @@ import type {
   MatchTimelineEvent,
   MatchTimelinePeriod,
 } from '@/landing/features/matches/types'
+import { formatLongDate, formatTime } from '@/landing/lib/dates'
+import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
+import { postPath } from '@/landing/lib/paths'
+import { htmlPlainText, snippet } from '@/lib/plainText'
 import type { Match, Post } from '@/payload-types'
 
 import { goalName, toGoals } from './matchEvents'

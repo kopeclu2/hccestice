@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { Milestone } from '@/landing/types'
+import type { Milestone } from '@/landing/features/history/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile } from '@/landing/ui/PhotoTile'

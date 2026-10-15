@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { countLabel } from '@/landing/data/format'
-import { fetchSponsors } from '@/landing/data/sponsors'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
-import type { Sponsor } from '@/landing/types'
+import { fetchSponsors } from '@/landing/features/sponsors/data'
+import type { Sponsor } from '@/landing/features/sponsors/types'
+import { countLabel } from '@/landing/lib/text'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'

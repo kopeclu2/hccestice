@@ -1,4 +1,4 @@
-import { fetchNavCta, fetchNavigation } from '@/landing/data/navigation'
+import { fetchNavCta, fetchNavigation } from '@/landing/features/navigation/data'
 
 import { StickyNav } from './StickyNav'
 

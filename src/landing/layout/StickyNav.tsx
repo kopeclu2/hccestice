@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { ctaHref } from '@/landing/data/navHref'
-import type { NavCta, NavItem } from '@/landing/types'
+import { ctaHref } from '@/landing/features/navigation/navHref'
+import type { NavCta, NavItem } from '@/landing/features/navigation/types'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
 import { PillLink } from '@/landing/ui/PillLink'
 import { cn } from '@/lib/utils'

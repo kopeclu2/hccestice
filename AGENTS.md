@@ -16,7 +16,7 @@ a **Nastavení → Položky menu**. Pořadí odkazů se přetahuje myší v poli
 
 ## Model
 
-`NavItem` (`src/landing/types.ts`) rozpojuje tři role, které dřív plnil
+`NavItem` (`src/landing/features/navigation/types.ts`) rozpojuje tři role, které dřív plnil
 jediný string `href`:
 
 | pole | role |
@@ -26,10 +26,10 @@ jediný string `href`:
 | `path` | cesta na podstránku; prázdné = položka žije jen jako kotva |
 
 Cíl odkazu skládá `navHref(item, 'home' \| 'subpage')`
-(`src/landing/data/navHref.ts`). Tím zmizely konstanty `SUBPAGE_HREF`
+(`src/landing/features/navigation/navHref.ts`). Tím zmizely konstanty `SUBPAGE_HREF`
 a `PAGE_ONLY_LINKS` — druhá je derivovatelná z `anchor === null`.
 
-`navHref.ts` je oddělený od `navigation.ts` **záměrně**: `navigation.ts`
+`navHref.ts` je oddělený od `data.ts` **záměrně**: `data.ts`
 sahá na `getPayload`, takže kdyby si klientské komponenty (`NavPills`,
 `NavMobile`) tahaly resolvery odtud, přišel by do klientského bundlu
 server-only Payload config a build spadne.
@@ -64,7 +64,7 @@ ním** v `src/plugins/index.ts`. Pravidla, když se ho budete dotýkat:
 ## Cache a revalidace
 
 Navigace je na každé stránce, takže se cachuje **tagem**, ne časem
-(`unstable_cache` s tagem `navigation` v `src/landing/data/navigation.ts`).
+(`unstable_cache` s tagem `navigation` v `src/landing/features/navigation/data.ts`).
 Tag se propaguje i na build-time prerenderované stránky, takže jedno
 `revalidateTag('navigation', 'max')` pokryje i `/aktuality/[slug]`.
 
@@ -288,7 +288,7 @@ Dva odesílací kanály, dvě různé ochrany, protože plugin
 | kanál | ochrana |
 |---|---|
 | `landing/blocks/Form` → `POST /api/form-submissions` | plugin, přes `custom.recaptcha` na `formSubmissionOverrides` |
-| `landing/blocks/Contact` → server action, local API | `verifyRecaptchaToken()` v `action.ts` |
+| `landing/features/contact` → server action, local API | `verifyRecaptchaToken()` v `action.ts` |
 
 Token si obě komponenty berou z hooku `useRecaptcha()`, který skript Googlu
 vkládá **líně z formuláře** (ne z layoutu, aby se nestahoval na stránkách

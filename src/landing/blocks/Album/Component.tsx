@@ -1,8 +1,10 @@
 import React from 'react'
 
-import { relId, uploadToPhoto } from '@/landing/data/format'
-import { fetchAlbumGalleries } from '@/landing/data/galleries'
-import type { AlbumSpan, AlbumTile, GalleryCard } from '@/landing/types'
+import { fetchAlbumGalleries } from '@/landing/features/galleries/data'
+import type { GalleryCard } from '@/landing/features/galleries/types'
+import { uploadToPhoto } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
+import type { AlbumSpan, AlbumTile } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { MaybeLink } from '@/landing/ui/CardGrid'
 import { GlowCircle } from '@/landing/ui/Decorations'

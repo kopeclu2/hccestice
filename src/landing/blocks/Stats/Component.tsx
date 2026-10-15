@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { SEASON_STATS } from '@/landing/content'
-import { relId } from '@/landing/data/format'
 import { fetchAutoStats } from '@/landing/features/matches/data/seasons'
+import { relId } from '@/landing/lib/payload'
 import type { StatsContent } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'

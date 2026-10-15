@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { fetchAllPeople, fetchSite } from '@/landing/data/site'
-import { KontaktCta } from '@/landing/kontakt/KontaktCta'
-import { KontaktHeader } from '@/landing/kontakt/KontaktHeader'
-import { KontaktMap } from '@/landing/kontakt/KontaktMap'
-import { KontaktPanel } from '@/landing/kontakt/KontaktPanel'
+import { KontaktCta } from '@/landing/features/contact/components/KontaktCta'
+import { KontaktHeader } from '@/landing/features/contact/components/KontaktHeader'
+import { KontaktMap } from '@/landing/features/contact/components/KontaktMap'
+import { KontaktPanel } from '@/landing/features/contact/components/KontaktPanel'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 
 export const revalidate = 600

@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { matchPath } from '@/landing/data/format'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { matchDescription } from '@/landing/features/matches/view/matchDetailView'
 import { toSportsEvent } from '@/landing/features/matches/view/matchSchema'
+import { matchPath } from '@/landing/lib/paths'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
 

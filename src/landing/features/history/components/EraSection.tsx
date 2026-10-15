@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { HistoryEra } from '@/landing/types'
+import type { HistoryEra } from '@/landing/features/history/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'

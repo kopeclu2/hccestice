@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { relId } from '@/landing/data/format'
-import { fetchPickedPlayers, POSITION_LABEL } from '@/landing/data/players'
-import type { RosterPlayer } from '@/landing/types'
+import { fetchPickedPlayers, POSITION_LABEL } from '@/landing/features/roster/data'
+import type { RosterPlayer } from '@/landing/features/roster/types'
+import { relId } from '@/landing/lib/payload'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'

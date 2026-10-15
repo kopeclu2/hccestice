@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { relId } from '@/landing/data/format'
 import { MatchesWidgetView } from '@/landing/features/matches/components/MatchesWidgetView'
 import { fetchPickedMatchRows } from '@/landing/features/matches/data/matches'
+import { relId } from '@/landing/lib/payload'
 import type { MatchesPickerBlock } from '@/payload-types'
 
 /** Vybrané zápasy (v tomto pořadí) — render přes kartu widgetu zápasů. */

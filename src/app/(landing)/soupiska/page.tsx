@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { countLabel } from '@/landing/data/format'
-import { fetchPlayerSeasonStats, fetchRosterSections, POSITION_LABEL } from '@/landing/data/players'
 import { fetchAllPeople } from '@/landing/data/site'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import type { SoupiskaCard } from '@/landing/features/roster/components/PlayerTile'
+import { RosterCta } from '@/landing/features/roster/components/RosterCta'
+import { RosterSection } from '@/landing/features/roster/components/RosterSection'
+import { SoupiskaHeader } from '@/landing/features/roster/components/SoupiskaHeader'
+import {
+  fetchPlayerSeasonStats,
+  fetchRosterSections,
+  POSITION_LABEL,
+} from '@/landing/features/roster/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import type { SoupiskaCard } from '@/landing/soupiska/PlayerTile'
-import { RosterCta } from '@/landing/soupiska/RosterCta'
-import { RosterSection } from '@/landing/soupiska/RosterSection'
-import { SoupiskaHeader } from '@/landing/soupiska/SoupiskaHeader'
+import { countLabel } from '@/landing/lib/text'
 import { SectionShell } from '@/landing/ui/SectionShell'
 
 export const revalidate = 600

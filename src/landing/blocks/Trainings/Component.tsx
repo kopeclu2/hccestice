@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { TRAININGS } from '@/landing/content'
-import type { TrainingSlot, TrainingsContent } from '@/landing/types'
+import type { TrainingSlot, TrainingsContent } from '@/landing/features/trainings/types'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { fetchHistoryEras } from '@/landing/data/history'
-import { ArchiveCta } from '@/landing/historie/ArchiveCta'
-import { EraSection } from '@/landing/historie/EraSection'
-import { HistorieHeader } from '@/landing/historie/HistorieHeader'
-import { StoryPanel } from '@/landing/historie/StoryPanel'
+import { ArchiveCta } from '@/landing/features/history/components/ArchiveCta'
+import { EraSection } from '@/landing/features/history/components/EraSection'
+import { HistorieHeader } from '@/landing/features/history/components/HistorieHeader'
+import { StoryPanel } from '@/landing/features/history/components/StoryPanel'
+import { fetchHistoryEras } from '@/landing/features/history/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
 

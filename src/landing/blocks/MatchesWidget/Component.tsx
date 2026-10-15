@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { relId } from '@/landing/data/format'
 import { MatchesWidgetView } from '@/landing/features/matches/components/MatchesWidgetView'
 import { fetchMatchRows } from '@/landing/features/matches/data/matches'
+import { relId } from '@/landing/lib/payload'
 import type { MatchesWidgetBlock } from '@/payload-types'
 
 /** Widget zápasů — načte řádky z kolekce dle filtrů bloku. */

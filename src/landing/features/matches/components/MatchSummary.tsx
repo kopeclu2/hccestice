@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { countLabel } from '@/landing/data/format'
 import type { MatchSummary as MatchSummaryData } from '@/landing/features/matches/view/matchSummary'
+import { countLabel } from '@/landing/lib/text'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 

@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { TrainingsBlockComponent } from '@/landing/blocks/Trainings/Component'
-import { fetchTrainingsBlock } from '@/landing/data/trainings'
+import { TreninkyHeader } from '@/landing/features/trainings/components/TreninkyHeader'
+import { fetchTrainingsBlock } from '@/landing/features/trainings/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { TreninkyHeader } from '@/landing/treninky/TreninkyHeader'
 
 export const revalidate = 600
 

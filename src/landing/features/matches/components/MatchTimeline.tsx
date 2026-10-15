@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { countLabel } from '@/landing/data/format'
 import type {
   ArticleGoal,
   MatchTimelineEvent,
   MatchTimelinePeriod,
 } from '@/landing/features/matches/types'
+import { countLabel } from '@/landing/lib/text'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { cn } from '@/lib/utils'

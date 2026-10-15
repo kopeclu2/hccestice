@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { CLUB } from '@/landing/content'
-import { uploadToPhoto } from '@/landing/data/format'
+import { uploadToPhoto } from '@/landing/lib/media'
 import type { ClubContent } from '@/landing/types'
 import { DotGrid, PlusMark } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'

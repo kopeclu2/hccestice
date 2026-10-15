@@ -2,9 +2,11 @@ import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 
 import { CONTACT } from '@/landing/content'
-import { arrayOr } from '@/landing/data/format'
 import { fetchSite } from '@/landing/data/site'
-import type { ContactContent, SiteLinks } from '@/landing/types'
+import { ContactFormLazy } from '@/landing/features/contact/components/ContactFormLazy'
+import type { ContactContent } from '@/landing/features/contact/types'
+import { arrayOr } from '@/landing/lib/payload'
+import type { SiteLinks } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
@@ -13,8 +15,6 @@ import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import type { LandingContactBlock } from '@/payload-types'
-
-import { ContactFormLazy } from './ContactFormLazy'
 
 /** Block data → view-model (fallbacky na content.ts). */
 function mapContact(block: LandingContactBlock): ContactContent {

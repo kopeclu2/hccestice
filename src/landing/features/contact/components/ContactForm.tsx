@@ -8,6 +8,8 @@ import { useForm, useWatch } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { sendContactMessage } from '@/landing/features/contact/action'
+import { contactSchema, type ContactValues } from '@/landing/features/contact/schema'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
@@ -15,9 +17,6 @@ import { PillButton } from '@/landing/ui/PillButton'
 import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
 import { useRecaptcha } from '@/lib/recaptcha/useRecaptcha'
 import { cn } from '@/lib/utils'
-
-import { sendContactMessage } from './action'
-import { contactSchema, type ContactValues } from './schema'
 
 /** Vzhled polí podle tónu karty (přepis shadcn defaultů). */
 const fieldClasses = {

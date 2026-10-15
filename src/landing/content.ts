@@ -12,7 +12,7 @@
  * fallback pro prázdné CMS a zdroj pro `scripts/seed/seed-navigation.ts`.
  */
 
-import type { NavItem } from './types'
+import type { NavItem } from '@/landing/features/navigation/types'
 
 /**
  * Fallback hlavní navigace — použije se, když je v CMS prázdná.

@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { HISTORY } from '@/landing/content'
-import { arrayOr } from '@/landing/data/format'
-import type { HistoryContent } from '@/landing/types'
+import type { HistoryContent } from '@/landing/features/history/types'
+import { arrayOr } from '@/landing/lib/payload'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'

@@ -4,7 +4,6 @@ import { unstable_cache } from 'next/cache'
 import { getPayload, type Payload } from 'payload'
 import { cache } from 'react'
 
-import { formatDateTime, matchPath, postPath, toPhoto } from '@/landing/data/format'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type {
   FixtureCard,
@@ -33,6 +32,9 @@ import {
   toResultRow,
   toUpcoming,
 } from '@/landing/features/matches/view/matchRows'
+import { formatDateTime } from '@/landing/lib/dates'
+import { toPhoto } from '@/landing/lib/media'
+import { matchPath, postPath } from '@/landing/lib/paths'
 import type { Match, Media } from '@/payload-types'
 import configPromise from '@payload-config'
 

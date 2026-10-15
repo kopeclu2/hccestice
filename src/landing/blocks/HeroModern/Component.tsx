@@ -1,9 +1,10 @@
 import React from 'react'
 
 import { HERO } from '@/landing/content'
-import { uploadToPhoto } from '@/landing/data/format'
-import { fetchNavCta, fetchNavigation } from '@/landing/data/navigation'
-import type { HeroModernContent, NavCta, NavItem } from '@/landing/types'
+import { fetchNavCta, fetchNavigation } from '@/landing/features/navigation/data'
+import type { NavCta, NavItem } from '@/landing/features/navigation/types'
+import { uploadToPhoto } from '@/landing/lib/media'
+import type { HeroModernContent } from '@/landing/types'
 import { PageTitle } from '@/landing/ui/Heading'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { PillLink } from '@/landing/ui/PillLink'

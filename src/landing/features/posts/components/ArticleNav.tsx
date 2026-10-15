@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ctaHref, fetchNavCta, fetchNavigation } from '@/landing/data/navigation'
+import { ctaHref, fetchNavCta, fetchNavigation } from '@/landing/features/navigation/data'
 import { NavMobile } from '@/landing/layout/NavMobile'
 import { NavPills } from '@/landing/layout/NavPills'
 import { LogoStamp } from '@/landing/ui/LogoStamp'

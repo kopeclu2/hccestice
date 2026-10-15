@@ -1,4 +1,4 @@
-import type { TrainingSlot } from '@/landing/types'
+import type { TrainingSlot } from '@/landing/features/trainings/types'
 
 /**
  * `day` a `time` jsou v CMS volný text („Út", „17:45 – 19:00") kvůli

@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { relId } from '@/landing/data/format'
-import { fetchGalleryCards } from '@/landing/data/galleries'
-import type { GalleryCard } from '@/landing/types'
+import { fetchGalleryCards } from '@/landing/features/galleries/data'
+import type { GalleryCard } from '@/landing/features/galleries/types'
+import { relId } from '@/landing/lib/payload'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'

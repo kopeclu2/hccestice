@@ -1,8 +1,9 @@
 import { Mail, Phone } from 'lucide-react'
 import React from 'react'
 
-import { relId, toPersonCard } from '@/landing/data/format'
 import { fetchPerson } from '@/landing/data/site'
+import { toPersonCard } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
 import type { PersonCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'

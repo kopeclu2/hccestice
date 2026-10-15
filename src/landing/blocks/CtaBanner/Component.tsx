@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { uploadToPhoto } from '@/landing/data/format'
+import { uploadToPhoto } from '@/landing/lib/media'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PillLink } from '@/landing/ui/PillLink'

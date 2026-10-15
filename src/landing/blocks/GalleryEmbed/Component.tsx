@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { relId, toPhoto } from '@/landing/data/format'
-import { fetchGallery } from '@/landing/data/galleries'
+import { fetchGallery } from '@/landing/features/galleries/data'
+import { toPhoto } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
 import type { Photo } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile } from '@/landing/ui/PhotoTile'

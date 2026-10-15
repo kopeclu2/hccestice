@@ -4,10 +4,10 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
-import { relId } from '@/landing/data/format'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { pickReport, toMatchDetail } from '@/landing/features/matches/view/matchDetailView'
+import { relId } from '@/landing/lib/payload'
 import type { Match, Post } from '@/payload-types'
 import configPromise from '@payload-config'
 

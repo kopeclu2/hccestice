@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { ProductTile } from '@/landing/blocks/ProductsGrid/Component'
-import { relId } from '@/landing/data/format'
-import { fetchProduct } from '@/landing/data/products'
 import { fetchSite } from '@/landing/data/site'
+import { ProductTile } from '@/landing/features/products/components/ProductTile'
+import { fetchProduct } from '@/landing/features/products/data'
+import { relId } from '@/landing/lib/payload'
 import { Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'

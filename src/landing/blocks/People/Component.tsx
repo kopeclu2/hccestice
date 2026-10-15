@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { toPersonCard } from '@/landing/data/format'
+import { toPersonCard } from '@/landing/lib/media'
 import type { PersonCard } from '@/landing/types'
 import type { LandingPeopleBlock } from '@/payload-types'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { FAQ } from '@/landing/content'
-import { arrayOr } from '@/landing/data/format'
+import { arrayOr } from '@/landing/lib/payload'
 import type { FaqItem } from '@/landing/types'
 import type { LandingFaqBlock } from '@/payload-types'
 

@@ -4,10 +4,9 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { HISTORY_PAGE } from '@/landing/content'
-import type { HistoryEra, Milestone } from '@/landing/types'
+import type { HistoryEra, Milestone } from '@/landing/features/history/types'
+import { uploadToPhoto } from '@/landing/lib/media'
 import configPromise from '@payload-config'
-
-import { uploadToPhoto } from './format'
 
 /** Historie klubu — timeline milníků pro /historie-klubu. */
 

@@ -1,4 +1,4 @@
-import type { NavItem } from '@/landing/types'
+import type { NavItem } from '@/landing/features/navigation/types'
 
 /**
  * Čisté resolvery cílů navigace — bez jakékoli závislosti na Payloadu.

@@ -1,12 +1,12 @@
 import React from 'react'
 
-import { relId } from '@/landing/data/format'
 import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
 import { ResultsList } from '@/landing/features/matches/components/ResultsList'
 import { StandingsPanel } from '@/landing/features/matches/components/StandingsPanel'
 import { fetchSeasonFixtures, fetchSeasonResults } from '@/landing/features/matches/data/matches'
 import { fetchSeason, mapStandingsFromSeason } from '@/landing/features/matches/data/seasons'
 import type { FixtureCard, ResultRow, StandingsContent } from '@/landing/features/matches/types'
+import { relId } from '@/landing/lib/payload'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'

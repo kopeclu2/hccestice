@@ -8,7 +8,7 @@ import { CtaBannerBlockComponent } from '@/landing/blocks/CtaBanner/Component'
 import { DownloadsBlockComponent } from '@/landing/blocks/Downloads/Component'
 import { GalleryEmbedBlockComponent } from '@/landing/blocks/GalleryEmbed/Component'
 import { GalleryLinkBlockComponent } from '@/landing/blocks/GalleryLink/Component'
-import { relId } from '@/landing/data/format'
+import { relId } from '@/landing/lib/payload'
 import type {
   CtaBannerBlockType,
   DownloadsBlock as DownloadsBlockProps,

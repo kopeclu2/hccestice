@@ -2,13 +2,17 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { formatLongDate, toPhoto, uploadToPhoto } from '@/landing/data/format'
-import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/data/galleries'
+import { GalleryDetailHeader } from '@/landing/features/galleries/components/GalleryDetailHeader'
+import {
+  PhotoMasonry,
+  type GalleryPhoto,
+} from '@/landing/features/galleries/components/PhotoMasonry'
+import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
+import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/features/galleries/data'
 import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
-import { GalleryDetailHeader } from '@/landing/fotogalerie/GalleryDetailHeader'
-import { PhotoMasonry, type GalleryPhoto } from '@/landing/fotogalerie/PhotoMasonry'
-import { PhotosCta } from '@/landing/fotogalerie/PhotosCta'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { formatLongDate } from '@/landing/lib/dates'
+import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 

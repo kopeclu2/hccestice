@@ -5,11 +5,10 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { FALLBACK_NAV, HERO } from '@/landing/content'
-import type { NavCta, NavItem } from '@/landing/types'
+import { fetchSiteConfig } from '@/landing/data/site'
+import type { NavCta, NavItem } from '@/landing/features/navigation/types'
 import type { NavigationItem } from '@/payload-types'
 import configPromise from '@payload-config'
-
-import { fetchSiteConfig } from './site'
 
 /** Resolvery cílů jsou v `navHref.ts` (client-safe) — tady jen re-export. */
 export { ctaHref, navHref } from './navHref'

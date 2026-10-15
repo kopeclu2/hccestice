@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { relId } from '@/landing/data/format'
 import { StandingsCard } from '@/landing/features/matches/components/StandingsCard'
 import { fetchSeason, mapStandingsFromSeason } from '@/landing/features/matches/data/seasons'
 import type { StandingsContent } from '@/landing/features/matches/types'
+import { relId } from '@/landing/lib/payload'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import type { StandingsWidgetBlock } from '@/payload-types'
