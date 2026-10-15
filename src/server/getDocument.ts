@@ -3,8 +3,8 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
+import type { Config } from '@/payload-types'
 import configPromise from '@payload-config'
-import type { Config } from 'src/payload-types'
 
 type Collection = keyof Config['collections']
 

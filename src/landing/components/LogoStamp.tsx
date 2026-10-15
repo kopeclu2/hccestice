@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 import { Eyebrow } from './Kicker'
 

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
+import { plural } from '@/lib/plural'
+
 import { describeChanges } from '../../src/components/admin/VchlSync/format'
-import { plural } from '../../src/utilities/plural'
 
 describe('vchl admin: skloňování', () => {
   it('plural 1 / 2–4 / 5+', () => {

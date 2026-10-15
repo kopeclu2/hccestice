@@ -1,6 +1,6 @@
 /** Formátování pro ovládací stránku synchronizace (česky, pražský čas). */
 
-import { plural } from '@/utilities/plural'
+import { plural } from '@/lib/plural'
 
 const dtf = new Intl.DateTimeFormat('cs-CZ', {
   day: 'numeric',

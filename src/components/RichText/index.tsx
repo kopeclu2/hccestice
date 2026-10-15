@@ -17,6 +17,7 @@ import { YouTubeBlock } from '@/blocks/YouTube/Component'
 import { TEXT_STATE } from '@/fields/textStateColors'
 import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
 import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
+import { cn } from '@/lib/utils'
 import type {
   BannerBlock as BannerBlockProps,
   DataTableBlockType,
@@ -24,7 +25,6 @@ import type {
   StatCardsBlockType,
   YouTubeBlock as YouTubeBlockProps,
 } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 /**
  * Základní (klient-safe) render rich textu.

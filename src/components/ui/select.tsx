@@ -4,7 +4,7 @@ import * as SelectPrimitive from '@radix-ui/react-select'
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 import * as React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 const Select: React.FC<React.ComponentProps<typeof SelectPrimitive.Root>> = (props) => {
   return <SelectPrimitive.Root data-slot="select" {...props} />

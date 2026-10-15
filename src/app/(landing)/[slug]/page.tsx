@@ -10,7 +10,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { RenderHero } from '@/heros/RenderHero'
 import { PageHeader } from '@/landing/components/PageHeader'
 import { SubpageShell } from '@/landing/components/SubpageShell'
-import { generateMeta } from '@/utilities/generateMeta'
+import { generateMeta } from '@/lib/generateMeta'
 import configPromise from '@payload-config'
 
 /**

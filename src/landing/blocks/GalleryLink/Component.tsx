@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { GalleryLinkBlock } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { CardTitle } from '../../components/Heading'
 import { Reveal } from '../../components/Reveal'

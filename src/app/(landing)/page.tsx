@@ -9,9 +9,9 @@ import { PageCanvas } from '@/landing/components/PageCanvas'
 import { fetchSite, fetchSiteConfig, mapFooter } from '@/landing/data/site'
 import { RenderLandingBlocks } from '@/landing/render'
 import type { SiteLinks } from '@/landing/types'
-import { generateMeta } from '@/utilities/generateMeta'
-import { getServerSideURL } from '@/utilities/getURL'
-import { serializeJsonLd } from '@/utilities/jsonLd'
+import { generateMeta } from '@/lib/generateMeta'
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
 import configPromise from '@payload-config'
 
 /**

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { getServerSideURL } from '@/utilities/getURL'
-import { serializeJsonLd } from '@/utilities/jsonLd'
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
 
 import { eventDescription, toSportsEvent } from '../data/matchSchema'
 import type { FixtureCard, ResultRow } from '../types'

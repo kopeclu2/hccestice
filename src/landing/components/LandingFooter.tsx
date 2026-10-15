@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import type { FooterContent, SiteLinks } from '../types'
 

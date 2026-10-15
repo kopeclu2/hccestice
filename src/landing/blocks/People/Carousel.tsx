@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import { SectionTitle } from '../../components/Heading'
 import { Eyebrow, Highlight, Kicker } from '../../components/Kicker'

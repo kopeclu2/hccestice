@@ -4,8 +4,8 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { stripTracking } from '@/lib/stripTracking'
 import type { Person, SiteConfig } from '@/payload-types'
-import { stripTracking } from '@/utilities/stripTracking'
 import configPromise from '@payload-config'
 
 import { CLUB_EMAIL, FOOTER } from '../content'

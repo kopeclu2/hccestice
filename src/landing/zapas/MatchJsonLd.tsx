@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { getServerSideURL } from '@/utilities/getURL'
-import { serializeJsonLd } from '@/utilities/jsonLd'
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
 
 import { matchPath } from '../data/format'
 import { matchDescription } from '../data/matchDetailView'

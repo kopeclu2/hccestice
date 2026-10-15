@@ -1,8 +1,8 @@
 import type { CollectionBeforeChangeHook } from 'payload'
 
 import { utcToPragueLocal } from '@/jobs/vchlSync/time'
-import { matchSlug, uniqueSlug } from '@/utilities/matchSlug'
-import { slugifyCs } from '@/utilities/slugifyCs'
+import { matchSlug, uniqueSlug } from '@/lib/matchSlug'
+import { slugifyCs } from '@/lib/slugifyCs'
 
 /**
  * Slug zápasu (`/zapasy/<slug>`) se vytvoří **jednou**: dokud dokument slug

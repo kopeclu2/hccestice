@@ -4,7 +4,7 @@
  * a hlavičku layoutu.
  */
 import { CLUB_EMAIL } from '@/landing/content'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getServerSideURL } from '@/lib/getURL'
 
 export const CLUB_NAME = 'HC Čestice'
 

@@ -3,9 +3,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { cn } from '@/lib/utils'
 import type { MatchCardBlock } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { cn } from '@/utilities/ui'
 
 import { Kicker } from '../../components/Kicker'
 import { Numeral } from '../../components/Numeral'

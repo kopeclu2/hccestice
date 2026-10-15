@@ -1,8 +1,8 @@
 import { Check } from 'lucide-react'
 import React from 'react'
 
+import { cn } from '@/lib/utils'
 import type { PricingCardsBlock } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { SectionTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'

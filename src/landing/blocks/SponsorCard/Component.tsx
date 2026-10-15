@@ -2,8 +2,8 @@ import { ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { SponsorCardBlock } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { CardTitle } from '../../components/Heading'
 import { Kicker } from '../../components/Kicker'

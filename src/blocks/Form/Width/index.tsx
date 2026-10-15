@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Obal pole formuláře s procentuální šířkou z adminu (form-builder).

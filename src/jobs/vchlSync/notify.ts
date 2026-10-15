@@ -7,7 +7,7 @@ import {
   type NotificationPlan,
   type NotifyWarning,
 } from '@/email/templates/vchlSync'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getServerSideURL } from '@/lib/getURL'
 
 import type { VchlRunResult, VchlSettings } from './types'
 

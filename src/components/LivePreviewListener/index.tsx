@@ -3,7 +3,7 @@ import { RefreshRouteOnSave as PayloadLivePreview } from '@payloadcms/live-previ
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import { getClientSideURL } from '@/utilities/getURL'
+import { getClientSideURL } from '@/lib/getURL'
 
 export const LivePreviewListener: React.FC = () => {
   const router = useRouter()

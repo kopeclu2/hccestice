@@ -6,8 +6,8 @@ import { useSelectedLayoutSegments } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import { getClientSideURL } from '@/utilities/getURL'
-import { cn } from '@/utilities/ui'
+import { getClientSideURL } from '@/lib/getURL'
+import { cn } from '@/lib/utils'
 
 import './index.scss'
 

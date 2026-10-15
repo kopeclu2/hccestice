@@ -3,9 +3,9 @@
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 
-import { getClientIp, isRateLimited } from '@/utilities/rateLimit'
-import { RECAPTCHA_ACTIONS } from '@/utilities/recaptcha/config'
-import { verifyRecaptchaToken } from '@/utilities/recaptcha/verify'
+import { getClientIp, isRateLimited } from '@/lib/rateLimit'
+import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
+import { verifyRecaptchaToken } from '@/server/recaptcha/verify'
 import configPromise from '@payload-config'
 
 import { contactSchema, type ContactResult, type ContactValues } from './schema'

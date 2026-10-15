@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Dekorační watermark text na pozadí sekcí („PONÍCI", „1970", „KONTAKT"…).

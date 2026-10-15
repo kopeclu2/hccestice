@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Vzory na pozadí sekcí — klubová obdoba shadcnblocks „background pattern".

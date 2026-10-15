@@ -1,8 +1,8 @@
 import React from 'react'
 
+import { serializeJsonLd } from '@/lib/jsonLd'
+import { cn } from '@/lib/utils'
 import type { LandingTrainingsBlock } from '@/payload-types'
-import { serializeJsonLd } from '@/utilities/jsonLd'
-import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
 import { CardTitle, SectionTitle } from '../../components/Heading'

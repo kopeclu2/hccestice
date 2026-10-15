@@ -2,8 +2,8 @@ import { Quote } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { Media, TestimonialsBlock } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { SectionTitle } from '../../components/Heading'
 import { Highlight } from '../../components/Kicker'

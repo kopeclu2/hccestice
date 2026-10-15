@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import { Badge } from '../components/Badge'
 import { CardTitle } from '../components/Heading'

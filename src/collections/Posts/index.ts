@@ -8,10 +8,11 @@ import {
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
+import { generatePreviewPath } from '@/lib/generatePreviewPath'
+
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { revalidateLanding, revalidateLandingDelete } from '../../hooks/revalidateLanding'
-import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'

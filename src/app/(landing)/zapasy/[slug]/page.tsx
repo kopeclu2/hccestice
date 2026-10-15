@@ -17,11 +17,11 @@ import { MatchJsonLd } from '@/landing/zapas/MatchJsonLd'
 import { MatchReportCard } from '@/landing/zapas/MatchReportCard'
 import { MatchSummary } from '@/landing/zapas/MatchSummary'
 import { MatchTimeline } from '@/landing/zapas/MatchTimeline'
-import { brandTitle } from '@/utilities/brandTitle'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { getServerSideURL } from '@/utilities/getURL'
-import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/utilities/mergeOpenGraph'
-import { cn } from '@/utilities/ui'
+import { brandTitle } from '@/lib/brandTitle'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { getServerSideURL } from '@/lib/getURL'
+import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
+import { cn } from '@/lib/utils'
 
 /**
  * ISR pojistka pro HTML; data jdou přes tagovanou `unstable_cache`

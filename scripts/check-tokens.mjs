@@ -207,7 +207,7 @@ for (const m of tokens.matchAll(/'?([\w-]+)'?:\s*'(#[0-9a-fA-F]{3,8})'/g)) {
 }
 
 /* ── twmerge-font-size-parity ──────────────────────────────────────────────
- * Každý `--text-*` token musí být v `utilities/ui.ts` zaregistrovaný do
+ * Každý `--text-*` token musí být v `lib/utils.ts` zaregistrovaný do
  * skupiny `font-size`. Jinak ho tailwind-merge považuje za BARVU textu a při
  * kombinaci se skutečnou barvou jednu z nich zahodí — `cn('text-club/10
  * text-watermark-xl')` pak vyrenderuje watermark bez barvy. Tohle už se
@@ -218,7 +218,7 @@ for (const m of tokens.matchAll(/'?([\w-]+)'?:\s*'(#[0-9a-fA-F]{3,8})'/g)) {
  * skupinu `text-shadow`, takže do font-size nepatří — ověřeno, že
  * `text-white text-shadow-photo` obě třídy udrží.
  */
-const UI_FILE = 'src/utilities/ui.ts'
+const UI_FILE = 'src/lib/utils.ts'
 const ui = readFileSync(join(ROOT, UI_FILE), 'utf8')
 const fontSizeBlock = ui.match(/'font-size':\s*\[[\s\S]*?\n {6}\],/)?.[0] ?? ''
 const registered = new Set([...fontSizeBlock.matchAll(/'([\w-]+)'/g)].map((m) => m[1]))

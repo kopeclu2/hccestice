@@ -8,6 +8,7 @@ import { buildConfig, PayloadRequest } from 'payload'
 import sharp from 'sharp'
 
 import { defaultLexical } from '@/fields/defaultLexical'
+import { getServerSideURL } from '@/lib/getURL'
 
 import { Categories } from './collections/Categories'
 import { Galleries } from './collections/Galleries'
@@ -34,7 +35,6 @@ import { VchlSync } from './globals/VchlSync/config'
 import { Header } from './Header/config'
 import { vchlSyncTask, VCHL_CRON, VCHL_QUEUE } from './jobs/vchlSync/task'
 import { plugins } from './plugins'
-import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

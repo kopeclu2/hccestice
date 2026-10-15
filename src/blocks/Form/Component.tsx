@@ -6,9 +6,9 @@ import React, { useCallback, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
-import { getClientSideURL } from '@/utilities/getURL'
-import { RECAPTCHA_ACTIONS } from '@/utilities/recaptcha/config'
-import { useRecaptcha } from '@/utilities/recaptcha/useRecaptcha'
+import { getClientSideURL } from '@/lib/getURL'
+import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
+import { useRecaptcha } from '@/lib/recaptcha/useRecaptcha'
 
 import { fields } from './fields'
 

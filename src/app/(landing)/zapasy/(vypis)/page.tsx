@@ -20,7 +20,7 @@ import { MatchesJsonLd } from '@/landing/zapasy/MatchesJsonLd'
 import { ResultsList } from '@/landing/zapasy/ResultsList'
 import { StandingsPanel } from '@/landing/zapasy/StandingsPanel'
 import { ZapasyHeader } from '@/landing/zapasy/ZapasyHeader'
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }
 

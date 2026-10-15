@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 import { NavMobile } from '../../components/NavMobile'
 import { PillLink } from '../../components/PillLink'

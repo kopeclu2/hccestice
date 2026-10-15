@@ -14,7 +14,7 @@
  */
 import type { BeforeEmail, FormattedEmail } from '@payloadcms/plugin-form-builder/types'
 
-import { getServerSideURL } from '@/utilities/getURL'
+import { getServerSideURL } from '@/lib/getURL'
 
 import { emailBranding, formattedFrom, notificationAddress } from '../config'
 import { renderEmail, type EmailRow } from '../render'

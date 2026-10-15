@@ -1,7 +1,7 @@
 import React from 'react'
 
+import { cn } from '@/lib/utils'
 import type { MatchesWidgetBlock } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { Badge } from '../../components/Badge'
 import { EmptyState } from '../../components/EmptyState'

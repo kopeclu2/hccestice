@@ -21,11 +21,11 @@ import {
 } from '@/landing/data/posts'
 import { fetchSiteConfig } from '@/landing/data/site'
 import type { ArticleDetail } from '@/landing/types'
+import { generateMeta } from '@/lib/generateMeta'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
 import type { Post } from '@/payload-types'
-import { generateMeta } from '@/utilities/generateMeta'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { getServerSideURL } from '@/utilities/getURL'
-import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /** ISR pojistka; publikace revaliduje okamžitě (hook `revalidatePost`). */
 export const revalidate = 600

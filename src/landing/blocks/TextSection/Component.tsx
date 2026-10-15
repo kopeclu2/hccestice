@@ -1,8 +1,8 @@
 import React from 'react'
 
 import RichText from '@/components/RichText/Server'
+import { cn } from '@/lib/utils'
 import type { TextSectionBlockType } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { Reveal } from '../../components/Reveal'
 import { SectionShell } from '../../components/SectionShell'

@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
+import { cn } from '@/lib/utils'
 import type { LandingSeasonBlock } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { EmptyState } from '../../components/EmptyState'
 import { CardTitle, SectionTitle } from '../../components/Heading'

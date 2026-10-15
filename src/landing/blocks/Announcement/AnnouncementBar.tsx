@@ -4,7 +4,7 @@ import { Megaphone, X } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Pruh s oznámením („Trénink v pátek zrušen…").

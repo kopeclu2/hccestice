@@ -1,7 +1,7 @@
 import React from 'react'
 
+import { cn } from '@/lib/utils'
 import type { StatCardsBlockType } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { Numeral } from '../../components/Numeral'
 

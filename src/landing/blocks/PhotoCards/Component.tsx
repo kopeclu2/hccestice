@@ -1,7 +1,7 @@
 import React from 'react'
 
+import { cn } from '@/lib/utils'
 import type { PhotoCardsBlockType } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { PhotoTile, TileBadge } from '../../components/PhotoTile'
 import { Reveal } from '../../components/Reveal'

@@ -2,8 +2,8 @@ import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
 import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
-import { getServerSideURL } from '@/utilities/getURL'
-import { htmlPlainText, snippet } from '@/utilities/plainText'
+import { getServerSideURL } from '@/lib/getURL'
+import { htmlPlainText, snippet } from '@/lib/plainText'
 import config from '@payload-config'
 
 /**

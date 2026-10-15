@@ -6,8 +6,8 @@
  * (zbyde jen popisek), takže textová varianta nese adresu přímo v řádku.
  */
 import { LANDING_COLORS as C } from '@/landing/tokens'
-import { getServerSideURL } from '@/utilities/getURL'
-import { plural } from '@/utilities/plural'
+import { getServerSideURL } from '@/lib/getURL'
+import { plural } from '@/lib/plural'
 
 import { emailBranding } from '../config'
 import { escapeHtml, renderEmailHtml, renderEmailText, type RenderEmailArgs } from '../render'

@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { cn } from '@/lib/utils'
 import type { DataTableBlockType } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { CardTitle } from '../../components/Heading'
 import { Eyebrow, Highlight } from '../../components/Kicker'

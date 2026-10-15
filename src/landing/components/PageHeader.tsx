@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 import { Breadcrumbs, type Crumb } from './Breadcrumbs'
 import { PageTitle } from './Heading'

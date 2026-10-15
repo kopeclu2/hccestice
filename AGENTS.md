@@ -147,7 +147,7 @@ v produkci (`NODE_ENV=production`) je `push` vypnutý
 | vrstva | co vlastní |
 |---|---|
 | `@payloadcms/plugin-seo` | pole `meta` (title, description, image) na `pages` a `posts` |
-| `src/utilities/generateMeta.ts` | `generateMetadata` na stránkách frontendu |
+| `src/lib/generateMeta.ts` | `generateMetadata` na stránkách frontendu |
 | `src/app/(landing)/(sitemaps)/*` + `next-sitemap` | `/sitemap.xml` (index), `pages-`, `posts-`, `gallery-` a `matches-sitemap.xml`, `/robots.txt` |
 | `src/app/llms.txt/route.ts` | `/llms.txt` |
 
@@ -278,7 +278,7 @@ mechanismus na to Next nemá.
 Klíče: `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` a `RECAPTCHA_SECRET`. Bez nich se
 ověření **mimo produkci přeskakuje** (dev a CI nepotřebují účet u Googlu),
 v produkci se odeslání odmítne. Skóre pod `0.5` neprojde
-(`src/utilities/recaptcha/config.ts` — jediný zdroj akcí i thresholdu pro
+(`src/lib/recaptcha/config.ts` — jediný zdroj akcí i thresholdu pro
 klient, plugin i server action).
 
 Dva odesílací kanály, dvě různé ochrany, protože plugin
@@ -543,7 +543,7 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
   `scripts/check-tokens.mjs`. V `globals.css` jsou pořád definované, protože
   je ještě používá rozpracovaná `LandingFooter.tsx` (výjimka v pravidle);
   po jejím převodu je jde smazat i z `@theme` a z registru twMerge
-  (`src/utilities/ui.ts`).
+  (`src/lib/utils.ts`).
 - Výchozí velikosti Tailwindu nesou i `line-height`. Kde na řádkování
   závisí zarovnání (časová osa zápasu: `h-5 md:h-6` = řádek
   `text-sm` / `md:text-base`), musí se měnit spolu.
@@ -894,7 +894,7 @@ zápasu" ve stylu Livesportu a karta reportáže.
 | fetchery | `src/landing/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
 | view-model | `src/landing/data/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
 | komponenty | `src/landing/zapas/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
-| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/utilities/matchSlug.ts` a `slugifyCs.ts` |
+| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts` |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
 ## Slug
@@ -1087,7 +1087,7 @@ s `updatedAt`, absolutní URL) a kartu `summary_large_image`; bez fotky je
 to čtvercové logo klubu a `summary`. Slug z URL se dekóduje přes
 `readSlug`: neplatné kódování (`/zapasy/%25zz`) je `notFound()`, ne 500.
 
-JSON-LD se serializuje přes `serializeJsonLd` (`src/utilities/jsonLd.ts`),
+JSON-LD se serializuje přes `serializeJsonLd` (`src/lib/jsonLd.ts`),
 který nahrazuje `<` za `\u003c` — jména střelců a soupeřů jsou scrapovaná
 z ahl.cz a `JSON.stringify` samo `</script>` neescapuje (viz
 `node_modules/next/dist/docs/01-app/02-guides/json-ld.md`). Každé nové

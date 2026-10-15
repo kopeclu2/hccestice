@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { getServerSideURL } from '@/utilities/getURL'
-import { serializeJsonLd } from '@/utilities/jsonLd'
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
 
 import type { Crumb } from './Breadcrumbs'
 

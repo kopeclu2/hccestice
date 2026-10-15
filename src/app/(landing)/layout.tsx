@@ -13,8 +13,8 @@ import { fetchMaintenance } from '@/landing/data/maintenance'
 import { hasSession } from '@/landing/data/session'
 import { fetchSite } from '@/landing/data/site'
 import { LANDING_COLORS } from '@/landing/tokens'
-import { getServerSideURL } from '@/utilities/getURL'
-import { defaultTwitter, mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getServerSideURL } from '@/lib/getURL'
+import { defaultTwitter, mergeOpenGraph } from '@/lib/mergeOpenGraph'
 
 import '../globals.css'
 

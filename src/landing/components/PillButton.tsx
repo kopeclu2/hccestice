@@ -4,7 +4,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 import { arrowVariants, pillVariants } from './pill'
 

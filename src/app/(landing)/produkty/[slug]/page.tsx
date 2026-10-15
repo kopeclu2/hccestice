@@ -13,11 +13,11 @@ import { PillLink } from '@/landing/components/PillLink'
 import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchProductBySlug, fetchProductSlugs } from '@/landing/data/products'
 import { fetchSite } from '@/landing/data/site'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
+import { cn } from '@/lib/utils'
 import type { Media, Product } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { getServerSideURL } from '@/utilities/getURL'
-import { serializeJsonLd } from '@/utilities/jsonLd'
-import { cn } from '@/utilities/ui'
 
 export const revalidate = 600
 

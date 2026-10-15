@@ -1,10 +1,11 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
+import { slugifyCs } from '@/lib/slugifyCs'
+
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
-import { slugifyCs } from '../utilities/slugifyCs'
 
 export const Opponents: CollectionConfig = {
   slug: 'opponents',

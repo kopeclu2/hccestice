@@ -12,13 +12,13 @@ import reCAPTCHAv3 from 'payload-recaptcha-v3'
 import { notificationAddress } from '@/email/config'
 import { wrapFormEmails } from '@/email/templates/formSubmission'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
+import { brandTitle } from '@/lib/brandTitle'
+import { getServerSideURL } from '@/lib/getURL'
+import { getClientIp, isRateLimited } from '@/lib/rateLimit'
+import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/lib/recaptcha/config'
 import { Page, Post } from '@/payload-types'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { searchFields } from '@/search/fieldOverrides'
-import { brandTitle } from '@/utilities/brandTitle'
-import { getServerSideURL } from '@/utilities/getURL'
-import { getClientIp, isRateLimited } from '@/utilities/rateLimit'
-import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/utilities/recaptcha/config'
 
 import { auditor } from './auditor'
 import { navigationOverrides } from './navigationOverrides'
@@ -152,7 +152,7 @@ export const plugins: Plugin[] = [
    * Plugin hlídá **jen operace přes REST** (`payloadAPI === 'REST'`, viz
    * `payload-recaptcha-v3/dist/hookBuilder.js`), takže pokrývá blok Formulář,
    * ale ne server action landing kontaktu nad local API. Tu ověřuje
-   * `verifyRecaptchaToken` (`@/utilities/recaptcha/verify`).
+   * `verifyRecaptchaToken` (`@/server/recaptcha/verify`).
    */
   reCAPTCHAv3({
     secret: process.env.RECAPTCHA_SECRET ?? '',

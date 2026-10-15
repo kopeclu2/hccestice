@@ -2,7 +2,7 @@ import { Globe, Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import { CardTitle } from '../components/Heading'
 import { Numeral } from '../components/Numeral'

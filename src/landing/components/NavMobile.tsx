@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 import { createPortal } from 'react-dom'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 import { isNavItemActive, navHref } from '../data/navHref'
 import type { NavItem } from '../types'

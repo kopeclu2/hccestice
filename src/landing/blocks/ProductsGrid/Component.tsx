@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
+import { getMediaUrl } from '@/lib/getMediaUrl'
 import type { Product, ProductsGridBlock } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import { Badge } from '../../components/Badge'
 import { CardTitle, SectionTitle } from '../../components/Heading'

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Ztišený řádek údajů pod názvem zápasu — „Základní část · Rychnov nad

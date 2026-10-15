@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import React from 'react'
 
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { cn } from '@/lib/utils'
 import type { CtaBannerBlockType } from '@/payload-types'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { cn } from '@/utilities/ui'
 
 import { SectionTitle } from '../../components/Heading'
 import { Eyebrow } from '../../components/Kicker'

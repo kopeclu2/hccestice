@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 const cardShellVariants = cva(
   'flex h-full flex-col overflow-hidden rounded-block border border-line-mid bg-surface transition-colors hover:border-club',

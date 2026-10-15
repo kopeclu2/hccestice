@@ -11,7 +11,7 @@ import {
   type PatternVariant,
 } from '@/landing/components/PatternBackground'
 import { SectionShell } from '@/landing/components/SectionShell'
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 export const revalidate = 600
 

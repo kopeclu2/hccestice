@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { isOurTeam } from '@/ahl/ourTeam'
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 import { EmptyState } from '../components/EmptyState'
 import { Eyebrow } from '../components/Kicker'

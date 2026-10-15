@@ -144,13 +144,7 @@ export const readingLabel = (words: number): string =>
 /* ── Textový úryvek (textové karty výpisu) ───────────────────────────────── */
 
 // HTML → text a zkrácení řeší utilities/plainText (používá to i generateMeta)
-export {
-  dropTitleEcho,
-  echoesTitle,
-  htmlPlainText,
-  looksLikeProse,
-  snippet,
-} from '@/utilities/plainText'
+export { dropTitleEcho, echoesTitle, htmlPlainText, looksLikeProse, snippet } from '@/lib/plainText'
 
 /** Prostý text z lexical stromu (rekurzivní sběr `text` polí). */
 export const lexicalPlainText = (node: unknown): string => {

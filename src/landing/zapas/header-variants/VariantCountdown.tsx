@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Odpočet do buly pro varianty hlavičky. Logika je tatáž jako

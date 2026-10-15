@@ -2,8 +2,8 @@ import { Newspaper } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { cn } from '@/utilities/ui'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { cn } from '@/lib/utils'
 
 import type { PostCard } from '../types'
 

@@ -2,7 +2,7 @@ import { Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { getMediaUrl } from '@/lib/getMediaUrl'
 
 import { Badge } from '../components/Badge'
 import { CardCta, CardGrid, CardShell } from '../components/CardGrid'

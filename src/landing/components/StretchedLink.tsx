@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * „Stretched link" — titulek karty nebo řádku je odkaz, jehož `::after`

@@ -1,8 +1,9 @@
 import { revalidatePath, revalidateTag } from 'next/cache'
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
+import { pingIndexNow } from '@/lib/indexNow'
+
 import type { Page } from '../../../payload-types'
-import { pingIndexNow } from '../../../utilities/indexNow'
 
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * Obří obrysový kód chyby („404", „500") s jedním plným lime znakem uvnitř.

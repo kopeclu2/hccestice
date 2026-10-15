@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { serializeJsonLd } from '../../src/utilities/jsonLd'
+import { serializeJsonLd } from '@/lib/jsonLd'
 
 describe('serializeJsonLd', () => {
   it('nenechá v řetězci žádné `<`, takže `</script>` nic neuzavře', () => {

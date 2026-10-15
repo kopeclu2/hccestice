@@ -9,8 +9,8 @@ import { seasonShortLabel } from '@/landing/data/seasons'
 import { GalleryDetailHeader } from '@/landing/fotogalerie/GalleryDetailHeader'
 import { PhotoMasonry, type GalleryPhoto } from '@/landing/fotogalerie/PhotoMasonry'
 import { PhotosCta } from '@/landing/fotogalerie/PhotosCta'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { getServerSideURL } from '@/lib/getURL'
 
 /** ISR pojistka — galerie nemají revalidační hook, obnoví se samy. */
 export const revalidate = 600

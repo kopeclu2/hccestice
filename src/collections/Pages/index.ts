@@ -9,6 +9,7 @@ import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
 import { hero } from '@/heros/config'
+import { generatePreviewPath } from '@/lib/generatePreviewPath'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
@@ -16,7 +17,6 @@ import { FormBlock } from '../../blocks/Form/config'
 import { RawHtml } from '../../blocks/RawHtml/config'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { landingBlocks } from '../../landing/blocks'
-import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 

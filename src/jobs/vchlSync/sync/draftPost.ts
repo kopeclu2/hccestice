@@ -1,8 +1,8 @@
 import type { Payload } from 'payload'
 
 import type { AhlMatchDetail } from '@/ahl'
+import { slugifyCs } from '@/lib/slugifyCs'
 import type { Match, Post } from '@/payload-types'
-import { slugifyCs } from '@/utilities/slugifyCs'
 
 import { utcToPragueLocal } from '../time'
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import type { Media, Page, Post, Config } from '../payload-types'
+import type { Media, Page, Post, Config } from '@/payload-types'
 
 import { brandTitle } from './brandTitle'
 import { getServerSideURL } from './getURL'

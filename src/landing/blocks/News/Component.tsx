@@ -1,7 +1,7 @@
 import React from 'react'
 
+import { cn } from '@/lib/utils'
 import type { LandingNewsBlock, Post } from '@/payload-types'
-import { cn } from '@/utilities/ui'
 
 import { ArticleCard } from '../../components/ArticleCard'
 import { ArcLines, GlowCircle } from '../../components/Decorations'
