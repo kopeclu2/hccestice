@@ -5,9 +5,9 @@ import type {
   MatchTimelineEvent,
   MatchTimelinePeriod,
 } from '@/landing/features/matches/types'
-import { countLabel } from '@/landing/lib/text'
 import { Badge } from '@/landing/ui/Badge'
 import { Eyebrow } from '@/landing/ui/Kicker'
+import { countLabel } from '@/lib/plural'
 import { cn } from '@/lib/utils'
 
 import { MatchMeta } from './MatchMeta'

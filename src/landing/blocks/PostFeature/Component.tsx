@@ -3,7 +3,6 @@ import React from 'react'
 
 import { fetchDefaultPostPhoto, fetchPost } from '@/landing/features/posts/data/posts'
 import { POST_TYPE_LABEL, postHref } from '@/landing/features/posts/view/posts'
-import { formatFullDate } from '@/landing/lib/dates'
 import { toPhoto } from '@/landing/lib/media'
 import { relId } from '@/landing/lib/payload'
 import type { Photo } from '@/landing/types'
@@ -11,6 +10,7 @@ import { CardTitle } from '@/landing/ui/Heading'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { formatFullDate } from '@/lib/datetime'
 import type { PostFeatureBlock } from '@/payload-types'
 
 /** Vypíchnutý článek — velká fotokarta se štítkem, datem a titulkem. */

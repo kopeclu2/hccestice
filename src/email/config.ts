@@ -4,9 +4,8 @@
  * a hlavičku layoutu.
  */
 import { CLUB_EMAIL } from '@/landing/content'
+import { CLUB_NAME } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
-
-export const CLUB_NAME = 'HC Čestice'
 
 /** Prázdná proměnná v `.env` je totéž jako nenastavená. */
 const fromEnv = (name: string): string | undefined => process.env[name]?.trim() || undefined

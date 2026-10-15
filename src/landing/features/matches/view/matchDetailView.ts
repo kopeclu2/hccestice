@@ -8,16 +8,16 @@ import type {
   MatchTimelineEvent,
   MatchTimelinePeriod,
 } from '@/landing/features/matches/types'
-import { formatLongDate, formatTime } from '@/landing/lib/dates'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
-import { postPath } from '@/landing/lib/paths'
+import { CLUB_NAME } from '@/lib/club'
+import { formatLongDate, formatTime } from '@/lib/datetime'
 import { htmlPlainText, snippet } from '@/lib/plainText'
+import { linkOrNull, routes } from '@/lib/routes'
 import type { Match, Post } from '@/payload-types'
 
 import { goalName, toGoals } from './matchEvents'
 import {
   CLUB_LOGO,
-  CLUB_NAME,
   matchOutcome,
   matchTitle,
   opponentName,
@@ -225,7 +225,7 @@ const toStats = (match: Match): MatchStatRow[] => {
 /* ── Reportáž a galerie ──────────────────────────────────────────────────── */
 
 const toReport = (post: Post | null): MatchDetailReport | null => {
-  const href = postPath(post?.slug)
+  const href = linkOrNull(routes.post, post?.slug)
   if (!post || !href) return null
   const excerpt = snippet(htmlPlainText(post.excerpt || post.meta?.description || ''), 200)
   return {

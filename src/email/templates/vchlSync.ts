@@ -50,7 +50,7 @@ export function buildSubject(plan: NotificationPlan): string {
   if (plan.failure) parts.push(`selhání (${plan.failure.streak}× po sobě)`)
   if (plan.recovered) parts.push('synchronizace obnovena')
   const n = (count: number, one: string, few: string, many: string) =>
-    count > 0 ? parts.push(`${count} ${plural(count, one, few, many)}`) : undefined
+    count > 0 ? parts.push(`${count} ${plural(count, [one, few, many])}`) : undefined
   n(plan.newPlayers.length, 'nový hráč', 'noví hráči', 'nových hráčů')
   n(
     plan.ambiguousPlayers.length,
@@ -79,7 +79,7 @@ function sections(
       title: 'Synchronizace selhává',
       items: [
         {
-          text: `${streak} ${plural(streak, 'běh', 'běhy', 'běhů')} po sobě ${
+          text: `${streak} ${plural(streak, ['běh', 'běhy', 'běhů'])} po sobě ${
             status === 'error' ? 'skončil chybou' : 'proběhl jen částečně'
           }.${error ? ` Poslední chyba: ${error.slice(0, 500)}` : ''}`,
         },
@@ -92,7 +92,7 @@ function sections(
       title: 'Synchronizace funguje znovu',
       items: [
         {
-          text: `Po ${plan.recovered.after} ${plural(plan.recovered.after, 'selhání', 'selháních', 'selháních')} proběhl poslední běh bez chyby.`,
+          text: `Po ${plan.recovered.after} ${plural(plan.recovered.after, ['selhání', 'selháních', 'selháních'])} proběhl poslední běh bez chyby.`,
         },
       ],
     })
@@ -129,7 +129,7 @@ function sections(
       ),
       note:
         plan.draftPosts > 0
-          ? `Založeno ${plan.draftPosts} ${plural(plan.draftPosts, 'koncept reportáže', 'koncepty reportáží', 'konceptů reportáží')} — najdete je mezi články: ${base}/admin/collections/posts`
+          ? `Založeno ${plan.draftPosts} ${plural(plan.draftPosts, ['koncept reportáže', 'koncepty reportáží', 'konceptů reportáží'])} — najdete je mezi články: ${base}/admin/collections/posts`
           : undefined,
     })
   }

@@ -9,8 +9,8 @@ import { STANDINGS } from '@/landing/content'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { StandingsContent } from '@/landing/features/matches/types'
 import { formatCompetition } from '@/landing/features/matches/view/matchFormat'
-import { pluralForm } from '@/landing/lib/text'
 import type { StatsContent } from '@/landing/types'
+import { plural } from '@/lib/plural'
 import type { Season } from '@/payload-types'
 import configPromise from '@payload-config'
 
@@ -143,7 +143,7 @@ export const fetchAutoStats = cache(
       const points = ourRow.points ?? 0
       items.push({
         value: String(points),
-        label: `${pluralForm(points, ['bod', 'body', 'bodů'])} v základní části`,
+        label: `${plural(points, ['bod', 'body', 'bodů'])} v základní části`,
         accent: true,
       })
     }
@@ -165,7 +165,7 @@ export const fetchAutoStats = cache(
     }
     items.push({
       value: String(bestStreak),
-      label: `${pluralForm(bestStreak, ['výhra', 'výhry', 'výher'])} v řadě`,
+      label: `${plural(bestStreak, ['výhra', 'výhry', 'výher'])} v řadě`,
       accent: false,
     })
 
@@ -175,7 +175,7 @@ export const fetchAutoStats = cache(
     })
     items.push({
       value: String(playerCount),
-      label: `${pluralForm(playerCount, ['hráč', 'hráči', 'hráčů'])} na soupisce`,
+      label: `${plural(playerCount, ['hráč', 'hráči', 'hráčů'])} na soupisce`,
       accent: false,
     })
 

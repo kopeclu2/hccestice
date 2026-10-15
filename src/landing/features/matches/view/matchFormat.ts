@@ -1,5 +1,6 @@
 import type { Outcome } from '@/landing/features/matches/types'
 import type { Photo } from '@/landing/types'
+import { CLUB_LOGO as CLUB_LOGO_PATH, CLUB_NAME } from '@/lib/club'
 import type { Match } from '@/payload-types'
 
 /**
@@ -12,11 +13,9 @@ import type { Match } from '@/payload-types'
 export const opponentName = (match: Match): string =>
   typeof match.opponent === 'object' && match.opponent ? match.opponent.name : 'Soupeř'
 
-export const CLUB_NAME = 'HC Čestice'
-
-/** Logo klubu — stejný soubor jako v navigaci a na kartě zápasu. */
+/** Logo klubu jako `Photo` — stejný soubor jako v navigaci a na kartě zápasu. */
 export const CLUB_LOGO: Photo = {
-  url: '/logo-cestice.png',
+  url: CLUB_LOGO_PATH,
   alt: CLUB_NAME,
   width: 200,
   height: 200,

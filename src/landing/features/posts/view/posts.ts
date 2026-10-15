@@ -6,11 +6,11 @@ import {
   lexicalWordCount,
   readingLabel,
 } from '@/landing/features/posts/view/text'
-import { formatFullDate, formatLongDate } from '@/landing/lib/dates'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
-import { postPath, matchPath } from '@/landing/lib/paths'
 import type { Photo } from '@/landing/types'
+import { formatFullDate, formatLongDate } from '@/lib/datetime'
 import { htmlPlainText, snippet, dropTitleEcho, looksLikeProse, echoesTitle } from '@/lib/plainText'
+import { linkOrNull, routes } from '@/lib/routes'
 import type { Post } from '@/payload-types'
 
 /** Články — čisté mapování Payload dokumentu na view-modely (karta, detail). */
@@ -24,7 +24,7 @@ export const POST_TYPE_LABEL: Record<string, string> = {
   standings: 'Výsledky',
 }
 
-export const postHref = (post: Post): string | null => postPath(post.slug)
+export const postHref = (post: Post): string | null => linkOrNull(routes.post, post.slug)
 
 export const postTag = (post: Post): string => POST_TYPE_LABEL[post.type ?? 'news'] ?? 'Novinky'
 
@@ -133,7 +133,7 @@ export const toArticleDetail = (
     readingLabel: readingLabel(words),
     author: toArticleAuthor(post),
     scoreboard: variant === 'zapas' ? scoreboard : null,
-    matchHref: matchPath(match?.slug ?? matchSlug),
+    matchHref: linkOrNull(routes.match, match?.slug ?? matchSlug),
     tags: (post.categories ?? [])
       .map((category) => (typeof category === 'object' ? category.title : null))
       .filter((title): title is string => Boolean(title)),

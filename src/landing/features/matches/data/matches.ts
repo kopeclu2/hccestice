@@ -32,9 +32,9 @@ import {
   toResultRow,
   toUpcoming,
 } from '@/landing/features/matches/view/matchRows'
-import { formatDateTime } from '@/landing/lib/dates'
 import { toPhoto } from '@/landing/lib/media'
-import { matchPath, postPath } from '@/landing/lib/paths'
+import { formatDateTime } from '@/lib/datetime'
+import { linkOrNull, routes } from '@/lib/routes'
 import type { Match, Media } from '@/payload-types'
 import configPromise from '@payload-config'
 
@@ -332,7 +332,7 @@ export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardDa
     score: match.status === 'played' ? matchScore(match) : null,
     suffix: scoreSuffix(match),
     won: match.status === 'played' ? (match.scoreOurs ?? 0) > (match.scoreOpp ?? 0) : null,
-    reportHref: postPath(report?.slug),
-    href: matchPath(match.slug),
+    reportHref: linkOrNull(routes.post, report?.slug),
+    href: linkOrNull(routes.match, match.slug),
   }
 })

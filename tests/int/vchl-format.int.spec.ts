@@ -6,7 +6,13 @@ import { describeChanges } from '../../src/components/admin/VchlSync/format'
 
 describe('vchl admin: skloňování', () => {
   it('plural 1 / 2–4 / 5+', () => {
-    expect([1, 2, 4, 5, 0].map((n) => plural(n, 'a', 'b', 'c'))).toEqual(['a', 'b', 'b', 'c', 'c'])
+    expect([1, 2, 4, 5, 0].map((n) => plural(n, ['a', 'b', 'c']))).toEqual([
+      'a',
+      'b',
+      'b',
+      'c',
+      'c',
+    ])
   })
 
   it('describeChanges: 1, 2 a 5 zápasů', () => {

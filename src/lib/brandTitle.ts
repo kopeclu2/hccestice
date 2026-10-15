@@ -1,4 +1,4 @@
-export const SITE_NAME = 'HC Čestice'
+import { SITE_NAME } from './club'
 
 /**
  * Přilepí název klubu k titulku stránky — ale **jen když tam ještě není**.

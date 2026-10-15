@@ -13,8 +13,8 @@ import {
   POSITION_LABEL,
 } from '@/landing/features/roster/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { countLabel } from '@/landing/lib/text'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
 

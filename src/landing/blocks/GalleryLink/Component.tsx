@@ -6,11 +6,11 @@ import React from 'react'
 import { fetchGallery, toGalleryCard } from '@/landing/features/galleries/data'
 import type { GalleryCard } from '@/landing/features/galleries/types'
 import { relId } from '@/landing/lib/payload'
-import { countLabel } from '@/landing/lib/text'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { countLabel } from '@/lib/plural'
 import type { GalleryLinkBlock } from '@/payload-types'
 
 /**

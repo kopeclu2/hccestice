@@ -1,5 +1,5 @@
 import type { ArticleGoal, ArticleScoreboard } from '@/landing/features/matches/types'
-import { formatLongDate } from '@/landing/lib/dates'
+import { formatLongDate } from '@/lib/datetime'
 import type { Match } from '@/payload-types'
 
 import { formatCompetition } from './matchFormat'

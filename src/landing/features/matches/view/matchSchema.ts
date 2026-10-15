@@ -1,4 +1,4 @@
-import { CLUB_NAME } from './matchFormat'
+import { CLUB_NAME } from '@/lib/club'
 
 /**
  * Stavba schema.org `SportsEvent` sdílená výpisem `/zapasy`

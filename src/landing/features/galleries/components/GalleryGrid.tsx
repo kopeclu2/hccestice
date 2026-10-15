@@ -3,13 +3,13 @@ import Image from 'next/image'
 import React from 'react'
 
 import type { GalleryCard } from '@/landing/features/galleries/types'
-import { countLabel } from '@/landing/lib/text'
 import { Badge } from '@/landing/ui/Badge'
 import { CardCta, CardGrid, CardShell } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle } from '@/landing/ui/Heading'
 import { PillLink } from '@/landing/ui/PillLink'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { countLabel } from '@/lib/plural'
 
 /**
  * Výpis galerií — pravidelná mřížka, na mobilu jeden sloupec.

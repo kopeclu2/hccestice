@@ -94,7 +94,7 @@ export function describeChanges(changes: unknown): string {
     .filter(([, v]) => typeof v === 'number' && v > 0)
     .map(([k, v]) => {
       const l = CHANGE_LABEL[k]
-      return l ? `${v} ${plural(v as number, ...l)}` : `${v} ${k}`
+      return l ? `${v} ${plural(v as number, l)}` : `${v} ${k}`
     })
   return parts.length ? parts.join(', ') : 'beze změn'
 }

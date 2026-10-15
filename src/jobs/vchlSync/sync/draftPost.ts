@@ -1,14 +1,13 @@
 import type { Payload } from 'payload'
 
 import type { AhlMatchDetail } from '@/ahl'
+import { CLUB_NAME } from '@/lib/club'
 import { slugifyCs } from '@/lib/slugifyCs'
 import type { Match, Post } from '@/payload-types'
 
 import { utcToPragueLocal } from '../time'
 
 import { ourSide } from './matchDetail'
-
-const CLUB = 'HC Čestice'
 
 type Side = 'home' | 'away'
 
@@ -66,7 +65,7 @@ export function draftTitle(
   weAreHome: boolean,
   detail: AhlMatchDetail,
 ): string {
-  const pair = weAreHome ? `${CLUB} – ${opponentName}` : `${opponentName} – ${CLUB}`
+  const pair = weAreHome ? `${CLUB_NAME} – ${opponentName}` : `${opponentName} – ${CLUB_NAME}`
   const score = scoreLabel(detail)
   return score ? `${pair} ${score}` : pair
 }
@@ -122,7 +121,7 @@ export function buildDraftContent(
   opponentName: string,
   weAreHome: boolean,
 ): Lexical {
-  const pair = weAreHome ? `${CLUB} – ${opponentName}` : `${opponentName} – ${CLUB}`
+  const pair = weAreHome ? `${CLUB_NAME} – ${opponentName}` : `${opponentName} – ${CLUB_NAME}`
   const periods = periodsLabel(detail)
   return doc(
     paragraph(

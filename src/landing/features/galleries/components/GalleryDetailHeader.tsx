@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { countLabel } from '@/landing/lib/text'
 import { Badge } from '@/landing/ui/Badge'
 import { PageHeader } from '@/landing/ui/PageHeader'
+import { countLabel } from '@/lib/plural'
 
 /**
  * Hlavička detailu galerie: drobečky, titulek a meta řádek

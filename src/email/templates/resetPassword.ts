@@ -8,10 +8,11 @@
  * Payload umí u forgotPassword nastavit jen `generateEmailHTML`, textovou
  * alternativu tam předat nelze — proto se `renderEmailText` nepoužívá.
  */
+import { CLUB_NAME } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
 import type { User } from '@/payload-types'
 
-import { CLUB_NAME, emailBranding } from '../config'
+import { emailBranding } from '../config'
 import { renderEmailHtml } from '../render'
 
 /** Platnost odkazu — musí zůstat v souladu s `forgotPassword.expiration`. */

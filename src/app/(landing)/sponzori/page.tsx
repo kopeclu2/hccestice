@@ -7,10 +7,10 @@ import { PartnerSlotCta } from '@/landing/features/sponsors/components/PartnerSl
 import { SponsorsHeader } from '@/landing/features/sponsors/components/SponsorsHeader'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { countLabel } from '@/landing/lib/text'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
 

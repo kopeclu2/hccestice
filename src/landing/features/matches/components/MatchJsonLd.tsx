@@ -3,9 +3,9 @@ import React from 'react'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { matchDescription } from '@/landing/features/matches/view/matchDetailView'
 import { toSportsEvent } from '@/landing/features/matches/view/matchSchema'
-import { matchPath } from '@/landing/lib/paths'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
+import { linkOrNull, routes } from '@/lib/routes'
 
 /**
  * JSON-LD `SportsEvent` jednoho zápasu s `url` samotného detailu.
@@ -22,7 +22,7 @@ export function MatchJsonLd({ match }: { match: MatchDetail }) {
       venue: match.venue,
       status: match.status,
       description: matchDescription(match),
-      url: `${getServerSideURL()}${matchPath(match.slug)}`,
+      url: `${getServerSideURL()}${linkOrNull(routes.match, match.slug)}`,
     }),
   }
 

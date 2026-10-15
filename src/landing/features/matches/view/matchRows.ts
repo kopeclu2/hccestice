@@ -9,20 +9,20 @@ import type {
   TeamLogos,
   UpcomingMatch,
 } from '@/landing/features/matches/types'
+import { uploadToPhoto } from '@/landing/lib/media'
+import { CLUB_NAME } from '@/lib/club'
 import {
   formatDateTime,
   formatWeekday,
   formatDay,
   formatTime,
   formatWeekdayDay,
-} from '@/landing/lib/dates'
-import { uploadToPhoto } from '@/landing/lib/media'
-import { matchPath } from '@/landing/lib/paths'
+} from '@/lib/datetime'
+import { linkOrNull, routes } from '@/lib/routes'
 import type { Match } from '@/payload-types'
 
 import {
   CLUB_LOGO,
-  CLUB_NAME,
   formatCompetition,
   matchOutcome,
   matchScore,
@@ -67,7 +67,7 @@ export const teamLogos = (match: Match): TeamLogos => {
 }
 
 /** Odkaz na detail zápasu; zápas bez slugu (dokument z doby před slugy) detail nemá. */
-const hrefOf = (match: Pick<Match, 'slug'>): string | null => matchPath(match.slug)
+const hrefOf = (match: Pick<Match, 'slug'>): string | null => linkOrNull(routes.match, match.slug)
 
 export const toMatchRow = (match: Match): MatchRow => ({
   id: match.id,
