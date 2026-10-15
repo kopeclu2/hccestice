@@ -85,9 +85,9 @@ function TeamWithCrest({ name, logo }: { name: string; logo: Photo | null }) {
 }
 
 /**
- * Název zápasu se znaky týmů jako odkaz přes celý řádek. Na mobilu týmy pod
- * sebou — dlouhé dvojice („HC Čestice × SK Divočáci Žamberk") se jinak
- * lámaly uprostřed názvu týmu.
+ * Název zápasu se znaky týmů jako odkaz přes celý řádek. Týmy pod sebou na
+ * všech šířkách — znaky lícují pod sebou bez ohledu na délku názvu a dlouhé
+ * dvojice („HC Čestice × SK Divočáci Žamberk") se nelámou uprostřed týmu.
  */
 export function MatchRowTitle({
   home,
