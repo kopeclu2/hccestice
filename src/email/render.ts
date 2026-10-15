@@ -67,7 +67,7 @@ const preheaderHtml = (text: string) =>
 const headerHtml = (clubName: string) => `
       <tr>
         <td style="background-color:${C.ink};padding:24px 32px;border-bottom:4px solid ${C.lime};border-radius:12px 12px 0 0;">
-          <span style="font-family:${FONT};font-size:18px;font-weight:700;letter-spacing:0.02em;color:#ffffff;">${escapeHtml(clubName)}</span>
+          <span style="font-family:${FONT};font-size:18px;font-weight:700;letter-spacing:0.02em;color:${C['on-contrast']};">${escapeHtml(clubName)}</span>
         </td>
       </tr>`
 
@@ -91,7 +91,7 @@ const buttonHtml = (button: { href: string; label: string }) => `
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;">
                 <tr>
                   <td align="center" bgcolor="${C.club}" style="border-radius:8px;">
-                    <a href="${escapeHtml(button.href)}" style="display:inline-block;padding:14px 26px;font-family:${FONT};font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">${escapeHtml(button.label)}</a>
+                    <a href="${escapeHtml(button.href)}" style="display:inline-block;padding:14px 26px;font-family:${FONT};font-size:15px;font-weight:600;color:${C['on-contrast']};text-decoration:none;border-radius:8px;">${escapeHtml(button.label)}</a>
                   </td>
                 </tr>
               </table>`
@@ -142,7 +142,7 @@ export function renderEmailHtml({
           <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;border-collapse:collapse;">
 ${headerHtml(clubName)}
             <tr>
-              <td style="background-color:#ffffff;border:1px solid ${C['line-mid']};border-top:none;border-radius:0 0 12px 12px;padding:32px;">
+              <td style="background-color:${C.surface};border:1px solid ${C['line-mid']};border-top:none;border-radius:0 0 12px 12px;padding:32px;">
                 <h1 style="margin:0 0 16px;font-family:${FONT};font-size:22px;line-height:1.3;font-weight:700;color:${C.ink};">${escapeHtml(heading)}</h1>
 ${paragraphs
   .map(
