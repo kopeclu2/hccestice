@@ -1,6 +1,7 @@
 import React from 'react'
 
 import type { FixtureCard } from '@/landing/features/matches/types'
+import { type FixturesLayout, pickLayout } from '@/landing/features/matches/view/fixturesLayout'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
@@ -80,7 +81,9 @@ export function FixturesRail({
   /** `list` = nejbližší zápas v panelu, zbytek jako řádky pod sebou (/zapasy). */
   layout?: 'cards' | 'list'
 }) {
-  if (fixtures.length === 0) {
+  const picked = pickLayout(fixtures, layout)
+
+  if (picked.kind === 'empty') {
     if (!emptyState) return null
 
     return (
@@ -91,40 +94,51 @@ export function FixturesRail({
     )
   }
 
-  const solo = fixtures.length === 1 ? fixtures[0]! : null
-  const stacked = fixtures.length > 2 || (layout === 'list' && !solo)
-  const nearest = stacked ? fixtures[0]! : null
-  const rest = stacked ? fixtures.slice(1) : fixtures
-
   return (
     <SectionShell className={className} id={id} spacing={spacing}>
       <SectionHead note="Rozlosování" title="Nadcházející zápasy" variant={headVariant}>
         {moreHref && <MoreLink href={moreHref}>{moreLabel}</MoreLink>}
       </SectionHead>
 
-      {solo ? (
+      <FixturesBody picked={picked} />
+    </SectionShell>
+  )
+}
+
+function FixturesBody({
+  picked,
+}: {
+  picked: Exclude<FixturesLayout<FixtureCard>, { kind: 'empty' }>
+}) {
+  switch (picked.kind) {
+    case 'solo':
+      return (
         <div className="mt-5">
-          <SoloFixturePanel fixture={solo} />
+          <SoloFixturePanel fixture={picked.fixture} />
         </div>
-      ) : stacked ? (
+      )
+    case 'stacked':
+      return (
         <div className="mt-5 space-y-3.5 md:space-y-4">
-          <SoloFixturePanel fixture={nearest!} />
-          {layout === 'list' ? (
-            <FixtureList fixtures={rest} />
+          <SoloFixturePanel fixture={picked.nearest} />
+          {picked.display === 'list' ? (
+            <FixtureList fixtures={picked.rest} />
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {rest.map((fixture) => (
+              {picked.rest.map((fixture) => (
                 <FixtureTile fixture={fixture} key={fixture.id} />
               ))}
             </div>
           )}
         </div>
-      ) : (
+      )
+    case 'rail':
+      return (
         <div
           className="-mx-[clamp(0.875rem,3vw,2.5rem)] mt-5 no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pt-0.5 pb-2.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] md:mx-0 md:gap-3.5 md:px-0.5"
           id={RAIL_ID}
         >
-          {rest.map((fixture) => (
+          {picked.fixtures.map((fixture) => (
             <FixtureTile
               className="w-[78%] flex-none snap-start md:w-77.5"
               fixture={fixture}
@@ -132,9 +146,8 @@ export function FixturesRail({
             />
           ))}
         </div>
-      )}
-    </SectionShell>
-  )
+      )
+  }
 }
 
 /** Jedna karta zápasu — v pásu (2 zápasy) i v mřížce pod nejbližším (3+). */
