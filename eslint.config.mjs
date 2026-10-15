@@ -73,7 +73,7 @@ const eslintConfig = [
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
-  globalIgnores(['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts']),
+  globalIgnores(['.next/', '.claude/', 'src/payload-types.ts', 'src/payload-generated-schema.ts']),
 ]
 
 export default eslintConfig
