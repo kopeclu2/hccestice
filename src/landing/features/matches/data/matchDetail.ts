@@ -46,10 +46,14 @@ export const resolveReport = async (match: Match): Promise<Post | null> => {
   // číslo se dotáhne, jinak by se publikovaná reportáž tiše ztratila.
   let linked = match.report ?? null
   if (typeof linked === 'number') {
-    linked = await payload
-      .findByID({ collection: 'posts', id: linked, depth: 1, select: REPORT_SELECT })
-      .then((doc) => doc as Post)
-      .catch(() => null)
+    const doc = await payload.findByID({
+      collection: 'posts',
+      id: linked,
+      depth: 1,
+      select: REPORT_SELECT,
+      disableErrors: true,
+    })
+    linked = doc as Post | null
   }
 
   // Druhý dotaz jen když ruční vazba nestačí.
@@ -155,9 +159,13 @@ export const fetchMatchSlugForPost = cache(async (post: Post): Promise<string | 
   const payload = await getPayloadClient()
   const matchId = relId(post.match)
   if (matchId) {
-    const match = await payload
-      .findByID({ collection: 'matches', id: matchId, depth: 0, select: { slug: true } })
-      .catch(() => null)
+    const match = await payload.findByID({
+      collection: 'matches',
+      id: matchId,
+      depth: 0,
+      select: { slug: true },
+      disableErrors: true,
+    })
     return match?.slug ?? null
   }
 

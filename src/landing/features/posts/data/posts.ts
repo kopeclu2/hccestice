@@ -166,7 +166,7 @@ export const fetchPostsPage = cachedQuery(
 /** Článek pro vypíchnutou kartu (s heroImage). */
 export const fetchPost = cache(async (postId: number): Promise<Post | null> => {
   const payload = await getPayloadClient()
-  return payload.findByID({ collection: 'posts', id: postId, depth: 1 })
+  return payload.findByID({ collection: 'posts', id: postId, depth: 1, disableErrors: true })
 })
 
 /* ── Detail článku (/aktuality/[slug]) ───────────────────────────────────── */

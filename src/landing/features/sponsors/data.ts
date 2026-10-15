@@ -35,5 +35,5 @@ export const fetchSponsors = cache(async (): Promise<Sponsor[]> => {
 /** Sponzor pro spotlight kartu (s logem). */
 export const fetchSponsor = cache(async (sponsorId: number): Promise<SponsorDoc | null> => {
   const payload = await getPayloadClient()
-  return payload.findByID({ collection: 'sponsors', id: sponsorId, depth: 1 })
+  return payload.findByID({ collection: 'sponsors', id: sponsorId, depth: 1, disableErrors: true })
 })

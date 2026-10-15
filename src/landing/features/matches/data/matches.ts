@@ -300,7 +300,12 @@ export const fetchSeasonForm = cachedQuery(
 /** Jeden zápas pro velkou kartu — depth 2 kvůli logu soupeře a reportáži. */
 export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardData | null> => {
   const payload = await getPayloadClient()
-  const match = await payload.findByID({ collection: 'matches', id: matchId, depth: 2 })
+  const match = await payload.findByID({
+    collection: 'matches',
+    id: matchId,
+    depth: 2,
+    disableErrors: true,
+  })
   if (!match) return null
 
   const opponent = typeof match.opponent === 'object' ? match.opponent : null

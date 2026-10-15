@@ -23,7 +23,7 @@ export const fetchProducts = cache(async (): Promise<Product[]> => {
 /** Jeden produkt (i nedostupný — karta ho může ukázat s upozorněním). */
 export const fetchProduct = cache(async (productId: number): Promise<Product | null> => {
   const payload = await getPayloadClient()
-  return payload.findByID({ collection: 'products', id: productId, depth: 1 })
+  return payload.findByID({ collection: 'products', id: productId, depth: 1, disableErrors: true })
 })
 
 /** Produkt podle slugu — pro detail stránku /produkty/{slug}. */

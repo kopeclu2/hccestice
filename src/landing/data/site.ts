@@ -75,7 +75,7 @@ export function mapFooter(site: SiteConfig): FooterContent {
 /** Osoba pro kontaktní kartu. */
 export const fetchPerson = cache(async (personId: number): Promise<Person | null> => {
   const payload = await getPayloadClient()
-  return payload.findByID({ collection: 'people', id: personId, depth: 1 })
+  return payload.findByID({ collection: 'people', id: personId, depth: 1, disableErrors: true })
 })
 
 /** Všichni lidé v klubu dle pořadí — realizační tým na /soupiska. */

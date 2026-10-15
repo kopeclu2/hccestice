@@ -16,8 +16,7 @@ import type { Gallery, Season } from '@/payload-types'
 /** Galerie podle id (s fotkami). */
 export const fetchGallery = cache(async (galleryId: number): Promise<Gallery | null> => {
   const payload = await getPayloadClient()
-  const gallery = await payload.findByID({ collection: 'galleries', id: galleryId, depth: 1 })
-  return gallery ?? null
+  return payload.findByID({ collection: 'galleries', id: galleryId, depth: 1, disableErrors: true })
 })
 
 /**
@@ -156,14 +155,13 @@ export const fetchAlbumGalleries = cache(
         select: LIST_SELECT,
       }),
       options.pinnedId
-        ? payload
-            .findByID({
-              collection: 'galleries',
-              id: options.pinnedId,
-              depth: 1,
-              select: LIST_SELECT,
-            })
-            .catch(() => null)
+        ? payload.findByID({
+            collection: 'galleries',
+            id: options.pinnedId,
+            depth: 1,
+            select: LIST_SELECT,
+            disableErrors: true,
+          })
         : null,
     ])
 
