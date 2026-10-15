@@ -45,8 +45,8 @@ export function DownloadsBlockComponent({ block }: { block: DownloadsBlock }) {
               <span className="bg-chip text-club-dark rounded-lg px-2.5 py-1.5 text-eyebrow font-extrabold tracking-wide">
                 {fileExtension(item.file.filename)}
               </span>
-              <span className="flex-1 text-body font-bold">{item.label || item.file.filename}</span>
-              <span className="text-faint text-caption font-semibold">
+              <span className="flex-1 text-sm md:text-base font-bold">{item.label || item.file.filename}</span>
+              <span className="text-faint text-xs font-semibold">
                 {formatFileSize(item.file.filesize)}
               </span>
               <span className="bg-lime text-ink grid size-8 flex-none place-items-center rounded-full [&_svg]:size-4">

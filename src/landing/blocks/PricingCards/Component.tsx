@@ -42,19 +42,19 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
                 <div className="mt-2 flex items-baseline gap-2">
                   <Numeral size="xl">{card.price}</Numeral>
                   {card.period && (
-                    <span className={cn('text-meta', highlighted ? 'text-white/65' : 'text-faint')}>
+                    <span className={cn('text-sm', highlighted ? 'text-white/65' : 'text-faint')}>
                       {card.period}
                     </span>
                   )}
                 </div>
                 {card.description && (
-                  <p className={cn('mt-2 text-meta', highlighted ? 'text-white/85' : 'text-dim')}>
+                  <p className={cn('mt-2 text-sm', highlighted ? 'text-white/85' : 'text-dim')}>
                     {card.description}
                   </p>
                 )}
                 <ul className="mt-5 flex flex-1 flex-col gap-2.5">
                   {(card.features ?? []).map((feature, featureIndex) => (
-                    <li className="flex items-start gap-2.5 text-meta" key={featureIndex}>
+                    <li className="flex items-start gap-2.5 text-sm" key={featureIndex}>
                       <Check
                         className={cn(
                           'mt-0.5 size-4 flex-none',

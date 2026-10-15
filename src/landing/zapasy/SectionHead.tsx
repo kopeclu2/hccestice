@@ -67,7 +67,7 @@ export function SectionHead({
             {note}
           </Eyebrow>
         ) : (
-          <span className="text-faint text-caption font-bold">{note}</span>
+          <span className="text-faint text-xs font-bold">{note}</span>
         ))}
       {children}
     </div>

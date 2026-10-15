@@ -68,7 +68,7 @@ export function ErrorMeta({
       <span className={cn('h-0.5 w-5.5 flex-none', tone === 'dark' ? 'bg-lime' : 'bg-club')} />
       <span
         className={cn(
-          'text-caption font-semibold',
+          'text-xs font-semibold',
           tone === 'dark' ? 'text-white/50' : 'text-faint',
         )}
       >

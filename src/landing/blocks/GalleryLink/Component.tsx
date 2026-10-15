@@ -71,7 +71,7 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
             <CardTitle className="line-clamp-2" size="xs">
               {label || card.title}
             </CardTitle>
-            <div className="text-faint mt-1.5 flex items-center gap-1.5 text-caption font-semibold">
+            <div className="text-faint mt-1.5 flex items-center gap-1.5 text-xs font-semibold">
               <ImageIcon size={13} strokeWidth={2.4} />
               {countLabel(card.photoCount, ['fotka', 'fotky', 'fotek'])}
             </div>

@@ -107,7 +107,7 @@ export function PlayerTile({ card }: { card: SoupiskaCard }) {
             sekaly, zatímco na 1024px a víc se obojí vejde. */}
         <CardTitle
           as="h4"
-          className="mt-1 max-lg:line-clamp-2 max-md:text-caption lg:truncate"
+          className="mt-1 max-lg:line-clamp-2 max-md:text-xs lg:truncate"
           size="sm"
         >
           {card.name}

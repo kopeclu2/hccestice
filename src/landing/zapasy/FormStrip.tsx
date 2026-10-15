@@ -41,7 +41,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
             Posledních {form.squares.length}{' '}
             {form.squares.length === 1 ? 'zápas' : form.squares.length <= 4 ? 'zápasy' : 'zápasů'}
           </CardTitle>
-          <div className="text-faint mt-0.75 text-caption font-semibold">{form.summary}</div>
+          <div className="text-faint mt-0.75 text-xs font-semibold">{form.summary}</div>
         </div>
 
         <div className="flex-1" />
@@ -50,7 +50,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
           {form.squares.map((square, index) => {
             const alignRight = index >= form.squares.length - 2
             const squareClass = cn(
-              'grid size-10 place-items-center rounded-field text-lead font-extrabold md:size-11',
+              'grid size-10 place-items-center rounded-field text-lg font-extrabold md:size-11',
               SQUARE_CLASS[square.outcome],
             )
             return (
@@ -79,7 +79,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
                     alignRight ? 'right-0' : 'left-1/2 -translate-x-1/2',
                   )}
                 >
-                  <div className="text-caption font-extrabold tabular-nums">
+                  <div className="text-xs font-extrabold tabular-nums">
                     {square.score}
                     {square.suffix && ` ${square.suffix}`}{' '}
                     <span className="text-lime">· {square.stage}</span>

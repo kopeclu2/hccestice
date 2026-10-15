@@ -63,7 +63,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
                 </TileBadge>
               )}
               {card.caption && (
-                <div className="absolute inset-x-4 bottom-4 text-body leading-normal font-semibold text-white">
+                <div className="absolute inset-x-4 bottom-4 text-sm md:text-base leading-normal font-semibold text-white">
                   {card.caption}
                 </div>
               )}

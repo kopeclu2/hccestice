@@ -158,7 +158,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
         <CardTitle as="h3" size="md">
           Tabulka <Highlight>VČHL</Highlight>
         </CardTitle>
-        <span className="text-faint text-caption">{standings.seasonLabel}</span>
+        <span className="text-faint text-xs">{standings.seasonLabel}</span>
       </div>
 
       {standings.rows.length === 0 ? (
@@ -190,25 +190,25 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                 )}
                 key={row.pos}
               >
-                <div className={cn('text-meta font-extrabold', isOurs ? 'text-club-dark' : 'text-faint')}>
+                <div className={cn('text-sm font-extrabold', isOurs ? 'text-club-dark' : 'text-faint')}>
                   {row.pos}.
                 </div>
                 <div
                   className={cn(
-                    'text-meta md:text-body',
+                    'text-sm md:text-base',
                     isOurs ? 'font-extrabold' : 'font-semibold',
                   )}
                 >
                   {row.team}
                 </div>
-                <div className="text-faint text-right text-meta">{row.games}</div>
-                <div className="text-right text-body font-extrabold">{row.points}</div>
+                <div className="text-faint text-right text-sm">{row.games}</div>
+                <div className="text-right text-sm md:text-base font-extrabold">{row.points}</div>
               </div>
             )
           })}
 
           <a
-            className="text-club-dark hover:text-club mt-3.5 inline-block text-meta font-bold"
+            className="text-club-dark hover:text-club mt-3.5 inline-block text-sm font-bold"
             href={standings.fullTableUrl}
             rel="noreferrer"
             target="_blank"

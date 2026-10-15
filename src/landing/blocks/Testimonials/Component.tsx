@@ -45,14 +45,14 @@ export function TestimonialsBlockComponent({ block }: { block: TestimonialsBlock
                       width={44}
                     />
                   ) : (
-                    <span className="bg-chip text-club-dark grid size-11 place-items-center rounded-full text-meta font-extrabold">
+                    <span className="bg-chip text-club-dark grid size-11 place-items-center rounded-full text-sm font-extrabold">
                       {item.name.charAt(0)}
                     </span>
                   )}
                   <span>
-                    <span className="block text-meta font-extrabold">{item.name}</span>
+                    <span className="block text-sm font-extrabold">{item.name}</span>
                     {item.role && (
-                      <span className="text-faint block text-caption font-semibold">
+                      <span className="text-faint block text-xs font-semibold">
                         {item.role}
                       </span>
                     )}

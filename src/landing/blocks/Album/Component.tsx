@@ -229,7 +229,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
               </Badge>
             )}
             {tile.title && (
-              <div className="text-shadow-photo line-clamp-2 text-caption leading-snug font-bold text-white">
+              <div className="text-shadow-photo line-clamp-2 text-xs leading-snug font-bold text-white">
                 {tile.title}
               </div>
             )}
@@ -241,14 +241,14 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
             /* Na mobilu o stupeň nižší řez a menší odsazení: 21px nadpis se
                v pásu lámal po slabikách („PLAY- / OFF o…"). Od `md` je
                dlaždice součástí mozaiky a platí velikost z handoffu. */
-            className="absolute right-14 bottom-3.5 left-4 line-clamp-2 text-lead tracking-[-0.02em] text-white md:right-18 md:bottom-4.5 md:left-5 md:text-card-title"
+            className="absolute right-14 bottom-3.5 left-4 line-clamp-2 text-lg tracking-[-0.02em] text-white md:right-18 md:bottom-4.5 md:left-5 md:text-xl"
             size="sm"
           >
             {tile.title}
           </CardTitle>
         )}
         {tile.title && tile.span === 'wide' && (
-          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-body font-bold text-white">
+          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm md:text-base font-bold text-white">
             {tile.title}
           </div>
         )}

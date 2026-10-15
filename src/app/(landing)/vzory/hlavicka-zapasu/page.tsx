@@ -120,14 +120,14 @@ export default async function MatchHeaderVariantsPage() {
         </PageTitle>
         <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
           Čtyři koncepty hlavičky stránky{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-meta">/zapasy/[slug]</code> vedle
+          <code className="bg-chip rounded px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
           současné podoby. Každý je vykreslený nad stejnými zápasy z databáze — po nájezdech, v
           normální hrací době, naplánovaný a soupeř bez znaku.
         </p>
         <nav aria-label="Varianty" className="mt-6 flex flex-wrap justify-center gap-2">
           {VARIANTS.map((variant) => (
             <a
-              className="border-line text-ink-soft hover:bg-chip rounded-full border px-4 py-1.5 text-caption font-semibold"
+              className="border-line text-ink-soft hover:bg-chip rounded-full border px-4 py-1.5 text-xs font-semibold"
               href={`#${variant.id}`}
               key={variant.id}
             >

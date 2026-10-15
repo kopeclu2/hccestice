@@ -137,7 +137,7 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
       <CardTitle as="h3" size="sm">
         {title}
       </CardTitle>
-      <p className="text-dim mt-2 text-caption leading-relaxed">{children}</p>
+      <p className="text-dim mt-2 text-xs leading-relaxed">{children}</p>
     </article>
   )
 }
@@ -220,7 +220,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
       {slot.venue && (
         <div
           className={cn(
-            'mt-1 text-caption font-semibold',
+            'mt-1 text-xs font-semibold',
             slot.accent ? 'text-faint-dark' : 'text-faint',
           )}
         >
@@ -228,7 +228,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
         </div>
       )}
       {slot.note && (
-        <div className={cn('mt-1 text-caption', slot.accent ? 'text-white/55' : 'text-dim')}>
+        <div className={cn('mt-1 text-xs', slot.accent ? 'text-white/55' : 'text-dim')}>
           {slot.note}
         </div>
       )}

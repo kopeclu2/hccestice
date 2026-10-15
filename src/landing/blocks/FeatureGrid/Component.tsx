@@ -63,7 +63,7 @@ export function FeatureGridBlockComponent({ block }: { block: FeatureGridBlock }
                 <CardTitle className="mt-4" size="xs">
                   {item.title}
                 </CardTitle>
-                <p className="text-dim mt-1.5 text-meta leading-relaxed text-pretty">{item.text}</p>
+                <p className="text-dim mt-1.5 text-sm leading-relaxed text-pretty">{item.text}</p>
               </div>
             </Reveal>
           )

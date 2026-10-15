@@ -58,10 +58,10 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
               přímo na tečku za „led". Dekorace proto naskakují až od `lg`. */}
           <div className="border-club/14 pointer-events-none absolute top-17 right-15 hidden size-37.5 rounded-full border-2 lg:block" />
           <div className="bg-lime pointer-events-none absolute top-30 right-27 hidden size-13 rounded-full opacity-55 lg:block" />
-          <div className="text-club/22 pointer-events-none absolute top-37 left-11 hidden origin-top-left -rotate-90 text-body font-extrabold tracking-[0.3em] whitespace-nowrap uppercase md:block">
+          <div className="text-club/22 pointer-events-none absolute top-37 left-11 hidden origin-top-left -rotate-90 text-sm md:text-base font-extrabold tracking-[0.3em] whitespace-nowrap uppercase md:block">
             HC ČESTICE · VČHL
           </div>
-          <div className="text-club/22 pointer-events-none absolute right-11 bottom-37 hidden origin-bottom-right rotate-90 text-body font-extrabold tracking-[0.3em] whitespace-nowrap uppercase md:block">
+          <div className="text-club/22 pointer-events-none absolute right-11 bottom-37 hidden origin-bottom-right rotate-90 text-sm md:text-base font-extrabold tracking-[0.3em] whitespace-nowrap uppercase md:block">
             POJĎME NA LED
           </div>
 

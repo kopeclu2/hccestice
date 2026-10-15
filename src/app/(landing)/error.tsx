@@ -54,7 +54,7 @@ export default function Error({
           Technická přestávka <span className="text-lime">na naší straně</span>
         </PageTitle>
 
-        <p className="mt-4.5 max-w-130 text-lead leading-[1.55] text-white/72 text-pretty">
+        <p className="mt-4.5 max-w-130 text-lg leading-[1.55] text-white/72 text-pretty">
           Na serveru se něco pokazilo. Už na tom pracujeme — zkuste stránku za chvíli obnovit.
         </p>
 

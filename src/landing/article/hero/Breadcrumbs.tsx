@@ -36,7 +36,7 @@ export function Breadcrumbs({
   return (
     <div
       className={cn(
-        'flex items-center gap-2 text-caption font-semibold',
+        'flex items-center gap-2 text-xs font-semibold',
         tone === 'light' && 'text-faint',
         className,
       )}

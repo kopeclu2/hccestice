@@ -63,11 +63,11 @@ function PostFeatureView({
         {tag}
       </TileBadge>
       <div className="absolute inset-x-5.5 bottom-5.5 text-white">
-        <div className="text-caption font-semibold opacity-75">{dateLabel}</div>
+        <div className="text-xs font-semibold opacity-75">{dateLabel}</div>
         <CardTitle as="h3" className="mt-1.5 max-w-160 text-pretty text-white" size="lg">
           {title}
         </CardTitle>
-        {perex && <div className="mt-2 max-w-160 text-meta opacity-85">{perex}</div>}
+        {perex && <div className="mt-2 max-w-160 text-sm opacity-85">{perex}</div>}
       </div>
     </PhotoTile>
   )

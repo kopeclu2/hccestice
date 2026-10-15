@@ -12,8 +12,8 @@ import { cn } from '@/utilities/ui'
  *
  * Škála (mobil → desktop):
  * - `PageTitle`    h1, hero stránky — clamp, 34→72px
- * - `SectionTitle` h2, nadpis sekce — 28→34px (`size="lg"` 28→40px)
- * - `CardTitle`    h3/h4, nadpis karty — 17px / 24px / 26→30px
+ * - `SectionTitle` h2, nadpis sekce — 30→36px (`size="xl"` 30→48px)
+ * - `CardTitle`    h3/h4, nadpis karty — 18px / 20px / 24px / 24→30px
  */
 
 /* ── h1 ─────────────────────────────────────────────────────────────────── */
@@ -84,12 +84,12 @@ export function PageTitle({
 const sectionTitleVariants = cva('', {
   variants: {
     size: {
-      /** Základní nadpis sekce — 28px mobil, 34px desktop. */
-      md: 'text-section-title font-bold tracking-[-0.025em] md:text-section-title-md',
-      /** Zvýrazněná sekce (CTA banner, hero panel) — 28px → 40px. */
-      lg: 'text-section-title leading-tight font-extrabold tracking-[-0.03em] text-pretty md:text-section-title-lg',
-      /** Claim ve footeru — největší nadpis mimo hero, 32px → 52px. */
-      xl: 'text-claim leading-tight font-extrabold tracking-[-0.035em] text-pretty md:text-claim-lg',
+      /** Základní nadpis sekce — 30px mobil, 36px desktop. */
+      md: 'text-3xl leading-tight font-bold tracking-[-0.025em] md:text-4xl',
+      /** Zvýrazněná sekce (CTA banner, hero panel) — 30px → 36px. */
+      lg: 'text-3xl leading-tight font-extrabold tracking-[-0.03em] text-pretty md:text-4xl',
+      /** Claim ve footeru — největší nadpis mimo hero, 30px → 48px. */
+      xl: 'text-3xl leading-tight font-extrabold tracking-[-0.035em] text-pretty md:text-5xl',
     },
   },
   defaultVariants: { size: 'md' },
@@ -112,14 +112,14 @@ export function SectionTitle({ children, className, size, ...props }: SectionTit
 const cardTitleVariants = cva('', {
   variants: {
     size: {
-      /** Nadpis v hustém výpisu (řádek zápasu, milník, mini dlaždice) — 17px. */
-      xs: 'text-lead leading-tight font-extrabold',
-      /** Nadpis karty v gridu (článek, galerie, trénink) — 21px. */
-      sm: 'text-card-title leading-[1.15] font-extrabold tracking-[-0.02em] text-pretty',
+      /** Nadpis v hustém výpisu (řádek zápasu, milník, mini dlaždice) — 18px. */
+      xs: 'text-lg leading-tight font-extrabold',
+      /** Nadpis karty v gridu (článek, galerie, trénink) — 20px. */
+      sm: 'text-xl leading-[1.15] font-extrabold tracking-[-0.02em] text-pretty',
       /** Základní nadpis karty — 24px. */
       md: 'text-2xl font-bold tracking-[-0.025em]',
-      /** Nadpis velkého panelu — 26px mobil, 30px desktop. */
-      lg: 'text-panel-title font-extrabold tracking-[-0.025em] md:text-panel-title-lg',
+      /** Nadpis velkého panelu — 24px mobil, 30px desktop. */
+      lg: 'text-2xl font-extrabold tracking-[-0.025em] md:text-3xl',
     },
   },
   defaultVariants: { size: 'md' },

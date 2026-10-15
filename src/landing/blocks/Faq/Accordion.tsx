@@ -42,7 +42,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 </span>
               </button>
               {isOpen && (
-                <p className="text-dim max-w-160 px-4.5 pb-4 text-body leading-relaxed text-pretty md:px-5 md:pb-4.25 lg:px-5.5 lg:pb-4.5">
+                <p className="text-dim max-w-160 px-4.5 pb-4 text-sm md:text-base leading-relaxed text-pretty md:px-5 md:pb-4.25 lg:px-5.5 lg:pb-4.5">
                   {item.answer}
                 </p>
               )}

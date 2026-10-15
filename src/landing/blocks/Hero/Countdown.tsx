@@ -14,7 +14,7 @@ import React from 'react'
  */
 /** Číslice odpočtu; pod 360 px o stupeň menší (viz komentář u řádku). */
 const DIGITS =
-  'text-[clamp(1.5rem,2.6vw,2.625rem)] font-extrabold tracking-tight max-[22.5rem]:text-numeral-sm'
+  'text-[clamp(1.5rem,2.6vw,2.625rem)] font-extrabold tracking-tight max-[22.5rem]:text-2xl'
 
 export function Countdown({ targetISO }: { targetISO: string }) {
   const [remainingMs, setRemainingMs] = React.useState<number | null>(null)
@@ -73,7 +73,7 @@ export function Countdown({ targetISO }: { targetISO: string }) {
           >
             {unit.value}
           </span>
-          <span className="text-caption font-semibold text-white/55">{unit.label}</span>
+          <span className="text-xs font-semibold text-white/55">{unit.label}</span>
         </span>
       ))}
     </div>

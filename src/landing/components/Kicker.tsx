@@ -73,7 +73,7 @@ export function Kicker({ children, className }: { children: React.ReactNode; cla
   return (
     <span
       className={cn(
-        'inline-block rounded-full border border-line px-4 py-1.5 text-caption font-semibold text-ink-soft',
+        'inline-block rounded-full border border-line px-4 py-1.5 text-xs font-semibold text-ink-soft',
         className,
       )}
     >

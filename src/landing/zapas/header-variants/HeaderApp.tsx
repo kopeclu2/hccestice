@@ -95,7 +95,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     <th className="py-2 pr-2 text-left md:py-2.5" scope="row">
                       <span className="flex items-center gap-2.5 md:gap-3">
                         <Crest
-                          className="size-7 text-caption md:size-9 md:text-meta"
+                          className="size-7 text-xs md:size-9 md:text-sm"
                           logo={row.logo}
                           name={row.name}
                           sizes="36px"
@@ -103,7 +103,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                         />
                         <span
                           className={cn(
-                            'min-w-0 text-meta leading-tight text-balance break-words md:text-lead',
+                            'min-w-0 text-sm leading-tight text-balance break-words md:text-lg',
                             lost ? 'text-ink-soft font-semibold' : 'font-extrabold',
                           )}
                         >
@@ -122,7 +122,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     </th>
                     {columns.map((column) => (
                       <td
-                        className="text-faint py-2 text-center text-meta font-semibold max-[22.5rem]:hidden md:py-2.5 md:text-body"
+                        className="text-faint py-2 text-center text-sm font-semibold max-[22.5rem]:hidden md:py-2.5 md:text-base"
                         key={column.label}
                       >
                         {column[row.side]}
@@ -130,7 +130,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
                     ))}
                     <td
                       className={cn(
-                        'py-2 text-right text-numeral-sm leading-none font-extrabold md:py-2.5 md:text-numeral-lg',
+                        'py-2 text-right text-2xl leading-none font-extrabold md:py-2.5 md:text-3xl',
                         lost && 'text-faint',
                         !played && 'text-inactive',
                       )}
@@ -146,7 +146,7 @@ export function HeaderApp({ match, titleAs = 'h1' }: HeaderVariantProps) {
           {columns.length > 0 && (
             <p
               aria-hidden
-              className="text-faint mt-2 text-caption font-semibold min-[22.5rem]:hidden"
+              className="text-faint mt-2 text-xs font-semibold min-[22.5rem]:hidden"
             >
               {columns
                 .map(
@@ -177,7 +177,7 @@ function Status({ match }: { match: MatchDetail }) {
     return (
       <span className="bg-tint text-club inline-flex items-center gap-2 rounded-full px-3 py-1">
         <span aria-hidden className="bg-lime shadow-ring-lime size-1.5 rounded-full" />
-        <VariantCountdown className="text-caption" look="inline" targetISO={match.kickoffISO} />
+        <VariantCountdown className="text-xs" look="inline" targetISO={match.kickoffISO} />
       </span>
     )
   }
@@ -198,7 +198,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
       <Fact label="Datum">
         {match.dateLabel}
         {day && (
-          <span className="text-faint block text-caption font-semibold capitalize">{day}</span>
+          <span className="text-faint block text-xs font-semibold capitalize">{day}</span>
         )}
       </Fact>
       <Fact label="Buly">{match.timeLabel}</Fact>
@@ -208,7 +208,7 @@ function Facts({ match, played }: { match: MatchDetail; played: boolean }) {
           <Badge size="xs" variant={outcome.variant}>
             {outcome.label}
           </Badge>
-          {note && <span className="text-faint mt-1 block text-caption font-semibold">{note}</span>}
+          {note && <span className="text-faint mt-1 block text-xs font-semibold">{note}</span>}
         </Fact>
       ) : (
         <Fact label="Strana">
@@ -227,7 +227,7 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dt>
         <Eyebrow tight>{label}</Eyebrow>
       </dt>
-      <dd className="mt-0.5 text-meta font-bold [overflow-wrap:anywhere]">{children}</dd>
+      <dd className="mt-0.5 text-sm font-bold [overflow-wrap:anywhere]">{children}</dd>
     </div>
   )
 }

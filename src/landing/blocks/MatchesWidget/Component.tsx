@@ -79,10 +79,10 @@ export function MatchesWidgetView({
                 key={row.id}
               >
                 <div className="col-span-2 flex items-baseline gap-2 md:col-span-1 md:block">
-                  <div className="text-body font-extrabold">{row.dateLabel}</div>
+                  <div className="text-sm md:text-base font-extrabold">{row.dateLabel}</div>
                   <div className="text-faint text-eyebrow">{row.timeLabel}</div>
                 </div>
-                <div className="text-body font-bold">
+                <div className="text-sm md:text-base font-bold">
                   <StretchedLink href={row.href}>{row.title}</StretchedLink>
                 </div>
                 {row.score ? (

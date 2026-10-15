@@ -31,7 +31,7 @@ export default async function CookiesPage() {
     <SubpageShell>
       <SectionShell spacing="header">
         <PageTitle size="sm">Ochrana osobních údajů a cookies</PageTitle>
-        <p className="mt-3 text-caption text-dim">Naposledy aktualizováno 10. 9. 2026</p>
+        <p className="mt-3 text-xs text-dim">Naposledy aktualizováno 10. 9. 2026</p>
       </SectionShell>
 
       <SectionShell spacing="content">

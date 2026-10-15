@@ -110,7 +110,7 @@ function SponsorsView({
             <PillLink href="/sponzori" variant="outline" withArrow>
               Všichni partneři
             </PillLink>
-            <span className="text-faint text-meta font-semibold">{count}</span>
+            <span className="text-faint text-sm font-semibold">{count}</span>
           </div>
         </div>
       </Reveal>
@@ -170,7 +170,7 @@ function SponsorTile({ sponsor }: { sponsor: Sponsor }) {
   )
 
   const className =
-    'group border-line-soft hover:border-club hover:shadow-tile grid h-22 min-w-47.5 flex-none place-items-center rounded-badge border bg-surface px-6.5 text-body font-extrabold tracking-tight whitespace-nowrap transition duration-200 hover:-translate-y-0.5'
+    'group border-line-soft hover:border-club hover:shadow-tile grid h-22 min-w-47.5 flex-none place-items-center rounded-badge border bg-surface px-6.5 text-sm md:text-base font-extrabold tracking-tight whitespace-nowrap transition duration-200 hover:-translate-y-0.5'
 
   return sponsor.url ? (
     <a

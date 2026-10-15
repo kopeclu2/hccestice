@@ -106,7 +106,7 @@ function GalleryCardTile({ card }: { card: GalleryCard }) {
       </div>
       {/* flex-1 + mt-auto v CardCta: odkaz drží u spodní hrany i u kratších titulků */}
       <div className="flex flex-1 flex-col px-2.5 pt-4">
-        <div className="text-faint text-caption font-bold">{card.dateLabel}</div>
+        <div className="text-faint text-xs font-bold">{card.dateLabel}</div>
         <CardTitle className="mt-2 line-clamp-3" size="sm">
           {card.title}
         </CardTitle>

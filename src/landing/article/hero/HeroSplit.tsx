@@ -30,7 +30,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
           <TitleParts accent="lime-box" highlight={article.titleHighlight} title={article.title} />
         </PageTitle>
         {article.excerpt && (
-          <p className="text-ink-soft mt-5 max-w-130 text-lead leading-relaxed text-pretty">
+          <p className="text-ink-soft mt-5 max-w-130 text-lg leading-relaxed text-pretty">
             {article.excerpt}
           </p>
         )}
@@ -55,7 +55,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
           />
         )}
         {article.photoCaption && (
-          <span className="bg-pine-deep/72 absolute bottom-4 left-4 rounded-full px-4 py-2 text-caption font-semibold text-white backdrop-blur-md">
+          <span className="bg-pine-deep/72 absolute bottom-4 left-4 rounded-full px-4 py-2 text-xs font-semibold text-white backdrop-blur-md">
             {article.photoCaption}
           </span>
         )}

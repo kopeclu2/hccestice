@@ -46,11 +46,11 @@ const badgeVariants = cva('inline-flex items-center rounded-full whitespace-nowr
       /** Drobný štítek v hustých výpisech (11px text). */
       xs: 'px-3 py-1.25 text-eyebrow',
       /** Základní štítek u karet a řádků. */
-      sm: 'px-3 py-1.25 text-caption',
+      sm: 'px-3 py-1.25 text-xs',
       /** Volnější štítek v textových sekcích. */
-      md: 'px-4 py-1.75 text-caption',
+      md: 'px-4 py-1.75 text-xs',
       /** Štítek v rytmu pilulek (`PillLink size="sm"`) — kontakty, adresy. */
-      lg: 'px-4.5 py-2.25 text-meta',
+      lg: 'px-4.5 py-2.25 text-sm',
     },
     /**
      * Uppercase varianta (kategorie článku). Prostrkání je jemnější než

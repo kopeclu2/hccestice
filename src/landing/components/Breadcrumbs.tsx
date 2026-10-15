@@ -22,7 +22,7 @@ export function Breadcrumbs({ className, trail }: { className?: string; trail: C
   return (
     <nav aria-label="Drobečková navigace" className={cn('mb-5', className)}>
       <BreadcrumbsJsonLd trail={trail} />
-      <ol className="text-faint m-0 flex list-none items-center gap-2 p-0 text-caption font-semibold">
+      <ol className="text-faint m-0 flex list-none items-center gap-2 p-0 text-xs font-semibold">
         <li>
           <Link className="text-club-dark hover:text-club transition-colors" href="/">
             Domů

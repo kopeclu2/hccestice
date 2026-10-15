@@ -66,7 +66,7 @@ export function MaintenanceScreen({
           <HeadlineWithAccent>{maintenance.headline}</HeadlineWithAccent>
         </PageTitle>
 
-        <p className="text-ink-soft mt-4.5 max-w-115 text-lead leading-[1.55] text-pretty">
+        <p className="text-ink-soft mt-4.5 max-w-115 text-lg leading-[1.55] text-pretty">
           {maintenance.perex}
         </p>
 

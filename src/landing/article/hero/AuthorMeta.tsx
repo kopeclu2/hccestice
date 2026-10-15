@@ -42,7 +42,7 @@ export function AuthorMeta({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center gap-x-4.5 gap-y-3 text-meta font-semibold',
+        'flex flex-wrap items-center gap-x-4.5 gap-y-3 text-sm font-semibold',
         rowClass[tone],
         className,
       )}

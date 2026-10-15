@@ -50,7 +50,7 @@ export function KontaktInfoPanel({ site }: { site: SiteLinks }) {
         </span>
       </a>
 
-      <p className="text-dim mt-4 text-meta leading-relaxed text-pretty">
+      <p className="text-dim mt-4 text-sm leading-relaxed text-pretty">
         Obvykle odpovídáme do pár dní. Když to spěchá, zavolejte přímo někomu z realizačního týmu.
       </p>
 

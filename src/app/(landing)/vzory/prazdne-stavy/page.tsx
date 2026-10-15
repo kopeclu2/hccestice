@@ -32,7 +32,7 @@ export default function EmptyStatesPage() {
           Prázdné stavy
         </PageTitle>
         <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
-          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-meta">EmptyState</code>{' '}
+          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-sm">EmptyState</code>{' '}
           — vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
         </p>
       </header>

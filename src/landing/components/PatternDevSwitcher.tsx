@@ -115,7 +115,7 @@ export function PatternDevSwitcher() {
         {VARIANTS.map((item) => (
           <button
             className={cn(
-              'cursor-pointer rounded-full px-3 py-2 text-caption font-bold whitespace-nowrap transition-colors',
+              'cursor-pointer rounded-full px-3 py-2 text-xs font-bold whitespace-nowrap transition-colors',
               state.variant === item.id
                 ? 'bg-lime text-ink'
                 : 'text-white/80 hover:bg-white/10 hover:text-white',
@@ -131,7 +131,7 @@ export function PatternDevSwitcher() {
         <span className="mx-1 h-5 w-px bg-white/15" />
 
         <button
-          className="cursor-pointer rounded-full px-3 py-2 text-caption font-bold whitespace-nowrap text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          className="cursor-pointer rounded-full px-3 py-2 text-xs font-bold whitespace-nowrap text-white/80 transition-colors hover:bg-white/10 hover:text-white"
           onClick={() => update({ fade: cycle(FADES, state.fade) })}
           title="Přepnout fade masku"
           type="button"
@@ -140,7 +140,7 @@ export function PatternDevSwitcher() {
         </button>
 
         <button
-          className="cursor-pointer rounded-full px-3 py-2 text-caption font-bold whitespace-nowrap text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+          className="cursor-pointer rounded-full px-3 py-2 text-xs font-bold whitespace-nowrap text-white/80 transition-colors hover:bg-white/10 hover:text-white"
           onClick={() => update({ tone: cycle(TONES, state.tone) })}
           title="Přepnout barvu vzoru"
           type="button"

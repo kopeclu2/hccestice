@@ -49,7 +49,7 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
       </PageTitle>
 
       {article.excerpt && (
-        <p className="text-ink-soft mt-6.5 max-w-160 text-lead leading-relaxed text-pretty">
+        <p className="text-ink-soft mt-6.5 max-w-160 text-lg leading-relaxed text-pretty">
           {article.excerpt}
         </p>
       )}

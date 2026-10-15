@@ -29,7 +29,7 @@ export function StatCardsBlockComponent({ block }: { block: StatCardsBlockType }
           </Numeral>
           <div
             className={cn(
-              'mt-1 text-meta font-semibold',
+              'mt-1 text-sm font-semibold',
               item.dark ? 'text-white/60' : 'text-faint',
             )}
           >

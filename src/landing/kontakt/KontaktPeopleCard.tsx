@@ -59,7 +59,7 @@ function PersonContactTile({ person }: { person: PersonCard }) {
         <div className="mt-2 flex flex-col gap-1">
           {person.phone && (
             <a
-              className="text-ink-soft hover:text-club flex items-center gap-1.5 text-caption font-semibold transition-colors"
+              className="text-ink-soft hover:text-club flex items-center gap-1.5 text-xs font-semibold transition-colors"
               href={`tel:${person.phone.replace(/\s/g, '')}`}
             >
               <Phone className="size-3.5 flex-none" /> {person.phone}
@@ -67,7 +67,7 @@ function PersonContactTile({ person }: { person: PersonCard }) {
           )}
           {person.mail && (
             <a
-              className="text-ink-soft hover:text-club flex items-center gap-1.5 text-caption font-semibold break-all transition-colors"
+              className="text-ink-soft hover:text-club flex items-center gap-1.5 text-xs font-semibold break-all transition-colors"
               href={`mailto:${person.mail}`}
             >
               <Mail className="size-3.5 flex-none" /> {person.mail}

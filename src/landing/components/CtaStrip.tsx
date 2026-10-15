@@ -68,7 +68,7 @@ export function CtaStrip({
 
         <div className="relative min-w-60">
           <CardTitle size="lg">{headline}</CardTitle>
-          {perex && <div className={cn('mt-1.5 text-body', perexTone[tone])}>{perex}</div>}
+          {perex && <div className={cn('mt-1.5 text-sm md:text-base', perexTone[tone])}>{perex}</div>}
         </div>
 
         <div className="flex-1" />

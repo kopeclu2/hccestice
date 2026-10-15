@@ -40,7 +40,7 @@ function PersonCardView({ person }: { person: PersonCard }) {
             <CardTitle as="h3" className="mt-0.5" size="sm">
               {person.name}
             </CardTitle>
-            {person.note && <p className="text-dim mt-1 text-meta">{person.note}</p>}
+            {person.note && <p className="text-dim mt-1 text-sm">{person.note}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
               {person.phone && (
                 <PillLink

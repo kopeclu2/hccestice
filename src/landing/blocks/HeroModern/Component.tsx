@@ -79,7 +79,7 @@ function HeroModernView({
                 {content.cta.label}
               </PillLink>
             )}
-            <p className="text-shadow-photo mt-4.5 mb-4 max-w-110 text-lead leading-snug text-pretty text-white/92">
+            <p className="text-shadow-photo mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-white/92">
               {content.intro}
             </p>
             {/* dvouřádkový headline: základ regular (PageTitle weight="normal"),

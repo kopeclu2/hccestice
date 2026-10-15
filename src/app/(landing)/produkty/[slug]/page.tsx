@@ -60,7 +60,7 @@ export default async function ProductDetailPage({ params }: Args) {
       />
       <div className="mx-auto max-w-[80rem] pt-10">
         <Link
-          className="text-faint hover:text-club inline-flex items-center gap-2 text-meta font-bold transition-colors [&_svg]:size-4"
+          className="text-faint hover:text-club inline-flex items-center gap-2 text-sm font-bold transition-colors [&_svg]:size-4"
           href="/produkty-merch"
         >
           <ArrowLeft strokeWidth={2.5} /> Zpět na Produkty merch
@@ -107,11 +107,11 @@ export default async function ProductDetailPage({ params }: Args) {
               </div>
               <div className="mt-3">
                 {product.available ? (
-                  <span className="text-club-dark inline-flex items-center gap-1.5 text-meta font-bold [&_svg]:size-4">
+                  <span className="text-club-dark inline-flex items-center gap-1.5 text-sm font-bold [&_svg]:size-4">
                     <CircleCheck strokeWidth={2.5} /> V nabídce
                   </span>
                 ) : (
-                  <span className="text-faint inline-flex items-center gap-1.5 text-meta font-bold [&_svg]:size-4">
+                  <span className="text-faint inline-flex items-center gap-1.5 text-sm font-bold [&_svg]:size-4">
                     <CircleX strokeWidth={2.5} /> Momentálně mimo nabídku
                   </span>
                 )}
@@ -130,7 +130,7 @@ export default async function ProductDetailPage({ params }: Args) {
                 <div className="flex flex-wrap gap-2">
                   {(product.sizes ?? []).map((size) => (
                     <span
-                      className="border-line rounded-xl border bg-surface px-4 py-2 text-meta font-bold"
+                      className="border-line rounded-xl border bg-surface px-4 py-2 text-sm font-bold"
                       key={size.id}
                     >
                       {size.label}
@@ -152,7 +152,7 @@ export default async function ProductDetailPage({ params }: Args) {
                 >
                   <Mail strokeWidth={2.5} /> Objednat e-mailem
                 </PillLink>
-                <p className="text-faint mt-2 text-center text-caption font-semibold">
+                <p className="text-faint mt-2 text-center text-xs font-semibold">
                   {product.orderNote ??
                     'V objednávce uveďte název předmětu, velikost a počet kusů.'}
                 </p>
@@ -170,8 +170,8 @@ export default async function ProductDetailPage({ params }: Args) {
                       className="border-line-soft flex items-center justify-between gap-6 border-b py-3 last:border-b-0"
                       key={param.id}
                     >
-                      <dt className="text-faint text-meta font-semibold">{param.label}</dt>
-                      <dd className="text-right text-meta font-bold">{param.value}</dd>
+                      <dt className="text-faint text-sm font-semibold">{param.label}</dt>
+                      <dd className="text-right text-sm font-bold">{param.value}</dd>
                     </div>
                   ))}
                 </dl>

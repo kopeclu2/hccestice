@@ -103,11 +103,11 @@ export function NextMatchPanel({
               údaji, ne uvnitř nich a bez visící tečky (`MatchMeta`). */}
           {typeof subtitle === 'string' ? (
             <MatchMeta
-              className="mt-1.5 text-meta font-normal text-white/65"
+              className="mt-1.5 text-sm font-normal text-white/65"
               items={subtitle.split(' · ')}
             />
           ) : (
-            subtitle && <div className="mt-1.5 text-meta text-white/65">{subtitle}</div>
+            subtitle && <div className="mt-1.5 text-sm text-white/65">{subtitle}</div>
           )}
           {meta}
         </div>

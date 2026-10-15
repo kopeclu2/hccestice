@@ -44,7 +44,7 @@ export function HeaderEditorial({ match, titleAs = 'h1' }: HeaderVariantProps) {
 
         {played ? <PlayedSpread match={match} /> : <UpcomingSpread match={match} />}
 
-        <p className="text-dim mx-auto mt-6 max-w-160 text-center text-body leading-relaxed text-pretty md:mt-8 md:text-lead">
+        <p className="text-dim mx-auto mt-6 max-w-160 text-center text-sm leading-relaxed text-pretty md:mt-8 md:text-lg">
           {standfirst(match)}
         </p>
 
@@ -61,12 +61,12 @@ function Masthead({ match }: { match: MatchDetail }) {
     <div>
       <div className="border-ink flex flex-wrap items-end justify-between gap-x-6 gap-y-1 border-b-2 pb-2">
         <Eyebrow tone="club">{competitionLabel(match)}</Eyebrow>
-        <span className="text-caption font-semibold">
+        <span className="text-xs font-semibold">
           {day && <span className="capitalize">{day} </span>}
           {match.dateLabel}
         </span>
       </div>
-      <div className="border-line text-faint flex flex-wrap justify-between gap-x-6 border-b py-1.5 text-caption font-semibold">
+      <div className="border-line text-faint flex flex-wrap justify-between gap-x-6 border-b py-1.5 text-xs font-semibold">
         <span>{match.seasonLabel ? `Sezóna ${match.seasonLabel}` : 'HC Čestice'}</span>
         <span>
           {match.status === 'played'
@@ -99,7 +99,7 @@ function PlayedSpread({ match }: { match: MatchDetail }) {
           <Digit filled={winner === 'away'}>{match.awayScore}</Digit>
         </div>
         {match.suffix && (
-          <span className="text-club absolute top-1 right-0 translate-x-[calc(100%+0.75rem)] text-caption font-bold [writing-mode:vertical-rl] max-sm:static max-sm:mt-2 max-sm:block max-sm:translate-x-0 max-sm:text-center max-sm:[writing-mode:horizontal-tb]">
+          <span className="text-club absolute top-1 right-0 translate-x-[calc(100%+0.75rem)] text-xs font-bold [writing-mode:vertical-rl] max-sm:static max-sm:mt-2 max-sm:block max-sm:translate-x-0 max-sm:text-center max-sm:[writing-mode:horizontal-tb]">
             {SUFFIX_NOTE[match.suffix]}
           </span>
         )}
@@ -156,7 +156,7 @@ function TeamBlock({
         className={cn('flex items-center gap-2', align === 'end' && 'flex-row-reverse lg:flex-row')}
       >
         <Crest
-          className="size-8 text-caption md:size-10 md:text-meta"
+          className="size-8 text-xs md:size-10 md:text-sm"
           logo={logo}
           name={name}
           sizes="40px"
@@ -166,7 +166,7 @@ function TeamBlock({
       </span>
       <span
         className={cn(
-          'mt-2 text-lead leading-[1.05] font-extrabold tracking-[-0.03em] text-balance break-words min-[25rem]:text-card-title md:text-section-title-md lg:text-section-title-lg',
+          'mt-2 text-lg leading-[1.05] font-extrabold tracking-[-0.03em] text-balance break-words min-[25rem]:text-xl md:text-4xl lg:text-4xl',
           !won && 'text-ink-soft',
         )}
       >
@@ -197,15 +197,15 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
       )}
       <div aria-hidden className="mt-4 flex items-center gap-2.5 md:mt-6">
         <Crest
-          className="size-9 text-meta md:size-11"
+          className="size-9 text-sm md:size-11"
           logo={match.homeLogo}
           name={match.homeName}
           sizes="44px"
           tone="light"
         />
-        <span className="text-faint text-meta font-bold">×</span>
+        <span className="text-faint text-sm font-bold">×</span>
         <Crest
-          className="size-9 text-meta md:size-11"
+          className="size-9 text-sm md:size-11"
           logo={match.awayLogo}
           name={match.awayName}
           sizes="44px"
@@ -214,7 +214,7 @@ function UpcomingSpread({ match }: { match: MatchDetail }) {
       </div>
       <p
         aria-hidden
-        className="mt-3 max-w-200 text-center text-card-title leading-[1.05] font-extrabold tracking-[-0.03em] text-balance md:text-section-title-md lg:text-section-title-lg"
+        className="mt-3 max-w-200 text-center text-xl leading-[1.05] font-extrabold tracking-[-0.03em] text-balance md:text-4xl lg:text-4xl"
       >
         {/* Zlom jen za „×", ne uvnitř jména týmu (viz `TeamPair`). */}
         <TeamPair away={match.awayName} home={match.homeName} />
@@ -282,7 +282,7 @@ function Dateline({ match, played }: { match: MatchDetail; played: boolean }) {
             {columns.map((column) => (
               <span className="whitespace-nowrap" key={column.label}>
                 {column.label.length > 1 || column.label === 'P' ? (
-                  <abbr className="text-faint mr-1 text-caption no-underline" title={column.title}>
+                  <abbr className="text-faint mr-1 text-xs no-underline" title={column.title}>
                     {column.label}
                   </abbr>
                 ) : null}
@@ -321,7 +321,7 @@ function Item({
       <dt>
         <Eyebrow>{label}</Eyebrow>
       </dt>
-      <dd className="mt-1 text-meta font-bold [overflow-wrap:anywhere] md:text-body">{children}</dd>
+      <dd className="mt-1 text-sm font-bold [overflow-wrap:anywhere] md:text-base">{children}</dd>
     </div>
   )
 }
