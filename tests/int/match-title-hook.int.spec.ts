@@ -59,12 +59,23 @@ describe('resolveOpponent', () => {
     expect(find).toHaveBeenCalledTimes(1)
   })
 
-  it('různí soupeři se nepletou a bez contextu se jen nememoizuje', async () => {
+  it('různí soupeři se nepletou a opakovaný dotaz v téže operaci se nenačítá znovu', async () => {
     const find = vi.fn(async ({ id }: { id: number }) => ({ id, name: `T${id}`, slug: `t${id}` }))
     const req = { payload: { findByID: find } } as unknown as PayloadRequest
     expect((await resolveOpponent(req, 1))?.name).toBe('T1')
     expect((await resolveOpponent(req, 2))?.name).toBe('T2')
     await resolveOpponent(req, 1)
-    expect(find).toHaveBeenCalledTimes(3)
+    expect(find).toHaveBeenCalledTimes(2)
+  })
+
+  it('paměť nepřežije operaci, ani když seed předává sdílený context', async () => {
+    const find = vi.fn(async () => opponent)
+    const context = {}
+    const first = { payload: { findByID: find }, context } as unknown as PayloadRequest
+    const second = { payload: { findByID: find }, context } as unknown as PayloadRequest
+    await resolveOpponent(first, 5)
+    await resolveOpponent(second, 5)
+    expect(find).toHaveBeenCalledTimes(2)
+    expect(context).toEqual({})
   })
 })

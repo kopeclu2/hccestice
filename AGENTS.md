@@ -1205,7 +1205,7 @@ zápasu" ve stylu Livesportu a karta reportáže.
 | fetchery | `src/landing/features/matches/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
 | view-model | `src/landing/features/matches/view/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` (jediný zdroj pravidel zápasu: `orient` NAŠE:SOUPEŘ → domácí:hosté, `ScoreSuffix`, `SUFFIX_NOTE`, `outcomeNote`, `sideLabel`), `fixturesLayout.ts` (`pickLayout` pro `FixturesRail`) |
 | komponenty | `src/landing/features/matches/components/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/features/matches/components/MatchScoreboard.tsx` |
-| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts`; soupeře pro slug i titulek načítá `src/hooks/resolveOpponent.ts` (jednou na uložení, paměť v `req.context`) |
+| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts`; soupeře pro slug i titulek načítá `src/hooks/resolveOpponent.ts` (jednou na uložení, paměť vázaná na `req`) |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
 ## Slug

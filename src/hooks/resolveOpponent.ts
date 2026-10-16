@@ -5,22 +5,23 @@ import type { Opponent } from '../payload-types'
 /** Relace `matches.opponent`: ID, populovaný dokument, nebo nic (částečný update). */
 export type OpponentRef = number | { id: number } | null | undefined
 
-const MEMO_KEY = 'matchOpponents'
-
 type Memo = Map<number, Promise<Opponent | null>>
 
 /**
- * Paměť v `req.context`: slug i titulek zápasu potřebují stejného soupeře
+ * Paměť vázaná na `req`: slug i titulek zápasu potřebují stejného soupeře
  * a dřív si ho každý hook načítal zvlášť (dva `findByID` na jedno uložení).
- * Bez `context` (hook volaný mimo Payload) se nic nepamatuje.
+ * `req.context` se k tomu nehodí — seed skript ho předává sdílený napříč
+ * operacemi, takže by paměť přežila uložení a další zápas dostal soupeře
+ * z minulého (zastaralého) čtení. `req` žije jednu operaci a WeakMap ho
+ * pustí s ní.
  */
-const memoOf = (req: PayloadRequest): Memo | null => {
-  const context: Record<string, unknown> | undefined = req.context
-  if (!context) return null
-  const existing = context[MEMO_KEY]
-  if (existing instanceof Map) return existing
+const MEMOS = new WeakMap<PayloadRequest, Memo>()
+
+const memoOf = (req: PayloadRequest): Memo => {
+  const existing = MEMOS.get(req)
+  if (existing) return existing
   const created: Memo = new Map()
-  context[MEMO_KEY] = created
+  MEMOS.set(req, created)
   return created
 }
 
@@ -39,12 +40,12 @@ export const resolveOpponent = (
   if (id == null) return Promise.resolve(null)
 
   const memo = memoOf(req)
-  const cached = memo?.get(id)
+  const cached = memo.get(id)
   if (cached) return cached
 
   const loaded = req.payload
     .findByID({ collection: 'opponents', id, depth: 0, req })
     .catch((): null => null)
-  memo?.set(id, loaded)
+  memo.set(id, loaded)
   return loaded
 }
