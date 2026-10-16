@@ -95,9 +95,43 @@ cva, napojené na značku přes proměnné v `globals.css`).
   pro holé třídy a `ButtonArrow` pro pilulku, která není button ani odkaz.
   `pill.ts`, `PillButton` a `PillLink` už neexistují, hlídá to `no-pill-import`
   v `check-tokens`. `key` v `map()` patří na `<Button asChild>`, ne na `<Link>`.
-- **FAQ** je `Accordion`, **mobilní menu** `Sheet`, **drobečky** `Breadcrumb`.
-  `Sheet` nesmí přijít o overlay ani když je panel přes celou obrazovku: Radix
-  v něm drží zámek scrollu (`RemoveScroll`), proto `overlayClassName="bg-transparent"`.
+- **Mobilní menu** je `Sheet`, **drobečky** `Breadcrumb`. `Sheet` nesmí přijít
+  o overlay ani když je panel přes celou obrazovku: Radix v něm drží zámek
+  scrollu (`RemoveScroll`), proto `overlayClassName="bg-transparent"`.
+- **FAQ** shadcn nepoužívá: `blocks/Faq/Accordion.tsx` je Server Component
+  s nativním `<details name="faq">` bez řádku klientského JS (`ui/accordion.tsx`
+  neexistuje, `@radix-ui/react-accordion` je z `package.json` pryč). Společné
+  `name` dělá z položek výlučnou skupinu (Chrome 120, Safari 17.2, Firefox 130;
+  starší prohlížeč nechá otevřít víc otázek najednou, nic se nerozbije), ikona
+  +/− se přepíná CSS (`group-open:`). Radix navíc uměl šipky a Home/End mezi
+  otázkami; to je ve WAI-ARIA vzoru volitelné a za ~7 kB gzip na každé stránce
+  s FAQ se nevyplatilo.
+- **Mobilní menu je líné.** Burger v `landing/layout/NavMobile.tsx` je
+  v hlavním bundlu a nese ARIA, kterou by jinak dodal Radix trigger
+  (`aria-expanded`, `aria-haspopup`, `aria-controls`). `NavMobilePanel.tsx`
+  (Sheet, focus trap, `react-remove-scroll`) je `dynamic()` chunk a ten se
+  dostane do bundlu jen přes `import()`:
+  - `dynamic()` musí být volané uvnitř klientského modulu (`'use client'`);
+    ze Server Componenty by hranici chunku nevytvořilo.
+  - Přednačtení při `onPointerEnter` a `onFocus` na burgeru, nejpozději při
+    kliknutí; oba spouštěče sdílí `loadPanel`, takže se `import()` dedupuje.
+  - Panel se montuje při prvním otevření a pak zůstane (zavírací animace).
+  - Fokus po zavření se vrací **výslovně** (`onCloseAutoFocus` →
+    `triggerRef.current?.focus()`). Radix by ho vrátil na prvek, který měl
+    fokus při montáži panelu, a ten se kvůli línému chunku může od kliknutí
+    na burger lišit; burger je jediný vlastník otevření.
+- **JS stránky, naměřený na produkčním buildu** (first load, gzip, kB):
+
+  | stránka | před fází 4c | po 4c (Accordion + Sheet v bundlu) | po optimalizaci |
+  |---|---|---|---|
+  | `/` | 312 | 330 | 311 |
+  | detail článku | 307 | 320 | 307 |
+  | `/soupiska` | 304 | 319 | 306 |
+  | `/kontakt` | 312 | 330 | 311 |
+
+  Accordion a Sheet v hlavním bundlu přidaly 13–18 kB na každou stránku,
+  proto se nový klientský primitiv z shadcn nejdřív měří (`next build`,
+  First Load JS).
 - **Formuláře** se skládají z `Field` / `FieldLabel` / `FieldError` a
   `Controller` z react-hook-form (doporučený vzor shadcn, komponenta `form` se
   dál nevyvíjí). Vzor je `ContactField` v `ContactForm.tsx`; `ui/field.tsx` je
@@ -131,6 +165,10 @@ cva, napojené na značku přes proměnné v `globals.css`).
 - CI (`.github/workflows/deploy.yml`): `format:check`, `lint`, `check`
   (`check:tokens` + `check:types`) a `test:unit`. `test:unit` vynechává
   `api.int.spec.ts`, který potřebuje Postgres; ten běží jen v `test:int`.
+- Unit testy jsou v `tests/int/*.int.spec.ts` (vitest). Nesahají na síť ani
+  databázi: `next/cache` a balíčky e-mailových adapterů se mockují
+  (`email-adapter`, `internal-revalidate`), kolekce pluginů se skládají ručně
+  (`navigation-overrides`).
 
 # Navigace landing page
 
@@ -274,6 +312,12 @@ v produkci (`NODE_ENV=production`) je `push` vypnutý
 | `src/lib/generateMeta.ts` | `generateMetadata` na stránkách frontendu |
 | `src/app/(landing)/(sitemaps)/*` + `next-sitemap` | `/sitemap.xml` (index), `pages-`, `posts-`, `gallery-` a `matches-sitemap.xml`, `/robots.txt` |
 | `src/app/llms.txt/route.ts` | `/llms.txt` |
+
+Náhled adresy v poli SEO v adminu (`generateURL` pluginu) skládá
+`src/lib/seoPreviewUrl.ts` přes `lib/routes`, podle kolekce, kterou plugin
+předává jako `collectionSlug` (`posts` → `/aktuality/{slug}`, `pages` →
+`/{slug}`, `home` → `/`). Dřív to bylo `/{slug}` pro všechno, takže náhled
+článku vedl na neexistující adresu.
 
 ## llms.txt
 
@@ -472,7 +516,8 @@ odpovídat účtu, kterým se autentizujeme.
 Layout skládá `src/email/render.ts`: tabulkové HTML s inline styly, protože
 Outlook neumí flex ani grid, Gmail zahazuje `<style>` v přeposlaných zprávách
 a žádný klient neresolvuje CSS custom properties. Barvy proto jdou z hex
-zrcadla `LANDING_COLORS` (`src/landing/tokens.ts`) — nový mirror záměrně
+zrcadla `LANDING_COLORS` (`src/landing/tokens.ts`) — včetně `surface`
+a `on-contrast`, takže v `render.ts` není holé `#fff`. Nový mirror záměrně
 nevznikl, `theme-hex-parity` v `scripts/check-tokens.mjs` hlídá jen jednu
 cestu a druhý soubor by z dohledu vypadl.
 
@@ -545,7 +590,8 @@ Next 16 předává error boundary **`retry`**, ne `reset`
 u serverové chyby by tlačítko „Obnovit stránku" nic neudělalo.
 
 `global-error.tsx` nahrazuje root layout, takže k němu nedoteče `globals.css`
-ani `next/font`. Barvy proto jdou inline z `LANDING_COLORS` a `metadata`
+ani `next/font`. Barvy proto jdou inline z `LANDING_COLORS` (text na plochách
+je `on-contrast`, ne `#fff`) a `metadata`
 export tam nefunguje (titulek se dává Reactovým `<title>`). Kompozici 500
 záměrně nekopíruje — bez tokenů by z ní byl duplikát, který se rozejde
 při první změně designu.
@@ -623,13 +669,21 @@ variant je na `/vzory/prazdne-stavy`.
   Při nedostupné databázi spadne i ona. Není to regrese (platilo to i dřív),
   ale u chybové stránky je to nešťastné.
 - `LandingNav` žije uvnitř bloku Hero (`blocks/Hero/Component.tsx`). Když
-  správce blok Hero v CMS odstraní, na homepage nebude navigace vůbec.
-  Patří do `src/app/(landing)/layout.tsx`.
+  správce blok Hero v CMS odstraní, na homepage nebude navigace nahoře.
+  Po scrollu (480 px) se objeví `StickyNav`, kterou `GlobalNav` vykresluje
+  v `src/app/(landing)/layout.tsx`, ale horní lišta patří také tam.
 - ~~`Dockerfile` nekopíruje `bun.lock`~~ — doplněno spolu s větví pro `bun`
   v install i build kroku; base image zvednutý na `node:24-alpine`, protože
   `payload-auditor` má `engines.node: ">=24"`.
 - `tests/e2e/frontend.e2e.spec.ts` je nedotčená Payload šablona a padá už
-  dnes — regresní síť pro navigaci neexistuje.
+  dnes — regresní síť pro navigaci neexistuje. Unit testy pokrývají jen čistou
+  logiku (`navHref`, `isNavItemActive`, adaptér `navigationOverrides`).
+- `revalidateRedirects` je jen na `afterChange` (`plugins/index.ts`). Smazané
+  přesměrování zůstane v cache `getCachedRedirects` do vypršení TTL (3600 s).
+  Řešením je přidat `afterDelete` do `overrides.hooks` pluginu.
+- `matches.displayTitle` (titulek v adminu) odděluje týmy malým „x", web
+  (`matchTitle`) „×". Hodnota je uložená, takže sjednocení znamená migraci
+  dat všech zápasů a změnu hooku `matchDisplayTitle`; zatím se nevyplatí.
 
 # Typografie — standardní škála Tailwindu
 
@@ -660,14 +714,18 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
   `extrabold` / `bold` / `semibold`. `font-extrabold` patří nadpisům
   (`Heading.tsx`), skóre a číslům (`Numeral.tsx`) a jménům týmů v tabuli;
   tlačítka (`components/ui/button`) mají `font-bold`.
-- Výjimky, které zůstávají tokeny: `text-eyebrow` (11px mikro-label
-  verzálkami, Tailwind krok nemá) a `text-watermark-*` (dekorativní
-  obrysové nápisy 110–260 px).
-- Staré tokeny hlídá pravidlo `no-legacy-font-token` v
-  `scripts/check-tokens.mjs`. V `globals.css` jsou pořád definované, protože
-  je ještě používá rozpracovaná `LandingFooter.tsx` (výjimka v pravidle);
-  po jejím převodu je jde smazat i z `@theme` a z registru twMerge
-  (`src/lib/utils.ts`).
+- Výjimky, které zůstávají tokeny (definované v `@theme`, registrované
+  v twMerge): `text-eyebrow` (11px mikro-label verzálkami, Tailwind krok
+  nemá), `text-watermark-*` (dekorativní obrysové nápisy 110–260 px)
+  a **fluidní display škála** — `clamp()` mezi mobilem a desktopem, kterou
+  Tailwind nevyjádří: `text-title-*` (nadpisy hero a podstránek), `text-score-*`
+  (skóre), `text-hero-*`, `text-countdown*`, `text-contact-*`, `text-year`,
+  `text-jersey*` a `text-error-code`.
+- Staré tokeny (`text-caption` … `text-numeral-*`) jsou **smazané** z `@theme`
+  i z registru twMerge (`src/lib/utils.ts`); poslední uživatel,
+  `LandingFooter.tsx`, je převedený (odkazy `text-sm`, copyright `text-xs`).
+  Třída, která by na ně zbyla, se tiše nevygeneruje, proto je hlídá pravidlo
+  `no-legacy-font-token` v `scripts/check-tokens.mjs`.
 - Výchozí velikosti Tailwindu nesou i `line-height`. Kde na řádkování
   závisí zarovnání (časová osa zápasu: `h-5 md:h-6` = řádek
   `text-sm` / `md:text-base`), musí se měnit spolu.
@@ -681,10 +739,23 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
 Handoffy v `design_*/` jsou kreslené pro **1440px**. `md:` (768px) proto
 **není** místo pro desktopovou hodnotu z handoffu; ta patří na `lg:` (1024px)
 a mezi mobil a desktop se vkládá mezistupeň. Breakpointy projektu
-(`src/app/globals.css`): sm 640, md 768, lg 1024, xl 1280, 2xl 1376.
+(`@theme` v `src/app/globals.css`):
+
+| varianta | šířka | k čemu |
+|---|---|---|
+| `3xs:` | 360 | zúžené řádky na malých telefonech; `max-3xs:` je `< 360` |
+| `2xs:` | 400 | |
+| `xs:` | 528 | Tréninky: karta přestane být přes celou šířku |
+| `sm:` / `md:` / `lg:` / `xl:` / `2xl:` | 640 / 768 / 1024 / 1280 / 1376 | |
+| `nav:` | 1440 | hlavní navigace: pilulky `hidden nav:flex`, burger `nav:hidden` |
+
+Mikro-breakpointy (`3xs`, `2xs`, `xs`) jsou jen v `@theme`, bez
+`@custom-variant`; arbitrární `min-[22.5rem]:` a spol. hlídá pravidlo
+`no-arbitrary-breakpoint`. `nav:` je na 1440 a ne na `xl`, protože deset
+položek se vedle loga a CTA vejde až tam.
 
 Pravidlo už dřív platilo pro svislý rytmus (`SectionShell`), navigaci
-(`NavPills` je `hidden xl:flex`), mřížky výpisů (`CardGrid`) a watermarky
+(`NavPills` je `hidden nav:flex`), mřížky výpisů (`CardGrid`) a watermarky
 (`Watermark` od `lg`). Od 22. 8. 2026 platí i pro **vnitřní odsazení
 panelů**: každá zelená/bílá karta jede na `p-4.5 md:p-<mezistupeň>
 lg:p-<handoff>`. Dřív skákaly rovnou (`p-4.5 md:p-13`), takže si na 768px
@@ -693,8 +764,19 @@ displeji braly okraje panelu až pětinu jeho šířky.
 Doložení, že se desktop nezměnil: `node shot.mjs --bp=desktop` před a po,
 `scrollHeight` v `report.json` musí sedět na pixel na všech routách.
 
-Dvě opakující se pasti:
+Vodorovné zarovnání stránky drží tokeny `px-gutter` (odsazení od okraje,
+14–40 px) a `max-w-page` (šířka celého webu, 1560 px) místo
+`px-[clamp(…)]` a `max-w-[97.5rem]`; viz „Design tokeny".
 
+Tři opakující se pasti:
+
+- **Vestavěné `.container` Tailwindu.** Generuje `max-width` pro **každý**
+  `--breakpoint-*`, tedy i pro mikro-breakpointy pod `sm`, takže by se
+  kontejner na displeji 360–639 px ořezal na 360 / 400 / 528 px. Projekt
+  proto má vlastní `.container` (`@layer utilities` v `globals.css`) s
+  `max-width: none` a šířkou od `sm` výš, která se přebíjí `@variant` bloky
+  níž. Nový breakpoint, který má kontejner omezit, se tam musí doplnit
+  ručně.
 - **`minmax(<X>rem,1fr)` v `auto-fit` mřížce.** Když je `X` širší než
   vnitřek kontejneru (patička má na 320px displeji 256px), dráha kontejner
   přeteče a `overflow-hidden` obsah ustřihne. Píše se
@@ -704,6 +786,111 @@ Dvě opakující se pasti:
   mřížka posune z `md:grid-cols-3` na `lg:grid-cols-3`, ale `sizes` zůstane
   `(max-width: 48rem) 100vw, 33vw`, tablet si tahá třetinové fotky do
   polovičních dlaždic.
+
+# Design tokeny
+
+Zdroj pravdy je `@theme` v `src/app/globals.css`. Komponenty se na hodnoty
+odkazují utilitou, ne arbitrární hodnotou (`px-gutter`, ne
+`px-[clamp(…)]`); hlídá to `scripts/check-tokens.mjs` (Husky `pre-commit`
+a krok `check` v CI).
+
+| skupina | tokeny | utility |
+|---|---|---|
+| spacing | `gutter` (okraj stránky/sekce), `gutter-tight` (PageCanvas tight, chyba 500), `gutter-nav` (lišta článku), `split-gap` (mezi sloupci dvousloupcového bloku), `hero-gap`, `hero-inset` (obsah hero přes fotku), `panel` (vodorovný padding velkého panelu), `panel-y` (svislý padding hlavičky zápasu) | `p-`, `m-`, `gap-`, `inset-`, `w-`, `h-`… (všechny spacing prefixy) |
+| container | `page` (97,5 rem), `article` (51,25 rem — tělo článku a `RawHtml`) | `max-w-page`, `max-w-article` |
+| tracking | `display` −0,06 em, `title-tight` −0,04, `title` −0,035, `heading` −0,03, `subheading` −0,02, `snug` −0,01; verzálky `caps-sm` 0,08, `caps-md` 0,12, `caps-lg` 0,16 (Eyebrow, Kicker) | `tracking-*` |
+| leading | `copy` 1,55, `title` 1,02, `title-tight` 0,98, `heading` 1,15, `heading-tight` 1,05, `display` 0,9, `score` 0,82 | `leading-*` |
+| radius | `card` 36, `section` 30, `panel` 28, `block` 26, `tile` 24, `thumb` 22, `row` 20, `badge` 18, `icon` 16, `field` 14, `item` 12, `chip` 8, `tag` 4 (px) | `rounded-*` |
+
+Radius: holé `rounded` a výchozí stupně `sm`–`3xl` v landingu zakazuje
+`no-default-radius`; `full` a `none` smí zůstat.
+
+## Průhlednost na tmavém
+
+Bílá s průhledností na tmavých a zelených plochách a přes fotky je žebřík
+`on-contrast-*` (použitelný pro `text-`, `bg-`, `border-`, `divide-`
+i `placeholder:`), ne `white/N`:
+
+| stupeň | průhlednost | typické použití |
+|---|---|---|
+| `on-contrast` | 100 % | text a ikony na ploše `contrast` |
+| `-strong` | 90 % | nejsilnější text, skleněné plochy |
+| `-soft` | 80 % | hlavní text na tmavém |
+| `-muted` | 70 % | meta text |
+| `-subtle` | 60 % | popisky |
+| `-faint` | 50 % | velmi tlumený text |
+| `-ghost` | 40 % | obrys tlačítka, placeholder |
+| `-line` | 30 % | linky a rámečky skla |
+| `-glass` | 16 % | výplň skleněného tlačítka |
+| `-wash` | 10 % | nejjemnější výplň, dělicí linka |
+
+Černá je `scrim` (`bg-scrim/10`). Holé `white` a `black` s předponou
+`text-`/`bg-`/`border-`… hlásí `no-white-black` i s hintem na správný token.
+Žebřík nahradil 37 různých hodnot `white/N`; sousední stupně se slily s
+odchylkou nejvýš ~5 procentních bodů.
+
+## Utility a vzory v `globals.css`
+
+- `bg-split` (90°) a `bg-split-diagonal` (135°): půlený podklad cihlová |
+  zelená pro prohru po prodloužení/nájezdech (`Badge split`, čtvereček formy).
+- `dot-grid`: tečkovaný vzor pro `DotGrid`. `--alpha()` je build-time funkce
+  Tailwindu a v inline `style` ji prohlížeč nezná, proto vzor žije v CSS
+  a komponenta nese jen třídu. Stejně jsou řešená šrafování (`hatch`,
+  `hatch-white`, `hatch-lime`).
+
+## shadcn vrstva je alias na značku
+
+Proměnné shadcn (`--background`, `--primary`…) nemají vlastní paletu, jsou
+to aliasy na značkové tokeny, takže tmavý režim (`--ds-*`) se přenáší sám:
+
+| shadcn | značka | proč |
+|---|---|---|
+| `primary` | `club-dark` | bílý text na `club` má ~3,4 : 1, na `club-dark` ~5,1 : 1 (AA) |
+| `ring` | `club` | u prstence stačí 3 : 1 pro netextové prvky |
+| `destructive` | `danger` | |
+| `border` | `--ds-line-mid` | |
+| `input` | `--ds-line` | |
+
+oklch „slate" vrstva ze šablony neexistuje; `components.json` je `new-york`
+a `baseColor: slate` slouží jen pro `shadcn add`. Shadcn třídy
+(`bg-primary`, `text-muted-foreground`…) patří jen do `components/ui`
+a do šablonového frontendu, v landingu je zakazuje `no-shadcn-in-landing`.
+
+## twMerge a nový token
+
+`src/lib/utils.ts` (`extendTailwindMerge`) zná jen výchozí názvy Tailwindu.
+Nový token se musí zapsat i tam: `--text-*` do skupiny `font-size`, `--spacing-*`,
+`--container-*`, `--tracking-*` a `--leading-*` do `theme`. Bez toho by
+`cn('px-gutter', 'px-4')` nechalo obě třídy (rozhodne pořadí v CSS) a `text-*`
+token by se bral jako barva textu a zahodil by se vedle skutečné barvy.
+**Radiusy jsou záměrně neregistrované:** registrace by změnila, která z dvojice
+`rounded-*` v `cn()` vyhraje.
+
+## `check-tokens`
+
+Všechna pravidla jsou `error` (exit 1); přepínač `--strict` je no-op kvůli
+starým voláním. Skenuje se celé `src/` včetně `components/ui`, jen generovaný
+`payload-types.ts` se přeskakuje. Pravidla
+`no-shadcn-in-landing`, `no-dark-variant-in-landing` a `no-default-radius`
+platí jen v `src/landing/` a `src/app/(landing)/`. Výjimka:
+`// token-check-ignore: <důvod>` na stejném nebo předchozím řádku; prázdný
+důvod je pořád chyba.
+
+| pravidlo | co hlídá |
+|---|---|
+| `no-raw-hex`, `no-rgb-literal`, `no-arbitrary-color-class`, `no-default-palette` | barvy mimo tokeny |
+| `no-white-black` | `white`/`black` místo `on-contrast-*` / `scrim` |
+| `no-arbitrary-radius`, `no-default-radius` | zaoblení |
+| `no-arbitrary-font-size`, `no-legacy-font-token` | velikosti písma |
+| `no-arbitrary-spacing`, `-tracking`, `-leading`, `-font-clamp`, `-breakpoint`, `-aspect` | arbitrární hodnota, kterou už pokrývá token nebo výchozí třída; hodnoty čtou z `@theme`, takže **nový token se začne hlídat sám** |
+| `no-shadcn-in-landing`, `no-dark-variant-in-landing`, `no-pill-import` | vrstvy a zrušené moduly |
+| `style-allowlist` | inline `style={{` jen v souborech z allowlistu |
+| `theme-hex-parity` | `LANDING_COLORS` (`src/landing/tokens.ts`) se shoduje s `@theme` |
+| `twmerge-font-size-parity`, `twmerge-theme-parity` | každý token je registrovaný v `src/lib/utils.ts` |
+
+`LANDING_COLORS` je hex zrcadlo jen pro kontexty bez CSS proměnných (admin,
+SVG `data:` URI, `global-error.tsx`, e-maily, `theme-color`); do komponent
+se nikdy neimportuje.
 
 # Sekce Tréninky (blok `landingTrainings`)
 
