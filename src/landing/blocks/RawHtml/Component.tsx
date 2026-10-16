@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { sanitizeHtml } from '@/hooks/sanitizeHtml'
 import type { RawHtmlBlock as RawHtmlBlockProps } from '@/payload-types'
 
 export const RawHtmlBlock: React.FC<RawHtmlBlockProps> = ({ html }) => {
@@ -15,8 +16,8 @@ export const RawHtmlBlock: React.FC<RawHtmlBlockProps> = ({ html }) => {
    */
   return (
     <div className="relative z-1 mx-auto max-w-article px-gutter">
-      {/* Legacy obsah importovaný z eStránky — rendrováno jako HTML */}
-      <div className="article-prose" dangerouslySetInnerHTML={{ __html: html }} />
+      {/* Legacy obsah importovaný z eStránky — rendrováno jako HTML. Sanitizace i tady, ne jen v hooku: data mohla vzniknout mimo něj. */}
+      <div className="article-prose" dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />
     </div>
   )
 }
