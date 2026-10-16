@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchHistoryEras } from '@/landing/data/history'
-import { ArchiveCta } from '@/landing/historie/ArchiveCta'
-import { EraSection } from '@/landing/historie/EraSection'
-import { HistorieHeader } from '@/landing/historie/HistorieHeader'
-import { StoryPanel } from '@/landing/historie/StoryPanel'
+import { ArchiveCta } from '@/landing/features/history/components/ArchiveCta'
+import { EraSection } from '@/landing/features/history/components/EraSection'
+import { HistoryHeader } from '@/landing/features/history/components/HistoryHeader'
+import { StoryPanel } from '@/landing/features/history/components/StoryPanel'
+import { fetchHistoryEras } from '@/landing/features/history/data'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
 
@@ -24,11 +24,11 @@ export default async function HistorieKlubuPage() {
 
   return (
     <SubpageShell pattern={{ variant: 'cross', tone: 'club', fade: 'center' }}>
-      <HistorieHeader />
+      <HistoryHeader />
 
       {/* Šířku timeline drží vnitřní obal, ne `SectionShell`. Override
           `max-w` na shellu se totiž potkal s jeho `mx-auto`, takže se obsah
-          od 1240px vycentroval uvnitř širší hlavičky (`max-w-[97.5rem]`)
+          od 1240px vycentroval uvnitř širší hlavičky (`max-w-page`)
           a odsadil se ~80px vpravo od `<h1>`. */}
       <SectionShell spacing="content">
         <div className="max-w-[77.5rem] space-y-12 md:space-y-15 lg:space-y-18">
@@ -46,7 +46,7 @@ export default async function HistorieKlubuPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Historie klubu | HC Čestice',
+  title: brandTitle('Historie klubu'),
   description:
     'Sedmdesát let hokeje v Česticích — od kluziště za Machačovými a dresů na dluh po historický bronz ve Východočeské hokejové lize.',
   alternates: { canonical: '/historie-klubu' },

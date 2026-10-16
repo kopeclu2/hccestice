@@ -1,4 +1,3 @@
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
@@ -11,8 +10,15 @@ import {
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-
+import { TEXT_STATE } from '@/fields/textStateColors'
+import { BannerBlock } from '@/landing/blocks/Banner/Component'
+import { CodeBlock, CodeBlockProps } from '@/landing/blocks/Code/Component'
+import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
+import { MediaBlock } from '@/landing/blocks/MediaBlock/Component'
+import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
+import { YouTubeBlock } from '@/landing/blocks/YouTube/Component'
+import { collectionDocPath } from '@/lib/routes'
+import { cn } from '@/lib/utils'
 import type {
   BannerBlock as BannerBlockProps,
   DataTableBlockType,
@@ -20,12 +26,6 @@ import type {
   StatCardsBlockType,
   YouTubeBlock as YouTubeBlockProps,
 } from '@/payload-types'
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { YouTubeBlock } from '@/blocks/YouTube/Component'
-import { TEXT_STATE } from '@/fields/textStateColors'
-import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
-import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
-import { cn } from '@/utilities/ui'
 
 /**
  * Základní (klient-safe) render rich textu.
@@ -56,35 +56,23 @@ const toReactStyle = (css: Record<string, string>): React.CSSProperties => {
   return style
 }
 
-/** Ručně psané prefixy — `pages` jsou jediná kolekce beze svého, žije na `/[slug]`. */
-const INTERNAL_LINK_PREFIX: Partial<Record<string, string>> = {
-  posts: '/aktuality',
-  galleries: '/fotogalerie',
-}
-
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== 'object') {
     throw new Error('Expected value to be an object')
   }
-  const slug = value.slug
-  const prefix = INTERNAL_LINK_PREFIX[relationTo]
-  return prefix ? `${prefix}/${slug}` : `/${slug}`
+  return collectionDocPath(relationTo, String(value.slug))
 }
 
 /** Klient-safe konvertory — sdílí je i serverová varianta. */
-export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({
-  defaultConverters,
-}) => ({
+export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   // Barvy a zvýraznění z TextStateFeature — výchozí converter stav
   // v `$` ignoruje (funguje jen v adminu), proto ho tu aplikujeme sami.
   text: (args) => {
     const rendered =
-      typeof defaultConverters.text === 'function'
-        ? defaultConverters.text(args as never)
-        : args.node.text
+      typeof defaultConverters.text === 'function' ? defaultConverters.text(args) : args.node.text
     const state = (args.node as { $?: Record<string, string> }).$
     if (!state) return rendered
 
@@ -100,10 +88,10 @@ export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (
       <MediaBlock
-        className="col-start-1 col-span-3"
+        className="col-span-3 col-start-1"
         imgClassName="m-0"
         {...node.fields}
-        captionClassName="mx-auto max-w-[48rem]"
+        captionClassName="mx-auto max-w-3xl"
         enableGutter={false}
         disableInnerContainer={true}
       />
@@ -116,7 +104,7 @@ export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({
     ),
     // tabulka v textu — bez sekčních rozestupů a bočního paddingu
     dataTable: ({ node }) => (
-      <div className="not-prose font-display text-ink my-6 [&_section]:mt-0! [&_section]:px-0!">
+      <div className="not-prose my-6 font-display text-ink [&_section]:mt-0! [&_section]:px-0!">
         <DataTableBlockComponent block={node.fields} />
       </div>
     ),

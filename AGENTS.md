@@ -8,6 +8,181 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+# Struktura `src/landing/`
+
+| složka | co v ní je |
+|---|---|
+| `ui/` | design systém: tlačítka, nadpisy, karty, dekorace — bez znalosti domény |
+| `layout/` | kostra stránek: `SubpageShell`, navigace, patička, údržba |
+| `blocks/` | CMS bloky (`Component.tsx` + `config.ts`) a `render.tsx`; blok neimportuje jiný blok |
+| `features/<doména>/` | `matches`, `posts`, `galleries`, `roster`, `history`, `contact`, `sponsors`, `trainings`, `products`, `navigation`, `pages` (fetcher dokumentu `pages` a JSON-LD home stránky) |
+| `data/` | průřezové fetchery (`site`, `maintenance`, `session`, `landingSlugs`) a infrastruktura datové vrstvy: `query` (`cachedQuery`, `getPayloadClient`), `tags` (`CACHE_TAGS`) |
+| `lib/` | pomocníky nad Payload dokumenty: `media`, `payload`, a `listUrl` (`buildListUrl`). Obecné helpery (`routes`, `datetime`, `plural`, `fold`, `teamName`, `club`, `errors`) jsou v `src/lib/` |
+| `types.ts` | sdílené jádro view-modelů (`Photo`, `PersonCard`, `SiteLinks`, obsah hero a patičky) |
+
+Uvnitř feature: `components/` (prezentace), `data` (fetchery, `server-only`),
+`view/` (čisté mapování bez I/O — smí do klienta), `types.ts`. Menší features
+mají `data.ts` a `types.ts` přímo v kořeni. Typy jedné domény žijí v její
+`types.ts`, ne v `landing/types.ts`. Prezentační komponenta, kterou potřebuje
+víc bloků (`MatchesWidgetView`, `StandingsCard`, `RosterWidgetView`,
+`ProductTile`, `Countdown`), patří do `components/` feature, ne do bloku.
+`features/*/components` jsou anglicky; složky v `src/app/` zůstávají česky (URL).
+
+`landing/lib/listUrl.ts` — `buildListUrl(base, { filters, page, pageKey, hash })`
+skládá adresu výpisu: filtry jdou před stránkou, prázdný filtr v adrese není
+a první strana do URL nepatří. Výpis `/zapasy` předává `pageKey: 'strana'`,
+ostatní výpisy mají výchozí `page`. Parametr je v indexu vyhledávačů,
+takže se nepřejmenovává.
+
+`landing/data/query.ts` — `cachedQuery(fn, { key, version, tags, revalidate })`
+je jediná cesta k tagované datové cache (`unstable_cache` pod React `cache()`,
+`revalidate` výchozí 3600 s) a `getPayloadClient()` jediné místo, které volá
+`getPayload`. Klíč a `version` se nemění, dokud se nemění tvar dat; tag je
+povinný (viz „Cache a renderovací režimy").
+
+# Konvence kódu
+
+## Kam co patří
+
+| místo | co v něm je |
+|---|---|
+| `src/lib/` | izomorfní moduly: bez `server-only`, bez importu Payload configu. Smí je importovat klient, admin, hooky, seed skripty i vitest (`routes`, `club`, `teamName`, `fold`, `datetime`, `plural`, `errors`, `jsonLd`, `matchSlug`, `slugifyCs`, `indexNow`, `rateLimit`) |
+| `src/server/` | serverové utility nad Payloadem (`getDocument`, `getRedirects`, `recaptcha/verify`), všechny s `import 'server-only'` |
+| `src/landing/ui`, `layout`, `blocks`, `features`, `data`, `lib` | viz „Struktura `src/landing/`" |
+| `src/hooks/` | hooky kolekcí a globalů; revalidační stavíte přes `createRevalidateHooks` |
+| `src/collections`, `globals`, `fields`, `plugins`, `jobs`, `ahl`, `email`, `endpoints` | Payload config a serverová logika mimo frontend |
+| `scripts/seed/` | jednorázové skripty spouštěné ručně přes `bun`; patří do nich `context: { disableRevalidate: true }` |
+
+## `server-only`
+
+Mají ho moduly, které sahají na Payload nebo `next/headers` a patří jen na
+server: fetchery v `landing/**/data`, `landing/data/*` a `src/server/*`.
+Import z klientské komponenty pak shodí build srozumitelnou chybou místo
+tichého tažení Payload configu do klientského bundlu.
+
+Nemají ho moduly dosažitelné z `payload.config.ts`, ze seed skriptů a z testů
+(např. `lib/indexNow.ts`, `lib/rateLimit.ts`, hooky, `plugins/*`): mimo Next
+runtime `server-only` při importu hodí výjimku, takže by spadl `payload
+migrate`, `generate:types`, seed skripty a `api.int.spec.ts`. Stejně tak
+nemají `server-only` čisté moduly v `view/` a `navHref.ts`, které importují
+klientské komponenty. Ve vitestu je balíček nahrazený stubem
+(`tests/stubs/server-only.ts`, alias ve `vitest.config.mts`), aby šly
+v unit testech importovat i fetchery.
+
+## Sdílené moduly — použij místo vlastní kopie
+
+| modul | použij místo |
+|---|---|
+| `lib/routes` (`routes`, `linkOrNull`, `collectionDocPath`) | skládání `` `/zapasy/${slug}` `` a podobných cest |
+| `landing/lib/listUrl` (`buildListUrl`) | ruční `URLSearchParams` pro filtry a stránkování výpisů |
+| `lib/club` (`CLUB_NAME`, `SITE_NAME`, `CLUB_LOGO`, `CLUB_PREFIXES`) | literály „HC Čestice", cesta k logu a seznamy předpon |
+| `lib/teamName` (`monogram`, `teamCode`, `initials`, `stripClubPrefix`) | vlastní zkratky, iniciály a odstraňování „HC"/„SK" z názvů |
+| `lib/fold` | `normalize('NFD').replace(…)` pro porovnávání a slugy |
+| `lib/datetime` | zakládání `Intl.DateTimeFormat`; datumy jsou v Europe/Prague |
+| `lib/plural` | ruční skloňování počtů |
+| `lib/errors` (`errorMessage`) | `e instanceof Error ? e.message : String(e)` v `catch` |
+| `landing/data/query` (`cachedQuery`) + `landing/data/tags` (`CACHE_TAGS`) | holé `unstable_cache` a tag zapsaný jako řetězec |
+| `hooks/createRevalidateHooks` (`createRevalidateHooks`, `applyRevalidation`) | ručně psané `afterChange` / `afterDelete` s `revalidateTag` |
+
+## UI primitiva (shadcn)
+
+Jeden systém místo dvou paralelních: `src/components/ui/*` (shadcn, Radix +
+cva, napojené na značku přes proměnné v `globals.css`).
+
+- **Tlačítka a CTA pilulky** jsou `Button` z `components/ui/button`:
+  `<Button variant size withArrow>` pro tlačítko, `<Button asChild><Link …/></Button>`
+  pro odkaz (`Slottable` vloží šipku `withArrow` dovnitř `<a>`), `buttonVariants()`
+  pro holé třídy a `ButtonArrow` pro pilulku, která není button ani odkaz.
+  `pill.ts`, `PillButton` a `PillLink` už neexistují, hlídá to `no-pill-import`
+  v `check-tokens`. `key` v `map()` patří na `<Button asChild>`, ne na `<Link>`.
+- **Mobilní menu** je `Sheet`, **drobečky** `Breadcrumb`. `Sheet` nesmí přijít
+  o overlay ani když je panel přes celou obrazovku: Radix v něm drží zámek
+  scrollu (`RemoveScroll`), proto `overlayClassName="bg-transparent"`.
+- **FAQ** shadcn nepoužívá: `blocks/Faq/Accordion.tsx` je Server Component
+  s nativním `<details name>` bez řádku klientského JS (`ui/accordion.tsx`
+  neexistuje, `@radix-ui/react-accordion` je z `package.json` pryč). Společné
+  `name` (unikátní na blok, `useId`) dělá z položek výlučnou skupinu (Chrome 120, Safari 17.2, Firefox 130;
+  starší prohlížeč nechá otevřít víc otázek najednou, nic se nerozbije), ikona
+  +/− se přepíná CSS (`group-open:`). Radix navíc uměl šipky a Home/End mezi
+  otázkami; to je ve WAI-ARIA vzoru volitelné a za ~7 kB gzip na každé stránce
+  s FAQ se nevyplatilo.
+- **Mobilní menu je líné.** Burger v `landing/layout/NavMobile.tsx` je
+  v hlavním bundlu a nese ARIA, kterou by jinak dodal Radix trigger
+  (`aria-expanded`, `aria-haspopup`, `aria-controls`). `NavMobilePanel.tsx`
+  (Sheet, focus trap, `react-remove-scroll`) je `dynamic()` chunk a ten se
+  dostane do bundlu jen přes `import()`:
+  - `dynamic()` musí být volané uvnitř klientského modulu (`'use client'`);
+    ze Server Componenty by hranici chunku nevytvořilo.
+  - Přednačtení při `onPointerEnter` a `onFocus` na burgeru; oba spouštěče
+    sdílí `loadPanel`, takže se `import()` dedupuje. Na dotyku najetí není,
+    proto klik **nejdřív počká na chunk** (`aria-busy` na burgeru,
+    `aria-expanded` zůstává `false`) a teprve pak menu otevře.
+  - Selhání importu (po deployi chunk starého buildu už neexistuje) řeší
+    `window.location.reload()`, ne error boundary stránky; offline se jen
+    zruší stav „načítá se".
+  - Panel se montuje při prvním otevření a pak zůstane (zavírací animace).
+  - Fokus po zavření se vrací **výslovně** (`onCloseAutoFocus` →
+    `triggerRef.current?.focus()`). Radix by ho vrátil na prvek, který měl
+    fokus při montáži panelu, a ten se kvůli línému chunku může od kliknutí
+    na burger lišit; burger je jediný vlastník otevření.
+- **JS stránky, naměřený na produkčním buildu** (first load, gzip, kB):
+
+  | stránka | před fází 4c | po 4c (Accordion + Sheet v bundlu) | po optimalizaci |
+  |---|---|---|---|
+  | `/` | 312 | 330 | 311 |
+  | detail článku | 307 | 320 | 307 |
+  | `/soupiska` | 304 | 319 | 306 |
+  | `/kontaky` | 312 | 330 | 311 |
+
+  Accordion a Sheet v hlavním bundlu přidaly 13–18 kB na každou stránku,
+  proto se nový klientský primitiv z shadcn nejdřív měří (`next build`,
+  First Load JS). `/kontaky` je **CMS stránka** renderovaná přes `[slug]`
+  (`.next/server/app/kontaky.html`); `/kontakt` je jiná, ručně psaná route
+  a tahle řada se na ní neměřila.
+- **Formuláře** se skládají z `Field` / `FieldLabel` / `FieldError` a
+  `Controller` z react-hook-form (doporučený vzor shadcn, komponenta `form` se
+  dál nevyvíjí). Vzor je `ContactField` v `ContactForm.tsx`; `ui/field.tsx` je
+  bez `FieldSeparator`. Šablonový blok `landing/blocks/Form/**` zůstal na
+  `register` + vlastních `Error` a `Width` (formBlock nemá v DB žádnou stránku).
+- `shadcn add` generuje starší vzhled s `React.forwardRef`, hardcoded barvami a
+  uvozovkami; po vygenerování kód přepsat podle okolních souborů (tokeny,
+  prettier, `function`) a Radix balíčky držet na jedné verzi, jinak se do
+  bundlu dostanou dvě kopie `react-primitive` a `react-slot`.
+
+## Pojmenování a styl
+
+- Složky v `src/app/` jsou česky (tvoří URL); identifikátory, komponenty
+  a soubory v `src/` anglicky.
+- Named exporty. `export default` jen tam, kde ho vyžaduje Next
+  (`page`, `layout`, `route`, `error`, `not-found`, `loading`) nebo Payload;
+  výjimkou zůstává `components/RichText` (obě varianty) a `lib/canUseDOM`.
+- Komponenty jsou deklarace `function`; nový kód nepoužívá `React.FC`.
+  `const X: React.FC` zůstává (~55 výskytů) v kódu zděděném ze šablony
+  Payloadu a v kódu, který ho přebírá jako typ: `components/admin` a
+  `VchlSync` (admin komponenty), `components/ui`, `components/Media`,
+  `AdminBar`, `LivePreviewListener`, `PayloadRedirects`, `landing/blocks/Form/*`
+  a pár bloků (`Banner`, `Code`, `MediaBlock`, `RawHtml`, `Trainings`,
+  `YouTube`, `RenderBlocks`). Při úpravě takového souboru se převádí jen
+  tehdy, když tím nevznikne zbytečně velký diff.
+- Žádné `any`. `eslint-disable` a `@ts-expect-error` jen s důvodem
+  v komentáři (dnes `plugins/index.ts`, `plugins/auditor.ts`, `blocks/Form`
+  a React hooky v klientských komponentech). Kde se typy nedají srovnat,
+  cast má jednořádkový komentář proč.
+- Pořadí importů hlídá ESLint (`import/order`, abecedně, `@/` jako interní).
+
+## Nástroje
+
+- `bun run format` (Prettier, vč. řazení Tailwind tříd), `format:check` v CI.
+- Husky `pre-commit`: `lint-staged` (Prettier + ESLint na staged souborech)
+  a `scripts/check-tokens.mjs` (hlídač design tokenů).
+- CI (`.github/workflows/deploy.yml`): `format:check`, `lint`, `check`
+  (`check:tokens` + `check:types`) a `test:unit`. `test:unit` vynechává
+  `api.int.spec.ts`, který potřebuje Postgres; ten běží jen v `test:int`.
+- Unit testy jsou v `tests/int/*.int.spec.ts` (vitest). Nesahají na síť ani
+  databázi: `next/cache` a balíčky e-mailových adapterů se mockují
+  (`email-adapter`, `internal-revalidate`), kolekce pluginů se skládají ručně
+  (`navigation-overrides`).
+
 # Navigace landing page
 
 Navigaci spravuje správce v adminu: **Nastavení → Menu** (kontejner `hlavni`)
@@ -16,7 +191,7 @@ a **Nastavení → Položky menu**. Pořadí odkazů se přetahuje myší v poli
 
 ## Model
 
-`NavItem` (`src/landing/types.ts`) rozpojuje tři role, které dřív plnil
+`NavItem` (`src/landing/features/navigation/types.ts`) rozpojuje tři role, které dřív plnil
 jediný string `href`:
 
 | pole | role |
@@ -26,10 +201,10 @@ jediný string `href`:
 | `path` | cesta na podstránku; prázdné = položka žije jen jako kotva |
 
 Cíl odkazu skládá `navHref(item, 'home' \| 'subpage')`
-(`src/landing/data/navHref.ts`). Tím zmizely konstanty `SUBPAGE_HREF`
+(`src/landing/features/navigation/navHref.ts`). Tím zmizely konstanty `SUBPAGE_HREF`
 a `PAGE_ONLY_LINKS` — druhá je derivovatelná z `anchor === null`.
 
-`navHref.ts` je oddělený od `navigation.ts` **záměrně**: `navigation.ts`
+`navHref.ts` je oddělený od `data.ts` **záměrně**: `data.ts`
 sahá na `getPayload`, takže kdyby si klientské komponenty (`NavPills`,
 `NavMobile`) tahaly resolvery odtud, přišel by do klientského bundlu
 server-only Payload config a build spadne.
@@ -64,7 +239,7 @@ ním** v `src/plugins/index.ts`. Pravidla, když se ho budete dotýkat:
 ## Cache a revalidace
 
 Navigace je na každé stránce, takže se cachuje **tagem**, ne časem
-(`unstable_cache` s tagem `navigation` v `src/landing/data/navigation.ts`).
+(`unstable_cache` s tagem `navigation` v `src/landing/features/navigation/data.ts`).
 Tag se propaguje i na build-time prerenderované stránky, takže jedno
 `revalidateTag('navigation', 'max')` pokryje i `/aktuality/[slug]`.
 
@@ -147,9 +322,15 @@ v produkci (`NODE_ENV=production`) je `push` vypnutý
 | vrstva | co vlastní |
 |---|---|
 | `@payloadcms/plugin-seo` | pole `meta` (title, description, image) na `pages` a `posts` |
-| `src/utilities/generateMeta.ts` | `generateMetadata` na stránkách frontendu |
+| `src/lib/generateMeta.ts` | `generateMetadata` na stránkách frontendu |
 | `src/app/(landing)/(sitemaps)/*` + `next-sitemap` | `/sitemap.xml` (index), `pages-`, `posts-`, `gallery-` a `matches-sitemap.xml`, `/robots.txt` |
 | `src/app/llms.txt/route.ts` | `/llms.txt` |
+
+Náhled adresy v poli SEO v adminu (`generateURL` pluginu) skládá
+`src/lib/seoPreviewUrl.ts` přes `lib/routes`, podle kolekce, kterou plugin
+předává jako `collectionSlug` (`posts` → `/aktuality/{slug}`, `pages` →
+`/{slug}`, `home` → `/`). Dřív to bylo `/{slug}` pro všechno, takže náhled
+článku vedl na neexistující adresu.
 
 ## llms.txt
 
@@ -278,7 +459,7 @@ mechanismus na to Next nemá.
 Klíče: `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` a `RECAPTCHA_SECRET`. Bez nich se
 ověření **mimo produkci přeskakuje** (dev a CI nepotřebují účet u Googlu),
 v produkci se odeslání odmítne. Skóre pod `0.5` neprojde
-(`src/utilities/recaptcha/config.ts` — jediný zdroj akcí i thresholdu pro
+(`src/lib/recaptcha/config.ts` — jediný zdroj akcí i thresholdu pro
 klient, plugin i server action).
 
 Dva odesílací kanály, dvě různé ochrany, protože plugin
@@ -287,8 +468,8 @@ Dva odesílací kanály, dvě různé ochrany, protože plugin
 
 | kanál | ochrana |
 |---|---|
-| `blocks/Form` → `POST /api/form-submissions` | plugin, přes `custom.recaptcha` na `formSubmissionOverrides` |
-| `landing/blocks/Contact` → server action, local API | `verifyRecaptchaToken()` v `action.ts` |
+| `landing/blocks/Form` → `POST /api/form-submissions` | plugin, přes `custom.recaptcha` na `formSubmissionOverrides` |
+| `landing/features/contact` → server action, local API | `verifyRecaptchaToken()` v `action.ts` |
 
 Token si obě komponenty berou z hooku `useRecaptcha()`, který skript Googlu
 vkládá **líně z formuláře** (ne z layoutu, aby se nestahoval na stránkách
@@ -348,7 +529,8 @@ odpovídat účtu, kterým se autentizujeme.
 Layout skládá `src/email/render.ts`: tabulkové HTML s inline styly, protože
 Outlook neumí flex ani grid, Gmail zahazuje `<style>` v přeposlaných zprávách
 a žádný klient neresolvuje CSS custom properties. Barvy proto jdou z hex
-zrcadla `LANDING_COLORS` (`src/landing/tokens.ts`) — nový mirror záměrně
+zrcadla `LANDING_COLORS` (`src/landing/tokens.ts`) — včetně `surface`
+a `on-contrast`, takže v `render.ts` není holé `#fff`. Nový mirror záměrně
 nevznikl, `theme-hex-parity` v `scripts/check-tokens.mjs` hlídá jen jednu
 cestu a druhý soubor by z dohledu vypadl.
 
@@ -384,7 +566,7 @@ takže `doc.id` na parametrech reálně je, i když je typ deklaruje jako
 ## Kontaktní formulář
 
 Adresáty i texty drží dokument `forms` v databázi, zakládá je
-`migration/seed-contact-form.ts` (notifikace klubu + potvrzení odesílateli).
+`scripts/seed/seed-contact-form.ts` (notifikace klubu + potvrzení odesílateli).
 Seed umí i **doplnit e-maily existujícímu formuláři** — starší verze je
 neuměla, takže formulář v produkci je bez nich a je nutné seed spustit znovu.
 
@@ -404,8 +586,8 @@ Handoff `design_maintance/HC Cestice Systemove Stranky.dc.html` — 404, 500,
 | chyba v root layoutu | `src/app/global-error.tsx` |
 | údržba | brána v `src/app/(landing)/layout.tsx` + náhled `/udrzba` |
 
-Společné díly: `components/ErrorCode.tsx` (obří obrysový kód + `ErrorMeta`),
-`components/PuckTrail.tsx`, utility `text-stroke-none`, `hatch-lime` a
+Společné díly: `landing/ui/ErrorCode.tsx` (obří obrysový kód + `ErrorMeta`),
+`landing/ui/PuckTrail.tsx`, utility `text-stroke-none`, `hatch-lime` a
 animace `--animate-puck-trail(-fast)` v `globals.css`.
 
 ## 500 nesmí stát na `SubpageShell`
@@ -421,7 +603,8 @@ Next 16 předává error boundary **`retry`**, ne `reset`
 u serverové chyby by tlačítko „Obnovit stránku" nic neudělalo.
 
 `global-error.tsx` nahrazuje root layout, takže k němu nedoteče `globals.css`
-ani `next/font`. Barvy proto jdou inline z `LANDING_COLORS` a `metadata`
+ani `next/font`. Barvy proto jdou inline z `LANDING_COLORS` (text na plochách
+je `on-contrast`, ne `#fff`) a `metadata`
 export tam nefunguje (titulek se dává Reactovým `<title>`). Kompozici 500
 záměrně nekopíruje — bez tokenů by z ní byl duplikát, který se rozejde
 při první změně designu.
@@ -468,12 +651,12 @@ Co brána **neumí** a je potřeba o tom vědět:
 
 ## Prázdné stavy
 
-`components/EmptyState.tsx` — jedna komponenta místo pěti různých
+`landing/ui/EmptyState.tsx` — jedna komponenta místo pěti různých
 jednořádkových odstavců, které měl každý výpis vlastní. `actions` je
 **povinné**: slepá ulička („Zatím tu žádné články nejsou.") je nejhorší
 možná odpověď na aktivní filtr.
 
-Zapojení: `AktualityGrid`, `GalleryGrid` (obojí přes `CardGrid empty`),
+Zapojení: `PostsListGrid`, `GalleryGrid` (obojí přes `CardGrid empty`),
 `ResultsList`, `FixturesRail` a widget `MatchesWidget`. Katalog všech
 variant je na `/vzory/prazdne-stavy`.
 
@@ -499,13 +682,18 @@ variant je na `/vzory/prazdne-stavy`.
   Při nedostupné databázi spadne i ona. Není to regrese (platilo to i dřív),
   ale u chybové stránky je to nešťastné.
 - `LandingNav` žije uvnitř bloku Hero (`blocks/Hero/Component.tsx`). Když
-  správce blok Hero v CMS odstraní, na homepage nebude navigace vůbec.
-  Patří do `src/app/(landing)/layout.tsx`.
+  správce blok Hero v CMS odstraní, na homepage nebude navigace nahoře.
+  Po scrollu (480 px) se objeví `StickyNav`, kterou `GlobalNav` vykresluje
+  v `src/app/(landing)/layout.tsx`, ale horní lišta patří také tam.
 - ~~`Dockerfile` nekopíruje `bun.lock`~~ — doplněno spolu s větví pro `bun`
   v install i build kroku; base image zvednutý na `node:24-alpine`, protože
   `payload-auditor` má `engines.node: ">=24"`.
 - `tests/e2e/frontend.e2e.spec.ts` je nedotčená Payload šablona a padá už
-  dnes — regresní síť pro navigaci neexistuje.
+  dnes — regresní síť pro navigaci neexistuje. Unit testy pokrývají jen čistou
+  logiku (`navHref`, `isNavItemActive`, adaptér `navigationOverrides`).
+- `matches.displayTitle` (titulek v adminu) odděluje týmy malým „x", web
+  (`matchTitle`) „×". Hodnota je uložená, takže sjednocení znamená migraci
+  dat všech zápasů a změnu hooku `matchDisplayTitle`; zatím se nevyplatí.
 
 # Typografie — standardní škála Tailwindu
 
@@ -535,15 +723,19 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
   `text-lg` má `font-bold` / `font-semibold` / `font-medium` místo
   `extrabold` / `bold` / `semibold`. `font-extrabold` patří nadpisům
   (`Heading.tsx`), skóre a číslům (`Numeral.tsx`) a jménům týmů v tabuli;
-  tlačítka (`pill.ts`) mají `font-bold`.
-- Výjimky, které zůstávají tokeny: `text-eyebrow` (11px mikro-label
-  verzálkami, Tailwind krok nemá) a `text-watermark-*` (dekorativní
-  obrysové nápisy 110–260 px).
-- Staré tokeny hlídá pravidlo `no-legacy-font-token` v
-  `scripts/check-tokens.mjs`. V `globals.css` jsou pořád definované, protože
-  je ještě používá rozpracovaná `LandingFooter.tsx` (výjimka v pravidle);
-  po jejím převodu je jde smazat i z `@theme` a z registru twMerge
-  (`src/utilities/ui.ts`).
+  tlačítka (`components/ui/button`) mají `font-bold`.
+- Výjimky, které zůstávají tokeny (definované v `@theme`, registrované
+  v twMerge): `text-eyebrow` (11px mikro-label verzálkami, Tailwind krok
+  nemá), `text-watermark-*` (dekorativní obrysové nápisy 110–260 px)
+  a **fluidní display škála** — `clamp()` mezi mobilem a desktopem, kterou
+  Tailwind nevyjádří: `text-title-*` (nadpisy hero a podstránek), `text-score-*`
+  (skóre), `text-hero-*`, `text-countdown*`, `text-contact-*`, `text-year`,
+  `text-jersey*` a `text-error-code`.
+- Staré tokeny (`text-caption` … `text-numeral-*`) jsou **smazané** z `@theme`
+  i z registru twMerge (`src/lib/utils.ts`); poslední uživatel,
+  `LandingFooter.tsx`, je převedený (odkazy `text-sm`, copyright `text-xs`).
+  Třída, která by na ně zbyla, se tiše nevygeneruje, proto je hlídá pravidlo
+  `no-legacy-font-token` v `scripts/check-tokens.mjs`.
 - Výchozí velikosti Tailwindu nesou i `line-height`. Kde na řádkování
   závisí zarovnání (časová osa zápasu: `h-5 md:h-6` = řádek
   `text-sm` / `md:text-base`), musí se měnit spolu.
@@ -557,10 +749,23 @@ Převod udělal skript jedna ku jedné (nejbližší krok):
 Handoffy v `design_*/` jsou kreslené pro **1440px**. `md:` (768px) proto
 **není** místo pro desktopovou hodnotu z handoffu; ta patří na `lg:` (1024px)
 a mezi mobil a desktop se vkládá mezistupeň. Breakpointy projektu
-(`src/app/globals.css`): sm 640, md 768, lg 1024, xl 1280, 2xl 1376.
+(`@theme` v `src/app/globals.css`):
+
+| varianta | šířka | k čemu |
+|---|---|---|
+| `3xs:` | 360 | zúžené řádky na malých telefonech; `max-3xs:` je `< 360` |
+| `2xs:` | 400 | |
+| `xs:` | 528 | Tréninky: karta přestane být přes celou šířku |
+| `sm:` / `md:` / `lg:` / `xl:` / `2xl:` | 640 / 768 / 1024 / 1280 / 1376 | |
+| `nav:` | 1440 | hlavní navigace: pilulky `hidden nav:flex`, burger `nav:hidden` |
+
+Mikro-breakpointy (`3xs`, `2xs`, `xs`) jsou jen v `@theme`, bez
+`@custom-variant`; arbitrární `min-[22.5rem]:` a spol. hlídá pravidlo
+`no-arbitrary-breakpoint`. `nav:` je na 1440 a ne na `xl`, protože deset
+položek se vedle loga a CTA vejde až tam.
 
 Pravidlo už dřív platilo pro svislý rytmus (`SectionShell`), navigaci
-(`NavPills` je `hidden xl:flex`), mřížky výpisů (`CardGrid`) a watermarky
+(`NavPills` je `hidden nav:flex`), mřížky výpisů (`CardGrid`) a watermarky
 (`Watermark` od `lg`). Od 22. 8. 2026 platí i pro **vnitřní odsazení
 panelů**: každá zelená/bílá karta jede na `p-4.5 md:p-<mezistupeň>
 lg:p-<handoff>`. Dřív skákaly rovnou (`p-4.5 md:p-13`), takže si na 768px
@@ -569,8 +774,19 @@ displeji braly okraje panelu až pětinu jeho šířky.
 Doložení, že se desktop nezměnil: `node shot.mjs --bp=desktop` před a po,
 `scrollHeight` v `report.json` musí sedět na pixel na všech routách.
 
-Dvě opakující se pasti:
+Vodorovné zarovnání stránky drží tokeny `px-gutter` (odsazení od okraje,
+14–40 px) a `max-w-page` (šířka celého webu, 1560 px) místo
+`px-[clamp(…)]` a `max-w-[97.5rem]`; viz „Design tokeny".
 
+Tři opakující se pasti:
+
+- **Vestavěné `.container` Tailwindu.** Generuje `max-width` pro **každý**
+  `--breakpoint-*`, tedy i pro mikro-breakpointy pod `sm`, takže by se
+  kontejner na displeji 360–639 px ořezal na 360 / 400 / 528 px. Projekt
+  proto má vlastní `.container` (`@layer utilities` v `globals.css`) s
+  `max-width: none` a šířkou od `sm` výš, která se přebíjí `@variant` bloky
+  níž. Nový breakpoint, který má kontejner omezit, se tam musí doplnit
+  ručně.
 - **`minmax(<X>rem,1fr)` v `auto-fit` mřížce.** Když je `X` širší než
   vnitřek kontejneru (patička má na 320px displeji 256px), dráha kontejner
   přeteče a `overflow-hidden` obsah ustřihne. Píše se
@@ -580,6 +796,111 @@ Dvě opakující se pasti:
   mřížka posune z `md:grid-cols-3` na `lg:grid-cols-3`, ale `sizes` zůstane
   `(max-width: 48rem) 100vw, 33vw`, tablet si tahá třetinové fotky do
   polovičních dlaždic.
+
+# Design tokeny
+
+Zdroj pravdy je `@theme` v `src/app/globals.css`. Komponenty se na hodnoty
+odkazují utilitou, ne arbitrární hodnotou (`px-gutter`, ne
+`px-[clamp(…)]`); hlídá to `scripts/check-tokens.mjs` (Husky `pre-commit`
+a krok `check` v CI).
+
+| skupina | tokeny | utility |
+|---|---|---|
+| spacing | `gutter` (okraj stránky/sekce), `gutter-tight` (PageCanvas tight, chyba 500), `gutter-nav` (lišta článku), `split-gap` (mezi sloupci dvousloupcového bloku), `hero-gap`, `hero-inset` (obsah hero přes fotku), `panel` (vodorovný padding velkého panelu), `panel-y` (svislý padding hlavičky zápasu) | `p-`, `m-`, `gap-`, `inset-`, `w-`, `h-`… (všechny spacing prefixy) |
+| container | `page` (97,5 rem), `article` (51,25 rem — tělo článku a `RawHtml`) | `max-w-page`, `max-w-article` |
+| tracking | `display` −0,06 em, `title-tight` −0,04, `title` −0,035, `heading` −0,03, `subheading` −0,02, `snug` −0,01; verzálky `caps-sm` 0,08, `caps-md` 0,12, `caps-lg` 0,16 (Eyebrow, Kicker) | `tracking-*` |
+| leading | `copy` 1,55, `title` 1,02, `title-tight` 0,98, `heading` 1,15, `heading-tight` 1,05, `display` 0,9, `score` 0,82 | `leading-*` |
+| radius | `card` 36, `section` 30, `panel` 28, `block` 26, `tile` 24, `thumb` 22, `row` 20, `badge` 18, `icon` 16, `field` 14, `item` 12, `chip` 8, `tag` 4 (px) | `rounded-*` |
+
+Radius: holé `rounded` a výchozí stupně `sm`–`3xl` v landingu zakazuje
+`no-default-radius`; `full` a `none` smí zůstat.
+
+## Průhlednost na tmavém
+
+Bílá s průhledností na tmavých a zelených plochách a přes fotky je žebřík
+`on-contrast-*` (použitelný pro `text-`, `bg-`, `border-`, `divide-`
+i `placeholder:`), ne `white/N`:
+
+| stupeň | průhlednost | typické použití |
+|---|---|---|
+| `on-contrast` | 100 % | text a ikony na ploše `contrast` |
+| `-strong` | 90 % | nejsilnější text, skleněné plochy |
+| `-soft` | 80 % | hlavní text na tmavém |
+| `-muted` | 70 % | meta text |
+| `-subtle` | 60 % | popisky |
+| `-faint` | 50 % | velmi tlumený text |
+| `-ghost` | 40 % | obrys tlačítka, placeholder |
+| `-line` | 30 % | linky a rámečky skla |
+| `-glass` | 16 % | výplň skleněného tlačítka |
+| `-wash` | 10 % | nejjemnější výplň, dělicí linka |
+
+Černá je `scrim` (`bg-scrim/10`). Holé `white` a `black` s předponou
+`text-`/`bg-`/`border-`… hlásí `no-white-black` i s hintem na správný token.
+Žebřík nahradil 37 různých hodnot `white/N`; sousední stupně se slily s
+odchylkou nejvýš ~5 procentních bodů.
+
+## Utility a vzory v `globals.css`
+
+- `bg-split` (90°) a `bg-split-diagonal` (135°): půlený podklad cihlová |
+  zelená pro prohru po prodloužení/nájezdech (`Badge split`, čtvereček formy).
+- `dot-grid`: tečkovaný vzor pro `DotGrid`. `--alpha()` je build-time funkce
+  Tailwindu a v inline `style` ji prohlížeč nezná, proto vzor žije v CSS
+  a komponenta nese jen třídu. Stejně jsou řešená šrafování (`hatch`,
+  `hatch-white`, `hatch-lime`).
+
+## shadcn vrstva je alias na značku
+
+Proměnné shadcn (`--background`, `--primary`…) nemají vlastní paletu, jsou
+to aliasy na značkové tokeny, takže tmavý režim (`--ds-*`) se přenáší sám:
+
+| shadcn | značka | proč |
+|---|---|---|
+| `primary` | `club-dark` | bílý text na `club` má ~3,4 : 1, na `club-dark` ~5,1 : 1 (AA) |
+| `ring` | `club` | u prstence stačí 3 : 1 pro netextové prvky |
+| `destructive` | `danger` | |
+| `border` | `--ds-line-mid` | |
+| `input` | `--ds-line` | |
+
+oklch „slate" vrstva ze šablony neexistuje; `components.json` je `new-york`
+a `baseColor: slate` slouží jen pro `shadcn add`. Shadcn třídy
+(`bg-primary`, `text-muted-foreground`…) patří jen do `components/ui`
+a do šablonového frontendu, v landingu je zakazuje `no-shadcn-in-landing`.
+
+## twMerge a nový token
+
+`src/lib/utils.ts` (`extendTailwindMerge`) zná jen výchozí názvy Tailwindu.
+Nový token se musí zapsat i tam: `--text-*` do skupiny `font-size`, `--spacing-*`,
+`--container-*`, `--tracking-*` a `--leading-*` do `theme`. Bez toho by
+`cn('px-gutter', 'px-4')` nechalo obě třídy (rozhodne pořadí v CSS) a `text-*`
+token by se bral jako barva textu a zahodil by se vedle skutečné barvy.
+**Radiusy jsou záměrně neregistrované:** registrace by změnila, která z dvojice
+`rounded-*` v `cn()` vyhraje.
+
+## `check-tokens`
+
+Všechna pravidla jsou `error` (exit 1); přepínač `--strict` je no-op kvůli
+starým voláním. Skenuje se celé `src/` včetně `components/ui`, jen generovaný
+`payload-types.ts` se přeskakuje. Pravidla
+`no-shadcn-in-landing`, `no-dark-variant-in-landing` a `no-default-radius`
+platí jen v `src/landing/` a `src/app/(landing)/`. Výjimka:
+`// token-check-ignore: <důvod>` na stejném nebo předchozím řádku; prázdný
+důvod je pořád chyba.
+
+| pravidlo | co hlídá |
+|---|---|
+| `no-raw-hex`, `no-rgb-literal`, `no-arbitrary-color-class`, `no-default-palette` | barvy mimo tokeny |
+| `no-white-black` | `white`/`black` místo `on-contrast-*` / `scrim` |
+| `no-arbitrary-radius`, `no-default-radius` | zaoblení |
+| `no-arbitrary-font-size`, `no-legacy-font-token` | velikosti písma |
+| `no-arbitrary-spacing`, `-tracking`, `-leading`, `-font-clamp`, `-breakpoint`, `-aspect` | arbitrární hodnota, kterou už pokrývá token nebo výchozí třída; hodnoty čtou z `@theme`, takže **nový token se začne hlídat sám** |
+| `no-shadcn-in-landing`, `no-dark-variant-in-landing`, `no-pill-import` | vrstvy a zrušené moduly |
+| `style-allowlist` | inline `style={{` jen v souborech z allowlistu |
+| `theme-hex-parity` | `LANDING_COLORS` (`src/landing/tokens.ts`) se shoduje s `@theme` |
+| `twmerge-font-size-parity`, `twmerge-theme-parity` | každý token je registrovaný v `src/lib/utils.ts` |
+
+`LANDING_COLORS` je hex zrcadlo jen pro kontexty bez CSS proměnných (admin,
+SVG `data:` URI, `global-error.tsx`, e-maily, `theme-color`); do komponent
+se nikdy neimportuje.
 
 # Sekce Tréninky (blok `landingTrainings`)
 
@@ -891,10 +1212,10 @@ zápasu" ve stylu Livesportu a karta reportáže.
 |---|---|
 | route | `src/app/(landing)/zapasy/[slug]/page.tsx` (SSG + ISR 600 s, `generateStaticParams`, `notFound()`) |
 | výpis | `src/app/(landing)/zapasy/(vypis)/` (`page.tsx` + `loading.tsx`) |
-| fetchery | `src/landing/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
-| view-model | `src/landing/data/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` |
-| komponenty | `src/landing/zapas/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/components/MatchScoreboard.tsx` |
-| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/utilities/matchSlug.ts` a `slugifyCs.ts` |
+| fetchery | `src/landing/features/matches/data/matchDetail.ts` (`fetchMatchDetail`, `resolveReport`, `fetchMatchSlugForPost`, `fetchMatchSlugs`) |
+| view-model | `src/landing/features/matches/view/matchDetailView.ts` (čisté mapování, `pickReport`), `matchEvents.ts` (branky a tabule, sdílené s hero reportáže), `matchFormat.ts` (jediný zdroj pravidel zápasu: `orient` NAŠE:SOUPEŘ → domácí:hosté, `ScoreSuffix`, `SUFFIX_NOTE`, `outcomeNote`, `sideLabel`), `fixturesLayout.ts` (`pickLayout` pro `FixturesRail`) |
+| komponenty | `src/landing/features/matches/components/*` (`MatchHeader`, `MatchTimeline`, `MatchReportCard`, `MatchJsonLd`), `src/landing/features/matches/components/MatchScoreboard.tsx` |
+| slug | pole `matches.slug`, hook `src/hooks/matchSlug.ts`, helpery `src/lib/matchSlug.ts` a `slugifyCs.ts`; soupeře pro slug i titulek načítá `src/hooks/resolveOpponent.ts` (jednou na uložení, paměť vázaná na `req`) |
 | sitemapa | `src/app/(landing)/(sitemaps)/matches-sitemap.xml/route.ts` |
 
 ## Slug
@@ -978,7 +1299,7 @@ s `report = post.id`.
     skóre nemají.
   - Řazení je stabilní podle času, při shodném čase branka před trestem.
 - **Souhrn** (`MatchSummary`, `buildMatchSummary` v
-  `data/matchSummary.ts`) — pravý sloupec vedle osy, pod případnou
+  `features/matches/view/matchSummary.ts`) — pravý sloupec vedle osy, pod případnou
   reportáží: kanadské body (G / A / B), počet gólů v PP / OS a tresty po
   hráčích. Rozhodnutí uživatele 15. 10. 2026: osa přes celou šířku 1320 px
   měla stav po gólu daleko od jména, takže zůstává ve sloupci
@@ -997,9 +1318,12 @@ s `report = post.id`.
   webu → Vzhled hlavičky detailu zápasu** (`siteConfig.matchHeaderVariant`:
   `classic` = původní `MatchHeader`, `arena`, `editorial`, `split`, `app`;
   rozhodnutí uživatele 15. 10. 2026). Přepíná `MatchHeaderByVariant`
-  (`landing/zapas/header-variants/index.tsx`), katalog všech vedle sebe
+  (`landing/features/matches/header-variants/index.tsx`), katalog všech vedle sebe
   je `/vzory/hlavicka-zapasu` (noindex). Zrušený zápas má vždy `classic`
-  (`CanceledHeader`). Uložení nastavení invaliduje tag `site-config`, který
+  (`CanceledHeader`); varianty ho umět nemusí (typ `VariantMatch`, katalog
+  ho nezobrazuje). Sdílené drobnosti variant (`MetaItem`, `OutcomeBadge`,
+  `SideBadge`, `StatusBadge`) jsou v `header-variants/shared.tsx`, znak týmu
+  `TeamCrest` v `components/`. Uložení nastavení invaliduje tag `site-config`, který
   detail čte (i přes `SubpageShell`), takže se změna projeví hned i na
   prerenderovaných detailech. Varianty A a D dopočítávají sloupce P a SN
   ze skóre (ukládají se jen tři třetiny) a zkratky týmů (`POL`, `ČES`)
@@ -1028,8 +1352,9 @@ nemá tabuli, takže `h1` s titulkem je viditelný (jinak je u tabule jen
 Události osy se před seskupením stabilně řadí podle času (nájezd `SN` na
 konec) — ručně zadané neseřazené branky by jinak daly dvě skupiny téhož
 názvu a duplicitní React `key`. Změna tvaru view-modelu znamená novou verzi
-klíče `unstable_cache` (teď `['match-detail', 'v3']`), jinak by stará
-entry stránku shodila.
+klíče `unstable_cache` (teď `['match-detail', 'v4']`; v4: třetiny a skóre
+úseku osy jsou `{ home, away }`, ne řetězec „3:1“), jinak by stará entry
+stránku shodila.
 
 ## Výsledek zápasu a výpisy na `/zapasy`
 
@@ -1038,13 +1363,13 @@ je prohra po prodloužení nebo nájezdech (`matchOutcome` v
 `matchFormat.ts`): v tabulce VČHL za ni je bod, proto má „půlený" štítek
 — varianta `split` v `Badge` (cihlová | světle zelená), ve formě čtvereček
 půlený úhlopříčkou s písmenem P. Mapa štítků je jedna,
-`landing/components/outcome.ts`, sdílí ji `ResultsList` i `MatchHeader`.
+`landing/features/matches/components/outcome.ts`, sdílí ji `ResultsList` i `MatchHeader`.
 Výhra po prodloužení zůstává `win` (suffix `pp`/`sn` u skóre ji odliší).
 
 Řádky výpisu mají **znaky týmů a čitelné datum** (rozhodnutí uživatele
-15. 10. 2026): `MatchRowTitle` kreslí `Crest` u každého týmu, `MatchWhen`
+15. 10. 2026): `MatchRowTitle` kreslí `TeamCrest` u každého týmu, `MatchWhen`
 den v týdnu + datum `md:text-lg` + čas. Logo soupeře se načítá v
-`withOpponentLogos` (`data/matches.ts`) jedním dotazem na `media` pro celou
+`withOpponentLogos` (`features/matches/data/matches.ts`) jedním dotazem na `media` pro celou
 stránku — výpisy jedou na `depth: 1` (`depth: 2` by rozbalil i sezónu,
 reportáž a sestavu). V `select` musí být `filename`: `url` je virtuální pole
 z něj složené, bez něj vyjde prázdné. Fetchery bez loga (`depth: 1`)
@@ -1065,10 +1390,10 @@ výpis zápasu by je měl použít místo vlastního řetězce:
 
 | díl | co řeší |
 |---|---|
-| `components/TeamPair.tsx` | „domácí × hosté": tým je nedělitelný celek, láme se za „×"; `stack` dá na mobilu každý tým na vlastní řádek. `splitMatchTitle` rozdělí titulek zápasu |
-| `components/MatchMeta.tsx` | ztišený řádek údajů oddělených „·" — láme se mezi údaji, tečka nikdy nevisí na kraji řádku |
-| `components/DotEyebrow.tsx` | popisek s lime tečkou (nejbližší zápas, hlavička detailu, hero reportáže) |
-| `zapasy/MatchRow.tsx` | společná karta, mřížka, datum a titulek řádků `ResultsList` i `FixtureList` |
+| `features/matches/components/TeamPair.tsx` | „domácí × hosté": tým je nedělitelný celek, láme se za „×"; `stack` dá na mobilu každý tým na vlastní řádek. `splitMatchTitle` rozdělí titulek zápasu |
+| `features/matches/components/MatchMeta.tsx` | ztišený řádek údajů oddělených „·" — láme se mezi údaji, tečka nikdy nevisí na kraji řádku |
+| `landing/ui/DotEyebrow.tsx` | popisek s lime tečkou (nejbližší zápas, hlavička detailu, hero reportáže) |
+| `features/matches/components/MatchRow.tsx` | společná karta, mřížka, datum a titulek řádků `ResultsList` i `FixtureList` |
 
 Fáze soutěže z AHL („VČHL 2.ročník - ZČ") se pro web formátuje jen
 v `matchFormat.ts`: `formatCompetition()` → „VČHL 2. ročník · Základní
@@ -1087,7 +1412,7 @@ s `updatedAt`, absolutní URL) a kartu `summary_large_image`; bez fotky je
 to čtvercové logo klubu a `summary`. Slug z URL se dekóduje přes
 `readSlug`: neplatné kódování (`/zapasy/%25zz`) je `notFound()`, ne 500.
 
-JSON-LD se serializuje přes `serializeJsonLd` (`src/utilities/jsonLd.ts`),
+JSON-LD se serializuje přes `serializeJsonLd` (`src/lib/jsonLd.ts`),
 který nahrazuje `<` za `\u003c` — jména střelců a soupeřů jsou scrapovaná
 z ahl.cz a `JSON.stringify` samo `</script>` neescapuje (viz
 `node_modules/next/dist/docs/01-app/02-guides/json-ld.md`). Každé nové
@@ -1100,7 +1425,7 @@ z ahl.cz a `JSON.stringify` samo `</script>` neescapuje (viz
 a `revalidate: 3600` jako záchranná síť. Platí tři pravidla z „Cache
 a renderovací režimy": tag i `revalidate`, `{ expire: 0 }` u redakčního
 obsahu a žádné `new Date()` uvnitř cache (naplánovaný zápas řeší odpočet
-na klientu: `Countdown` po uplynutí času buly místo nul ukáže „Zápas právě
+na klientu (`useCountdown`): `Countdown` po uplynutí času buly místo nul ukáže „Zápas právě
 probíhá nebo čeká na výsledek", server vždy kreslí „--", takže bez hydration
 mismatch; platí i v hero a ve widgetu Nejbližší zápas). Tag se propaguje do prerenderované stránky, takže
 `revalidatePath` na detail není potřeba.
@@ -1109,8 +1434,8 @@ Cesty, kterými se tagy expirují:
 
 | změna | cesta |
 |---|---|
-| zápas v adminu | `revalidateLanding` → `LANDING_CACHE_TAGS` (`matches-list`) |
-| zápas ze synchronizace | `/internal/revalidate` → `revalidateLandingNow` (stejné tagy) |
+| zápas v adminu | hook `revalidateLanding` (`hooks/revalidateLanding.ts`) → plán `LANDING_REVALIDATION` s tagy `LANDING_CACHE_TAGS` (`matches-list`) |
+| zápas ze synchronizace | `/internal/revalidate` → `applyRevalidation` (`hooks/createRevalidateHooks.ts`) s týmž plánem `LANDING_REVALIDATION` |
 | soupeř (název, logo, slug) | `Opponents` hooks `afterChange` / `afterDelete` → `revalidateLanding` / `revalidateLandingDelete` (`matches-list`); synchronizace zakládá soupeře s `disableRevalidate` a revaliduje jednou na konci běhu |
 | reportáž (publikace, odpublikování, smazání) | `revalidatePost` / `revalidateDelete` → `posts-list` |
 
@@ -1190,6 +1515,39 @@ DATABASE_URL=postgres://…@127.0.0.1:5433/postgres bun run migrate
 
 Runner image je standalone, takže `payload migrate` v něm **nejde spustit** —
 nemá `node_modules` ani `src`. Tunel to řeší bez druhého image.
+
+Migrace `20261016_041722_remove_template_leftovers` je **výjimka z pravidla
+„migrace před buildem“ — pouští se až PO nasazení nového image.** Starý běžící
+build čte `pages` přes Payload `find` bez `select`, takže Drizzle vybírá
+sloupce `hero_*` a joinuje `pages_hero_links`; po dropu by každá stránka
+starého buildu padala. Nový kód hero sloupce nepotřebuje, takže běží na obou
+schématech (před i po migraci) a pořadí „nový image → migrace“ nemá výpadek.
+Prerender na runneru prochází také bez migrace, protože novému kódu
+dropnuté sloupce nechybí. Postup: deploy → ověřit, že nový kontejner běží →
+`bun run migrate` přes tunel.
+
+Je **destruktivní** (jedna z mála): dropne globaly `header`, `footer`
+a `sidebar` (tabulky `header*`, `footer*`, `sidebar*` včetně
+`sidebar_blocks_*` a jejich enumů), hero kolekce `pages`
+(`pages_hero_links`, `_pages_v_version_hero_links`, sloupce `hero_*` na
+`pages` a `version_hero_*` na `_pages_v`) a sloupce `pages_id` / `posts_id`
+na `pages_rels` a `_pages_v_rels` (patřily jen odkazům v hero, v datech byly
+NULL). **Před spuštěním zálohovat tabulky `sidebar*`**: `down` vrací jen
+schéma, ne data, a obsah 5 RawHtml widgetů Sidebaru by měl po `up` jen
+záloha databáze (originál je v seed datech `scripts/seed/data/codes.json`).
+Ověřeno `up` → `down` → `up` na čisté databázi a `up` na kopii reálných dat
+(počty `pages`, `posts`, `matches` beze změny).
+
+**Lokální vývoj** jede na `push`: po merge Payload při startu `next dev`
+zahlásí ztrátu dat (drop `header` / `footer` / `sidebar` / hero) a zeptá se na
+potvrzení. Je to očekávané, potvrdit.
+
+Čerstvá databáze, na které proběhnou **všechny** migrace od nuly, se liší od
+schématu v `push` módu u bloku News (`pages_blocks_landing_news` a verze:
+`count` default 3 místo 5, navíc `fallback_photo_id`, `highlight_tag`,
+`highlight_title`). Starší migrace tedy nesedí na dnešní config; produkci se
+to netýká (schéma má z dumpu a migrace jen dorovnává), ale pro novou
+databázi z migrací je to dluh.
 
 ## Co je zapečené v buildu
 

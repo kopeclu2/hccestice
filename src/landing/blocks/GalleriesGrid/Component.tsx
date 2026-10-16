@@ -1,15 +1,14 @@
-import type { GalleriesGridBlock } from '@/payload-types'
-
 import React from 'react'
 
-import { CardTitle } from '../../components/Heading'
-import { Highlight } from '../../components/Kicker'
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { relId } from '../../data/format'
-import { fetchGalleryCards } from '../../data/galleries'
-import type { GalleryCard } from '../../types'
+import { fetchGalleryCards } from '@/landing/features/galleries/data'
+import type { GalleryCard } from '@/landing/features/galleries/types'
+import { relId } from '@/landing/lib/payload'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { GalleriesGridBlock } from '@/payload-types'
 
 /** Widget galerií — načte karty galerií z kolekce dle filtrů bloku. */
 export async function GalleriesGridBlockComponent({ block }: { block: GalleriesGridBlock }) {
@@ -48,8 +47,8 @@ function GalleriesGridView({
               <TileBadge className="top-3 right-3" tone="lime">
                 {gallery.photoCount} fotek
               </TileBadge>
-              <div className="absolute inset-x-4 bottom-4 text-white">
-                <div className="text-sm md:text-base leading-snug font-semibold">
+              <div className="absolute inset-x-4 bottom-4 text-on-contrast">
+                <div className="text-sm leading-snug font-semibold md:text-base">
                   {gallery.title}
                 </div>
                 <div className="text-xs opacity-75">{gallery.dateLabel}</div>

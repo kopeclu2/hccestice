@@ -1,13 +1,11 @@
-import type { PhotoCardsBlockType } from '@/payload-types'
-
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { uploadToPhoto } from '../../data/format'
+import { uploadToPhoto } from '@/landing/lib/media'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { cn } from '@/lib/utils'
+import type { PhotoCardsBlockType } from '@/payload-types'
 
 const CARD_HEIGHTS: Record<string, string> = {
   sm: 'h-52.5',
@@ -58,7 +56,7 @@ export function PhotoCardsBlockComponent({ block }: { block: PhotoCardsBlockType
                 </TileBadge>
               )}
               {card.caption && (
-                <div className="absolute inset-x-4 bottom-4 text-sm md:text-base leading-normal font-medium text-white">
+                <div className="absolute inset-x-4 bottom-4 text-sm leading-normal font-medium text-on-contrast md:text-base">
                   {card.caption}
                 </div>
               )}

@@ -34,3 +34,6 @@ node_modules/
 # ruční screenshoty z macOS
 /Snímek obrazovky*.png
 /Screenshot*.png
+
+# git worktrees agentů Claude Code
+/.claude/worktrees/

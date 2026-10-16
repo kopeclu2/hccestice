@@ -1,17 +1,16 @@
-import type { CtaBannerBlockType } from '@/payload-types'
-
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { cn } from '@/utilities/ui'
-
-import { SectionTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { uploadToPhoto } from '../../data/format'
+import { Button } from '@/components/ui/button'
+import { uploadToPhoto } from '@/landing/lib/media'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { cn } from '@/lib/utils'
+import type { CtaBannerBlockType } from '@/payload-types'
 
 /** CTA banner — zelená/tmavá karta s titulkem a tlačítkem (vzor brigáda). */
 export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }) {
@@ -21,7 +20,7 @@ export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }
       <Reveal>
         <div
           className={cn(
-            'relative overflow-hidden rounded-card p-8 text-white md:p-10 lg:p-12',
+            'relative overflow-hidden rounded-card p-8 text-on-contrast md:p-10 lg:p-12',
             block.tone === 'dark' ? 'bg-contrast' : 'bg-club',
           )}
         >
@@ -38,11 +37,11 @@ export function CtaBannerBlockComponent({ block }: { block: CtaBannerBlockType }
           <div className="relative max-w-150">
             {block.kicker && <Eyebrow tone="lime">{block.kicker}</Eyebrow>}
             <SectionTitle className="mt-1.5 text-pretty">{block.title}</SectionTitle>
-            {block.text && <p className="mt-3 text-white/85">{block.text}</p>}
+            {block.text && <p className="mt-3 text-on-contrast-strong">{block.text}</p>}
             {block.ctaLabel && block.ctaHref && (
-              <PillLink className="mt-6" href={block.ctaHref} variant="light" withArrow>
-                {block.ctaLabel}
-              </PillLink>
+              <Button asChild className="mt-6" variant="light" withArrow>
+                <Link href={block.ctaHref}>{block.ctaLabel}</Link>
+              </Button>
             )}
           </div>
         </div>

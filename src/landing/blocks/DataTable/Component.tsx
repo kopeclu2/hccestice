@@ -1,5 +1,3 @@
-import type { DataTableBlockType } from '@/payload-types'
-
 import React from 'react'
 
 import {
@@ -11,12 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { cn } from '@/utilities/ui'
-
-import { CardTitle } from '../../components/Heading'
-import { Eyebrow, Highlight } from '../../components/Kicker'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { cn } from '@/lib/utils'
+import type { DataTableBlockType } from '@/payload-types'
 
 /**
  * Obecná datová tabulka (shadcn/ui Table v klubovém stylu).
@@ -113,7 +111,7 @@ export function DataTableBlockComponent({ block }: { block: DataTableBlockType }
               })}
             </TableBody>
             {block.caption && (
-              <TableCaption className="text-faint text-left text-xs">{block.caption}</TableCaption>
+              <TableCaption className="text-left text-xs text-faint">{block.caption}</TableCaption>
             )}
           </Table>
         </div>

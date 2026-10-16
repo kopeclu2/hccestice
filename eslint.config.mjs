@@ -25,6 +25,33 @@ const eslintConfig = [
     },
   },
   {
+    // Plugin `import` registruje eslint-config-next jen pro tyto přípony,
+    // takže pravidlo smí platit jen na nich (jinak ESLint hlásí „could not
+    // find plugin"). Nic dalšího se neinstaluje.
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
+    // Soubory v `(payload)` generuje Payload (`DO NOT MODIFY`) a po úpravě
+    // šablony je přepíše zpátky, takže pořadí importů v nich nehlídáme.
+    ignores: ['src/app/(payload)/**'],
+    rules: {
+      // `@/**` je alias na `src/` a `@payload-config` míří na `payload.config.ts`
+      // (oba z `tsconfig#paths`) — bez `pathGroups` by je plugin bral jako externí
+      // balíčky a smíchal s `react`, `next` apod.
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          pathGroups: [
+            { pattern: '@/**', group: 'internal' },
+            { pattern: '@payload-config', group: 'internal' },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+    },
+  },
+  {
     // Payload generuje `up`/`down({ payload, req, ... })` s pevným podpisem
     // podle `MigrateUpArgs`/`MigrateDownArgs` — nevyužité destrukturované
     // parametry tu nejsou chyba, jsou to schéma migrací a `payload
@@ -38,7 +65,7 @@ const eslintConfig = [
     // Jednorázové seed/import skripty spouštěné ručně přes `bun`, ne
     // součást buildu ani runtime aplikace — pracují s volně tvarovanými
     // daty z CMS importu, kde `any` je legitimní.
-    files: ['migration/**'],
+    files: ['scripts/seed/**'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       // seed-home-landing.ts je záměrně zamrzlý historický skript — typ,
@@ -46,7 +73,7 @@ const eslintConfig = [
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
-  globalIgnores(['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts']),
+  globalIgnores(['.next/', '.claude/', 'src/payload-types.ts', 'src/payload-generated-schema.ts']),
 ]
 
 export default eslintConfig

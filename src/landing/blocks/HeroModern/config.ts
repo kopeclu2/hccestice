@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { photoField } from '../shared'
+import { photoField } from '@/landing/blocks/shared'
 
 /**
  * Varianta 2 hero sekce (handoff `design_header/HC Cestice Modern.dc.html`).

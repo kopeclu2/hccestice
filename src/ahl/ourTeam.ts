@@ -1,16 +1,9 @@
-/**
- * Záměrně bez importů: sdílí se i s frontendem, takže se sem nesmí dostat
- * jsdom ani nic serverového.
- */
+import { fold } from '@/lib/fold'
 
-function fold(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim()
-}
+/**
+ * Sdílí se i s frontendem, takže se sem nesmí dostat jsdom ani nic
+ * serverového. `@/lib/fold` je bez importů.
+ */
 
 // AHL má pro Čestice tři podoby: krátký název ve výpisech, plný v tabulce
 // a třípísmennou zkratku v zápise.
@@ -18,5 +11,5 @@ const OUR_TEAM = new Set(['cestice', 'hc cestice', 'ces'])
 
 export function isOurTeam(name: string | null | undefined): boolean {
   if (!name) return false
-  return OUR_TEAM.has(fold(name))
+  return OUR_TEAM.has(fold(name, { collapseSpaces: true }))
 }

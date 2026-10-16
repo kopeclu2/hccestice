@@ -1,0 +1,47 @@
+import React from 'react'
+
+import { getServerSideURL } from '@/lib/getURL'
+import { serializeJsonLd } from '@/lib/jsonLd'
+
+export type Crumb = {
+  label: string
+  /** Bez `href` je položka poslední (aktuální stránka) — vykreslí se jako text. */
+  href?: string
+}
+
+/**
+ * JSON-LD (schema.org BreadcrumbList) k viditelným drobečkům.
+ *
+ * Typ `Crumb` žije tady, ne v `ui/Breadcrumbs`: ta komponentu importuje,
+ * takže by opačný směr udělal import cyklus.
+ *
+ * „Domů" se doplňuje automaticky, stejně jako ve vizuální komponentě,
+ * takže volající předává jen zbytek cesty a obě reprezentace se nemohou
+ * rozejít.
+ *
+ * U poslední položky se `item` **vynechává** záměrně — je to aktuální
+ * stránka a Google pro ni URL nečeká. Díky tomu komponenta nepotřebuje
+ * znát vlastní adresu a jde použít i tam, kde ji nemá po ruce.
+ */
+export function BreadcrumbsJsonLd({ trail }: { trail: Crumb[] }) {
+  const baseUrl = getServerSideURL()
+  const items: Crumb[] = [{ href: '/', label: 'Domů' }, ...trail]
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.label,
+      ...(crumb.href && index < items.length - 1 ? { item: `${baseUrl}${crumb.href}` } : {}),
+    })),
+  }
+
+  return (
+    <script
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      type="application/ld+json"
+    />
+  )
+}

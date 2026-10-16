@@ -1,23 +1,22 @@
 import type { Metadata } from 'next'
-
-import { draftMode } from 'next/headers'
 import { Archivo } from 'next/font/google'
+import { draftMode } from 'next/headers'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { CookieConsentInit } from '@/components/CookieConsent/CookieConsentInit'
-import { GlobalNav } from '@/landing/components/GlobalNav'
-import { MaintenanceNotice } from '@/landing/components/MaintenanceNotice'
-import { MaintenanceScreen } from '@/landing/components/MaintenanceScreen'
-import { PatternDevSwitcher } from '@/landing/components/PatternDevSwitcher'
 import { fetchMaintenance } from '@/landing/data/maintenance'
 import { hasSession } from '@/landing/data/session'
 import { fetchSite } from '@/landing/data/site'
+import { GlobalNav } from '@/landing/layout/GlobalNav'
+import { MaintenanceNotice } from '@/landing/layout/MaintenanceNotice'
+import { MaintenanceScreen } from '@/landing/layout/MaintenanceScreen'
+import { PatternDevSwitcher } from '@/landing/layout/PatternDevSwitcher'
 import { LANDING_COLORS } from '@/landing/tokens'
-import { getServerSideURL } from '@/utilities/getURL'
-import { defaultTwitter, mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { getServerSideURL } from '@/lib/getURL'
+import { defaultTwitter, mergeOpenGraph } from '@/lib/mergeOpenGraph'
 
-import '../globals.css'
+import '@/app/globals.css'
 
 /**
  * Jediný font landing page (viz design handoff — Typografie).

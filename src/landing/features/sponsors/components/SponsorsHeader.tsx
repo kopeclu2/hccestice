@@ -1,0 +1,50 @@
+import Link from 'next/link'
+import React from 'react'
+
+import { Button } from '@/components/ui/button'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PageHeader } from '@/landing/ui/PageHeader'
+
+/**
+ * Hlavička stránky partnerů: watermark „DÍKY", drobečky, titulek s lime
+ * zvýrazněním, perex se sezónou a CTA „Chci podpořit klub" s počtem partnerů.
+ *
+ * Počet je na rozdíl od soupisky vidět i na mobilu (handoff ho neskrývá)
+ * a sedí hned vedle CTA, ne u pravé hrany — proto `spacer={false}`.
+ */
+export function SponsorsHeader({
+  count,
+  seasonLabel,
+}: {
+  count: string
+  seasonLabel: string | null
+}) {
+  return (
+    <PageHeader
+      filters={
+        <Button asChild variant="dark" withArrow>
+          <Link href="/#kontakt">Chci podpořit klub</Link>
+        </Button>
+      }
+      meta={count}
+      metaClassName="text-faint text-sm font-medium"
+      perex={
+        <>
+          Led, rozhodčí, doprava, výstroj — vesnický hokej stojí na lidech a firmách z okolí, které
+          ho drží nad vodou. Tohle jsou naši partneři
+          {seasonLabel ? ` pro sezónu ${seasonLabel}` : ''}.
+        </>
+      }
+      perexWidth="md"
+      rowClassName="mt-7.5 gap-x-2.5 gap-y-3"
+      spacer={false}
+      title={
+        <>
+          Bez nich by se <Highlight>nehrálo</Highlight>
+        </>
+      }
+      trail={[{ label: 'Partneři' }]}
+      watermark="DÍKY"
+    />
+  )
+}

@@ -1,14 +1,13 @@
 import type { Payload } from 'payload'
 
 import type { AhlMatchDetail } from '@/ahl'
+import { relId } from '@/landing/lib/payload'
+import { CLUB_NAME } from '@/lib/club'
+import { utcToPragueLocal } from '@/lib/datetime'
+import { slugifyCs } from '@/lib/slugifyCs'
 import type { Match, Post } from '@/payload-types'
 
-import { slugifyCs } from '@/utilities/slugifyCs'
-
-import { utcToPragueLocal } from '../time'
 import { ourSide } from './matchDetail'
-
-const CLUB = 'HC Čestice'
 
 type Side = 'home' | 'away'
 
@@ -61,8 +60,12 @@ export function scoreLabel(detail: AhlMatchDetail): string {
  * „HC Čestice – Soupeř 5:6 sn". Pořadí je domácí–hosté, takže u venkovního
  * zápasu stojí soupeř vpředu a skóre odpovídá tomuto pořadí.
  */
-export function draftTitle(opponentName: string, weAreHome: boolean, detail: AhlMatchDetail): string {
-  const pair = weAreHome ? `${CLUB} – ${opponentName}` : `${opponentName} – ${CLUB}`
+export function draftTitle(
+  opponentName: string,
+  weAreHome: boolean,
+  detail: AhlMatchDetail,
+): string {
+  const pair = weAreHome ? `${CLUB_NAME} – ${opponentName}` : `${opponentName} – ${CLUB_NAME}`
   const score = scoreLabel(detail)
   return score ? `${pair} ${score}` : pair
 }
@@ -87,7 +90,10 @@ export function ourGoalsLine(detail: AhlMatchDetail, side: Side): string {
   return ours
     .map((g) => {
       const assists = g.assists.map((a) => a.name).join(', ')
-      const strength = g.strength && g.strength !== '5/5' && !(shootout && g.time === '60:00') ? ` ${g.strength}` : ''
+      const strength =
+        g.strength && g.strength !== '5/5' && !(shootout && g.time === '60:00')
+          ? ` ${g.strength}`
+          : ''
       return `${goalTime(g.time, shootout)} ${g.scorer.name}${assists ? ` (${assists})` : ''}${strength}`
     })
     .join(', ')
@@ -97,7 +103,10 @@ export function ourGoalsLine(detail: AhlMatchDetail, side: Side): string {
 export function periodsLabel(detail: AhlMatchDetail): string {
   const p = detail.periods
   if (p.length === 0) return ''
-  const thirds = p.slice(0, 3).map((x) => `${x.home}:${x.away}`).join(', ')
+  const thirds = p
+    .slice(0, 3)
+    .map((x) => `${x.home}:${x.away}`)
+    .join(', ')
   const ot = p[3] ? `, prodloužení ${p[3].home}:${p[3].away}` : ''
   return `${thirds}${ot}`
 }
@@ -112,7 +121,7 @@ export function buildDraftContent(
   opponentName: string,
   weAreHome: boolean,
 ): Lexical {
-  const pair = weAreHome ? `${CLUB} – ${opponentName}` : `${opponentName} – ${CLUB}`
+  const pair = weAreHome ? `${CLUB_NAME} – ${opponentName}` : `${opponentName} – ${CLUB_NAME}`
   const periods = periodsLabel(detail)
   return doc(
     paragraph(
@@ -123,9 +132,6 @@ export function buildDraftContent(
     paragraph(text('Doplňte text reportáže…')),
   )
 }
-
-const relId = (v: unknown): number | null =>
-  v == null ? null : typeof v === 'object' ? ((v as { id: number }).id ?? null) : (v as number)
 
 /**
  * Koncept reportáže po zápase (`_status: 'draft'`, vazba `match`, hero
@@ -152,14 +158,18 @@ export async function createDraftPost(
     where: { match: { equals: matchDoc.id } },
   })
   if (existing.totalDocs > 0) {
-    payload.logger.info(`vchl-sync: k zápasu ${matchDoc.id} už článek existuje, koncept se nezakládá`)
+    payload.logger.info(
+      `vchl-sync: k zápasu ${matchDoc.id} už článek existuje, koncept se nezakládá`,
+    )
     return false
   }
 
   const opponentId = relId(matchDoc.opponent)
   let opponentName = 'soupeř'
   if (opponentId != null) {
-    const opp = await payload.findByID({ collection: 'opponents', id: opponentId, depth: 0 }).catch(() => null)
+    const opp = await payload
+      .findByID({ collection: 'opponents', id: opponentId, depth: 0 })
+      .catch(() => null)
     if (opp?.name) opponentName = opp.name
   }
 

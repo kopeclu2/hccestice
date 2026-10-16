@@ -1,29 +1,19 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { Pagination } from '@/landing/components/Pagination'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchGalleriesPage } from '@/landing/data/galleries'
-import { fetchGallerySeasons, seasonShortLabel } from '@/landing/data/seasons'
-import { GalerieHeader } from '@/landing/fotogalerie/GalerieHeader'
-import { GalleryGrid } from '@/landing/fotogalerie/GalleryGrid'
-import { PhotosCta } from '@/landing/fotogalerie/PhotosCta'
+import { GalleriesHeader } from '@/landing/features/galleries/components/GalleriesHeader'
+import { GalleryGrid } from '@/landing/features/galleries/components/GalleryGrid'
+import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
+import { fetchGalleriesPage } from '@/landing/features/galleries/data'
+import { fetchGallerySeasons, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { buildListUrl } from '@/landing/lib/listUrl'
+import { Pagination } from '@/landing/ui/Pagination'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { routes } from '@/lib/routes'
 
 type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
-
-/**
- * Cesta výpisu bez `#seznam` — kotva patří jen do odkazů stránkování v UI,
- * ne do `canonical`. Sdílí ji komponenta (`hrefFor`) i `generateMetadata`.
- */
-const listPath = (page: number, seasonSlug: string | null): string => {
-  const params = new URLSearchParams()
-  if (seasonSlug) params.set('sezona', seasonSlug)
-  if (page > 1) params.set('page', String(page))
-  const query = params.toString()
-  return `/fotogalerie${query ? `?${query}` : ''}`
-}
 
 /**
  * Výpis fotogalerií v novém (landing) designu — handoff „HC Cestice Galerie".
@@ -45,11 +35,16 @@ export default async function FotogaleriePage({ searchParams }: Args) {
     seasonId: activeSeason?.id ?? null,
   })
 
-  const hrefFor = (n: number): string => `${listPath(n, activeSlug)}#seznam`
+  const hrefFor = (n: number): string =>
+    buildListUrl(routes.list.galleries, {
+      filters: { sezona: activeSlug },
+      page: n,
+      hash: 'seznam',
+    })
 
   return (
     <SubpageShell pattern={{ variant: 'glow-duo', tone: 'club', fade: 'top' }}>
-      <GalerieHeader
+      <GalleriesHeader
         activeSlug={activeSlug}
         seasons={seasons
           .filter((season) => season.slug)
@@ -77,7 +72,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
   )
 }
 
-const TITLE = 'Fotoalbum | HC Čestice'
+const TITLE = brandTitle('Fotoalbum')
 const DESCRIPTION =
   'Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase.'
 
@@ -99,7 +94,12 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : '/fotogalerie' },
+    alternates: {
+      canonical:
+        page > 1
+          ? buildListUrl(routes.list.galleries, { filters: { sezona }, page })
+          : routes.list.galleries,
+    },
     ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
   }
 }

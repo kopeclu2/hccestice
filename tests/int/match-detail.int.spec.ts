@@ -1,8 +1,10 @@
-import type { ArticleGoal, MatchPenaltyRow, MatchTimelineEvent } from '../../src/landing/types'
-import type { Match, Post } from '../../src/payload-types'
-
 import { describe, expect, it } from 'vitest'
 
+import type {
+  ArticleGoal,
+  MatchPenaltyRow,
+  MatchTimelineEvent,
+} from '@/landing/features/matches/types'
 import {
   buildTimeline,
   matchDescription,
@@ -10,7 +12,9 @@ import {
   periodLabel,
   pickReport,
   toMatchDetail,
-} from '../../src/landing/data/matchDetailView'
+} from '@/landing/features/matches/view/matchDetailView'
+
+import type { Match, Post } from '../../src/payload-types'
 
 type Goals = NonNullable<Match['goals']>
 
@@ -96,7 +100,11 @@ describe('toMatchDetail — domácí a venkovní zápas', () => {
     expect(detail.weAreHome).toBe(true)
     expect([detail.homeName, detail.awayName]).toEqual(['HC Čestice', 'HC Zdar'])
     expect([detail.homeScore, detail.awayScore]).toEqual([5, 3])
-    expect(detail.thirds).toEqual(['2:0', '1:3', '2:0'])
+    expect(detail.thirds).toEqual([
+      { home: 2, away: 0 },
+      { home: 1, away: 3 },
+      { home: 2, away: 0 },
+    ])
     expect(firstGoals(detail)[0]?.score).toBe('1:0')
     expect(detail.outcome).toBe('win')
     expect(detail.title).toBe('HC Čestice × HC Zdar')
@@ -120,7 +128,10 @@ describe('toMatchDetail — domácí a venkovní zápas', () => {
     )
     expect([detail.homeName, detail.awayName]).toEqual(['HC Zdar', 'HC Čestice'])
     expect([detail.homeScore, detail.awayScore]).toEqual([8, 7])
-    expect(detail.thirds).toEqual(['2:3', '2:2'])
+    expect(detail.thirds).toEqual([
+      { home: 2, away: 3 },
+      { home: 2, away: 2 },
+    ])
     expect(firstGoals(detail)[0]?.score).toBe('0:1')
     // Prohra po nájezdech má bod — vlastní výsledek, ne obyčejná prohra.
     expect(detail.outcome).toBe('otLoss')
@@ -266,33 +277,33 @@ describe('buildTimeline', () => {
     const periods = buildTimeline(
       [g('05:00'), g('25:00', null, false), g('26:00', null, false), g('61:00'), g('65:00', 'sn')],
       [],
-      ['3:1'],
+      [{ home: 3, away: 1 }],
       true,
     )
     expect(periods.map((x) => [x.label, x.score])).toEqual([
-      ['1. třetina', '3:1'],
-      ['2. třetina', '0:2'],
-      ['Prodloužení', '1:0'],
+      ['1. třetina', { home: 3, away: 1 }],
+      ['2. třetina', { home: 0, away: 2 }],
+      ['Prodloužení', { home: 1, away: 0 }],
       ['Nájezdy', null],
     ])
   })
 
   it('spočítané skóre úseku je venku v pořadí domácí : hosté', () => {
     const [period] = buildTimeline([g('05:00'), g('06:00'), g('07:00', null, false)], [], [], false)
-    expect(period.score).toBe('1:2')
+    expect(period.score).toEqual({ home: 1, away: 2 })
   })
 
   it('trest bez času (ruční zápis) jde do „Ostatní", ne na začátek 1. třetiny', () => {
     const periods = buildTimeline([g('05:00')], [p('')], [], true)
     expect(periods.map((x) => [x.label, x.events.length, x.score])).toEqual([
-      ['1. třetina', 1, '1:0'],
+      ['1. třetina', 1, { home: 1, away: 0 }],
       ['Ostatní', 1, null],
     ])
   })
 
   it('úsek bez branek (jen tresty) má skóre 0:0, ne prázdné', () => {
     const [period] = buildTimeline([], [p('05:00')], [], true)
-    expect(period.score).toBe('0:0')
+    expect(period.score).toEqual({ home: 0, away: 0 })
   })
 })
 

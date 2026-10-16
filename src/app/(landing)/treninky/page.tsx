@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { TrainingsBlockComponent } from '@/landing/blocks/Trainings/Component'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchTrainingsBlock } from '@/landing/data/trainings'
-import { TreninkyHeader } from '@/landing/treninky/TreninkyHeader'
+import { TrainingsHeader } from '@/landing/features/trainings/components/TrainingsHeader'
+import { fetchTrainingsBlock } from '@/landing/features/trainings/data'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
 
@@ -20,7 +20,7 @@ export default async function TreninkyPage() {
 
   return (
     <SubpageShell>
-      <TreninkyHeader />
+      <TrainingsHeader />
       <TrainingsBlockComponent
         block={block ?? { blockType: 'landingTrainings' }}
         spacing="content"
@@ -30,7 +30,7 @@ export default async function TreninkyPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Tréninky | HC Čestice',
+  title: brandTitle('Tréninky'),
   description:
     'Rozpis ledových hodin HC Čestice — kdy a kde trénují muži a mládež na zimním stadionu.',
   alternates: { canonical: '/treninky' },

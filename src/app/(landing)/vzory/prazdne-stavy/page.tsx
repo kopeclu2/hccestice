@@ -1,14 +1,15 @@
-import type { Metadata } from 'next'
-
 import { X } from 'lucide-react'
+import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
-import { EmptyState } from '@/landing/components/EmptyState'
-import { PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Kicker } from '@/landing/components/Kicker'
-import { PillLink } from '@/landing/components/PillLink'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
+import { Button } from '@/components/ui/button'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Kicker } from '@/landing/ui/Kicker'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 /**
  * Interní náhled prázdných stavů — tři varianty z handoffu „HC Cestice
@@ -26,21 +27,22 @@ import { SubpageShell } from '@/landing/components/SubpageShell'
 export default function EmptyStatesPage() {
   return (
     <SubpageShell hatch={false} surface="paper">
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Prázdné stavy
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
-          Komponenta <code className="bg-chip rounded px-1.5 font-mono text-sm">EmptyState</code> —
-          vkládá se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
+        <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
+          Komponenta{' '}
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">EmptyState</code> — vkládá
+          se místo mřížky karet, když filtr nic nevrátí nebo se sekce nemá čím naplnit.
         </p>
       </header>
 
       <SectionShell spacing="section">
-        <div className="border-line border-b pb-5">
+        <div className="border-b border-line pb-5">
           <SectionTitle>Varianty</SectionTitle>
-          <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">
+          <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">
             Živé komponenty, ne obrázky. Znění textů a cesty dál si skládá každý výpis sám — závisí
             na tom, jestli je zapnutý filtr.
           </p>
@@ -51,18 +53,18 @@ export default function EmptyStatesPage() {
             <EmptyState
               actions={
                 <>
-                  <PillLink
+                  <Button
+                    asChild
                     arrowIcon={<X strokeWidth={2.5} />}
-                    href="/aktuality#seznam"
                     size="md"
                     variant="dark"
                     withArrow
                   >
-                    Zrušit filtr
-                  </PillLink>
-                  <PillLink href="/zapasy" size="md" variant="outline">
-                    Zápasy
-                  </PillLink>
+                    <Link href="/aktuality#seznam">Zrušit filtr</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/zapasy">Zápasy</Link>
+                  </Button>
                 </>
               }
               icon="search"
@@ -77,12 +79,12 @@ export default function EmptyStatesPage() {
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                    Sledovat aktuality
-                  </PillLink>
-                  <PillLink href="/zapasy#odehrane" size="md" variant="outline">
-                    Odehrané zápasy
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/aktuality">Sledovat aktuality</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/zapasy#odehrane">Odehrané zápasy</Link>
+                  </Button>
                 </>
               }
               icon="schedule"
@@ -98,12 +100,12 @@ export default function EmptyStatesPage() {
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/#kontakt" size="md" variant="dark" withArrow>
-                    Poslat fotky
-                  </PillLink>
-                  <PillLink href="/fotogalerie#seznam" size="md" variant="outline">
-                    Starší sezóny
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/#kontakt">Poslat fotky</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/fotogalerie#seznam">Starší sezóny</Link>
+                  </Button>
                 </>
               }
               icon="photos"
@@ -120,9 +122,9 @@ export default function EmptyStatesPage() {
             <div className="rounded-card bg-surface p-4.5 md:p-6 lg:p-9">
               <EmptyState
                 actions={
-                  <PillLink href="/zapasy" size="sm" variant="dark" withArrow>
-                    Všechny zápasy
-                  </PillLink>
+                  <Button asChild size="sm" variant="dark" withArrow>
+                    <Link href="/zapasy">Všechny zápasy</Link>
+                  </Button>
                 }
                 frame="bare"
                 icon="schedule"
@@ -144,7 +146,7 @@ function Demo({ caption, children }: { caption: string; children: React.ReactNod
   return (
     <figure className="m-0">
       {children}
-      <figcaption className="text-faint mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] uppercase">
+      <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-widest text-faint uppercase">
         {caption}
       </figcaption>
     </figure>
@@ -152,7 +154,7 @@ function Demo({ caption, children }: { caption: string; children: React.ReactNod
 }
 
 export const metadata: Metadata = {
-  title: 'Prázdné stavy — interní náhled | HC Čestice',
+  title: brandTitle('Prázdné stavy — interní náhled'),
   description: 'Interní přehled prázdných stavů (EmptyState) pro výpisy webu HC Čestice.',
   robots: { index: false, follow: false },
 }

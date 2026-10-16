@@ -1,9 +1,8 @@
-import type { LandingPeopleBlock } from '@/payload-types'
-
 import React from 'react'
 
-import { toPersonCard } from '../../data/format'
-import type { PersonCard } from '../../types'
+import { toPersonCard } from '@/landing/lib/media'
+import type { PersonCard } from '@/landing/types'
+import type { LandingPeopleBlock } from '@/payload-types'
 
 import { PeopleCarousel } from './Carousel'
 

@@ -14,7 +14,12 @@ type Where = { url?: string; matchId?: number; season?: string | number }
 export type VchlStage = 'fetch' | 'parse' | 'write'
 
 /** Vrací event id (pro `vchl-sync-runs.sentryEventId`), případně undefined. */
-export function captureFailure(err: unknown, stage: VchlStage, trigger: VchlTrigger, where: Where = {}): string | undefined {
+export function captureFailure(
+  err: unknown,
+  stage: VchlStage,
+  trigger: VchlTrigger,
+  where: Where = {},
+): string | undefined {
   // Nanečisto je ruční kontrola z adminu: chyba je vidět ve výsledku a v logu,
   // do Sentry nepatří (nezakládalo by issue ani neznečišťovalo statistiky).
   if (trigger === 'dry') return undefined
@@ -64,7 +69,11 @@ export function captureWarning(w: VchlWarning, trigger: VchlTrigger): string | u
 }
 
 export function breadcrumb(info: { url: string; status: number; ms: number }): void {
-  Sentry.addBreadcrumb({ category: 'vchl.http', level: info.status >= 400 || info.status === 0 ? 'warning' : 'info', data: info })
+  Sentry.addBreadcrumb({
+    category: 'vchl.http',
+    level: info.status >= 400 || info.status === 0 ? 'warning' : 'info',
+    data: info,
+  })
 }
 
 export function span<T>(name: string, fn: () => Promise<T>): Promise<T> {

@@ -1,0 +1,19 @@
+import React from 'react'
+
+import { TRAININGS_PAGE } from '@/landing/content'
+import { PageHeader } from '@/landing/ui/PageHeader'
+
+/**
+ * Hlavička `/treninky`: jen drobečky, watermark a obecný titulek. Perex
+ * a hlavní nadpis nese sám blok `landingTrainings` níž na stránce — druhý
+ * pár by byl duplicitní.
+ */
+export function TrainingsHeader() {
+  return (
+    <PageHeader
+      title="Tréninky"
+      trail={[{ label: TRAININGS_PAGE.breadcrumb }]}
+      watermark={TRAININGS_PAGE.watermark}
+    />
+  )
+}

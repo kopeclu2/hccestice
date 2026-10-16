@@ -1,16 +1,14 @@
-import type { PlayerCardBlock } from '@/payload-types'
-
 import React from 'react'
 
-import type { RosterPlayer } from '../../types'
-
-import { CardTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { relId } from '../../data/format'
-import { fetchPickedPlayers, POSITION_LABEL } from '../../data/players'
+import { fetchPickedPlayers, POSITION_LABEL } from '@/landing/features/roster/data'
+import type { RosterPlayer } from '@/landing/features/roster/types'
+import { relId } from '@/landing/lib/payload'
+import { CardTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { PlayerCardBlock } from '@/payload-types'
 
 /** Karta jednoho hráče — velký portrét, číslo, post, poznámka. */
 export async function PlayerCardBlockComponent({ block }: { block: PlayerCardBlock }) {
@@ -27,7 +25,7 @@ function PlayerCardView({ player, note }: { player: RosterPlayer; note: string |
       <Reveal>
         <div className="mx-auto flex max-w-160 flex-col items-stretch gap-6 rounded-card bg-surface p-4.5 sm:flex-row md:p-6.5 lg:p-8">
           <PhotoTile
-            className="aspect-[3/4] w-full flex-none rounded-panel sm:w-60"
+            className="aspect-3/4 w-full flex-none rounded-panel sm:w-60"
             photo={player.photo}
             sizes="(max-width: 40rem) 100vw, 15rem"
           >
@@ -44,10 +42,10 @@ function PlayerCardView({ player, note }: { player: RosterPlayer; note: string |
             <CardTitle as="h3" className="mt-1" size="lg">
               {player.name}
               {player.number != null && (
-                <span className="text-faint ml-3 font-normal">#{player.number}</span>
+                <span className="ml-3 font-normal text-faint">#{player.number}</span>
               )}
             </CardTitle>
-            {note && <p className="text-dim mt-3 leading-relaxed text-pretty">{note}</p>}
+            {note && <p className="mt-3 leading-relaxed text-pretty text-dim">{note}</p>}
           </div>
         </div>
       </Reveal>

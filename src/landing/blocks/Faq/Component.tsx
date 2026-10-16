@@ -1,10 +1,9 @@
-import type { LandingFaqBlock } from '@/payload-types'
-
 import React from 'react'
 
-import { FAQ } from '../../content'
-import { arrayOr } from '../../data/format'
-import type { FaqItem } from '../../types'
+import { FAQ } from '@/landing/content'
+import { arrayOr } from '@/landing/lib/payload'
+import type { FaqItem } from '@/landing/types'
+import type { LandingFaqBlock } from '@/payload-types'
 
 import { FaqAccordion } from './Accordion'
 
@@ -16,7 +15,7 @@ function mapFaq(block: LandingFaqBlock): FaqItem[] {
   }))
 }
 
-/** FAQ — server komponenta namapuje položky a předá klientskému accordionu. */
+/** FAQ — server komponenta namapuje položky a předá accordionu na nativním `<details>`. */
 export function FaqBlockComponent({ block }: { block: LandingFaqBlock }) {
   return <FaqAccordion items={mapFaq(block)} />
 }

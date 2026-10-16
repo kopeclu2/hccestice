@@ -1,21 +1,20 @@
-import type { LandingSponsorsBlock } from '@/payload-types'
-
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { cn } from '@/utilities/ui'
-
-import { GlowCircle } from '../../components/Decorations'
-import { SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { countLabel } from '../../data/format'
-import { fetchSeason, seasonShortLabel } from '../../data/seasons'
-import { fetchSponsors } from '../../data/sponsors'
-import type { Sponsor } from '../../types'
+import { Button } from '@/components/ui/button'
+import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import { fetchSponsors } from '@/landing/features/sponsors/data'
+import type { Sponsor } from '@/landing/features/sponsors/types'
+import { GlowCircle } from '@/landing/ui/Decorations'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { countLabel } from '@/lib/plural'
+import { cn } from '@/lib/utils'
+import type { LandingSponsorsBlock } from '@/payload-types'
 
 const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partnerů']
 
@@ -93,7 +92,7 @@ function SponsorsView({
 
   return (
     <SectionShell id="sponzori">
-      <GlowCircle className="-left-60 -top-40 size-180" tone="club" />
+      <GlowCircle className="-top-40 -left-60 size-180" tone="club" />
       <GlowCircle className="-right-50 -bottom-50 size-160" tone="lime" />
 
       <Reveal>
@@ -104,20 +103,20 @@ function SponsorsView({
             <Highlight dot>{titleHighlight}</Highlight>
           </SectionTitle>
           <div className="mt-6.5 flex flex-wrap items-center gap-x-2.5 gap-y-3">
-            <PillLink href="#kontakt" variant="dark" withArrow>
-              {ctaLabel}
-            </PillLink>
-            <PillLink href="/sponzori" variant="outline" withArrow>
-              Všichni partneři
-            </PillLink>
-            <span className="text-faint text-sm font-medium">{count}</span>
+            <Button asChild variant="dark" withArrow>
+              <Link href="#kontakt">{ctaLabel}</Link>
+            </Button>
+            <Button asChild variant="outline" withArrow>
+              <Link href="/sponzori">Všichni partneři</Link>
+            </Button>
+            <span className="text-sm font-medium text-faint">{count}</span>
           </div>
         </div>
       </Reveal>
 
       {/* pás log přes celou šířku sekce (bez vnitřního odsazení) */}
       <Reveal delay={0.1}>
-        <div className="-mx-[clamp(0.875rem,3vw,2.5rem)] mt-11 flex flex-col gap-3.5 md:mt-13">
+        <div className="-mx-gutter mt-11 flex flex-col gap-3.5 md:mt-13">
           {rows.map((row, index) => (
             <MarqueeRow key={index} reverse={index % 2 === 1} sponsors={row} />
           ))}
@@ -136,7 +135,7 @@ function SponsorsView({
  */
 function MarqueeRow({ sponsors, reverse }: { sponsors: Sponsor[]; reverse: boolean }) {
   return (
-    <div className="-my-5 overflow-hidden py-5 [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
+    <div className="-my-5 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] py-5">
       <div
         className={cn(
           'flex w-max gap-3.5 hover:[animation-play-state:paused] motion-reduce:animate-none',

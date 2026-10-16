@@ -1,16 +1,3 @@
-import type { CollectionConfig } from 'payload'
-
-import { authenticated } from '../../access/authenticated'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { FormBlock } from '../../blocks/Form/config'
-import { RawHtml } from '../../blocks/RawHtml/config'
-import { landingBlocks } from '../../landing/blocks'
-import { hero } from '@/heros/config'
-import { slugField } from 'payload'
-import { populatePublishedAt } from '../../hooks/populatePublishedAt'
-import { generatePreviewPath } from '../../utilities/generatePreviewPath'
-import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
-
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -18,6 +5,19 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import type { CollectionConfig } from 'payload'
+import { slugField } from 'payload'
+
+import { FormBlock } from '@/landing/blocks/Form/config'
+import { RawHtml } from '@/landing/blocks/RawHtml/config'
+import { generatePreviewPath } from '@/lib/generatePreviewPath'
+
+import { authenticated } from '../../access/authenticated'
+import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { populatePublishedAt } from '../../hooks/populatePublishedAt'
+import { landingBlocks } from '../../landing/blocks'
+
+import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -66,10 +66,6 @@ export const Pages: CollectionConfig<'pages'> = {
     {
       type: 'tabs',
       tabs: [
-        {
-          fields: [hero],
-          label: 'Hero',
-        },
         {
           fields: [
             {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { decideNotifications, type PrevRun } from '../../src/jobs/vchlSync/notify'
 import { buildSubject, renderVchlSyncEmail } from '../../src/email/templates/vchlSync'
+import { decideNotifications, type PrevRun } from '../../src/jobs/vchlSync/notify'
 import { emptyChanges, type VchlRunResult } from '../../src/jobs/vchlSync/types'
 
 const settings = (over: Partial<{ notifyOn: string[]; failureThreshold: number }> = {}) => ({
@@ -30,7 +30,11 @@ describe('vchl notifikace: selhání', () => {
   })
 
   it('přesně při dosažení prahu pošle, s textem chyby', () => {
-    const plan = decideNotifications([prev('error'), prev('ok')], run('error', { error: 'AHL 503' }), settings())
+    const plan = decideNotifications(
+      [prev('error'), prev('ok')],
+      run('error', { error: 'AHL 503' }),
+      settings(),
+    )
     expect(plan?.failure).toEqual({ streak: 2, status: 'error', error: 'AHL 503' })
   })
 
@@ -45,12 +49,20 @@ describe('vchl notifikace: selhání', () => {
   })
 
   it('práh 1 hlásí první selhání, ne druhé', () => {
-    expect(decideNotifications([prev('ok')], run('error'), settings({ failureThreshold: 1 }))?.failure).toBeTruthy()
-    expect(decideNotifications([prev('error')], run('error'), settings({ failureThreshold: 1 }))).toBeNull()
+    expect(
+      decideNotifications([prev('ok')], run('error'), settings({ failureThreshold: 1 }))?.failure,
+    ).toBeTruthy()
+    expect(
+      decideNotifications([prev('error')], run('error'), settings({ failureThreshold: 1 })),
+    ).toBeNull()
   })
 
   it('obnovení po sérii ≥ práh', () => {
-    const plan = decideNotifications([prev('error'), prev('error'), prev('error'), prev('ok')], run('ok'), settings())
+    const plan = decideNotifications(
+      [prev('error'), prev('error'), prev('error'), prev('ok')],
+      run('ok'),
+      settings(),
+    )
     expect(plan?.recovered).toEqual({ after: 3 })
   })
 
@@ -70,49 +82,89 @@ describe('vchl notifikace: selhání', () => {
 })
 
 describe('vchl notifikace: entity, přeložení, výsledky', () => {
-  const w = (type: string, ref: string, message = `${type} ${ref}`) => ({ type: type as never, ref, message })
+  const w = (type: string, ref: string, message = `${type} ${ref}`) => ({
+    type: type as never,
+    ref,
+    message,
+  })
 
   it('nový hráč a soupeř jen když nebyl v předchozím běhu', () => {
-    const current = run('ok', { warnings: [w('unknown-player', '38010'), w('unknown-opponent', 'Skuteč'), w('ambiguous-player', '5')] })
-    const plan = decideNotifications([prev('ok', [{ type: 'unknown-player', ref: '38010' }])], current, settings())
+    const current = run('ok', {
+      warnings: [
+        w('unknown-player', '38010'),
+        w('unknown-opponent', 'Skuteč'),
+        w('ambiguous-player', '5'),
+      ],
+    })
+    const plan = decideNotifications(
+      [prev('ok', [{ type: 'unknown-player', ref: '38010' }])],
+      current,
+      settings(),
+    )
     expect(plan?.newPlayers).toHaveLength(0)
     expect(plan?.newOpponents).toHaveLength(1)
     expect(plan?.ambiguousPlayers).toHaveLength(1)
   })
 
   it('error běh nemá varování: porovnává se s posledním ok/partial během, ne s errorem', () => {
-    const current = run('ok', { warnings: [w('unknown-player', '38010'), w('ambiguous-player', '5')] })
-    const history = [prev('error'), prev('ok', [{ type: 'unknown-player', ref: '38010' }, { type: 'ambiguous-player', ref: '5' }])]
+    const current = run('ok', {
+      warnings: [w('unknown-player', '38010'), w('ambiguous-player', '5')],
+    })
+    const history = [
+      prev('error'),
+      prev('ok', [
+        { type: 'unknown-player', ref: '38010' },
+        { type: 'ambiguous-player', ref: '5' },
+      ]),
+    ]
     expect(decideNotifications(history, current, settings({ failureThreshold: 5 }))).toBeNull()
   })
 
   it('přeložení: po error běhu se stejné znění nehlásí znovu', () => {
     const a = w('rescheduled', '1', 'Zápas přeložen: A → B')
     const history = [prev('error'), prev('partial', [a])]
-    expect(decideNotifications(history, run('ok', { warnings: [a] }), settings({ failureThreshold: 5 }))).toBeNull()
+    expect(
+      decideNotifications(history, run('ok', { warnings: [a] }), settings({ failureThreshold: 5 })),
+    ).toBeNull()
   })
 
   it('bez předchozího úspěšného běhu je všechno nové', () => {
     const current = run('ok', { warnings: [w('unknown-player', '1')] })
-    expect(decideNotifications([prev('error')], current, settings({ failureThreshold: 5 }))?.newPlayers).toHaveLength(1)
+    expect(
+      decideNotifications([prev('error')], current, settings({ failureThreshold: 5 }))?.newPlayers,
+    ).toHaveLength(1)
   })
 
   it('stejný nejednoznačný hráč v řadě běhů se hlásí jen jednou', () => {
     const current = run('ok', { warnings: [w('ambiguous-player', '5')] })
-    expect(decideNotifications([prev('ok', [{ type: 'ambiguous-player', ref: '5' }])], current, settings())).toBeNull()
+    expect(
+      decideNotifications(
+        [prev('ok', [{ type: 'ambiguous-player', ref: '5' }])],
+        current,
+        settings(),
+      ),
+    ).toBeNull()
   })
 
   it('přeložený zápas: nové znění se hlásí, stejné ne', () => {
     const a = w('rescheduled', '1', 'Zápas přeložen: A → B')
     const b = w('rescheduled', '1', 'Zápas přeložen: B → C')
-    expect(decideNotifications([prev('ok', [a])], run('ok', { warnings: [a] }), settings())).toBeNull()
-    expect(decideNotifications([prev('ok', [a])], run('ok', { warnings: [b] }), settings())?.rescheduled).toHaveLength(1)
+    expect(
+      decideNotifications([prev('ok', [a])], run('ok', { warnings: [a] }), settings()),
+    ).toBeNull()
+    expect(
+      decideNotifications([prev('ok', [a])], run('ok', { warnings: [b] }), settings())?.rescheduled,
+    ).toHaveLength(1)
   })
 
   it('výsledek jen s „result" v notifyOn', () => {
     const playedNow = [{ matchId: 1, label: '2026-10-04 doma Pardubice', score: '5:6 sn' }]
-    expect(decideNotifications([], run('ok', { playedNow }), settings())?.results).toEqual(playedNow)
-    expect(decideNotifications([], run('ok', { playedNow }), settings({ notifyOn: ['failure'] }))).toBeNull()
+    expect(decideNotifications([], run('ok', { playedNow }), settings())?.results).toEqual(
+      playedNow,
+    )
+    expect(
+      decideNotifications([], run('ok', { playedNow }), settings({ notifyOn: ['failure'] })),
+    ).toBeNull()
   })
 
   it('bez událostí nic', () => {
@@ -121,7 +173,11 @@ describe('vchl notifikace: entity, přeložení, výsledky', () => {
 
   it('jeden plán, víc sekcí v jednom e-mailu', () => {
     const current = run('ok', {
-      warnings: [w('unknown-player', '1'), w('unknown-player', '2'), w('rescheduled', '9', 'Zápas přeložen: A → B')],
+      warnings: [
+        w('unknown-player', '1'),
+        w('unknown-player', '2'),
+        w('rescheduled', '9', 'Zápas přeložen: A → B'),
+      ],
     })
     const plan = decideNotifications([], current, settings())!
     expect(buildSubject(plan)).toBe('Synchronizace VČHL: 2 noví hráči, 1 přeložený zápas')
@@ -138,7 +194,10 @@ describe('vchl notifikace: šablona', () => {
       }),
       settings(),
     )!
-    const { subject, html, text } = renderVchlSyncEmail(plan, () => 'http://x/admin/collections/players/7')
+    const { subject, html, text } = renderVchlSyncEmail(
+      plan,
+      () => 'http://x/admin/collections/players/7',
+    )
     expect(subject).toBe('Synchronizace VČHL: 1 nový hráč, 1 nový výsledek')
     expect(html).toContain('/admin/vchl-sync')
     expect(html).toContain('A &lt;b&gt;')

@@ -39,7 +39,10 @@ describe('vchl diff', () => {
       scoreOurs: 5,
       scoreOpp: 6,
       overtime: false,
-      thirds: [{ id: 'x', ours: 0, opp: 0 }, { id: 'y', ours: 3, opp: 1 }],
+      thirds: [
+        { id: 'x', ours: 0, opp: 0 },
+        { id: 'y', ours: 3, opp: 1 },
+      ],
       venue: 'Rychnov',
     }
     const desired = {
@@ -47,7 +50,10 @@ describe('vchl diff', () => {
       scoreOurs: 5,
       scoreOpp: 6,
       overtime: false,
-      thirds: [{ ours: 0, opp: 0 }, { ours: 3, opp: 1 }],
+      thirds: [
+        { ours: 0, opp: 0 },
+        { ours: 3, opp: 1 },
+      ],
       venue: 'Rychnov',
       competition: undefined,
     }
@@ -57,7 +63,10 @@ describe('vchl diff', () => {
   })
 
   it('patch obsahuje jen změněná pole a before/after', () => {
-    const r = buildPatch({ scoreOurs: 4, scoreOpp: 6, venue: 'A' }, { scoreOurs: 5, scoreOpp: 6, venue: 'A' })
+    const r = buildPatch(
+      { scoreOurs: 4, scoreOpp: 6, venue: 'A' },
+      { scoreOurs: 5, scoreOpp: 6, venue: 'A' },
+    )
     expect(r.fields).toEqual(['scoreOurs'])
     expect(r.patch).toEqual({ scoreOurs: 5 })
     expect(r.before).toEqual({ scoreOurs: 4 })

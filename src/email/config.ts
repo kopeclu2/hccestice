@@ -4,9 +4,8 @@
  * a hlavičku layoutu.
  */
 import { CLUB_EMAIL } from '@/landing/content'
-import { getServerSideURL } from '@/utilities/getURL'
-
-export const CLUB_NAME = 'HC Čestice'
+import { CLUB_NAME } from '@/lib/club'
+import { getServerSideURL } from '@/lib/getURL'
 
 /** Prázdná proměnná v `.env` je totéž jako nenastavená. */
 const fromEnv = (name: string): string | undefined => process.env[name]?.trim() || undefined
@@ -28,8 +27,7 @@ export const formattedFrom = (): string => `${fromName()} <${fromAddress()}>`
  * Kam míří notifikace o odeslaném formuláři, když si adresáta neurčí sám
  * formulář v adminu (pole „E-mail komu").
  */
-export const notificationAddress = (): string =>
-  fromEnv('EMAIL_NOTIFICATION_ADDRESS') ?? CLUB_EMAIL
+export const notificationAddress = (): string => fromEnv('EMAIL_NOTIFICATION_ADDRESS') ?? CLUB_EMAIL
 
 /** Hlavička a patička layoutu — stejné pro všechny šablony. */
 export const emailBranding = (): { clubName: string; siteUrl: string } => ({

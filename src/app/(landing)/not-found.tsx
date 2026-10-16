@@ -1,14 +1,16 @@
 import type { Metadata } from 'next'
-
+import Link from 'next/link'
 import React from 'react'
 
-import { ErrorCode, ErrorMeta } from '@/landing/components/ErrorCode'
-import { PageTitle } from '@/landing/components/Heading'
-import { Highlight } from '@/landing/components/Kicker'
-import { PillLink } from '@/landing/components/PillLink'
-import { PuckTrailArc } from '@/landing/components/PuckTrail'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
+import { Button } from '@/components/ui/button'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { ErrorCode, ErrorMeta } from '@/landing/ui/ErrorCode'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PuckTrailArc } from '@/landing/ui/PuckTrail'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { routes } from '@/lib/routes'
 
 /**
  * 404 podle handoffu „HC Cestice Systemove Stranky" — obří obrysový kód
@@ -37,21 +39,21 @@ export default function NotFound() {
           Puk zajel <Highlight>mimo hřiště</Highlight>
         </PageTitle>
 
-        <p className="text-ink-soft mt-4.5 max-w-130 text-lg leading-[1.55] text-pretty">
+        <p className="mt-4.5 max-w-130 text-lg leading-copy text-pretty text-ink-soft">
           Stránka, kterou hledáte, neexistuje nebo byla přesunuta. Zkuste to z domovské stránky —
           tam se hraje.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-2.5">
-          <PillLink href="/" size="lg" variant="dark" withArrow>
-            Zpět na hlavní stránku
-          </PillLink>
-          <PillLink href="/aktuality" size="md" variant="outline">
-            Aktuality
-          </PillLink>
-          <PillLink href="/zapasy" size="md" variant="outline">
-            Rozlosování
-          </PillLink>
+          <Button asChild size="lg" variant="dark" withArrow>
+            <Link href="/">Zpět na hlavní stránku</Link>
+          </Button>
+          <Button asChild size="md" variant="outline">
+            <Link href={routes.list.posts}>Aktuality</Link>
+          </Button>
+          <Button asChild size="md" variant="outline">
+            <Link href={routes.list.matches}>Rozlosování</Link>
+          </Button>
         </div>
 
         <ErrorMeta className="mt-14">Chyba 404 · Stránka nenalezena</ErrorMeta>
@@ -61,6 +63,6 @@ export default function NotFound() {
 }
 
 export const metadata: Metadata = {
-  title: 'Stránka nenalezena | HC Čestice',
+  title: brandTitle('Stránka nenalezena'),
   robots: { index: false, follow: true },
 }

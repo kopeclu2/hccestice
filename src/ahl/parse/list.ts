@@ -1,6 +1,16 @@
+import { fold } from '@/lib/fold'
+
 import { AhlParseError } from '../errors'
-import type { AhlListMatch, AhlScore, AhlScoreSuffix } from '../types'
-import { paramFromHref, parseDocument, phaseFromCompetition, text } from './dom'
+import type { AhlListMatch, AhlScore } from '../types'
+
+import {
+  pad2,
+  paramFromHref,
+  parseDocument,
+  parseScorePair,
+  phaseFromCompetition,
+  text,
+} from './dom'
 
 const PAGE = 'rozpis/vysledky'
 
@@ -21,12 +31,6 @@ const MONTHS: Record<string, number> = {
 
 // getDay(): 0 = neděle
 const WEEKDAYS: Record<string, number> = { ne: 0, po: 1, ut: 2, st: 3, ct: 4, pa: 5, so: 6 }
-
-const fold = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
 
 type Week = { startDay: number; startMonth: number; endDay: number; endMonth: number }
 
@@ -56,7 +60,10 @@ function resolveDate(
   } else if (day <= week.endDay) {
     month = week.endMonth
   } else {
-    throw new AhlParseError(PAGE, `den ${day} mimo týden ${week.startDay}.${week.startMonth}.–${week.endDay}.${week.endMonth}.`)
+    throw new AhlParseError(
+      PAGE,
+      `den ${day} mimo týden ${week.startDay}.${week.startMonth}.–${week.endDay}.${week.endMonth}.`,
+    )
   }
   // Sezóna startuje na podzim: 7–12 = startYear, 1–6 = startYear + 1.
   const year = month >= 7 ? seasonStartYear : seasonStartYear + 1
@@ -71,16 +78,13 @@ function resolveDate(
 }
 
 function parseScore(raw: string): AhlScore | null {
-  const m = raw.replace(/ /g, ' ').trim().match(/^(\d+)\s*:\s*(\d+)\s*(pp|sn)?$/i)
-  if (!m) return null
-  return {
-    home: +m[1],
-    away: +m[2],
-    suffix: (m[3]?.toLowerCase() as AhlScoreSuffix | undefined) ?? null,
-  }
+  const pair = parseScorePair(raw)
+  if (!pair) return null
+  const suffix = pair.rest.toLowerCase()
+  if (suffix === '') return { home: pair.home, away: pair.away, suffix: null }
+  if (suffix !== 'pp' && suffix !== 'sn') return null
+  return { home: pair.home, away: pair.away, suffix }
 }
-
-const pad = (n: number) => String(n).padStart(2, '0')
 
 /**
  * Parser `/rozpis/` i `/vysledky/` — tabulky mají stejný základ a liší se jen
@@ -93,11 +97,15 @@ export function parseMatchList(html: string, opts: { seasonStartYear: number }):
   const doc = parseDocument(html, PAGE)
 
   const table = Array.from(doc.querySelectorAll('table')).find((t) =>
-    Array.from(t.querySelectorAll('tr.tabulka_radek_nadpis th')).some((th) => text(th) === 'Domácí'),
+    Array.from(t.querySelectorAll('tr.tabulka_radek_nadpis th')).some(
+      (th) => text(th) === 'Domácí',
+    ),
   )
   if (!table) throw new AhlParseError(PAGE, 'chybí tabulka zápasů (záhlaví Domácí/Hosté)')
 
-  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) => text(th))
+  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) =>
+    text(th),
+  )
   const col = (name: string) => headers.indexOf(name)
   const iDate = col('Datum')
   const iHome = col('Domácí')
@@ -126,13 +134,17 @@ export function parseMatchList(html: string, opts: { seasonStartYear: number }):
     }
 
     const link = tr.querySelector('a[href*="zapasid="]')
-    const matchId = paramFromHref(link?.getAttribute('href') ?? tr.getAttribute('data-href'), 'zapasid')
+    const matchId = paramFromHref(
+      link?.getAttribute('href') ?? tr.getAttribute('data-href'),
+      'zapasid',
+    )
     if (matchId === null) throw new AhlParseError(PAGE, 'řádek bez zapasid')
     if (!week) throw new AhlParseError(PAGE, `zápas ${matchId} před nadpisem týdne`)
 
     const dateText = text(cells[iDate])
     const dm = dateText.match(/^(\d{1,2})\/(\S+)$/)
-    if (!dm) throw new AhlParseError(PAGE, `zápas ${matchId}: datum „${dateText}" neodpovídá „17/So"`)
+    if (!dm)
+      throw new AhlParseError(PAGE, `zápas ${matchId}: datum „${dateText}" neodpovídá „17/So"`)
     const { y, m, d } = resolveDate(+dm[1], dm[2], week, opts.seasonStartYear)
 
     let time = ''
@@ -140,7 +152,7 @@ export function parseMatchList(html: string, opts: { seasonStartYear: number }):
     if (iTime >= 0) {
       const tm = text(cells[iTime]).match(/^(\d{1,2}):(\d{2})$/)
       if (tm) {
-        time = `${pad(+tm[1])}:${tm[2]}`
+        time = `${pad2(+tm[1])}:${tm[2]}`
         timeKnown = true
       }
     }
@@ -168,7 +180,7 @@ export function parseMatchList(html: string, opts: { seasonStartYear: number }):
 
     out.push({
       matchId,
-      dateISO: `${y}-${pad(m)}-${pad(d)}T${timeKnown ? time : '00:00'}:00`,
+      dateISO: `${y}-${pad2(m)}-${pad2(d)}T${timeKnown ? time : '00:00'}:00`,
       timeKnown,
       home: teamCell(iHome),
       away: teamCell(iAway),

@@ -1,11 +1,11 @@
+import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { NavMobile } from '../../components/NavMobile'
-import { PillLink } from '../../components/PillLink'
-import { ctaHref, navHref } from '../../data/navigation'
-import type { NavCta, NavItem } from '../../types'
+import { Button } from '@/components/ui/button'
+import { ctaHref, navHref } from '@/landing/features/navigation/data'
+import type { NavCta, NavItem } from '@/landing/features/navigation/types'
+import { NavMobile } from '@/landing/layout/NavMobile'
+import { cn } from '@/lib/utils'
 
 import { LogoTab } from './LogoTab'
 
@@ -54,9 +54,9 @@ export function HeroModernNav({ cta, items }: { cta: NavCta | null; items: NavIt
         <NavPills className="justify-end" items={items.slice(split)} keep="last" />
 
         {cta && href && (
-          <PillLink className="max-md:hidden" href={href} size="sm" variant="dark" withArrow>
-            {cta.label}
-          </PillLink>
+          <Button asChild className="max-md:hidden" size="sm" variant="dark" withArrow>
+            <Link href={href}>{cta.label}</Link>
+          </Button>
         )}
 
         <NavMobile
@@ -96,15 +96,15 @@ function NavPills({
     <div className="min-w-0">
       <div className={cn('no-scrollbar hidden min-w-0 gap-2 overflow-x-auto lg:flex', className)}>
         {items.map((item, index) => (
-          <PillLink
-            className={cn(!kept(index) && 'max-2xl:hidden')}
-            href={navHref(item, 'home')}
+          <Button
+            asChild
             key={item.label}
+            className={cn(!kept(index) && 'max-2xl:hidden')}
             size="sm"
             variant="glass"
           >
-            {item.label}
-          </PillLink>
+            <Link href={navHref(item, 'home')}>{item.label}</Link>
+          </Button>
         ))}
       </div>
     </div>

@@ -13,9 +13,10 @@
 //      vyfotí s opacity 0, dokud nevstoupí do viewportu. Proto se stránka
 //      nejdřív proscrolluje po polovinách viewportu.
 
-import { chromium } from 'playwright'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+
+import { chromium } from 'playwright'
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000'
 
@@ -101,15 +102,18 @@ for (const bpName of bpNames) {
       })
 
       // odbavit Reveal / IntersectionObserver
-      const scrollHeight = await page.evaluate(async (step) => {
-        for (let y = 0; y < document.body.scrollHeight; y += step) {
-          window.scrollTo(0, y)
-          await new Promise((r) => setTimeout(r, 60))
-        }
-        window.scrollTo(0, 0)
-        await new Promise((r) => setTimeout(r, 250))
-        return document.body.scrollHeight
-      }, Math.floor(bp.height / 2))
+      const scrollHeight = await page.evaluate(
+        async (step) => {
+          for (let y = 0; y < document.body.scrollHeight; y += step) {
+            window.scrollTo(0, y)
+            await new Promise((r) => setTimeout(r, 60))
+          }
+          window.scrollTo(0, 0)
+          await new Promise((r) => setTimeout(r, 250))
+          return document.body.scrollHeight
+        },
+        Math.floor(bp.height / 2),
+      )
 
       // horizontální přetečení: co konkrétně vylézá z viewportu
       const overflow = await page.evaluate((vw) => {
@@ -190,10 +194,7 @@ for (const bpName of bpNames) {
       const files = []
       const screens = Math.min(Math.ceil(scrollHeight / bp.height), 24)
       for (let i = 0; i < screens; i++) {
-        await page.evaluate(
-          ([y]) => window.scrollTo(0, y),
-          [i * bp.height],
-        )
+        await page.evaluate(([y]) => window.scrollTo(0, y), [i * bp.height])
         await page.waitForTimeout(450)
         const file = path.join(outDir, `${base}--${String(i + 1).padStart(2, '0')}.png`)
         await page.screenshot({ path: file })

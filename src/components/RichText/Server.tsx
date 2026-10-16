@@ -4,24 +4,20 @@ import {
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
+import { CtaBannerBlockComponent } from '@/landing/blocks/CtaBanner/Component'
+import { DownloadsBlockComponent } from '@/landing/blocks/Downloads/Component'
+import { GalleryEmbedBlockComponent } from '@/landing/blocks/GalleryEmbed/Component'
+import { GalleryLinkBlockComponent } from '@/landing/blocks/GalleryLink/Component'
+import { relId } from '@/landing/lib/payload'
+import { collectionDocPath } from '@/lib/routes'
 import type {
   CtaBannerBlockType,
   DownloadsBlock as DownloadsBlockProps,
   GalleryEmbedBlock as GalleryEmbedBlockProps,
   GalleryLinkBlock as GalleryLinkBlockProps,
 } from '@/payload-types'
-import { CtaBannerBlockComponent } from '@/landing/blocks/CtaBanner/Component'
-import { DownloadsBlockComponent } from '@/landing/blocks/Downloads/Component'
-import { GalleryEmbedBlockComponent } from '@/landing/blocks/GalleryEmbed/Component'
-import { GalleryLinkBlockComponent } from '@/landing/blocks/GalleryLink/Component'
-import { relId } from '@/landing/data/format'
 
-import {
-  baseJSXConverters,
-  richTextClassName,
-  type BaseNodeTypes,
-  type Props,
-} from './index'
+import { baseJSXConverters, richTextClassName, type BaseNodeTypes, type Props } from './index'
 
 /**
  * Serverový render rich textu — základní konvertory + landing bloky,
@@ -36,9 +32,6 @@ type ServerNodeTypes =
       CtaBannerBlockType | GalleryEmbedBlockProps | GalleryLinkBlockProps | DownloadsBlockProps
     >
 
-/** Cesta na podstránku podle kolekce — `pages` nemá vlastní prefix, žije na `/[slug]`. */
-const RELATION_PREFIX: Partial<Record<string, string>> = { posts: '/aktuality' }
-
 /**
  * Konvertor pro `RelationshipFeature` (nástroj „Relace" v editoru) —
  * bez něj Payload takovou relaci v rich textu **potichu nevykreslí vůbec**,
@@ -50,11 +43,7 @@ const RELATION_PREFIX: Partial<Record<string, string>> = { posts: '/aktuality' }
  * zápas nemá vlastní detailní stránku, na kterou by se dalo odkázat.
  * Galerie dostávají stejnou kartu jako blok `galleryLink`, ne holý odkaz.
  */
-async function RelationshipConverter({
-  node,
-}: {
-  node: { relationTo: string; value: unknown }
-}) {
+async function RelationshipConverter({ node }: { node: { relationTo: string; value: unknown } }) {
   const { relationTo, value } = node
 
   if (relationTo === 'galleries') {
@@ -62,26 +51,29 @@ async function RelationshipConverter({
     if (!galleryId) return null
     return (
       <EmbeddedSection>
-        <GalleryLinkBlockComponent block={{ blockType: 'galleryLink', gallery: galleryId, label: null }} />
+        <GalleryLinkBlockComponent
+          block={{ blockType: 'galleryLink', gallery: galleryId, label: null }}
+        />
       </EmbeddedSection>
     )
   }
 
-  const doc = typeof value === 'object' && value ? (value as { slug?: string; title?: string }) : null
+  const doc =
+    typeof value === 'object' && value ? (value as { slug?: string; title?: string }) : null
   if (!doc?.slug) return null
-  const href = `${RELATION_PREFIX[relationTo] ?? ''}/${doc.slug}`
+  const href = collectionDocPath(relationTo, doc.slug)
   return (
-    <a className="text-club font-semibold underline underline-offset-2" href={href}>
+    <a className="font-semibold text-club underline underline-offset-2" href={href}>
       {doc.title ?? doc.slug}
     </a>
   )
 }
 
 const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
-  const base = baseJSXConverters(args as never)
+  const base = baseJSXConverters(args)
   return {
     ...base,
-    relationship: RelationshipConverter as never,
+    relationship: RelationshipConverter,
     blocks: {
       ...base.blocks,
       ctaBanner: ({ node }) => (
@@ -120,7 +112,7 @@ const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
  */
 function EmbeddedSection({ children }: { children: React.ReactNode }) {
   return (
-    <div className="not-prose font-display text-ink my-6 [&_img]:mt-0! [&_section]:mt-0! [&_section]:px-0!">
+    <div className="not-prose my-6 font-display text-ink [&_img]:mt-0! [&_section]:mt-0! [&_section]:px-0!">
       {children}
     </div>
   )

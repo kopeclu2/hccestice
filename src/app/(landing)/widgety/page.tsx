@@ -1,16 +1,16 @@
-import type { Metadata } from 'next'
-
 import { Database, MousePointerClick, Puzzle } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { Badge } from '@/landing/components/Badge'
-import { CardTitle, PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Eyebrow, Kicker } from '@/landing/components/Kicker'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { renderLandingBlock } from '@/landing/render'
+import { renderLandingBlock } from '@/landing/blocks/render'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { Badge } from '@/landing/ui/Badge'
+import { CardTitle, PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow, Kicker } from '@/landing/ui/Kicker'
+import { SectionShell } from '@/landing/ui/SectionShell'
 import { buildWidgetCatalog, resolveExampleIds, type WidgetDoc } from '@/landing/widget-catalog'
+import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
 
@@ -33,18 +33,18 @@ export default async function WidgetCatalogPage() {
   return (
     <SubpageShell hatch={false} surface="paper">
       {/* hlavička katalogu */}
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Příručka pro správce</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Katalog widgetů
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-150 leading-relaxed text-pretty">
+        <p className="mx-auto mt-4 max-w-150 leading-relaxed text-pretty text-dim">
           Všech {total} widgetů, které lze v adminu vložit na stránku (Stránky → Content → Add
           Layout). U každého: co dělá, odkud bere obsah, jak ho nastavit — a živá ukázka.
         </p>
-        <p className="text-faint mx-auto mt-3 max-w-150 text-sm">
+        <p className="mx-auto mt-3 max-w-150 text-sm text-faint">
           Sekce homepage (Hero, Aktuality, Sezóna…) tu nejsou — ty vidíš na{' '}
-          <Link className="text-club font-semibold" href="/">
+          <Link className="font-semibold text-club" href="/">
             úvodní stránce
           </Link>
           .
@@ -53,14 +53,14 @@ export default async function WidgetCatalogPage() {
 
       {catalog.map((category) => (
         <SectionShell key={category.title} spacing="section">
-          <div className="border-line border-b pb-6">
+          <div className="border-b border-line pb-6">
             <SectionTitle>
               {category.title}
-              <span className="text-faint ml-3 text-lg font-medium">
+              <span className="ml-3 text-lg font-medium text-faint">
                 {category.widgets.length}×
               </span>
             </SectionTitle>
-            <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">{category.perex}</p>
+            <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">{category.perex}</p>
           </div>
 
           {category.widgets.map((widget) => (
@@ -78,31 +78,33 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
     <article className="mt-16" id={widget.blockType}>
       {/* Dokumentace. Odsazení má tři stupně: `p-6` bralo na 390px displeji
           48 ze 370px šířky panelu, desktopová hodnota z handoffu patří na `lg`. */}
-      <div className="bg-contrast rounded-card p-4.5 text-on-contrast md:p-6 lg:p-8">
+      <div className="rounded-card bg-contrast p-4.5 text-on-contrast md:p-6 lg:p-8">
         <div className="flex flex-wrap items-center gap-3">
           <CardTitle size="md">{widget.name}</CardTitle>
           <Badge className="font-mono" size="sm" variant="lime">
             {widget.blockType}
           </Badge>
         </div>
-        <p className="mt-2 max-w-200 leading-relaxed text-white/85">{widget.description}</p>
+        <p className="mt-2 max-w-200 leading-relaxed text-on-contrast-strong">
+          {widget.description}
+        </p>
         <dl className="mt-5 grid gap-4 text-sm md:grid-cols-2">
           <div className="flex gap-3">
-            <Database className="text-lime mt-0.5 size-4.5 flex-none" strokeWidth={2.25} />
+            <Database className="mt-0.5 size-4.5 flex-none text-lime" strokeWidth={2.25} />
             <div>
-              <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
+              <dt className="text-eyebrow font-bold tracking-caps-lg text-on-contrast-subtle uppercase">
                 Odkud bere obsah
               </dt>
-              <dd className="mt-0.5 text-white/85">{widget.dataSource}</dd>
+              <dd className="mt-0.5 text-on-contrast-strong">{widget.dataSource}</dd>
             </div>
           </div>
           <div className="flex gap-3">
-            <MousePointerClick className="text-lime mt-0.5 size-4.5 flex-none" strokeWidth={2.25} />
+            <MousePointerClick className="mt-0.5 size-4.5 flex-none text-lime" strokeWidth={2.25} />
             <div>
-              <dt className="text-eyebrow font-bold tracking-[0.16em] text-white/60 uppercase">
+              <dt className="text-eyebrow font-bold tracking-caps-lg text-on-contrast-subtle uppercase">
                 Jak použít v adminu
               </dt>
-              <dd className="mt-0.5 text-white/85">{widget.usage}</dd>
+              <dd className="mt-0.5 text-on-contrast-strong">{widget.usage}</dd>
             </div>
           </div>
         </dl>
@@ -111,7 +113,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
       {/* Živá ukázka — widget renderuje stejnou komponentou jako na webu.
           `md:[&_section]:mt-8` bylo bajtově totožné s bezpodmínečnou třídou,
           tedy mrtvé; skutečný mezistupeň je rytmus 32 → 40px od `lg`. */}
-      <div className="border-line relative mt-4 rounded-card border-2 border-dashed pb-4 [&_section]:mt-8 lg:[&_section]:mt-10">
+      <div className="relative mt-4 rounded-card border-2 border-dashed border-line pb-4 [&_section]:mt-8 lg:[&_section]:mt-10">
         <Eyebrow
           className="absolute -top-2.5 left-8 z-2 inline-flex items-center gap-1.5 bg-paper px-2"
           tone="faint"
@@ -125,7 +127,7 @@ function WidgetEntry({ widget }: { widget: WidgetDoc }) {
 }
 
 export const metadata: Metadata = {
-  title: 'Katalog widgetů — příručka pro správce | HC Čestice',
+  title: brandTitle('Katalog widgetů — příručka pro správce'),
   description: 'Interní přehled všech bloků a widgetů webu HC Čestice s ukázkami a návodem.',
   robots: { index: false, follow: false },
 }

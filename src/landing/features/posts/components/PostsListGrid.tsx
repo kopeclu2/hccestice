@@ -1,0 +1,108 @@
+import { X } from 'lucide-react'
+import Link from 'next/link'
+import React from 'react'
+
+import { Button } from '@/components/ui/button'
+import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
+import type { PostCard } from '@/landing/features/posts/types'
+import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
+import { CardGrid } from '@/landing/ui/CardGrid'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { routes } from '@/lib/routes'
+
+/**
+ * Výpis článků — pravidelná mřížka, na mobilu jeden sloupec.
+ *
+ * Handoff „HC Cestice Aktuality" měl masonry (CSS columns, řazení po sloupcích).
+ * Přešlo se na grid: karty mají jednotný náhled, takže se jejich výška neliší —
+ * a čtení po řádcích odpovídá řazení podle data. První karta je featured
+ * (od `lg` přes dva sloupce), aby výpis začínal hlavní zprávou, ne mřížkou
+ * stejně důležitých dlaždic.
+ */
+export function PostsListGrid({
+  activeType,
+  cards,
+  featured: featuredPage = true,
+}: {
+  /** Zapnutý filtr typu — rozhoduje o znění prázdného stavu. */
+  activeType?: string | null
+  cards: PostCard[]
+  /**
+   * `false` na druhé a další straně — ta jede v rovné mřížce 3×N beze
+   * zvýrazněné první karty. `PostsPage.featured` z `fetchPostsPage` je
+   * `true` jen pro `page === 1`, kde je karet 5 (2+1 první řádek, pak
+   * trojice); od druhé strany je jich vždy 6 (dva plné řádky).
+   */
+  featured?: boolean
+}) {
+  return (
+    <CardGrid empty={<PostsListEmpty activeType={activeType ?? null} />} items={cards}>
+      {(card, index) => {
+        /* Nejnovější článek je „featured": od `sm` přes celý řádek, od `lg`
+           přes dva ze tří sloupců a s fotkou vedle textu. */
+        const featured = featuredPage && index === 0 && cards.length > 1
+        return (
+          <ArticleCard
+            card={card}
+            className={featured ? 'sm:col-span-2 lg:col-span-2' : undefined}
+            featured={featured}
+            key={card.id}
+            /* `sizes` kopíruje zlomy `CardGrid` (1 sloupec / 2 od `sm` = 40rem /
+               3 od `lg` = 64rem). Featured karta je od `sm` přes celý řádek
+               a její fotka bere od `lg` 55 % ze dvou třetin mřížky ≈ 37vw. */
+            sizes={
+              featured
+                ? '(max-width: 64rem) 100vw, 37vw'
+                : '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw'
+            }
+          />
+        )
+      }}
+    </CardGrid>
+  )
+}
+
+/**
+ * Prázdný výpis aktualit. Dvě různé situace, které se nesmí slít: filtr bez
+ * výsledků (nabídne zrušení filtru — handoff „Tomuhle filtru nic neodpovídá")
+ * a prázdná kolekce, kde by odkaz „Zrušit filtr" nikam nevedl.
+ */
+function PostsListEmpty({ activeType }: { activeType: string | null }) {
+  const typeLabel = activeType ? POST_TYPE_LABEL[activeType] : null
+
+  if (!typeLabel) {
+    return (
+      <EmptyState
+        actions={
+          <Button asChild size="md" variant="dark" withArrow>
+            <Link href="/">Zpátky na úvod</Link>
+          </Button>
+        }
+        icon="search"
+        title="Zatím tu žádné články nejsou"
+      >
+        První aktuality přidáme, jakmile se v klubu něco semele. Mezitím mrkněte na rozpis zápasů.
+      </EmptyState>
+    )
+  }
+
+  return (
+    <EmptyState
+      actions={
+        <>
+          <Button asChild arrowIcon={<X strokeWidth={2.5} />} size="md" variant="dark" withArrow>
+            <Link href={`${routes.list.posts}#seznam`}>Zrušit filtr</Link>
+          </Button>
+          <Button asChild size="md" variant="outline">
+            <Link href={routes.list.matches}>Zápasy</Link>
+          </Button>
+        </>
+      }
+      icon="search"
+      title="Tomuhle filtru nic neodpovídá"
+    >
+      V kategorii <strong className="font-semibold">{typeLabel}</strong> zatím nejsou žádné články.
+      Zkuste jinou kategorii nebo zrušte filtr.
+    </EmptyState>
+  )
+}

@@ -6,8 +6,8 @@
  * (zbyde jen popisek), takže textová varianta nese adresu přímo v řádku.
  */
 import { LANDING_COLORS as C } from '@/landing/tokens'
-import { getServerSideURL } from '@/utilities/getURL'
-import { plural } from '@/utilities/plural'
+import { getServerSideURL } from '@/lib/getURL'
+import { plural } from '@/lib/plural'
 
 import { emailBranding } from '../config'
 import { escapeHtml, renderEmailHtml, renderEmailText, type RenderEmailArgs } from '../render'
@@ -38,7 +38,6 @@ export type NotificationPlan = {
 type Item = { text: string; href?: string }
 type Section = { title: string; items: Item[]; note?: string }
 
-
 const MAX_ITEMS = 15
 
 const cap = (items: Item[]): Item[] =>
@@ -51,9 +50,14 @@ export function buildSubject(plan: NotificationPlan): string {
   if (plan.failure) parts.push(`selhání (${plan.failure.streak}× po sobě)`)
   if (plan.recovered) parts.push('synchronizace obnovena')
   const n = (count: number, one: string, few: string, many: string) =>
-    count > 0 ? parts.push(`${count} ${plural(count, one, few, many)}`) : undefined
+    count > 0 ? parts.push(`${count} ${plural(count, [one, few, many])}`) : undefined
   n(plan.newPlayers.length, 'nový hráč', 'noví hráči', 'nových hráčů')
-  n(plan.ambiguousPlayers.length, 'nejednoznačný hráč', 'nejednoznační hráči', 'nejednoznačných hráčů')
+  n(
+    plan.ambiguousPlayers.length,
+    'nejednoznačný hráč',
+    'nejednoznační hráči',
+    'nejednoznačných hráčů',
+  )
   n(plan.newOpponents.length, 'nový soupeř', 'noví soupeři', 'nových soupeřů')
   n(plan.rescheduled.length, 'přeložený zápas', 'přeložené zápasy', 'přeložených zápasů')
   n(plan.results.length, 'nový výsledek', 'nové výsledky', 'nových výsledků')
@@ -75,7 +79,7 @@ function sections(
       title: 'Synchronizace selhává',
       items: [
         {
-          text: `${streak} ${plural(streak, 'běh', 'běhy', 'běhů')} po sobě ${
+          text: `${streak} ${plural(streak, ['běh', 'běhy', 'běhů'])} po sobě ${
             status === 'error' ? 'skončil chybou' : 'proběhl jen částečně'
           }.${error ? ` Poslední chyba: ${error.slice(0, 500)}` : ''}`,
         },
@@ -88,7 +92,7 @@ function sections(
       title: 'Synchronizace funguje znovu',
       items: [
         {
-          text: `Po ${plan.recovered.after} ${plural(plan.recovered.after, 'selhání', 'selháních', 'selháních')} proběhl poslední běh bez chyby.`,
+          text: `Po ${plan.recovered.after} ${plural(plan.recovered.after, ['selhání', 'selháních', 'selháních'])} proběhl poslední běh bez chyby.`,
         },
       ],
     })
@@ -125,7 +129,7 @@ function sections(
       ),
       note:
         plan.draftPosts > 0
-          ? `Založeno ${plan.draftPosts} ${plural(plan.draftPosts, 'koncept reportáže', 'koncepty reportáží', 'konceptů reportáží')} — najdete je mezi články: ${base}/admin/collections/posts`
+          ? `Založeno ${plan.draftPosts} ${plural(plan.draftPosts, ['koncept reportáže', 'koncepty reportáží', 'konceptů reportáží'])} — najdete je mezi články: ${base}/admin/collections/posts`
           : undefined,
     })
   }
@@ -183,6 +187,9 @@ export function renderVchlSyncEmail(
   return {
     subject,
     html: renderEmailHtml({ ...common, bodyHtml: secs.map(sectionHtml).join('') }),
-    text: renderEmailText({ ...common, bodyHtml: escapeHtml(secs.map(sectionText).join('\n\n')).replace(/\n/g, '<br />') }),
+    text: renderEmailText({
+      ...common,
+      bodyHtml: escapeHtml(secs.map(sectionText).join('\n\n')).replace(/\n/g, '<br />'),
+    }),
   }
 }

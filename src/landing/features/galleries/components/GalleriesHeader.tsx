@@ -1,0 +1,56 @@
+import React from 'react'
+
+import { SeasonFilters, type SeasonPill } from '@/landing/features/matches/components/SeasonFilters'
+import { Highlight } from '@/landing/ui/Kicker'
+import { PageHeader } from '@/landing/ui/PageHeader'
+import { countLabel } from '@/lib/plural'
+import { routes } from '@/lib/routes'
+
+/**
+ * Hlavička výpisu fotogalerií: drobečky, titulek s lime zvýrazněním, perex,
+ * filtr sezón a počet galerií. `id="seznam"` je scroll kotva stránkování.
+ */
+export function GalleriesHeader({
+  seasons,
+  activeSlug,
+  totalDocs,
+}: {
+  seasons: SeasonPill[]
+  activeSlug: string | null
+  totalDocs: number
+}) {
+  return (
+    <PageHeader
+      className="scroll-mt-5"
+      filters={
+        <SeasonFilters
+          activeSlug={activeSlug}
+          allLabel="Vše"
+          anchor="#seznam"
+          basePath={routes.list.galleries}
+          maxVisible={6}
+          seasons={seasons}
+        />
+      }
+      /*
+       * Dvacet sezón se na 320px zalomí do jedenácti řádků (~570px) a odsune
+       * celý výpis pod druhou obrazovku. Pod `md` je z řádku vodorovný pás se
+       * snapem (vzor `zapasy/FixturesRail`), přetékající do okrajů sekce;
+       * od `md` se vrací původní zalamovaný řádek. Pravý okraj se prolíná do
+       * prázdna stejnou maskou jako pás rozpisu — bez ní pilulky na 390px
+       * lícovaly s okrajem a nic nenapovídalo, že jich je dvacet.
+       */
+      rowClassName="max-md:no-scrollbar max-md:-mx-gutter max-md:snap-x max-md:flex-nowrap max-md:overflow-x-auto max-md:px-gutter max-md:pb-1.5 max-md:[mask-image:linear-gradient(to_right,#000_calc(100%-3rem),transparent)] max-md:[&>*>*]:flex-none max-md:[&>*>*]:snap-start"
+      id="seznam"
+      meta={countLabel(totalDocs, ['galerie', 'galerie', 'galerií'])}
+      perex="Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase."
+      title={
+        <>
+          Sezóna v <Highlight>obrazech</Highlight>
+        </>
+      }
+      trail={[{ label: 'Fotoalbum' }]}
+      watermark="FOTO"
+    />
+  )
+}

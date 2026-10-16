@@ -8,11 +8,16 @@ export const DEFAULT_SETTINGS: VchlSettings = {
   idleIntervalHours: 6,
   matchdayIntervalMinutes: 15,
   matchdayWindowHours: 48,
-  notifications: { notifyOn: ['failure', 'new-entity', 'rescheduled'], recipients: [], failureThreshold: 2 },
+  notifications: {
+    notifyOn: ['failure', 'new-entity', 'rescheduled'],
+    recipients: [],
+    failureThreshold: 2,
+  },
 }
 
 const bool = (v: unknown, d: boolean) => (typeof v === 'boolean' ? v : d)
-const num = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : d)
+const num = (v: unknown, d: number) =>
+  typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : d
 
 /**
  * Global nemusí v DB existovat (nikdo ho ještě neuložil), takže každá
@@ -35,7 +40,9 @@ export async function loadSettings(payload: Payload): Promise<VchlSettings> {
     matchdayIntervalMinutes: num(g?.timing?.matchdayIntervalMinutes, d.matchdayIntervalMinutes),
     matchdayWindowHours: num(g?.timing?.matchdayWindowHours, d.matchdayWindowHours),
     notifications: {
-      notifyOn: Array.isArray(g?.notifications?.notifyOn) ? g.notifications.notifyOn : d.notifications.notifyOn,
+      notifyOn: Array.isArray(g?.notifications?.notifyOn)
+        ? g.notifications.notifyOn
+        : d.notifications.notifyOn,
       recipients: Array.isArray(g?.notifications?.recipients)
         ? g.notifications.recipients.map((r) => r.email).filter(Boolean)
         : [],

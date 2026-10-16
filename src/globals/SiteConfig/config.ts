@@ -48,7 +48,7 @@ export const SiteConfig: GlobalConfig = {
       },
     },
     {
-      // Varianty jsou v `landing/zapas/header-variants/`; náhled všech vedle
+      // Varianty jsou v `landing/features/matches/header-variants/`; náhled všech vedle
       // sebe na `/vzory/hlavicka-zapasu`. Hodnoty drží `MATCH_HEADER_VARIANTS`.
       name: 'matchHeaderVariant',
       type: 'select',

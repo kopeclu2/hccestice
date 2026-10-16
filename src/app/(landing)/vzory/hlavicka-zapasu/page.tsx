@@ -1,19 +1,22 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Kicker } from '@/landing/components/Kicker'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchMatchDetail } from '@/landing/data/matchDetail'
-import type { MatchDetail } from '@/landing/types'
-import { HeaderApp } from '@/landing/zapas/header-variants/HeaderApp'
-import { HeaderArena } from '@/landing/zapas/header-variants/HeaderArena'
-import { HeaderEditorial } from '@/landing/zapas/header-variants/HeaderEditorial'
-import { HeaderSplit } from '@/landing/zapas/header-variants/HeaderSplit'
-import type { HeaderVariantProps } from '@/landing/zapas/header-variants/shared'
-import { MatchHeader } from '@/landing/zapas/MatchHeader'
+import { MatchHeader } from '@/landing/features/matches/components/MatchHeader'
+import { fetchMatchDetail } from '@/landing/features/matches/data/matchDetail'
+import { HeaderApp } from '@/landing/features/matches/header-variants/HeaderApp'
+import { HeaderArena } from '@/landing/features/matches/header-variants/HeaderArena'
+import { HeaderEditorial } from '@/landing/features/matches/header-variants/HeaderEditorial'
+import { HeaderSplit } from '@/landing/features/matches/header-variants/HeaderSplit'
+import {
+  type HeaderVariantProps,
+  isVariantMatch,
+} from '@/landing/features/matches/header-variants/shared'
+import type { MatchDetail } from '@/landing/features/matches/types'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Kicker } from '@/landing/ui/Kicker'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { SITE_NAME } from '@/lib/club'
 
 /**
  * Interní náhled variant hlavičky detailu zápasu (`/zapasy/[slug]`).
@@ -102,7 +105,9 @@ const loadSamples = async () => {
             homeLogo: match.weAreHome ? match.homeLogo : null,
           }
         : match
-      return { ...sample, match: prepared }
+      // Zrušený zápas varianty neumí (v produkci ho dostane `MatchHeader`),
+      // takže by tu byl k ničemu; ukázky navíc žádný zrušený zápas nemají.
+      return isVariantMatch(prepared) ? { ...sample, match: prepared } : null
     }),
   )
   return loaded.filter((item): item is NonNullable<typeof item> => item !== null)
@@ -113,21 +118,21 @@ export default async function MatchHeaderVariantsPage() {
 
   return (
     <SubpageShell hatch={false} surface="paper">
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Hlavička detailu zápasu
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
+        <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
           Čtyři koncepty hlavičky stránky{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">/zapasy/[slug]</code> vedle
           současné podoby. Každý je vykreslený nad stejnými zápasy z databáze — po nájezdech, v
           normální hrací době, naplánovaný a soupeř bez znaku.
         </p>
         <nav aria-label="Varianty" className="mt-6 flex flex-wrap justify-center gap-2">
           {VARIANTS.map((variant) => (
             <a
-              className="border-line text-ink-soft hover:bg-chip rounded-full border px-4 py-1.5 text-xs font-medium"
+              className="rounded-full border border-line px-4 py-1.5 text-xs font-medium text-ink-soft hover:bg-chip"
               href={`#${variant.id}`}
               key={variant.id}
             >
@@ -139,18 +144,18 @@ export default async function MatchHeaderVariantsPage() {
 
       {VARIANTS.map((variant) => (
         <SectionShell id={variant.id} key={variant.id} spacing="section">
-          <div className="border-line border-b pb-5">
+          <div className="border-b border-line pb-5">
             <SectionTitle>
               <span className="text-club">{variant.number}</span> — {variant.name}
             </SectionTitle>
-            <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">{variant.summary}</p>
+            <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">{variant.summary}</p>
           </div>
 
           <div className="mt-8 flex flex-col gap-10 md:gap-12">
             {samples.map((sample) => (
               <figure className="m-0" data-variant={variant.id} key={sample.slug}>
                 {variant.render({ match: sample.match, titleAs: 'h3' })}
-                <figcaption className="text-faint mt-3 text-center text-eyebrow font-semibold tracking-[0.1em] uppercase">
+                <figcaption className="mt-3 text-center text-eyebrow font-semibold tracking-widest text-faint uppercase">
                   {sample.caption}
                 </figcaption>
               </figure>
@@ -163,7 +168,7 @@ export default async function MatchHeaderVariantsPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Hlavička zápasu — interní náhled | HC Čestice',
-  description: 'Interní přehled variant hlavičky detailu zápasu pro web HC Čestice.',
+  title: `Hlavička zápasu — interní náhled | ${SITE_NAME}`,
+  description: `Interní přehled variant hlavičky detailu zápasu pro web ${SITE_NAME}.`,
   robots: { index: false, follow: false },
 }

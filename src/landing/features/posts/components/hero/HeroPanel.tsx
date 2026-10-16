@@ -1,0 +1,63 @@
+import Image from 'next/image'
+import React from 'react'
+
+import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Watermark } from '@/landing/ui/Watermark'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+
+import { articleTrail } from './articleTrail'
+import { AuthorMeta } from './AuthorMeta'
+import { CategoryBadge } from './CategoryBadge'
+
+/**
+ * Hero D · Zelený panel — klubově zelená karta s bílým šrafováním
+ * a obrysovým watermarkem; text vlevo, menší fotka vpravo dole.
+ *
+ * Dvousloupcová kompozice je z handoffu pro 1440px, takže platí od `lg`:
+ * na 768px měl textový sloupec ~350px a fotka ~320px. `sizes` kopíruje
+ * tentýž zlom.
+ */
+export function HeroPanel({ article }: { article: ArticleDetail }) {
+  return (
+    <div className="relative z-1 mt-3.5">
+      <div className="relative overflow-hidden rounded-section bg-club px-panel py-[clamp(2.25rem,4vw,4rem)] text-on-contrast max-md:px-4.5 max-md:py-6">
+        <Watermark className="-right-12.5 -bottom-17.5 z-0 text-watermark-4xl tracking-display text-on-contrast-wash">
+          HCČ
+        </Watermark>
+        <div className="pointer-events-none absolute inset-0 hatch-white" />
+
+        <div className="relative grid items-end gap-hero-gap lg:grid-cols-[1.15fr_.85fr]">
+          <div>
+            <Breadcrumbs className="mb-5.5" tone="panel" trail={articleTrail(article.badge)} />
+            <CategoryBadge>{article.badge}</CategoryBadge>
+            <PageTitle balance="pretty" className="mt-4.5 text-on-contrast" size="sm">
+              {article.title}
+            </PageTitle>
+            <AuthorMeta
+              author={article.author}
+              className="mt-6"
+              dateLabel={article.dateLabel}
+              readingLabel={article.readingLabel}
+              tone="panel"
+            />
+          </div>
+
+          <div className="relative h-[clamp(15rem,26vw,21.25rem)] overflow-hidden rounded-thumb bg-pine">
+            {article.photo && (
+              <Image
+                alt={article.photo.alt}
+                className="object-cover"
+                fill
+                priority
+                sizes="(max-width: 64rem) 100vw, 40vw"
+                src={getMediaUrl(article.photo.url, article.photo.updatedAt)}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

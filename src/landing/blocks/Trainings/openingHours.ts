@@ -1,4 +1,4 @@
-import type { TrainingSlot } from '../../types'
+import type { TrainingSlot } from '@/landing/features/trainings/types'
 
 /**
  * `day` a `time` jsou v CMS volný text („Út", „17:45 – 19:00") kvůli
@@ -21,11 +21,7 @@ const DAY_MAP: Record<string, string> = {
 const TIME_RANGE = /(\d{1,2}):(\d{2})\s*[–—-]\s*(\d{1,2}):(\d{2})/
 
 const normalizeDay = (day: string): string | null => {
-  const key = day
-    .trim()
-    .toLowerCase()
-    .replace(/[.,]/g, '')
-    .slice(0, 2)
+  const key = day.trim().toLowerCase().replace(/[.,]/g, '').slice(0, 2)
   return DAY_MAP[key] ?? null
 }
 

@@ -184,3 +184,11 @@
   white-space: pre-wrap;
   color: var(--theme-error-500);
 }
+
+.flush {
+  margin: 0;
+}
+
+.listAfterError {
+  margin-top: 8px;
+}

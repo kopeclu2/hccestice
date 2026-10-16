@@ -11,6 +11,7 @@
  * cache entry routy nemají. Tag je u nich jediná funkční invalidace.
  */
 export const CACHE_TAGS = {
+  /* ── Datová vrstva webu (redakční obsah → `{ expire: 0 }`) ── */
   /** Global `siteConfig` — patička, kontakty, přepínače. */
   siteConfig: 'site-config',
   /** Výpis a filtry článků (`/aktuality`). */
@@ -19,7 +20,34 @@ export const CACHE_TAGS = {
   galleries: 'galleries-list',
   /** Rozlosování, výsledky a forma (`/zapasy`). */
   matches: 'matches-list',
+  /** Menu na každé stránce (`features/navigation/data.ts`). */
+  navigation: 'navigation',
+  /** Přepínač režimu údržby (`landing/data/maintenance.ts`). */
+  maintenance: 'maintenance',
+  /** Přesměrování z kolekce `redirects` (`server/getRedirects.ts`). */
+  redirects: 'redirects',
+
+  /* ── Crawlerské feedy (stale-while-revalidate `'max'` stačí) ── */
+  /** `/llms.txt`. */
+  llmsTxt: 'llms-txt',
+  /** `/posts-sitemap.xml`. */
+  postsSitemap: 'posts-sitemap',
+  /** `/pages-sitemap.xml`. */
+  pagesSitemap: 'pages-sitemap',
+  /** `/gallery-sitemap.xml`. */
+  gallerySitemap: 'gallery-sitemap',
+  /** `/matches-sitemap.xml`. */
+  matchesSitemap: 'matches-sitemap',
 } as const
+
+/** Libovolný tag z `CACHE_TAGS` — typ pro `unstable_cache` i revalidační hooky. */
+export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS]
+
+/**
+ * Tag jednoho dokumentu (`server/getDocument.ts`): `pages_home`. Jediný
+ * dynamický tag v repu, proto je mimo `CACHE_TAGS` (nelze ho vyjmenovat).
+ */
+export const documentTag = (collection: string, slug: string): string => `${collection}_${slug}`
 
 /**
  * Tagy, které se invalidují spolu s landing stránkami

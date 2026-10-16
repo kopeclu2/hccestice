@@ -43,8 +43,7 @@ export const LandingTrainings: Block = {
       type: 'text',
       label: 'Výchozí místo',
       admin: {
-        description:
-          'Doplní se u karet bez vlastního místa — např. „ZS Rychnov nad Kněžnou".',
+        description: 'Doplní se u karet bez vlastního místa — např. „ZS Rychnov nad Kněžnou".',
       },
     },
     {
@@ -86,7 +85,9 @@ export const LandingTrainings: Block = {
           name: 'note',
           type: 'text',
           label: 'Poznámka',
-          admin: { description: 'Drobný řádek pod místem — např. „Od 1. 11." nebo „Bez brankáře".' },
+          admin: {
+            description: 'Drobný řádek pod místem — např. „Od 1. 11." nebo „Bez brankáře".',
+          },
         },
         {
           type: 'row',

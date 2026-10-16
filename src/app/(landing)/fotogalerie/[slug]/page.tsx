@@ -1,17 +1,23 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/data/galleries'
-import { formatLongDate, toPhoto, uploadToPhoto } from '@/landing/data/format'
-import { seasonShortLabel } from '@/landing/data/seasons'
-import { GalleryDetailHeader } from '@/landing/fotogalerie/GalleryDetailHeader'
-import { PhotoMasonry, type GalleryPhoto } from '@/landing/fotogalerie/PhotoMasonry'
-import { PhotosCta } from '@/landing/fotogalerie/PhotosCta'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { getServerSideURL } from '@/utilities/getURL'
+import { GalleryDetailHeader } from '@/landing/features/galleries/components/GalleryDetailHeader'
+import {
+  PhotoMasonry,
+  type GalleryPhoto,
+} from '@/landing/features/galleries/components/PhotoMasonry'
+import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
+import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/features/galleries/data'
+import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
+import { brandTitle } from '@/lib/brandTitle'
+import { CLUB_NAME } from '@/lib/club'
+import { formatLongDate } from '@/lib/datetime'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { getServerSideURL } from '@/lib/getURL'
+import { routes } from '@/lib/routes'
 
 /** ISR pojistka — galerie nemají revalidační hook, obnoví se samy. */
 export const revalidate = 600
@@ -34,7 +40,7 @@ export default async function GalleryDetailPage({ params }: Args) {
   const slug = decodeURIComponent(rawSlug)
 
   const gallery = await fetchGalleryBySlug(slug)
-  if (!gallery) return <PayloadRedirects url={`/fotogalerie/${slug}`} />
+  if (!gallery) return <PayloadRedirects url={routes.gallery(slug)} />
 
   const photos: GalleryPhoto[] = (gallery.photos ?? [])
     .map((row) => ({
@@ -53,7 +59,7 @@ export default async function GalleryDetailPage({ params }: Args) {
         title={gallery.title}
       />
 
-      <div className="relative z-1 mx-auto mt-9 max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)]">
+      <div className="relative z-1 mx-auto mt-9 max-w-page px-gutter">
         <PhotoMasonry photos={photos} />
       </div>
 
@@ -66,13 +72,13 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
   const gallery = await fetchGalleryBySlug(slug)
-  if (!gallery) return { title: 'Galerie nenalezena | HC Čestice' }
+  if (!gallery) return { title: brandTitle('Galerie nenalezena') }
 
   const cover = uploadToPhoto(gallery.cover)
   return {
-    title: `${gallery.title} | Fotoalbum HC Čestice`,
+    title: `${gallery.title} | Fotoalbum ${CLUB_NAME}`,
     description: `Fotogalerie ${gallery.title} — ${gallery.photos?.length ?? 0} fotek.`,
-    alternates: { canonical: `/fotogalerie/${slug}` },
+    alternates: { canonical: routes.gallery(slug) },
     openGraph: cover
       ? { images: [{ url: `${getServerSideURL()}${getMediaUrl(cover.url, cover.updatedAt)}` }] }
       : undefined,

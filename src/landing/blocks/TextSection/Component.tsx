@@ -1,12 +1,10 @@
-import type { TextSectionBlockType } from '@/payload-types'
-
 import React from 'react'
 
 import RichText from '@/components/RichText/Server'
-import { cn } from '@/utilities/ui'
-
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { cn } from '@/lib/utils'
+import type { TextSectionBlockType } from '@/payload-types'
 
 /** Textová sekce — Lexical obsah, volitelně v bílé kartě. */
 export function TextSectionBlockComponent({ block }: { block: TextSectionBlockType }) {
@@ -16,9 +14,13 @@ export function TextSectionBlockComponent({ block }: { block: TextSectionBlockTy
   return (
     <SectionShell>
       <Reveal>
-        <div className={cn(block.appearance === 'card' && 'rounded-card bg-surface p-4.5 md:p-8 lg:p-13')}>
+        <div
+          className={cn(
+            block.appearance === 'card' && 'rounded-card bg-surface p-4.5 md:p-8 lg:p-13',
+          )}
+        >
           <RichText
-            className="prose-headings:tracking-[-0.025em] prose-a:text-club mx-0 max-w-none md:prose-lg"
+            className="mx-0 max-w-none md:prose-lg prose-headings:tracking-tight prose-a:text-club"
             data={block.content}
             enableGutter={false}
           />

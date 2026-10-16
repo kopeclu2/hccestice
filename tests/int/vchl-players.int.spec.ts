@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { matchPlayer, type PlayerCandidate, type PlayerLike } from '../../src/jobs/vchlSync/sync/players'
+import {
+  matchPlayer,
+  type PlayerCandidate,
+  type PlayerLike,
+} from '../../src/jobs/vchlSync/sync/players'
 
 const cand = (over: Partial<PlayerCandidate>): PlayerCandidate => ({
   ahlPlayerId: null,

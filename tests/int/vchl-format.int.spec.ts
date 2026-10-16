@@ -1,11 +1,18 @@
 import { describe, expect, it } from 'vitest'
 
+import { plural } from '@/lib/plural'
+
 import { describeChanges } from '../../src/components/admin/VchlSync/format'
-import { plural } from '../../src/utilities/plural'
 
 describe('vchl admin: skloňování', () => {
   it('plural 1 / 2–4 / 5+', () => {
-    expect([1, 2, 4, 5, 0].map((n) => plural(n, 'a', 'b', 'c'))).toEqual(['a', 'b', 'b', 'c', 'c'])
+    expect([1, 2, 4, 5, 0].map((n) => plural(n, ['a', 'b', 'c']))).toEqual([
+      'a',
+      'b',
+      'b',
+      'c',
+      'c',
+    ])
   })
 
   it('describeChanges: 1, 2 a 5 zápasů', () => {

@@ -1,15 +1,14 @@
-import type { GalleryEmbedBlock } from '@/payload-types'
-
 import React from 'react'
 
-import type { Photo } from '../../types'
-
-import { CardTitle } from '../../components/Heading'
-import { PhotoTile } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { relId, toPhoto } from '../../data/format'
-import { fetchGallery } from '../../data/galleries'
+import { fetchGallery } from '@/landing/features/galleries/data'
+import { toPhoto } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
+import type { Photo } from '@/landing/types'
+import { CardTitle } from '@/landing/ui/Heading'
+import { PhotoTile } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { GalleryEmbedBlock } from '@/payload-types'
 
 /** Vložená galerie — nadpis + mřížka prvních N fotek. */
 export async function GalleryEmbedBlockComponent({ block }: { block: GalleryEmbedBlock }) {
@@ -37,7 +36,7 @@ function GalleryEmbedView({ title, photos }: { title: string | null; photos: Pho
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {photos.map((photo, index) => (
             <PhotoTile
-              className="aspect-[4/3] rounded-thumb"
+              className="aspect-4/3 rounded-thumb"
               gradient="none"
               key={`${photo.url}-${index}`}
               photo={photo}

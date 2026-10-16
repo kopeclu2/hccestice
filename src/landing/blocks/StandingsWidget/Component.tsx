@@ -1,13 +1,12 @@
-import type { StandingsWidgetBlock } from '@/payload-types'
-
 import React from 'react'
 
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { relId } from '../../data/format'
-import { fetchSeason, mapStandingsFromSeason } from '../../data/seasons'
-import type { StandingsContent } from '../../types'
-import { StandingsCard } from '../Season/Component'
+import { StandingsCard } from '@/landing/features/matches/components/StandingsCard'
+import { fetchSeason, mapStandingsFromSeason } from '@/landing/features/matches/data/seasons'
+import type { StandingsContent } from '@/landing/features/matches/types'
+import { relId } from '@/landing/lib/payload'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { StandingsWidgetBlock } from '@/payload-types'
 
 /** Widget tabulky ligy — načte tabulku z dokumentu sezóny. */
 export async function StandingsWidgetBlockComponent({ block }: { block: StandingsWidgetBlock }) {

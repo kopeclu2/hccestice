@@ -1,25 +1,25 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { PageCanvas } from '@/landing/components/PageCanvas'
-import { PageTitle, SectionTitle } from '@/landing/components/Heading'
-import { Kicker } from '@/landing/components/Kicker'
-import { SectionShell } from '@/landing/components/SectionShell'
+import { PageTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Kicker } from '@/landing/ui/Kicker'
+import { PageCanvas } from '@/landing/ui/PageCanvas'
 import {
   PatternBackground,
   type PatternFade,
   type PatternTone,
   type PatternVariant,
-} from '@/landing/components/PatternBackground'
-import { cn } from '@/utilities/ui'
+} from '@/landing/ui/PatternBackground'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { cn } from '@/lib/utils'
 
 export const revalidate = 600
 
 /**
  * Galerie vzorů pozadí — interní stránka pro výběr vzoru do sekcí
  * (obdoba shadcnblocks „background pattern" v klubových barvách).
- * Neindexuje se; komponenta: `@/landing/components/PatternBackground`.
+ * Neindexuje se; komponenta: `@/landing/ui/PatternBackground`.
  */
 
 const VARIANTS: Array<{ variant: PatternVariant; label: string; note: string; fade: PatternFade }> =
@@ -60,20 +60,21 @@ const DARK_DEMOS: Array<{ variant: PatternVariant; tone: PatternTone; fade: Patt
 export default function PatternGalleryPage() {
   return (
     <PageCanvas hatch={false} surface="paper">
-      <header className="mx-auto max-w-[97.5rem] px-[clamp(0.875rem,3vw,2.5rem)] pt-16 text-center">
+      <header className="mx-auto max-w-page px-gutter pt-16 text-center">
         <Kicker>Interní náhled</Kicker>
         <PageTitle className="mx-auto mt-5 max-w-200" size="sm">
           Vzory pozadí
         </PageTitle>
-        <p className="text-dim mx-auto mt-4 max-w-160 leading-relaxed text-pretty">
+        <p className="mx-auto mt-4 max-w-160 leading-relaxed text-pretty text-dim">
           Komponenta{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">PatternBackground</code> — vzor
-          se vkládá jako první potomek do sekce s{' '}
-          <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>, obsah nad ním
-          dostane <code className="bg-chip rounded px-1.5 font-mono text-sm">relative</code>. Volí
-          se vzor (<code className="bg-chip rounded px-1.5 font-mono text-sm">variant</code>
-          ), vytracení (<code className="bg-chip rounded px-1.5 font-mono text-sm">fade</code>) a
-          barva (<code className="bg-chip rounded px-1.5 font-mono text-sm">tone</code>).
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">PatternBackground</code> —
+          vzor se vkládá jako první potomek do sekce s{' '}
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">relative</code>, obsah nad
+          ním dostane <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">relative</code>
+          . Volí se vzor (
+          <code className="rounded-tag bg-chip px-1.5 font-mono text-sm">variant</code>
+          ), vytracení (<code className="rounded-tag bg-chip px-1.5 font-mono text-sm">fade</code>)
+          a barva (<code className="rounded-tag bg-chip px-1.5 font-mono text-sm">tone</code>).
         </p>
       </header>
 
@@ -134,9 +135,9 @@ function Section({
 }) {
   return (
     <SectionShell spacing="section">
-      <div className="border-line border-b pb-5">
+      <div className="border-b border-line pb-5">
         <SectionTitle>{title}</SectionTitle>
-        <p className="text-dim mt-2 max-w-180 leading-relaxed text-pretty">{perex}</p>
+        <p className="mt-2 max-w-180 leading-relaxed text-pretty text-dim">{perex}</p>
       </div>
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
     </SectionShell>
@@ -161,23 +162,25 @@ function DemoCard({
     <figure
       className={cn(
         'relative isolate h-64 overflow-hidden rounded-panel border',
-        dark ? 'bg-contrast border-contrast' : 'border-line bg-surface',
+        dark ? 'border-contrast bg-contrast' : 'border-line bg-surface',
       )}
     >
       {children}
       <figcaption className="absolute inset-x-4 bottom-4">
-        <div className={cn('text-sm font-bold', dark ? 'text-white' : 'text-ink')}>
+        <div className={cn('text-sm font-bold', dark ? 'text-on-contrast' : 'text-ink')}>
           {label}
           {note && (
-            <span className={cn('ml-2 font-medium', dark ? 'text-white/55' : 'text-faint')}>
+            <span
+              className={cn('ml-2 font-medium', dark ? 'text-on-contrast-subtle' : 'text-faint')}
+            >
               {note}
             </span>
           )}
         </div>
         <code
           className={cn(
-            'mt-1.5 inline-block max-w-full overflow-x-auto rounded-lg px-2.5 py-1 font-mono text-eyebrow whitespace-nowrap',
-            dark ? 'bg-white/10 text-lime' : 'bg-chip text-club',
+            'mt-1.5 inline-block max-w-full overflow-x-auto rounded-chip px-2.5 py-1 font-mono text-eyebrow whitespace-nowrap',
+            dark ? 'bg-on-contrast-wash text-lime' : 'bg-chip text-club',
           )}
         >
           {code}
@@ -188,7 +191,7 @@ function DemoCard({
 }
 
 export const metadata: Metadata = {
-  title: 'Vzory pozadí — interní galerie | HC Čestice',
+  title: brandTitle('Vzory pozadí — interní galerie'),
   description: 'Interní přehled vzorů pozadí (PatternBackground) pro sekce webu HC Čestice.',
   robots: { index: false, follow: false },
 }

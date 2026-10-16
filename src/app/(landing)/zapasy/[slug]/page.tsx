@@ -1,29 +1,31 @@
 import type { Metadata } from 'next'
-
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { Breadcrumbs } from '@/landing/components/Breadcrumbs'
-import { PillLink } from '@/landing/components/PillLink'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchMatchDetail, fetchMatchSlugs } from '@/landing/data/matchDetail'
+import { Button } from '@/components/ui/button'
 import { fetchSiteConfig } from '@/landing/data/site'
-import { matchDescription, matchHeadline } from '@/landing/data/matchDetailView'
-import { buildMatchSummary } from '@/landing/data/matchSummary'
-import { formatFullDate } from '@/landing/data/format'
-import type { MatchDetail } from '@/landing/types'
-import { MatchHeaderByVariant } from '@/landing/zapas/header-variants'
-import { MatchJsonLd } from '@/landing/zapas/MatchJsonLd'
-import { MatchReportCard } from '@/landing/zapas/MatchReportCard'
-import { MatchSummary } from '@/landing/zapas/MatchSummary'
-import { MatchTimeline } from '@/landing/zapas/MatchTimeline'
-import { brandTitle } from '@/utilities/brandTitle'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { getServerSideURL } from '@/utilities/getURL'
-import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/utilities/mergeOpenGraph'
+import { MatchJsonLd } from '@/landing/features/matches/components/MatchJsonLd'
+import { MatchReportCard } from '@/landing/features/matches/components/MatchReportCard'
+import { MatchSummary } from '@/landing/features/matches/components/MatchSummary'
+import { MatchTimeline } from '@/landing/features/matches/components/MatchTimeline'
+import { fetchMatchDetail, fetchMatchSlugs } from '@/landing/features/matches/data/matchDetail'
+import { MatchHeaderByVariant } from '@/landing/features/matches/header-variants'
+import type { MatchDetail } from '@/landing/features/matches/types'
+import { matchDescription, matchHeadline } from '@/landing/features/matches/view/matchDetailView'
+import { buildMatchSummary } from '@/landing/features/matches/view/matchSummary'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { buildListUrl } from '@/landing/lib/listUrl'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { SITE_NAME } from '@/lib/club'
+import { formatFullDate } from '@/lib/datetime'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { getServerSideURL } from '@/lib/getURL'
+import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
+import { routes } from '@/lib/routes'
+import { cn } from '@/lib/utils'
 
 /**
  * ISR pojistka pro HTML; data jdou přes tagovanou `unstable_cache`
@@ -63,10 +65,11 @@ const REPORT_SIZES_SPLIT = '(max-width: 1023px) 100vw, 38vw'
 const REPORT_SIZES_WIDE = '(max-width: 767px) 100vw, 50vw'
 
 /** Cesta zpět do výpisu na sezónu zápasu (a jeho sekci). */
-const listHref = (match: MatchDetail): string => {
-  const season = match.seasonSlug ? `?sezona=${encodeURIComponent(match.seasonSlug)}` : ''
-  return `/zapasy${season}#${match.status === 'played' ? 'odehrane' : 'rozlosovani'}`
-}
+const listHref = (match: MatchDetail): string =>
+  buildListUrl(routes.list.matches, {
+    filters: { sezona: match.seasonSlug },
+    hash: match.status === 'played' ? 'odehrane' : 'rozlosovani',
+  })
 
 /**
  * Detail zápasu — časová osa ve stylu Livesportu (góly a tresty HC Čestice,
@@ -108,11 +111,11 @@ export default async function MatchDetailPage(args: Args) {
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <Breadcrumbs
             className="mb-0"
-            trail={[{ href: '/zapasy', label: 'Zápasy' }, { label: match.title }]}
+            trail={[{ href: routes.list.matches, label: 'Zápasy' }, { label: match.title }]}
           />
-          <PillLink href={listHref(match)} size="sm" variant="outline">
-            ← Všechny zápasy
-          </PillLink>
+          <Button asChild size="sm" variant="outline">
+            <Link href={listHref(match)}>← Všechny zápasy</Link>
+          </Button>
         </div>
       </SectionShell>
 
@@ -122,7 +125,7 @@ export default async function MatchDetailPage(args: Args) {
 
       {match.missingProtocol && (
         <SectionShell spacing="split">
-          <p className="border-line-mid text-ink-soft rounded-section border border-dashed bg-surface p-4.5 text-sm md:text-base font-medium text-pretty md:p-7 lg:p-9">
+          <p className="rounded-section border border-dashed border-line-mid bg-surface p-4.5 text-sm font-medium text-pretty text-ink-soft md:p-7 md:text-base lg:p-9">
             Podrobný zápis z utkání není k dispozici.
           </p>
         </SectionShell>
@@ -131,7 +134,7 @@ export default async function MatchDetailPage(args: Args) {
       {(hasTimeline || hasAside) && (
         <SectionShell
           className={cn(
-            'grid grid-cols-1 items-start gap-[clamp(1.25rem,3vw,2.5rem)]',
+            'grid grid-cols-1 items-start gap-split-gap',
             split && 'lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]',
           )}
           spacing="split"
@@ -151,7 +154,7 @@ export default async function MatchDetailPage(args: Args) {
             </div>
           )}
           {hasAside && (
-            <div className="flex min-w-0 flex-col gap-[clamp(1.25rem,3vw,2.5rem)]">
+            <div className="flex min-w-0 flex-col gap-split-gap">
               <MatchReportCard
                 gallery={match.gallery}
                 report={match.report}
@@ -169,9 +172,9 @@ export default async function MatchDetailPage(args: Args) {
           tlačítko o kus výš. */}
       {(hasTimeline || hasAside || match.missingProtocol) && (
         <SectionShell spacing="cta">
-          <PillLink href={listHref(match)} size="md" variant="outline">
-            ← Všechny zápasy
-          </PillLink>
+          <Button asChild size="md" variant="outline">
+            <Link href={listHref(match)}>← Všechny zápasy</Link>
+          </Button>
         </SectionShell>
       )}
     </SubpageShell>
@@ -190,11 +193,11 @@ export default async function MatchDetailPage(args: Args) {
 export async function generateMetadata(args: Args): Promise<Metadata> {
   const slug = await readSlug(args)
   const match = slug ? await fetchMatchDetail(slug) : null
-  if (!slug || !match) return { title: 'Zápas nenalezen | HC Čestice' }
+  if (!slug || !match) return { title: `Zápas nenalezen | ${SITE_NAME}` }
 
   const title = brandTitle(`${matchHeadline(match)} · ${formatFullDate(match.kickoffISO)}`)
   const description = matchDescription(match)
-  const url = `${getServerSideURL()}/zapasy/${slug}`
+  const url = `${getServerSideURL()}${routes.match(slug)}`
 
   // Fotka z reportáže je jediný obrázek, který o zápase něco říká; `getMediaUrl`
   // s `updatedAt` drží verzi v URL (viz AGENTS.md → Média). Bez ní zbývá logo
@@ -212,7 +215,7 @@ export async function generateMetadata(args: Args): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `/zapasy/${slug}` },
+    alternates: { canonical: routes.match(slug) },
     openGraph: mergeOpenGraph({ description, images, title, url }),
     twitter: { card: photo ? 'summary_large_image' : 'summary', description, images, title },
   }

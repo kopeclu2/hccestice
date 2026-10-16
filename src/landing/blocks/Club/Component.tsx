@@ -1,18 +1,18 @@
-import type { LandingClubBlock } from '@/payload-types'
-
+import Link from 'next/link'
 import React from 'react'
 
-import { DotGrid, PlusMark } from '../../components/Decorations'
-import { SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
-import { CLUB } from '../../content'
-import { uploadToPhoto } from '../../data/format'
-import type { ClubContent } from '../../types'
+import { Button } from '@/components/ui/button'
+import { CLUB } from '@/landing/content'
+import { uploadToPhoto } from '@/landing/lib/media'
+import type { ClubContent } from '@/landing/types'
+import { DotGrid, PlusMark } from '@/landing/ui/Decorations'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
+import type { LandingClubBlock } from '@/payload-types'
 
 /** Block data → view-model (fallbacky na content.ts). */
 function mapClub(block: LandingClubBlock): ClubContent {
@@ -55,23 +55,23 @@ function ClubView({ content }: { content: ClubContent }) {
       id="klub"
     >
       <Watermark
-        className="text-ink/4 -left-10 bottom-7 text-watermark-md tracking-[-0.06em]"
+        className="bottom-7 -left-10 text-watermark-md tracking-display text-ink/4"
         outlined={false}
       >
         ČESTICE
       </Watermark>
-      <DotGrid className="left-0 top-30 size-75" maskPosition="20% 30%" />
-      <PlusMark className="left-82 top-15" />
+      <DotGrid className="top-30 left-0 size-75" maskPosition="20% 30%" />
+      <PlusMark className="top-15 left-82" />
 
       <Reveal>
         <Kicker>{content.kicker}</Kicker>
         <SectionTitle className="mt-5" size="lg">
           {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
         </SectionTitle>
-        <p className="text-dim mt-4 mb-6.5 leading-relaxed text-pretty">{content.perex}</p>
-        <PillLink href="#kontakt" variant="dark" withArrow>
-          {content.ctaLabel}
-        </PillLink>
+        <p className="mt-4 mb-6.5 leading-relaxed text-pretty text-dim">{content.perex}</p>
+        <Button asChild variant="dark" withArrow>
+          <Link href="#kontakt">{content.ctaLabel}</Link>
+        </Button>
       </Reveal>
 
       <Reveal delay={0.1}>
@@ -86,7 +86,7 @@ function ClubView({ content }: { content: ClubContent }) {
             sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
           >
             <TileBadge className="top-3.5 left-3.5">{content.stadium.tag}</TileBadge>
-            <div className="absolute bottom-4 left-4 right-15 text-sm md:text-base leading-normal font-medium text-white">
+            <div className="absolute right-15 bottom-4 left-4 text-sm leading-normal font-medium text-on-contrast md:text-base">
               {content.stadium.caption}
             </div>
           </PhotoTile>
@@ -98,11 +98,11 @@ function ClubView({ content }: { content: ClubContent }) {
               sizes="(max-width: 48rem) 100vw, (max-width: 64rem) 50vw, 25vw"
             >
               <TileBadge className="top-3 left-3">{content.youth.tag}</TileBadge>
-              <div className="absolute bottom-3.5 left-3.5 text-sm md:text-base font-medium text-white">
+              <div className="absolute bottom-3.5 left-3.5 text-sm font-medium text-on-contrast md:text-base">
                 {content.youth.caption}
               </div>
             </PhotoTile>
-            <p className="text-dim text-sm leading-normal text-pretty">{content.note}</p>
+            <p className="text-sm leading-normal text-pretty text-dim">{content.note}</p>
           </div>
         </div>
       </Reveal>

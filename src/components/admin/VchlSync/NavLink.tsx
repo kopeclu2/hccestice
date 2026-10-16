@@ -15,7 +15,7 @@ export const VchlSyncNavLink: React.FC = () => {
   return (
     <NavGroup label="Synchronizace">
       <Link
-        className={`nav__link${active ? ' active' : ''}`}
+        className={`nav__link${active ? 'active' : ''}`}
         href={HREF}
         id="nav-vchl-sync"
         prefetch={false}

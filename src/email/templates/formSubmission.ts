@@ -14,7 +14,7 @@
  */
 import type { BeforeEmail, FormattedEmail } from '@payloadcms/plugin-form-builder/types'
 
-import { getServerSideURL } from '@/utilities/getURL'
+import { getServerSideURL } from '@/lib/getURL'
 
 import { emailBranding, formattedFrom, notificationAddress } from '../config'
 import { renderEmail, type EmailRow } from '../render'
@@ -98,7 +98,10 @@ export const wrapFormEmails: BeforeEmail = async (emails, params) => {
       heading: email.subject,
       bodyHtml: email.html,
       rows: isAutoresponder ? undefined : rows,
-      button: isAutoresponder || !adminUrl ? undefined : { href: adminUrl, label: 'Otevřít v administraci' },
+      button:
+        isAutoresponder || !adminUrl
+          ? undefined
+          : { href: adminUrl, label: 'Otevřít v administraci' },
       footnote: isAutoresponder
         ? 'Na tento e-mail můžete odpovědět — odpověď dorazí do klubu.'
         : submitterEmail

@@ -35,7 +35,13 @@ const SLACK_MS = 60_000
  * Zápasový režim: od začátku zápasu Čestic po `matchdayWindowHours`, dokud
  * zápas není odehraný se zápisem. Jinak klidový.
  */
-export function isDue({ now, lastRunAt, settings, ourMatches, lastRunStatus }: IsDueInput): IsDueResult {
+export function isDue({
+  now,
+  lastRunAt,
+  settings,
+  ourMatches,
+  lastRunStatus,
+}: IsDueInput): IsDueResult {
   const nowMs = now.getTime()
   const windowMs = settings.matchdayWindowHours * HOUR
 

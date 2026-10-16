@@ -1,0 +1,63 @@
+import Image from 'next/image'
+import React from 'react'
+
+import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
+import { PageTitle } from '@/landing/ui/Heading'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+
+import { articleTrail } from './articleTrail'
+import { AuthorMeta } from './AuthorMeta'
+import { CategoryBadge } from './CategoryBadge'
+import { TitleParts } from './HeroTitle'
+
+/**
+ * Hero A · Velké foto — fotka přes celou šířku se zeleným multiply
+ * filtrem, ztmavením a rozostřeným spodním pásem; titulek a meta dole.
+ */
+export function HeroPhoto({ article }: { article: ArticleDetail }) {
+  return (
+    <div className="relative z-1 mt-3.5">
+      <div className="relative h-[min(66vh,41.25rem)] min-h-[32.5rem] overflow-hidden rounded-section bg-pine max-md:h-auto max-md:min-h-[26.25rem]">
+        {article.photo && (
+          <Image
+            alt={article.photo.alt}
+            className="object-cover"
+            fill
+            priority
+            sizes="100vw"
+            src={getMediaUrl(article.photo.url, article.photo.updatedAt)}
+          />
+        )}
+        {/* zelený klubový filtr + svislé ztmavení (čitelnost textu) */}
+        <div className="pointer-events-none absolute inset-0 mix-blend-multiply [background:linear-gradient(160deg,--alpha(var(--color-club)/55%),--alpha(var(--color-club-dark)/30%)_55%,--alpha(var(--color-club-deep)/30%))]" />
+        <div className="pointer-events-none absolute inset-0 [background:linear-gradient(180deg,--alpha(var(--color-pine-deep)/34%)_0_12%,--alpha(var(--color-pine-deep)/2%)_38%,--alpha(var(--color-pine-deep)/60%)_70%,--alpha(var(--color-pine-deep)/92%))]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[56%] [mask-image:linear-gradient(transparent,#000_62%)] backdrop-blur-[6px] backdrop-saturate-[.85]" />
+
+        <Breadcrumbs
+          className="absolute top-6 left-[clamp(1.125rem,3vw,2.75rem)] z-2"
+          tone="photo"
+          trail={articleTrail(article.badge)}
+        />
+
+        <div className="absolute inset-x-hero-inset bottom-10 z-2">
+          <CategoryBadge>{article.badge}</CategoryBadge>
+          <PageTitle balance="pretty" className="mt-4.5 max-w-250 text-on-contrast" size="md">
+            <TitleParts
+              accent="lime-text"
+              highlight={article.titleHighlight}
+              title={article.title}
+            />
+          </PageTitle>
+          <AuthorMeta
+            author={article.author}
+            className="mt-5.5"
+            dateLabel={article.dateLabel}
+            readingLabel={article.readingLabel}
+            tone="photo"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}

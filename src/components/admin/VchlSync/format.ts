@@ -1,17 +1,9 @@
 /** Formátování pro ovládací stránku synchronizace (česky, pražský čas). */
 
-import { plural } from '@/utilities/plural'
+import { formatFullDateTime } from '@/lib/datetime'
+import { plural } from '@/lib/plural'
 
-const dtf = new Intl.DateTimeFormat('cs-CZ', {
-  day: 'numeric',
-  month: 'numeric',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZone: 'Europe/Prague',
-})
-
-export const fmtDate = (iso?: string | null) => (iso ? dtf.format(new Date(iso)) : '—')
+export const fmtDate = (iso?: string | null) => (iso ? formatFullDateTime(iso) : '—')
 
 export function fmtDuration(startIso?: string | null, endIso?: string | null): string {
   if (!startIso || !endIso) return '—'
@@ -27,7 +19,13 @@ export function fmtRelative(iso?: string | null, now = Date.now()): string {
   const abs = Math.abs(diff)
   const min = Math.round(abs / 60_000)
   const text =
-    min < 1 ? 'okamžik' : min < 60 ? `${min} min` : min < 2880 ? `${Math.round(min / 60)} h` : `${Math.round(min / 1440)} dní`
+    min < 1
+      ? 'okamžik'
+      : min < 60
+        ? `${min} min`
+        : min < 2880
+          ? `${Math.round(min / 60)} h`
+          : `${Math.round(min / 1440)} dní`
   if (min < 1) return 'právě teď'
   return diff >= 0 ? `za ${text}` : `před ${text}`
 }
@@ -88,7 +86,7 @@ export function describeChanges(changes: unknown): string {
     .filter(([, v]) => typeof v === 'number' && v > 0)
     .map(([k, v]) => {
       const l = CHANGE_LABEL[k]
-      return l ? `${v} ${plural(v as number, ...l)}` : `${v} ${k}`
+      return l ? `${v} ${plural(v as number, l)}` : `${v} ${k}`
     })
   return parts.length ? parts.join(', ') : 'beze změn'
 }

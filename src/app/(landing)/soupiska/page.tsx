@@ -1,17 +1,21 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { countLabel } from '@/landing/data/format'
-import { fetchPlayerSeasonStats, fetchRosterSections, POSITION_LABEL } from '@/landing/data/players'
-import { fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
 import { fetchAllPeople } from '@/landing/data/site'
-import type { SoupiskaCard } from '@/landing/soupiska/PlayerTile'
-import { RosterCta } from '@/landing/soupiska/RosterCta'
-import { RosterSection } from '@/landing/soupiska/RosterSection'
-import { SoupiskaHeader } from '@/landing/soupiska/SoupiskaHeader'
+import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import type { RosterCard } from '@/landing/features/roster/components/PlayerTile'
+import { RosterCta } from '@/landing/features/roster/components/RosterCta'
+import { RosterHeader } from '@/landing/features/roster/components/RosterHeader'
+import { RosterSection } from '@/landing/features/roster/components/RosterSection'
+import {
+  fetchPlayerSeasonStats,
+  fetchRosterSections,
+  POSITION_LABEL,
+} from '@/landing/features/roster/data'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
 
@@ -61,7 +65,7 @@ export default async function SoupiskaPage() {
 
   return (
     <SubpageShell>
-      <SoupiskaHeader
+      <RosterHeader
         pills={pills}
         seasonLabel={season ? seasonShortLabel(season) : null}
         summary={summary}
@@ -74,7 +78,7 @@ export default async function SoupiskaPage() {
         {sections.map((section) => (
           <RosterSection
             anchor={section.anchor}
-            cards={section.players.map((player): SoupiskaCard => ({
+            cards={section.players.map((player): RosterCard => ({
               key: `player-${player.id}`,
               name: player.name,
               kicker: (player.position && POSITION_LABEL[player.position]) || 'Hráč',
@@ -94,7 +98,7 @@ export default async function SoupiskaPage() {
         {people.length > 0 && (
           <RosterSection
             anchor="realizacni-tym"
-            cards={people.map((person, index): SoupiskaCard => ({
+            cards={people.map((person, index): RosterCard => ({
               key: `person-${index}-${person.name}`,
               name: person.name,
               kicker: person.role,
@@ -114,7 +118,7 @@ export default async function SoupiskaPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Soupiska | HC Čestice',
+  title: brandTitle('Soupiska'),
   description:
     'A-tým mužů HC Čestice ve Východočeské hokejové lize — brankáři, obránci, útočníci a realizační tým.',
   alternates: { canonical: '/soupiska' },

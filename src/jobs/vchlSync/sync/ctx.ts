@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 
 import type { AhlClient } from '@/ahl'
+import { errorMessage } from '@/lib/errors'
 
 import { captureFailure, type VchlStage } from '../sentry'
 import type { VchlChanges, VchlDiffEntry, VchlSettings, VchlTrigger, VchlWarning } from '../types'
@@ -29,13 +30,23 @@ export type SyncContext = {
   sentryEventIds: string[]
   warn(w: VchlWarning): void
   recordDiff(e: VchlDiffEntry): void
-  create(collection: string, data: Record<string, unknown>): Promise<{ id: number } & Record<string, unknown>>
-  update(collection: string, id: number, data: Record<string, unknown>): Promise<Record<string, unknown>>
+  create(
+    collection: string,
+    data: Record<string, unknown>,
+  ): Promise<{ id: number } & Record<string, unknown>>
+  update(
+    collection: string,
+    id: number,
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>>
   /** Zachytí chybu do Sentry a poznamená ji; běh pokračuje (status `partial`). */
   partialFailure(err: unknown, stage: VchlStage, where?: Parameters<typeof captureFailure>[3]): void
 }
 
-export type SyncContextInit = Pick<SyncContext, 'payload' | 'client' | 'trigger' | 'settings' | 'now' | 'teamId'> & {
+export type SyncContextInit = Pick<
+  SyncContext,
+  'payload' | 'client' | 'trigger' | 'settings' | 'now' | 'teamId'
+> & {
   changes: VchlChanges
 }
 
@@ -78,7 +89,7 @@ export function createSyncContext(init: SyncContextInit): SyncContext {
       return loose.update({ collection, id, data, depth: 0, context: { disableRevalidate: true } })
     },
     partialFailure(err, stage, where) {
-      ctx.partialErrors.push(err instanceof Error ? err.message : String(err))
+      ctx.partialErrors.push(errorMessage(err))
       const id = captureFailure(err, stage, init.trigger, where)
       if (id) ctx.sentryEventIds.push(id)
     },

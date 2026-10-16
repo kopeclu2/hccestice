@@ -1,6 +1,5 @@
 import type { Block } from 'payload'
 
-
 export const StandingsWidget: Block = {
   slug: 'standingsWidget',
   interfaceName: 'StandingsWidgetBlock',

@@ -1,11 +1,11 @@
-import type { Media } from '@/payload-types'
 import type { Metadata } from 'next'
-
 import React from 'react'
 
 import { HeroModernBlockComponent } from '@/landing/blocks/HeroModern/Component'
-import { PageCanvas } from '@/landing/components/PageCanvas'
 import { HERO } from '@/landing/content'
+import { PageCanvas } from '@/landing/ui/PageCanvas'
+import { CLUB_NAME } from '@/lib/club'
+import type { Media } from '@/payload-types'
 
 /**
  * Interní náhled hero varianty 2 (blok `landingHeroModern`).
@@ -24,7 +24,7 @@ const PREVIEW_PHOTO = {
   // `/api/media/file/**` je jediná cesta k médiím povolená v
   // `next.config.ts#images.localPatterns` — `/media/...` next/image odmítne.
   url: `/api/media/file/${HERO.photo}`,
-  alt: 'Tým HC Čestice na ledě',
+  alt: `Tým ${CLUB_NAME} na ledě`,
   width: 1920,
   height: 1440,
 } as Media

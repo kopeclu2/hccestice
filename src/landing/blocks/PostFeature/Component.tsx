@@ -1,16 +1,17 @@
-import type { PostFeatureBlock } from '@/payload-types'
-
 import Link from 'next/link'
 import React from 'react'
 
-import type { Photo } from '../../types'
-
-import { CardTitle } from '../../components/Heading'
-import { PhotoTile, TileBadge } from '../../components/PhotoTile'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { formatFullDate, relId, toPhoto } from '../../data/format'
-import { fetchDefaultPostPhoto, fetchPost, POST_TYPE_LABEL, postHref } from '../../data/posts'
+import { fetchDefaultPostPhoto, fetchPost } from '@/landing/features/posts/data/posts'
+import { POST_TYPE_LABEL, postHref } from '@/landing/features/posts/view/posts'
+import { toPhoto } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
+import type { Photo } from '@/landing/types'
+import { CardTitle } from '@/landing/ui/Heading'
+import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { formatFullDate } from '@/lib/datetime'
+import type { PostFeatureBlock } from '@/payload-types'
 
 /** Vypíchnutý článek — velká fotokarta se štítkem, datem a titulkem. */
 export async function PostFeatureBlockComponent({ block }: { block: PostFeatureBlock }) {
@@ -62,9 +63,9 @@ function PostFeatureView({
       <TileBadge className="top-4 left-4" tone="lime">
         {tag}
       </TileBadge>
-      <div className="absolute inset-x-5.5 bottom-5.5 text-white">
+      <div className="absolute inset-x-5.5 bottom-5.5 text-on-contrast">
         <div className="text-xs font-medium opacity-75">{dateLabel}</div>
-        <CardTitle as="h3" className="mt-1.5 max-w-160 text-pretty text-white" size="lg">
+        <CardTitle as="h3" className="mt-1.5 max-w-160 text-pretty text-on-contrast" size="lg">
           {title}
         </CardTitle>
         {perex && <div className="mt-2 max-w-160 text-sm opacity-85">{perex}</div>}

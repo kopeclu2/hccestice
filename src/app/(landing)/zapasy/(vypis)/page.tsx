@@ -1,28 +1,34 @@
 import type { Metadata } from 'next'
-
+import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { EmptyState } from '@/landing/components/EmptyState'
-import { PillLink } from '@/landing/components/PillLink'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { fetchSeasonFixtures, fetchSeasonForm, fetchSeasonResults } from '@/landing/data/matches'
+import { Button } from '@/components/ui/button'
+import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
+import { FormStrip } from '@/landing/features/matches/components/FormStrip'
+import { MatchesCta } from '@/landing/features/matches/components/MatchesCta'
+import { MatchesHeader } from '@/landing/features/matches/components/MatchesHeader'
+import { MatchesJsonLd } from '@/landing/features/matches/components/MatchesJsonLd'
+import { ResultsList } from '@/landing/features/matches/components/ResultsList'
+import { StandingsPanel } from '@/landing/features/matches/components/StandingsPanel'
+import {
+  fetchSeasonFixtures,
+  fetchSeasonForm,
+  fetchSeasonResults,
+} from '@/landing/features/matches/data/matches'
 import {
   fetchMatchSeasons,
   fetchSeason,
   mapStandingsFromSeason,
   seasonShortLabel,
-} from '@/landing/data/seasons'
-import type { StandingsContent } from '@/landing/types'
-import { FixturesRail } from '@/landing/zapasy/FixturesRail'
-import { FormStrip } from '@/landing/zapasy/FormStrip'
-import { MatchesCta } from '@/landing/zapasy/MatchesCta'
-import { MatchesJsonLd } from '@/landing/zapasy/MatchesJsonLd'
-import { ResultsList } from '@/landing/zapasy/ResultsList'
-import { StandingsPanel } from '@/landing/zapasy/StandingsPanel'
-import { ZapasyHeader } from '@/landing/zapasy/ZapasyHeader'
+} from '@/landing/features/matches/data/seasons'
+import type { StandingsContent } from '@/landing/features/matches/types'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { buildListUrl } from '@/landing/lib/listUrl'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { SITE_NAME } from '@/lib/club'
+import { routes } from '@/lib/routes'
+import { cn } from '@/lib/utils'
 
 type Args = { searchParams: Promise<{ sezona?: string; strana?: string }> }
 
@@ -32,13 +38,13 @@ const PER_PAGE = 6
  * Cesta výpisu bez `#odehrane` — kotva patří jen do odkazů stránkování v UI,
  * ne do `canonical`. Sdílí ji komponenta (`hrefFor`) i `generateMetadata`.
  */
-const listPath = (page: number, seasonSlug: string | null): string => {
-  const params = new URLSearchParams()
-  if (seasonSlug) params.set('sezona', seasonSlug)
-  if (page > 1) params.set('strana', String(page))
-  const query = params.toString()
-  return `/zapasy${query ? `?${query}` : ''}`
-}
+const listPath = (page: number, seasonSlug: string | null, hash?: string): string =>
+  buildListUrl(routes.list.matches, {
+    filters: { sezona: seasonSlug },
+    page,
+    pageKey: 'strana',
+    hash,
+  })
 
 /**
  * Zápasy a tabulka — handoff „HC Cestice Zapasy".
@@ -92,18 +98,18 @@ export default async function ZapasyPage({ searchParams }: Args) {
   // kratším sloupcem (výsledky a tabulka mají typicky jinou přirozenou délku).
   const bothEmpty = results.rows.length === 0 && standings.rows.length === 0
 
-  const hrefFor = (n: number): string => `${listPath(n, activeSeason?.slug ?? null)}#odehrane`
+  const hrefFor = (n: number): string => listPath(n, activeSeason?.slug ?? null, 'odehrane')
 
   return (
     <SubpageShell pattern={{ variant: 'grid', tone: 'club', fade: 'top-right' }}>
       <MatchesJsonLd fixtures={fixtures} results={results.rows} />
 
-      <ZapasyHeader
+      <MatchesHeader
         activeSlug={activeSeason?.slug ?? null}
         fullTableUrl={standings.fullTableUrl}
-        seasons={seasons
-          .filter((season) => season.slug)
-          .map((season) => ({ slug: season.slug!, label: seasonShortLabel(season) }))}
+        seasons={seasons.flatMap((season) =>
+          season.slug ? [{ slug: season.slug, label: seasonShortLabel(season) }] : [],
+        )}
       />
 
       {/* Prázdný stav dostane jen aktuální sezóna na /zapasy — u starší
@@ -117,12 +123,12 @@ export default async function ZapasyPage({ searchParams }: Args) {
             <EmptyState
               actions={
                 <>
-                  <PillLink href="/aktuality" size="md" variant="dark" withArrow>
-                    Sledovat aktuality
-                  </PillLink>
-                  <PillLink href="/zapasy#odehrane" size="md" variant="outline">
-                    Odehrané zápasy
-                  </PillLink>
+                  <Button asChild size="md" variant="dark" withArrow>
+                    <Link href="/aktuality">Sledovat aktuality</Link>
+                  </Button>
+                  <Button asChild size="md" variant="outline">
+                    <Link href="/zapasy#odehrane">Odehrané zápasy</Link>
+                  </Button>
                 </>
               }
               icon="schedule"
@@ -148,7 +154,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           Handoff to zalamuje na 760px, ale kreslí jen 1440px plochu. */}
       <SectionShell
         className={cn(
-          'grid grid-cols-1 gap-[clamp(1.25rem,3vw,2.5rem)] lg:grid-cols-[1.15fr_0.85fr]',
+          'grid grid-cols-1 gap-split-gap lg:grid-cols-[1.15fr_0.85fr]',
           bothEmpty ? 'items-stretch' : 'items-start',
         )}
         spacing="section"
@@ -168,7 +174,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   )
 }
 
-const TITLE = 'Zápasy a tabulka | HC Čestice'
+const TITLE = `Zápasy a tabulka | ${SITE_NAME}`
 const DESCRIPTION =
   'Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou.'
 
@@ -191,7 +197,7 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : '/zapasy' },
+    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : routes.list.matches },
     ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
   }
 }

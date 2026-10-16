@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { photoField } from '../shared'
+import { photoField } from '@/landing/blocks/shared'
 
 export const CtaBannerBlock: Block = {
   slug: 'ctaBanner',

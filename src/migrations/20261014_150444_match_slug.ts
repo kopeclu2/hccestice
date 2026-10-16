@@ -6,7 +6,7 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
  * (index nad prázdnými hodnotami by sice prošel — `NULL`y se neporovnávají —,
  * ale chceme, aby případná kolize shodila migraci, ne běžící web).
  *
- * Formát musí sedět s `matchSlug()` v `src/utilities/matchSlug.ts`:
+ * Formát musí sedět s `matchSlug()` v `src/lib/matchSlug.ts`:
  * `YYYY-MM-DD-<opponents.slug>` (den v Europe/Prague), bez slugu soupeře jen
  * den; u shody stejného dne a soupeře první zápas (podle data, id) bez
  * přípony, další `-2`, `-3`…

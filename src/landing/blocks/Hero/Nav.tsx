@@ -1,15 +1,16 @@
+import Link from 'next/link'
 import React from 'react'
 
-import { LogoStamp } from '../../components/LogoStamp'
-import { NavMobile } from '../../components/NavMobile'
-import { PillLink } from '../../components/PillLink'
-import { ctaHref, navHref } from '../../data/navigation'
-import type { NavCta, NavItem } from '../../types'
+import { Button } from '@/components/ui/button'
+import { ctaHref, navHref } from '@/landing/features/navigation/data'
+import type { NavCta, NavItem } from '@/landing/features/navigation/types'
+import { NavMobile } from '@/landing/layout/NavMobile'
+import { LogoStamp } from '@/landing/ui/LogoStamp'
 
 /**
  * Navigace plovoucí přes hero fotku: bílá „známka" s logem vlevo,
- * skleněné pill odkazy na kotvy sekcí (od `xl`), CTA vpravo a burger menu,
- * které je do `xl` jedinou úplnou navigací.
+ * skleněné pill odkazy na kotvy sekcí (od `nav`), CTA vpravo a burger menu,
+ * které je do `nav` jedinou úplnou navigací.
  *
  * Položky i CTA přicházejí z CMS; cíl odkazu řeší `navHref` v kontextu
  * `home` (kotva, nebo podstránka u položek bez sekce).
@@ -23,23 +24,23 @@ export function LandingNav({ cta, items }: { cta: NavCta; items: NavItem[] }) {
     <nav className="absolute inset-x-[clamp(1.125rem,3vw,2.75rem)] top-6.5 z-4 flex items-center gap-2.5">
       <LogoStamp href="#home" />
 
-      {/* Pilulky až od `xl` — stejná hranice jako `components/NavPills`.
-          Devět položek z CMS se vedle loga a CTA vejde až od 1280px; do té
+      {/* Pilulky až od `nav` — stejná hranice jako `components/NavPills`.
+          Deset položek z CMS se vedle loga a CTA vejde až od 1440px; do té
           doby se řada tiše scrollovala (`no-scrollbar`), takže na 768 i 1024
           byla část navigace nedosažitelná a poslední pilulka ustřižená. */}
-      <div className="no-scrollbar hidden min-w-0 gap-2 overflow-x-auto xl:flex">
+      <div className="no-scrollbar hidden min-w-0 gap-1.5 overflow-x-auto nav:flex">
         {items.map((item) => (
-          <PillLink href={navHref(item, 'home')} key={item.label} size="sm" variant="glass">
-            {item.label}
-          </PillLink>
+          <Button asChild key={item.label} size="sm" variant="glass">
+            <Link href={navHref(item, 'home')}>{item.label}</Link>
+          </Button>
         ))}
       </div>
 
       <div className="min-w-5 flex-1" />
 
-      <PillLink className="max-md:hidden" href={href} size="md" variant="dark" withArrow>
-        {cta.label}
-      </PillLink>
+      <Button asChild className="max-md:hidden" size="md" variant="dark" withArrow>
+        <Link href={href}>{cta.label}</Link>
+      </Button>
 
       <NavMobile context="home" ctaHref={href} ctaLabel={cta.label} items={items} tone="glass" />
     </nav>

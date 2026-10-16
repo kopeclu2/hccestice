@@ -1,26 +1,27 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
-import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
-import { navigationPlugin } from 'payload-cms-navigation-plugin'
-import reCAPTCHAv3 from 'payload-recaptcha-v3'
-import { auditor } from './auditor'
-import { navigationOverrides } from './navigationOverrides'
-import { notificationAddress } from '@/email/config'
-import { wrapFormEmails } from '@/email/templates/formSubmission'
-import { APIError, Plugin } from 'payload'
-import { revalidateRedirects } from '@/hooks/revalidateRedirects'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
-import { searchFields } from '@/search/fieldOverrides'
-import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { APIError, Plugin } from 'payload'
+import { navigationPlugin } from 'payload-cms-navigation-plugin'
+import reCAPTCHAv3 from 'payload-recaptcha-v3'
 
+import { notificationAddress } from '@/email/config'
+import { wrapFormEmails } from '@/email/templates/formSubmission'
+import { revalidateRedirects, revalidateRedirectsDelete } from '@/hooks/revalidateRedirects'
+import { brandTitle } from '@/lib/brandTitle'
+import { getClientIp, isRateLimited } from '@/lib/rateLimit'
+import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/lib/recaptcha/config'
+import { seoPreviewUrl } from '@/lib/seoPreviewUrl'
 import { Page, Post } from '@/payload-types'
-import { brandTitle } from '@/utilities/brandTitle'
-import { getServerSideURL } from '@/utilities/getURL'
-import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/utilities/recaptcha/config'
-import { getClientIp, isRateLimited } from '@/utilities/rateLimit'
+import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { searchFields } from '@/search/fieldOverrides'
+
+import { auditor } from './auditor'
+import { navigationOverrides } from './navigationOverrides'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   // Suffix drží `brandTitle`, ne tenhle řádek — sdílí ho s `generateMeta`,
@@ -28,11 +29,8 @@ const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return brandTitle(doc?.title)
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-  const url = getServerSideURL()
-
-  return doc?.slug ? `${url}/${doc.slug}` : url
-}
+const generateURL: GenerateURL<Post | Page> = ({ doc, collectionSlug, collectionConfig }) =>
+  seoPreviewUrl({ collectionSlug, collectionConfig, slug: doc?.slug })
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
@@ -56,6 +54,7 @@ export const plugins: Plugin[] = [
       },
       hooks: {
         afterChange: [revalidateRedirects],
+        afterDelete: [revalidateRedirectsDelete],
       },
     },
   }),
@@ -151,7 +150,7 @@ export const plugins: Plugin[] = [
    * Plugin hlídá **jen operace přes REST** (`payloadAPI === 'REST'`, viz
    * `payload-recaptcha-v3/dist/hookBuilder.js`), takže pokrývá blok Formulář,
    * ale ne server action landing kontaktu nad local API. Tu ověřuje
-   * `verifyRecaptchaToken` (`@/utilities/recaptcha/verify`).
+   * `verifyRecaptchaToken` (`@/server/recaptcha/verify`).
    */
   reCAPTCHAv3({
     secret: process.env.RECAPTCHA_SECRET ?? '',

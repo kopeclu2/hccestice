@@ -1,5 +1,6 @@
 import { AhlParseError } from '../errors'
 import type { AhlCompetitionInfo } from '../types'
+
 import { paramFromHref, parseDocument, text } from './dom'
 
 const PAGE = 'ročník'
@@ -12,7 +13,9 @@ const PAGE = 'ročník'
 export function parseCompetitionInfo(html: string): AhlCompetitionInfo {
   const doc = parseDocument(html, PAGE)
 
-  const yearSelect = doc.querySelector('select[name="souteznirocnikid"], select[name="souteznirocnikids[0]"]')
+  const yearSelect = doc.querySelector(
+    'select[name="souteznirocnikid"], select[name="souteznirocnikids[0]"]',
+  )
   const selected = yearSelect?.querySelector('option[selected]')
   const competitionYearId = Number.parseInt(selected?.getAttribute('value') ?? '', 10)
   if (!selected || !Number.isFinite(competitionYearId)) {

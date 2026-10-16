@@ -1,6 +1,5 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
-
-import { revalidateTag } from 'next/cache'
+import { createRevalidateHooks } from '@/hooks/createRevalidateHooks'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
 /**
  * Navigace je na každé stránce webu, takže se nerevaliduje po cestách
@@ -12,24 +11,11 @@ import { revalidateTag } from 'next/cache'
  * `afterDelete` by smazaná položka zůstala v menu (cache navigace má bez
  * revalidace TTL jeden rok).
  */
-const revalidate = (context: Record<string, unknown>, logger: { info: (m: string) => void }) => {
-  if (context.disableRevalidate) return
-  logger.info('Revaliduji navigaci (tag navigation)')
-  revalidateTag('navigation', { expire: 0 })
-}
+const hooks = createRevalidateHooks({
+  label: 'navigaci',
+  tags: [CACHE_TAGS.navigation],
+  profile: { expire: 0 },
+})
 
-export const revalidateNavigation: CollectionAfterChangeHook = ({
-  doc,
-  req: { payload, context },
-}) => {
-  revalidate(context, payload.logger)
-  return doc
-}
-
-export const revalidateNavigationDelete: CollectionAfterDeleteHook = ({
-  doc,
-  req: { payload, context },
-}) => {
-  revalidate(context, payload.logger)
-  return doc
-}
+export const revalidateNavigation = hooks.afterChange
+export const revalidateNavigationDelete = hooks.afterDelete

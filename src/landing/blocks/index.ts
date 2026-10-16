@@ -28,9 +28,9 @@ import { PlayerCardWidget } from './PlayerCard/config'
 import { PlayersPickerWidget } from './PlayersPicker/config'
 import { PostFeatureWidget } from './PostFeature/config'
 import { PostsGridWidget } from './PostsGrid/config'
+import { PricingCardsWidget } from './PricingCards/config'
 import { ProductCardWidget } from './ProductCard/config'
 import { ProductsGridWidget } from './ProductsGrid/config'
-import { PricingCardsWidget } from './PricingCards/config'
 import { RosterWidget } from './RosterWidget/config'
 import { LandingSeason } from './Season/config'
 import { SectionHeadingBlock } from './SectionHeading/config'
@@ -48,7 +48,7 @@ import { LandingTrainings } from './Trainings/config'
  * Pořadí = pořadí v admin výběru: sekce homepage → stavební bloky →
  * automatické widgety → výběrové widgety → marketing widgety.
  * Každý blok žije ve své složce: `config.ts` + `Component.tsx`
- * (render mapa je v `src/landing/render.tsx`).
+ * (render mapa je v `src/landing/blocks/render.tsx`).
  */
 export const landingBlocks: Block[] = [
   // sekce homepage

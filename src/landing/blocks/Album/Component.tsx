@@ -1,23 +1,25 @@
-import type { LandingAlbumBlock } from '@/payload-types'
-
+import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { Badge } from '../../components/Badge'
-import { MaybeLink } from '../../components/CardGrid'
-import { GlowCircle } from '../../components/Decorations'
-import { EmptyState } from '../../components/EmptyState'
-import { CardTitle, SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { PhotoTile, TileArrow } from '../../components/PhotoTile'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
-import { relId, uploadToPhoto } from '../../data/format'
-import { fetchAlbumGalleries } from '../../data/galleries'
-import type { AlbumSpan, AlbumTile, GalleryCard } from '../../types'
+import { Button } from '@/components/ui/button'
+import { fetchAlbumGalleries } from '@/landing/features/galleries/data'
+import type { GalleryCard } from '@/landing/features/galleries/types'
+import { uploadToPhoto } from '@/landing/lib/media'
+import { relId } from '@/landing/lib/payload'
+import type { AlbumSpan, AlbumTile } from '@/landing/types'
+import { Badge } from '@/landing/ui/Badge'
+import { MaybeLink } from '@/landing/ui/CardGrid'
+import { GlowCircle } from '@/landing/ui/Decorations'
+import { EmptyState } from '@/landing/ui/EmptyState'
+import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { PhotoTile, TileArrow } from '@/landing/ui/PhotoTile'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
+import { routes } from '@/lib/routes'
+import { cn } from '@/lib/utils'
+import type { LandingAlbumBlock } from '@/payload-types'
 
 /**
  * Rozmístění dlaždic mozaiky — 6 alb ve třech řádcích a čtyřech sloupcích:
@@ -99,31 +101,28 @@ export async function AlbumBlockComponent({ block }: { block: LandingAlbumBlock 
   return <AlbumView tiles={mapGalleryTiles(cards)} />
 }
 
-/** Rozměr dlaždice pro ruční mozaiku (bez pevné pozice — auto-placement). */
-const SPAN_GRID: Record<AlbumSpan, string> = {
-  big: 'md:col-span-2 md:row-span-2',
-  wide: 'md:col-span-2',
-  tile: '',
-}
-
-/** Radius drží fotka, ne obal odkazu — obal je průhledný a nemá co zaoblovat. */
-const SPAN_RADIUS: Record<AlbumSpan, string> = {
-  big: 'rounded-block',
-  wide: 'rounded-thumb',
-  tile: 'rounded-thumb',
-}
+/* Zlomy `sizes` kopírují mřížku: do 48rem pás, mezi 48 a 64rem dvousloupcový
+   mezistupeň (velká dlaždice na celou šířku, malá na polovinu) a až od
+   64rem čtyři sloupce. */
+const SIZES_LARGE =
+  '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem'
 
 /**
- * `sizes` podle skutečné šířky dlaždice. Jednotná hodnota velkou dlaždici
- * (polovina 97,5rem kontejneru) poddimenzovala a byla rozmazaná.
+ * Vzhled dlaždice podle velikosti.
+ *
+ * - `grid` — rozměr dlaždice pro ruční mozaiku (bez pevné pozice, auto-placement).
+ * - `radius` — drží ho fotka, ne obal odkazu: obal je průhledný a nemá co zaoblovat.
+ * - `sizes` — podle skutečné šířky dlaždice; jednotná hodnota velkou dlaždici
+ *   (polovina 97,5rem kontejneru) poddimenzovala a byla rozmazaná.
  */
-const SPAN_SIZES: Record<AlbumSpan, string> = {
-  /* Zlomy kopírují mřížku: do 48rem pás, mezi 48 a 64rem dvousloupcový
-     mezistupeň (velká dlaždice na celou šířku, malá na polovinu) a až od
-     64rem čtyři sloupce. */
-  big: '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem',
-  wide: '(max-width: 48rem) 66vw, (max-width: 64rem) 100vw, (max-width: 97.5rem) 50vw, 48rem',
-  tile: '(max-width: 48rem) 66vw, (max-width: 64rem) 50vw, 25vw',
+const SPAN_STYLE: Record<AlbumSpan, { grid: string; radius: string; sizes: string }> = {
+  big: { grid: 'md:col-span-2 md:row-span-2', radius: 'rounded-block', sizes: SIZES_LARGE },
+  wide: { grid: 'md:col-span-2', radius: 'rounded-thumb', sizes: SIZES_LARGE },
+  tile: {
+    grid: '',
+    radius: 'rounded-thumb',
+    sizes: '(max-width: 48rem) 66vw, (max-width: 64rem) 50vw, 25vw',
+  },
 }
 
 /**
@@ -140,9 +139,9 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
 
   return (
     <SectionShell id="fotoalbum">
-      <GlowCircle className="-right-60 -top-20 size-190" tone="lime" />
+      <GlowCircle className="-top-20 -right-60 size-190" tone="lime" />
       <Watermark
-        className="text-club/8 top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-[-0.06em] [writing-mode:vertical-rl]"
+        className="top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-display text-club/8 [writing-mode:vertical-rl]"
         outlined={false}
       >
         PONÍCI
@@ -157,9 +156,9 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <PillLink href="/fotogalerie" size="md" variant="dark" withArrow>
-            Celé fotoalbum
-          </PillLink>
+          <Button asChild size="md" variant="dark" withArrow>
+            <Link href={routes.list.galleries}>Celé fotoalbum</Link>
+          </Button>
         </div>
       </Reveal>
 
@@ -173,7 +172,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
                 /* Odsazení pásu se musí rovnat odsazení sekce
                    (`clamp(0.875rem,3vw,2.5rem)`), jinak dlaždice na mobilu
                    nekončí na stejné svislici jako nadpis nad nimi. */
-                'no-scrollbar -mx-[clamp(0.875rem,3vw,2.5rem)] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[clamp(0.875rem,3vw,2.5rem)] pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
+                '-mx-gutter no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-gutter pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
                 sparse
                   ? 'md:auto-rows-[13.75rem] lg:grid-cols-3'
                   : 'md:auto-rows-[11.25rem] lg:grid-cols-4',
@@ -204,16 +203,16 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
            dlaždice pořád vykukuje, takže signál „dá se scrollovat" zůstává —
            stejný podíl používá i pás rozlosování. */
         'group h-57.5 flex-[0_0_78%] snap-center md:h-auto md:flex-none',
-        tile.place ?? SPAN_GRID[tile.span],
+        tile.place ?? SPAN_STYLE[tile.span].grid,
       )}
       href={tile.href ?? undefined}
       label={tile.title ?? tile.chip ?? undefined}
     >
       <PhotoTile
-        className={cn('h-full', SPAN_RADIUS[tile.span])}
+        className={cn('h-full', SPAN_STYLE[tile.span].radius)}
         gradient={tile.span === 'big' ? 'bottom' : 'bottom-soft'}
         photo={tile.photo}
-        sizes={SPAN_SIZES[tile.span]}
+        sizes={SPAN_STYLE[tile.span].sizes}
       >
         {tile.badge && (
           <Badge className="absolute top-3.5 left-3.5" size="xs" variant="lime">
@@ -229,7 +228,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
               </Badge>
             )}
             {tile.title && (
-              <div className="text-shadow-photo line-clamp-2 text-xs leading-snug font-semibold text-white">
+              <div className="line-clamp-2 text-xs leading-snug font-semibold text-on-contrast text-shadow-photo">
                 {tile.title}
               </div>
             )}
@@ -241,14 +240,14 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
             /* Na mobilu o stupeň nižší řez a menší odsazení: 21px nadpis se
                v pásu lámal po slabikách („PLAY- / OFF o…"). Od `md` je
                dlaždice součástí mozaiky a platí velikost z handoffu. */
-            className="absolute right-14 bottom-3.5 left-4 line-clamp-2 text-lg tracking-[-0.02em] text-white md:right-18 md:bottom-4.5 md:left-5 md:text-xl"
+            className="absolute right-14 bottom-3.5 left-4 line-clamp-2 text-lg tracking-subheading text-on-contrast md:right-18 md:bottom-4.5 md:left-5 md:text-xl"
             size="sm"
           >
             {tile.title}
           </CardTitle>
         )}
         {tile.title && tile.span === 'wide' && (
-          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm md:text-base font-semibold text-white">
+          <div className="absolute right-15 bottom-3.5 left-4 line-clamp-2 text-sm font-semibold text-on-contrast md:text-base">
             {tile.title}
           </div>
         )}
@@ -265,7 +264,7 @@ function AlbumTileCard({ tile }: { tile: AlbumTile }) {
 
 /**
  * Prázdné fotoalbum. Znění i cesta dál se drží prázdného stavu výpisu
- * (`fotogalerie/GalleryGrid.tsx`), aby web mluvil jedním hlasem; `mailto:`
+ * (`features/galleries/components/GalleryGrid.tsx`), aby web mluvil jedním hlasem; `mailto:`
  * z handoffu by obešel kontaktní formulář a jeho ochranu reCAPTCHOU.
  */
 function AlbumEmpty() {
@@ -274,9 +273,9 @@ function AlbumEmpty() {
       /* jen jedna cesta dál — „Celé fotoalbum" už stojí v hlavičce sekce
          a bez alb by vedlo na stejně prázdný výpis */
       actions={
-        <PillLink href="/#kontakt" size="md" variant="dark" withArrow>
-          Poslat fotky
-        </PillLink>
+        <Button asChild size="md" variant="dark" withArrow>
+          <Link href="/#kontakt">Poslat fotky</Link>
+        </Button>
       }
       icon="photos"
       title="Fotoalbum se teprve plní"

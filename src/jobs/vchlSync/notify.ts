@@ -7,7 +7,7 @@ import {
   type NotificationPlan,
   type NotifyWarning,
 } from '@/email/templates/vchlSync'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getServerSideURL } from '@/lib/getURL'
 
 import type { VchlRunResult, VchlSettings } from './types'
 
@@ -18,7 +18,11 @@ export type PrevRun = {
 }
 
 const FAILING = new Set(['error', 'partial'])
-const ENTITY_TYPES = new Set<string | null | undefined>(['unknown-player', 'unknown-opponent', 'ambiguous-player'])
+const ENTITY_TYPES = new Set<string | null | undefined>([
+  'unknown-player',
+  'unknown-opponent',
+  'ambiguous-player',
+])
 
 const isFailing = (status: string | null | undefined) => FAILING.has(status ?? '')
 
@@ -92,7 +96,9 @@ export function decideNotifications(
   const last = prevRuns.find((r) => r.status === 'ok' || r.status === 'partial')
   if (on.has('new-entity')) {
     const seen = new Set(
-      (last?.warnings ?? []).filter((w) => ENTITY_TYPES.has(w.type)).map((w) => `${w.type}:${w.ref ?? ''}`),
+      (last?.warnings ?? [])
+        .filter((w) => ENTITY_TYPES.has(w.type))
+        .map((w) => `${w.type}:${w.ref ?? ''}`),
     )
     for (const w of current.warnings) {
       if (!ENTITY_TYPES.has(w.type) || seen.has(`${w.type}:${w.ref ?? ''}`)) continue
@@ -103,8 +109,12 @@ export function decideNotifications(
   }
 
   if (on.has('rescheduled')) {
-    const seen = new Set((last?.warnings ?? []).filter((w) => w.type === 'rescheduled').map((w) => w.message ?? ''))
-    plan.rescheduled = current.warnings.filter((w) => w.type === 'rescheduled' && !seen.has(w.message))
+    const seen = new Set(
+      (last?.warnings ?? []).filter((w) => w.type === 'rescheduled').map((w) => w.message ?? ''),
+    )
+    plan.rescheduled = current.warnings.filter(
+      (w) => w.type === 'rescheduled' && !seen.has(w.message),
+    )
   }
 
   if (on.has('result') && current.playedNow?.length) {
@@ -191,7 +201,8 @@ export async function notifyRun(
         limit: refs.length,
         depth: 0,
       })
-      for (const p of found.docs) if (p.ahlPlayerId != null) playerIds.set(String(p.ahlPlayerId), p.id)
+      for (const p of found.docs)
+        if (p.ahlPlayerId != null) playerIds.set(String(p.ahlPlayerId), p.id)
     }
     const linkFor = (w: NotifyWarning): string | undefined => {
       if (w.type === 'unknown-opponent') return `${base}/admin/collections/opponents`

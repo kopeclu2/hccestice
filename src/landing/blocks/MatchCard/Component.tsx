@@ -1,21 +1,20 @@
-import type { MatchCardBlock } from '@/payload-types'
-
 import { ArrowUpRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-import { cn } from '@/utilities/ui'
-
-import type { MatchCardData, Photo } from '../../types'
-
-import { Kicker } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { relId } from '../../data/format'
-import { fetchMatchCard } from '../../data/matches'
+import { fetchMatchCard } from '@/landing/features/matches/data/matches'
+import type { MatchCardData } from '@/landing/features/matches/types'
+import { relId } from '@/landing/lib/payload'
+import type { Photo } from '@/landing/types'
+import { Kicker } from '@/landing/ui/Kicker'
+import { Numeral } from '@/landing/ui/Numeral'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
+import { getMediaUrl } from '@/lib/getMediaUrl'
+import { cn } from '@/lib/utils'
+import type { MatchCardBlock } from '@/payload-types'
 
 /** Velká karta zápasu — loga, skóre / termín, odkaz na reportáž. */
 export async function MatchCardBlockComponent({ block }: { block: MatchCardBlock }) {
@@ -27,7 +26,7 @@ export async function MatchCardBlockComponent({ block }: { block: MatchCardBlock
 }
 
 function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string | null }) {
-  const our = { name: 'HC Čestice', logo: '/logo-cestice.png' }
+  const our = { name: CLUB_NAME, logo: CLUB_LOGO }
   const left = match.home ? 'ours' : 'theirs'
 
   return (
@@ -35,7 +34,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
       <Reveal>
         <div className="mx-auto max-w-180 rounded-card bg-surface p-4.5 text-center md:p-7.5 lg:p-10">
           {kicker && <Kicker className="mb-5">{kicker}</Kicker>}
-          <div className="text-faint text-sm font-medium">
+          <div className="text-sm font-medium text-faint">
             {[match.dateLabel, match.competition, match.venue].filter(Boolean).join(' · ')}
           </div>
 
@@ -49,14 +48,14 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
                 <Numeral
                   as="div"
                   className={cn(
-                    'rounded-2xl px-5 py-2.5 md:text-5xl',
+                    'rounded-icon px-5 py-2.5 md:text-5xl',
                     match.won ? 'bg-lime text-ink' : 'bg-chip text-ink',
                   )}
                   size="xl"
                 >
                   {match.score}
                   {match.suffix && (
-                    <span className="text-faint ml-1.5 text-sm md:text-base font-semibold">
+                    <span className="ml-1.5 text-sm font-semibold text-faint md:text-base">
                       {match.suffix}
                     </span>
                   )}
@@ -77,7 +76,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {match.reportHref && (
                 <Link
-                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-semibold"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-club-dark hover:text-club"
                   href={match.reportHref}
                 >
                   Reportáž ze zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
@@ -85,7 +84,7 @@ function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string
               )}
               {match.href && (
                 <Link
-                  className="text-club-dark hover:text-club inline-flex items-center gap-2 text-sm font-semibold"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-club-dark hover:text-club"
                   href={match.href}
                 >
                   Detail zápasu <ArrowUpRight className="size-4" strokeWidth={2.5} />
@@ -112,7 +111,7 @@ function TeamSide({ logo, name }: { logo: Photo | string | null; name: string })
           width={80}
         />
       ) : (
-        <div className="bg-chip size-16 rounded-full md:size-20" />
+        <div className="size-16 rounded-full bg-chip md:size-20" />
       )}
       <div className="text-sm leading-tight font-bold md:text-base">{name}</div>
     </div>

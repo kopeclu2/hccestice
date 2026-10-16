@@ -1,21 +1,22 @@
-import type { LandingHistoryBlock } from '@/payload-types'
-
+import Link from 'next/link'
 import React from 'react'
 
-import { Badge } from '../../components/Badge'
-import { CardTitle, SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
-import { HISTORY } from '../../content'
-import { arrayOr } from '../../data/format'
-import type { HistoryContent } from '../../types'
+import { Button } from '@/components/ui/button'
+import { HISTORY } from '@/landing/content'
+import type { HistoryContent } from '@/landing/features/history/types'
+import { arrayOr } from '@/landing/lib/payload'
+import { Badge } from '@/landing/ui/Badge'
+import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
+import { routes } from '@/lib/routes'
+import type { LandingHistoryBlock } from '@/payload-types'
 
 /** Interní routy, na které sekce odkazuje (v CMS se edituje jen text tlačítek). */
 const HISTORY_HREF = '/historie-klubu'
-const PHOTOS_HREF = '/fotogalerie'
+const PHOTOS_HREF = routes.list.galleries
 
 /** Block data → view-model (fallbacky na content.ts). */
 function mapHistory(block: LandingHistoryBlock): HistoryContent {
@@ -53,7 +54,7 @@ export function HistoryBlockComponent({ block }: { block: LandingHistoryBlock })
 function HistoryView({ content }: { content: HistoryContent }) {
   return (
     <SectionShell id="historie">
-      <Watermark className="text-club/10 -top-20 -right-7.5 text-watermark-2xl tracking-[-0.06em]">
+      <Watermark className="-top-20 -right-7.5 text-watermark-2xl tracking-display text-club/10">
         {content.watermark}
       </Watermark>
 
@@ -65,21 +66,21 @@ function HistoryView({ content }: { content: HistoryContent }) {
         </SectionTitle>
 
         <div className="mt-7.5 flex flex-wrap items-center gap-x-3.5 gap-y-3">
-          <PillLink href={HISTORY_HREF} variant="dark" withArrow>
-            {content.ctaLabel}
-          </PillLink>
-          <PillLink href={PHOTOS_HREF} variant="outline" withArrow>
-            {content.photosCtaLabel}
-          </PillLink>
-          <span className="text-faint text-sm font-medium">{content.metaLine}</span>
+          <Button asChild variant="dark" withArrow>
+            <Link href={HISTORY_HREF}>{content.ctaLabel}</Link>
+          </Button>
+          <Button asChild variant="outline" withArrow>
+            <Link href={PHOTOS_HREF}>{content.photosCtaLabel}</Link>
+          </Button>
+          <span className="text-sm font-medium text-faint">{content.metaLine}</span>
         </div>
       </Reveal>
 
-      <div className="mt-14 grid grid-cols-1 items-center gap-[clamp(1.5rem,4vw,4rem)] md:grid-cols-[1.15fr_0.85fr]">
+      <div className="mt-14 grid grid-cols-1 items-center gap-panel md:grid-cols-[1.15fr_0.85fr]">
         <Reveal>
           {/* perex i doplňkový odstavec drží stejnou škálu jako hlavičky podstránek */}
-          <p className="text-ink-soft text-lg leading-[1.55] text-pretty">{content.lead}</p>
-          <p className="text-dim mt-4 leading-relaxed text-pretty">{content.text}</p>
+          <p className="text-lg leading-copy text-pretty text-ink-soft">{content.lead}</p>
+          <p className="mt-4 leading-relaxed text-pretty text-dim">{content.text}</p>
 
           <div className="mt-6.5 flex flex-wrap items-center gap-2">
             {content.chips.map((chip) => (
@@ -94,7 +95,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
           <figure className="relative m-0 flex flex-col justify-center px-[clamp(0rem,1vw,0.625rem)]">
             <span
               aria-hidden
-              className="text-lime text-watermark-xs leading-[0.55] font-extrabold select-none"
+              className="text-watermark-xs leading-[0.55] font-extrabold text-lime select-none"
             >
               „
             </span>
@@ -104,7 +105,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
                 {content.quoteEnd}
               </CardTitle>
             </blockquote>
-            <figcaption className="text-faint border-contrast mt-5 max-w-80 border-t-2 pt-4 text-sm font-medium">
+            <figcaption className="mt-5 max-w-80 border-t-2 border-contrast pt-4 text-sm font-medium text-faint">
               {content.quoteSource}
             </figcaption>
           </figure>

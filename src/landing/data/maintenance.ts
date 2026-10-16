@@ -1,6 +1,9 @@
-import configPromise from '@payload-config'
-import { unstable_cache } from 'next/cache'
-import { getPayload } from 'payload'
+import 'server-only'
+
+import { CLUB_NAME } from '@/lib/club'
+
+import { cachedQuery, getPayloadClient } from './query'
+import { CACHE_TAGS } from './tags'
 
 /** Obsah údržbové stránky — `enabled` rozhoduje, jestli se vůbec zobrazí. */
 export type MaintenanceState = {
@@ -11,8 +14,7 @@ export type MaintenanceState = {
 
 const DEFAULTS = {
   headline: 'Rolba právě upravuje led',
-  perex:
-    'Web HC Čestice prochází krátkou údržbou. Za chvíli jsme zpátky — mezitím nás najdete na sociálních sítích.',
+  perex: `Web ${CLUB_NAME} prochází krátkou údržbou. Za chvíli jsme zpátky — mezitím nás najdete na sociálních sítích.`,
 } as const
 
 /**
@@ -27,10 +29,10 @@ const DEFAULTS = {
  * propagovala, nedostupná databáze by shodila i stránku 500 — a ta má být
  * to poslední, co v takové situaci funguje.
  */
-export const fetchMaintenance = unstable_cache(
+export const fetchMaintenance = cachedQuery(
   async (): Promise<MaintenanceState> => {
     try {
-      const payload = await getPayload({ config: configPromise })
+      const payload = await getPayloadClient()
       const siteConfig = await payload.findGlobal({ slug: 'siteConfig', depth: 0 })
       const maintenance = siteConfig.maintenance
 
@@ -43,6 +45,5 @@ export const fetchMaintenance = unstable_cache(
       return { enabled: false, ...DEFAULTS }
     }
   },
-  ['maintenance'],
-  { tags: ['maintenance'], revalidate: 3600 },
+  { key: 'maintenance', tags: [CACHE_TAGS.maintenance] },
 )

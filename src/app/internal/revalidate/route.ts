@@ -1,8 +1,8 @@
 import { timingSafeEqual } from 'node:crypto'
 
-import { revalidateTag } from 'next/cache'
-
-import { revalidateLandingNow } from '@/hooks/revalidateLanding'
+import { applyRevalidation } from '@/hooks/createRevalidateHooks'
+import { LANDING_REVALIDATION } from '@/hooks/revalidateLanding'
+import { CACHE_TAGS } from '@/landing/data/tags'
 
 /**
  * Interní revalidace pro synchronizaci VČHL (`jobs/vchlSync/revalidate.ts`).
@@ -28,10 +28,12 @@ function authorized(req: Request): boolean {
 
 export function POST(req: Request) {
   if (!authorized(req)) return new Response('Unauthorized', { status: 401 })
-  revalidateLandingNow({ info: (msg) => console.info(`[vchl-sync] ${msg}`) })
-  // Synchronizace zakládá nové zápasy (zápisy jdou s `disableRevalidate`,
-  // takže hook `revalidateMatchFeeds` neběží) → nové detaily do sitemapy.
-  // `'max'` jako u ostatních crawlerských feedů.
-  revalidateTag('matches-sitemap', 'max')
+  applyRevalidation(
+    { info: (msg) => console.info(`[vchl-sync] ${msg}`) },
+    // Synchronizace zakládá nové zápasy (zápisy jdou s `disableRevalidate`,
+    // takže hook `revalidateMatchFeeds` neběží) → nové detaily do sitemapy.
+    // Feedy se invalidují `'max'` jako u ostatních crawlerských feedů.
+    { ...LANDING_REVALIDATION, feeds: [CACHE_TAGS.matchesSitemap] },
+  )
   return Response.json({ revalidated: true }, { headers: { 'Cache-Control': 'no-store' } })
 }

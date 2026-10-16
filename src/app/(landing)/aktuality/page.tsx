@@ -1,15 +1,18 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { AktualityHeader } from '@/landing/aktuality/AktualityHeader'
-import { AktualityGrid } from '@/landing/aktuality/AktualityGrid'
-import { SocialCta } from '@/landing/aktuality/SocialCta'
-import { Pagination } from '@/landing/components/Pagination'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { POST_TYPE_LABEL, fetchPostsPage } from '@/landing/data/posts'
 import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
+import { PostsHeader } from '@/landing/features/posts/components/PostsHeader'
+import { PostsListGrid } from '@/landing/features/posts/components/PostsListGrid'
+import { SocialCta } from '@/landing/features/posts/components/SocialCta'
+import { fetchPostsPage } from '@/landing/features/posts/data/posts'
+import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { buildListUrl } from '@/landing/lib/listUrl'
+import { Pagination } from '@/landing/ui/Pagination'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { routes } from '@/lib/routes'
 
 type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
 
@@ -18,18 +21,6 @@ const readParams = (raw: { page?: string; typ?: string }) => ({
   page: Math.max(1, Number.parseInt(raw.page ?? '1', 10) || 1),
   type: raw.typ && raw.typ in POST_TYPE_LABEL ? raw.typ : null,
 })
-
-/**
- * Cesta výpisu bez `#seznam` — kotva patří do odkazů stránkování v UI,
- * ne do `canonical`.
- */
-const listPath = (page: number, type: string | null): string => {
-  const params = new URLSearchParams()
-  if (type) params.set('typ', type)
-  if (page > 1) params.set('page', String(page))
-  const query = params.toString()
-  return `/aktuality${query ? `?${query}` : ''}`
-}
 
 /**
  * Výpis aktualit v novém (landing) designu — handoff „HC Cestice Aktuality".
@@ -51,14 +42,15 @@ export default async function AktualityPage({ searchParams }: Args) {
     fetchSite(),
   ])
 
-  const hrefFor = (n: number): string => `${listPath(n, type)}#seznam`
+  const hrefFor = (n: number): string =>
+    buildListUrl(routes.list.posts, { filters: { typ: type }, page: n, hash: 'seznam' })
 
   return (
     <SubpageShell>
-      <AktualityHeader activeType={type} totalDocs={postsPage.totalDocs} />
+      <PostsHeader activeType={type} totalDocs={postsPage.totalDocs} />
 
       <SectionShell spacing="content">
-        <AktualityGrid activeType={type} cards={postsPage.cards} featured={postsPage.featured} />
+        <PostsListGrid activeType={type} cards={postsPage.cards} featured={postsPage.featured} />
         {/* Jedna strana = žádné stránkování. Bez podmínky zůstalo pod výpisem
             (a přímo pod prázdným stavem) mrtvé „Strana 1 z 1" se dvěma
             neaktivními šipkami — `ResultsList` to podmiňuje stejně. */}
@@ -90,10 +82,15 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   const { page, type } = readParams(await searchParams)
 
   return {
-    title: 'Aktuality | HC Čestice',
+    title: brandTitle('Aktuality'),
     description:
       'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.',
-    alternates: { canonical: page > 1 ? listPath(page, type) : '/aktuality' },
+    alternates: {
+      canonical:
+        page > 1
+          ? buildListUrl(routes.list.posts, { filters: { typ: type }, page })
+          : routes.list.posts,
+    },
     ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
   }
 }

@@ -2,6 +2,7 @@ import { AhlFetchError, AhlParseError, isOurTeam, parseMatchDetail, zapasUrl } f
 import type { AhlGoal, AhlLineupRow, AhlMatchDetail, AhlPair, AhlPersonRef } from '@/ahl'
 
 import { span } from '../sentry'
+
 import type { SyncContext } from './ctx'
 import type { PlayerCandidate } from './players'
 
@@ -19,9 +20,14 @@ export const DETAIL_VERSION = 2
  * běhu (zápis se může na AHL právě opravovat) — zápas se přeskočí a běh
  * skončí jako `partial`.
  */
-export async function fetchMatchDetail(ctx: SyncContext, matchId: number): Promise<AhlMatchDetail | null> {
+export async function fetchMatchDetail(
+  ctx: SyncContext,
+  matchId: number,
+): Promise<AhlMatchDetail | null> {
   try {
-    return await span('vchl.fetch.zapas', async () => parseMatchDetail(await ctx.client.get(zapasUrl(matchId)), matchId))
+    return await span('vchl.fetch.zapas', async () =>
+      parseMatchDetail(await ctx.client.get(zapasUrl(matchId)), matchId),
+    )
   } catch (err) {
     if (!(err instanceof AhlFetchError || err instanceof AhlParseError)) throw err
     ctx.partialFailure(err, err instanceof AhlParseError ? 'parse' : 'fetch', {
@@ -67,7 +73,8 @@ export function ourCandidates(detail: AhlMatchDetail, side: 'home' | 'away'): Pl
   const inLineup = new Set(detail.lineups[side].map((r) => r.playerId))
   for (const p of detail.penalties ?? []) {
     const id = p.player?.playerId
-    if (p.side === side && p.player && id != null && !inLineup.has(id)) out.push(refCandidate(p.player))
+    if (p.side === side && p.player && id != null && !inLineup.has(id))
+      out.push(refCandidate(p.player))
   }
   return out
 }
@@ -97,7 +104,8 @@ export function buildGoals(detail: AhlMatchDetail, side: 'home' | 'away', player
   const shootout = detail.score?.suffix === 'sn'
   return detail.goals.map((g: AhlGoal) => {
     const ours = g.side === side
-    const idOf = (p: AhlPersonRef | undefined) => (ours && p ? players.idFor(p.playerId, p.name) : null)
+    const idOf = (p: AhlPersonRef | undefined) =>
+      ours && p ? players.idFor(p.playerId, p.name) : null
     const [a1, a2] = g.assists
     return {
       time: g.time,
@@ -141,7 +149,10 @@ export function buildLineup(detail: AhlMatchDetail, side: 'home' | 'away', playe
     pim: r.pim,
   }))
   return rows.sort(
-    (a, b) => byNumberLast(a.number, b.number) || byName(a.name, b.name) || byNumberLast(a.player, b.player),
+    (a, b) =>
+      byNumberLast(a.number, b.number) ||
+      byName(a.name, b.name) ||
+      byNumberLast(a.player, b.player),
   )
 }
 

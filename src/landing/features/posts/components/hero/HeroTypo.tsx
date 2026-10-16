@@ -1,0 +1,63 @@
+import React from 'react'
+
+import type { ArticleDetail } from '@/landing/features/posts/types'
+import { Breadcrumbs } from '@/landing/ui/Breadcrumbs'
+import { PageTitle } from '@/landing/ui/Heading'
+import { Watermark } from '@/landing/ui/Watermark'
+
+import { articleTrail } from './articleTrail'
+import { AuthorMeta } from './AuthorMeta'
+import { CategoryBadge } from './CategoryBadge'
+import { TitleParts } from './HeroTitle'
+
+/**
+ * Hero C · Typografické — bez fotky; obří titulek (základ regular,
+ * zvýrazněná část tučně s lime podbarvením), watermark „HCČ"
+ * a dvoubarevná dělicí linka. Univerzální fallback ostatních variant.
+ *
+ * Meta řádek je `AuthorMeta` (`tone="light"` pro světlý podklad) jako
+ * u ostatních čtyř variant — vlastní skládaný string s ` · ` byl o stupeň
+ * menší a bez monogramu autora, takže fallback vypadal jako jiný web.
+ */
+export function HeroTypo({ article }: { article: ArticleDetail }) {
+  return (
+    <div className="relative z-1 mx-auto mt-6 max-w-page px-gutter md:mt-13 lg:mt-16">
+      <Watermark className="-top-14 right-0 z-0 text-watermark-3xl tracking-display text-club/13">
+        HC ČESTICE
+      </Watermark>
+
+      <Breadcrumbs className="mb-5.5" tone="light" trail={articleTrail(article.badge)} />
+
+      <div className="flex flex-wrap items-center gap-x-4.5 gap-y-3">
+        <CategoryBadge>{article.badge}</CategoryBadge>
+        <AuthorMeta
+          author={article.author}
+          dateLabel={article.dateLabel}
+          readingLabel={article.readingLabel}
+          tone="light"
+        />
+      </div>
+
+      {/* HeroTypo je designově odlišný — základní váha regular, jen zvýrazněná
+          část tučně. */}
+      <PageTitle className="mt-6 max-w-310" size="lg" weight="normal">
+        <TitleParts
+          accent="lime-box"
+          highlight={article.titleHighlight}
+          highlightClassName="font-bold px-3"
+          title={article.title}
+        />
+      </PageTitle>
+
+      {article.excerpt && (
+        <p className="mt-6.5 max-w-160 text-lg leading-relaxed text-pretty text-ink-soft">
+          {article.excerpt}
+        </p>
+      )}
+
+      {/* Tmavý úsek linky je 180px. Na 320px to je 62 % šířky (na desktopu 13 %),
+          takže se z akcentu stane půlka linky — pod `md` proto 80px. */}
+      <div className="mt-8 h-0.5 [background:linear-gradient(90deg,var(--color-ink)_0_5rem,var(--color-line-mid)_5rem)] md:mt-10 md:[background:linear-gradient(90deg,var(--color-ink)_0_11.25rem,var(--color-line-mid)_11.25rem)]" />
+    </div>
+  )
+}

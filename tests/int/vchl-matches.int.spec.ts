@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
+
 import { describe, expect, it } from 'vitest'
 
 import { parseMatchDetail, parseMatchList } from '../../src/ahl'
@@ -26,9 +27,16 @@ import {
   resolveMatchDate,
   shouldFetchDetail,
 } from '../../src/jobs/vchlSync/sync/matches'
-import { foldTeam, opponentKeys, stripClubPrefix } from '../../src/jobs/vchlSync/sync/opponents'
+import {
+  ahlNameKeys,
+  foldTeam,
+  keysIntersect,
+  opponentKeys,
+} from '../../src/jobs/vchlSync/sync/opponents'
+import { stripClubPrefix } from '../../src/lib/teamName'
 
-const fx = (name: string) => readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')
+const fx = (name: string) =>
+  readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')
 const detail = parseMatchDetail(fx('zapas-46616.html'), 46616)
 const players = { idFor: (id: number | null) => (id === 38010 ? 24 : null) }
 const detail2 = parseMatchDetail(fx('zapas-46992.html'), 46992)
@@ -47,7 +55,12 @@ describe('vchl zápasy: sestavení z detailu', () => {
   it('branky: strana, vazby jen u našich, skóre ve tvaru naše:soupeř', () => {
     const goals = buildGoals(detail, 'home', players)
     expect(goals).toHaveLength(11)
-    expect(goals[0]).toMatchObject({ side: 'ours', scorer: 24, scorerName: 'Lukáš Sajdl', scoreAfter: '1:0' })
+    expect(goals[0]).toMatchObject({
+      side: 'ours',
+      scorer: 24,
+      scorerName: 'Lukáš Sajdl',
+      scoreAfter: '1:0',
+    })
     expect(goals[1]).toMatchObject({ side: 'opp', scorer: null, scorerName: 'Roman Fuks' })
     const away = buildGoals(detail, 'away', players)
     expect(away[0]).toMatchObject({ side: 'opp', scoreAfter: '0:1' })
@@ -107,7 +120,9 @@ describe('vchl zápasy: tresty a statistika', () => {
     expect(detail2.away.name).toMatch(/Divo/)
     const rows = buildPenalties(detail2, 'away', idPlayers)
     expect(rows).toHaveLength(11)
-    expect(detail2.penalties!.filter((p) => p.side === 'away').every((p) => p.teamCode === 'DIV')).toBe(true)
+    expect(
+      detail2.penalties!.filter((p) => p.side === 'away').every((p) => p.teamCode === 'DIV'),
+    ).toBe(true)
     expect(buildPenalties(detail2, 'home', idPlayers)).toHaveLength(8)
   })
 
@@ -151,8 +166,14 @@ describe('vchl zápasy: tresty a statistika', () => {
 
   it('trest bez odkazu na hráče bere jméno z textu buňky', () => {
     const base = detail.penalties!.find((p) => p.side === 'home')!
-    const d = { ...detail, penalties: [{ ...base, player: null, playerText: 'Trenér Novák' }] } as never
-    expect(buildPenalties(d, 'home', idPlayers)[0]).toMatchObject({ player: null, playerName: 'Trenér Novák' })
+    const d = {
+      ...detail,
+      penalties: [{ ...base, player: null, playerText: 'Trenér Novák' }],
+    } as never
+    expect(buildPenalties(d, 'home', idPlayers)[0]).toMatchObject({
+      player: null,
+      playerName: 'Trenér Novák',
+    })
   })
 
   it('statistika se otáčí na naše:soupeř', () => {
@@ -179,7 +200,10 @@ describe('vchl zápasy: tresty a statistika', () => {
   })
 
   it('chybějící statistika → samé null', () => {
-    const none = { ...detail, stats: { penalties: null, majors: null, ppGoals: null, ppTime: null } }
+    const none = {
+      ...detail,
+      stats: { penalties: null, majors: null, ppGoals: null, ppTime: null },
+    }
     const stats = buildMatchStats(none, 'home')
     expect(Object.keys(stats)).toHaveLength(8)
     expect(Object.values(stats).every((v) => v === null)).toBe(true)
@@ -215,9 +239,14 @@ describe('vchl zápasy: tresty a statistika', () => {
   })
 
   it('stats: samé null vs. objekt z DB s null / chybějící skupina = shoda', () => {
-    const none = { ...detail, stats: { penalties: null, majors: null, ppGoals: null, ppTime: null } }
+    const none = {
+      ...detail,
+      stats: { penalties: null, majors: null, ppGoals: null, ppTime: null },
+    }
     const desired = { stats: buildMatchStats(none, 'home') }
-    expect(buildPatch({ stats: { penaltiesOurs: null, ppTimeOpp: null } }, desired).fields).toEqual([])
+    expect(buildPatch({ stats: { penaltiesOurs: null, ppTimeOpp: null } }, desired).fields).toEqual(
+      [],
+    )
     expect(buildPatch({}, desired).fields).toEqual([])
   })
 
@@ -230,8 +259,12 @@ describe('vchl zápasy: tresty a statistika', () => {
 
   it('zápas bez trestů: prázdné pole vs. prázdné pole z DB = shoda', () => {
     const none = { ...detail, penalties: [] }
-    expect(buildPatch({ penalties: [] }, { penalties: buildPenalties(none, 'home', idPlayers) }).fields).toEqual([])
-    expect(buildPatch({}, { penalties: buildPenalties(none, 'home', idPlayers) }).fields).toEqual([])
+    expect(
+      buildPatch({ penalties: [] }, { penalties: buildPenalties(none, 'home', idPlayers) }).fields,
+    ).toEqual([])
+    expect(buildPatch({}, { penalties: buildPenalties(none, 'home', idPlayers) }).fields).toEqual(
+      [],
+    )
   })
 
   it('pořadí řádků nezávisí na pořadí v HTML (AHL u shody příjmení pořadí nedrží)', () => {
@@ -241,7 +274,9 @@ describe('vchl zápasy: tresty a statistika', () => {
       penalties: [...detail.penalties!].reverse(),
     }
     expect(buildLineup(shuffled, 'home', idPlayers)).toEqual(buildLineup(detail, 'home', idPlayers))
-    expect(buildPenalties(shuffled, 'home', idPlayers)).toEqual(buildPenalties(detail, 'home', idPlayers))
+    expect(buildPenalties(shuffled, 'home', idPlayers)).toEqual(
+      buildPenalties(detail, 'home', idPlayers),
+    )
     const desired = {
       lineup: buildLineup(detail, 'home', idPlayers),
       penalties: buildPenalties(detail, 'home', idPlayers),
@@ -255,19 +290,34 @@ describe('vchl zápasy: tresty a statistika', () => {
 
   it('stejné příjmení: řádky se stejným číslem/jménem se řadí deterministicky', () => {
     const row = (name: string, playerId: number, number: number) =>
-      ({ ...detail.lineups.home[0], name, playerId, number, goalie: false }) as (typeof detail.lineups.home)[number]
+      ({
+        ...detail.lineups.home[0],
+        name,
+        playerId,
+        number,
+        goalie: false,
+      }) as (typeof detail.lineups.home)[number]
     const a = [row('Jakub Javůrek', 1, 7), row('Jan Javůrek', 2, 7), row('Matěj Vašata', 3, 9)]
     const mk = (rows: typeof a) => ({ ...detail, lineups: { ...detail.lineups, home: rows } })
-    expect(buildLineup(mk([a[1], a[0], a[2]]), 'home', idPlayers)).toEqual(buildLineup(mk(a), 'home', idPlayers))
+    expect(buildLineup(mk([a[1], a[0], a[2]]), 'home', idPlayers)).toEqual(
+      buildLineup(mk(a), 'home', idPlayers),
+    )
     // číslo null na konec
     const noNum = { ...a[2], number: null } as (typeof a)[number]
-    expect(buildLineup(mk([noNum, a[0]]), 'home', idPlayers).map((r) => r.number)).toEqual([7, null])
+    expect(buildLineup(mk([noNum, a[0]]), 'home', idPlayers).map((r) => r.number)).toEqual([
+      7,
+      null,
+    ])
   })
 
   it('tresty se řadí podle času numericky (9:59 před 10:00)', () => {
     const pen = (time: string) => ({ ...detail.penalties!.find((p) => p.side === 'home')!, time })
     const d = { ...detail, penalties: [pen('10:00'), pen('9:59'), pen('2:05')] }
-    expect(buildPenalties(d, 'home', idPlayers).map((r) => r.time)).toEqual(['2:05', '9:59', '10:00'])
+    expect(buildPenalties(d, 'home', idPlayers).map((r) => r.time)).toEqual([
+      '2:05',
+      '9:59',
+      '10:00',
+    ])
   })
 
   it('zastaralá verze: jen zápas se zápisem a nižší verzí (null = 1)', () => {
@@ -292,7 +342,9 @@ describe('vchl zápasy: tresty a statistika', () => {
     const next = { matchId: 46616, hasReport: true, detailVersion: DETAIL_VERSION }
     const old = { ahl: { matchId: 46616, hasReport: true, detailVersion: null } } as never
     expect(ahlNeedsWrite(old, next)).toBe(true)
-    const done = { ahl: { matchId: 46616, hasReport: true, detailVersion: DETAIL_VERSION } } as never
+    const done = {
+      ahl: { matchId: 46616, hasReport: true, detailVersion: DETAIL_VERSION },
+    } as never
     expect(ahlNeedsWrite(done, next)).toBe(false)
     expect(ahlNeedsWrite(null, next)).toBe(true)
     expect(ahlNeedsWrite(done, { ...next, hasReport: false })).toBe(true)
@@ -325,7 +377,9 @@ describe('vchl zápasy: seznamy a datum', () => {
     const e = entries.find((x) => x.matchId === 46616)!
     expect(e.vysledky?.timeKnown).toBe(false)
     const existing = { date: '2026-10-04T14:30:00.000Z' }
-    expect(resolveMatchDate(e, null, existing as never).toISOString()).toBe('2026-10-04T14:30:00.000Z')
+    expect(resolveMatchDate(e, null, existing as never).toISOString()).toBe(
+      '2026-10-04T14:30:00.000Z',
+    )
     // s detailem (má čas) vyhrává detail
     expect(resolveMatchDate(e, detail, null).toISOString()).toBe('2026-10-04T14:30:00.000Z')
   })
@@ -333,15 +387,21 @@ describe('vchl zápasy: seznamy a datum', () => {
   it('přeložený termín: stejné ID, jiný den → nový den se starým časem', () => {
     const e = entries.find((x) => x.matchId === 46616)!
     const existing = { date: '2026-10-03T14:30:00.000Z' }
-    expect(resolveMatchDate(e, null, existing as never).toISOString()).toBe('2026-10-04T14:30:00.000Z')
+    expect(resolveMatchDate(e, null, existing as never).toISOString()).toBe(
+      '2026-10-04T14:30:00.000Z',
+    )
   })
 })
 
 describe('vchl legacy párování', () => {
   const vysledky = parseMatchList(fx('vysledky-1185.html'), { seasonStartYear: 2026 })
   const entry = mergeLists({ rozpis: null, vysledky }).find((x) => x.matchId === 46616)! // doma, Pardubice 5:6
-  const opp = { byId: (id: number) => (id === 11 ? { id: 11, name: 'ZH Pardubice' } : { id: 99, name: 'Jiný' }) as never }
-  const doc = (over: object) => ({ id: 1, date: '2026-10-04T14:30:00.000Z', home: true, opponent: 11, ...over }) as never
+  const opp = {
+    byId: (id: number) =>
+      (id === 11 ? { id: 11, name: 'ZH Pardubice' } : { id: 99, name: 'Jiný' }) as never,
+  }
+  const doc = (over: object) =>
+    ({ id: 1, date: '2026-10-04T14:30:00.000Z', home: true, opponent: 11, ...over }) as never
 
   it('podle dne a soupeře („Pardubice" ↔ „ZH Pardubice")', () => {
     expect(pairLegacy(entry, [doc({})], opp)).toMatchObject({ id: 1 })
@@ -352,7 +412,9 @@ describe('vchl legacy párování', () => {
   })
 
   it('den se počítá v Europe/Prague (22:30 UTC je už další den)', () => {
-    expect(pairLegacy(entry, [doc({ date: '2026-10-03T22:30:00.000Z' })], opp)).toMatchObject({ id: 1 })
+    expect(pairLegacy(entry, [doc({ date: '2026-10-03T22:30:00.000Z' })], opp)).toMatchObject({
+      id: 1,
+    })
   })
 
   it('jiný soupeř jen při jediném zápase ten den, stejné straně a neodporujícím skóre', () => {
@@ -370,9 +432,21 @@ describe('vchl soupeři', () => {
   })
 
   it('klíče z názvu a aliasů', () => {
-    const k = opponentKeys({ name: 'ZH Pardubice', aliases: [{ name: 'Závodní hokejová Pardubice' }] } as never)
+    const k = opponentKeys({
+      name: 'ZH Pardubice',
+      aliases: [{ name: 'Závodní hokejová Pardubice' }],
+    } as never)
     expect(k.has('pardubice')).toBe(true)
     expect(k.has('zavodni hokejova pardubice')).toBe(true)
+  })
+
+  it('párování zahazuje jen původních pět předpon: „HCM Foo" se nespáruje na „Foo"', () => {
+    const foo = opponentKeys({ name: 'Foo', aliases: [] } as never)
+    expect(keysIntersect(ahlNameKeys('HCM Foo'), foo)).toBe(false)
+    expect(keysIntersect(ahlNameKeys('HC Foo'), foo)).toBe(true)
+    const hcmFoo = opponentKeys({ name: 'HCM Foo', aliases: [] } as never)
+    expect(hcmFoo.has('foo')).toBe(false)
+    expect(hcmFoo.has('hcm foo')).toBe(true)
   })
 })
 
@@ -412,11 +486,23 @@ describe('vchl: stav zápasu', () => {
 describe('vchl: stahování detailu', () => {
   const base = { played: true, recent: false, hasReport: false, outdated: false }
   it('neodehraný se nestahuje (ani zastaralý)', () => {
-    expect(shouldFetchDetail({ ...base, played: false, recent: true, trigger: 'manual' })).toBe(false)
-    expect(shouldFetchDetail({ ...base, played: false, hasReport: true, outdated: true, trigger: 'manual' })).toBe(false)
+    expect(shouldFetchDetail({ ...base, played: false, recent: true, trigger: 'manual' })).toBe(
+      false,
+    )
+    expect(
+      shouldFetchDetail({
+        ...base,
+        played: false,
+        hasReport: true,
+        outdated: true,
+        trigger: 'manual',
+      }),
+    ).toBe(false)
   })
   it('čerstvý odehraný vždy (i se zápisem, i z cronu)', () => {
-    expect(shouldFetchDetail({ ...base, recent: true, hasReport: true, trigger: 'cron' })).toBe(true)
+    expect(shouldFetchDetail({ ...base, recent: true, hasReport: true, trigger: 'cron' })).toBe(
+      true,
+    )
   })
   it('starý bez zápisu: cron ne, ruční a nanečisto ano', () => {
     expect(shouldFetchDetail({ ...base, trigger: 'cron' })).toBe(false)

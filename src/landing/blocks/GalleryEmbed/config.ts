@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { limitField } from '../shared'
+import { limitField } from '@/landing/blocks/shared'
 
 export const GalleryEmbedWidget: Block = {
   slug: 'galleryEmbed',

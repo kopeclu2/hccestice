@@ -1,21 +1,14 @@
-import type { Product, ProductsGridBlock } from '@/payload-types'
-
-import { Mail, Megaphone } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
+import { Megaphone } from 'lucide-react'
 import React from 'react'
 
-import { getMediaUrl } from '@/utilities/getMediaUrl'
-
-import { Badge } from '../../components/Badge'
-import { CardTitle, SectionTitle } from '../../components/Heading'
-import { Highlight } from '../../components/Kicker'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { uploadToPhoto } from '../../data/format'
-import { fetchProducts } from '../../data/products'
-import { fetchSite } from '../../data/site'
+import { fetchSite } from '@/landing/data/site'
+import { ProductTile } from '@/landing/features/products/components/ProductTile'
+import { fetchProducts } from '@/landing/features/products/data'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { ProductsGridBlock } from '@/payload-types'
 
 /**
  * Produkty (merch) — mřížka zboží v nabídce + objednací instrukce.
@@ -38,7 +31,7 @@ export async function ProductsGridBlockComponent({ block }: { block: ProductsGri
         )}
 
         {block.orderInfo && (
-          <div className="bg-club mb-8 flex items-start gap-3.5 rounded-tile px-4.5 py-4 text-white md:px-5 lg:px-5.5 lg:py-4.5">
+          <div className="mb-8 flex items-start gap-3.5 rounded-tile bg-club px-4.5 py-4 text-on-contrast md:px-5 lg:px-5.5 lg:py-4.5">
             <Megaphone className="mt-0.5 size-5 flex-none" strokeWidth={2.25} />
             <p className="text-sm leading-relaxed font-semibold whitespace-pre-line">
               {block.orderInfo}
@@ -58,92 +51,5 @@ export async function ProductsGridBlockComponent({ block }: { block: ProductsGri
         </div>
       </Reveal>
     </SectionShell>
-  )
-}
-
-/** Karta produktu v mřížce — sdílí ji i widget Karta produktu. */
-export function ProductTile({
-  product,
-  email,
-  ctaLabel,
-}: {
-  product: Product
-  email: string
-  ctaLabel: string
-}) {
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(`Objednávka: ${product.name}`)}`
-
-  const photo = uploadToPhoto(product.photo)
-  const detailHref = product.slug ? `/produkty/${product.slug}` : null
-
-  return (
-    <article className="flex h-full flex-col rounded-tile bg-surface p-4.5 md:p-5 lg:p-5.5">
-      {/* produktovky mají bílé pozadí a různé poměry → contain, ne cover */}
-      <MaybeLink
-        className="bg-chip relative block aspect-square overflow-hidden rounded-badge"
-        href={detailHref}
-      >
-        {/* `sizes` kopíruje zlomy mřížky výš (`sm:grid-cols-2 lg:grid-cols-3`).
-            Dřív tu byl jediný zlom na 48rem, takže mezi 768 a 1024 px se do
-            poloviční dlaždice tahala třetinová fotka — rozmazaně. */}
-        {photo && (
-          <Image
-            alt={photo.alt}
-            className="object-contain p-5"
-            fill
-            sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-            src={getMediaUrl(photo.url, photo.updatedAt)}
-          />
-        )}
-      </MaybeLink>
-      <div className="mt-4 flex items-start justify-between gap-3">
-        <CardTitle as="h3" size="xs">
-          <MaybeLink className="hover:text-club transition-colors" href={detailHref}>
-            {product.name}
-          </MaybeLink>
-        </CardTitle>
-        <Badge className="tabular-nums" variant="lime">
-          {product.price} Kč
-        </Badge>
-      </div>
-      {product.description && (
-        <p className="text-dim mt-1.5 text-sm leading-relaxed">{product.description}</p>
-      )}
-      {(product.sizes ?? []).length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {(product.sizes ?? []).map((size) => (
-            <Badge key={size.id} size="xs" title={size.note ?? undefined} variant="chip">
-              {size.label}
-              {size.note && <span className="text-faint font-medium"> · {size.note}</span>}
-            </Badge>
-          ))}
-        </div>
-      )}
-      {product.orderNote && (
-        <p className="text-faint mt-2 text-xs font-medium">⚠ {product.orderNote}</p>
-      )}
-      <div className="flex-1" />
-      <PillLink className="mt-4 self-start" href={mailto} size="sm" variant="dark">
-        <Mail strokeWidth={2.5} /> {ctaLabel}
-      </PillLink>
-    </article>
-  )
-}
-
-/** Odkaz na detail produktu; bez slugu renderuje jen obal. */
-function MaybeLink({
-  href,
-  className,
-  children,
-}: {
-  href: string | null
-  className?: string
-  children: React.ReactNode
-}) {
-  if (!href) return <span className={className}>{children}</span>
-  return (
-    <Link className={className} href={href}>
-      {children}
-    </Link>
   )
 }

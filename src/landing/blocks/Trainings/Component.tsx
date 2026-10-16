@@ -1,21 +1,20 @@
-import type { LandingTrainingsBlock } from '@/payload-types'
-
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { Badge } from '../../components/Badge'
-import { CardTitle, SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell, type SectionShellProps } from '../../components/SectionShell'
-import { Watermark } from '../../components/Watermark'
-import { TRAININGS } from '../../content'
-import type { TrainingSlot, TrainingsContent } from '../../types'
+import { TRAININGS } from '@/landing/content'
+import type { TrainingSlot, TrainingsContent } from '@/landing/features/trainings/types'
+import { Badge } from '@/landing/ui/Badge'
+import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Numeral } from '@/landing/ui/Numeral'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
+import { Watermark } from '@/landing/ui/Watermark'
+import { CLUB_NAME } from '@/lib/club'
+import { serializeJsonLd } from '@/lib/jsonLd'
+import { cn } from '@/lib/utils'
+import type { LandingTrainingsBlock } from '@/payload-types'
 
 import { parseTrainingSchedule } from './openingHours'
-import { serializeJsonLd } from '@/utilities/jsonLd'
 
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
@@ -80,7 +79,7 @@ function TrainingsView({
   spacing?: SectionShellProps['spacing']
 }) {
   // `/treninky` posílá `spacing="content"` (viz `TreninkyPage`) — na tý
-  // stránce má hlavičku (`TreninkyHeader`) i vlastní watermark „LED" a
+  // stránce má hlavičku (`TrainingsHeader`) i vlastní watermark „LED" a
   // Kicker „Tréninky" nad blokem, takže je blok sám nevykresluje znova.
   const standalonePage = spacing === 'content'
 
@@ -88,7 +87,7 @@ function TrainingsView({
     <SectionShell id="treninky" spacing={spacing}>
       <TrainingsJsonLd rows={content.rows} />
       {!standalonePage && (
-        <Watermark className="text-club/8 bottom-0 left-40 text-watermark-lg tracking-[-0.06em]">
+        <Watermark className="bottom-0 left-40 text-watermark-lg tracking-display text-club/8">
           LED
         </Watermark>
       )}
@@ -102,7 +101,7 @@ function TrainingsView({
           {content.headlineRest && <span className="text-club">.</span>}
         </SectionTitle>
         {content.perex && (
-          <p className="text-dim mt-4 max-w-130 leading-relaxed text-pretty">{content.perex}</p>
+          <p className="mt-4 max-w-130 leading-relaxed text-pretty text-dim">{content.perex}</p>
         )}
       </Reveal>
 
@@ -133,11 +132,11 @@ function TrainingsView({
  */
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <article className="border-line-soft w-full min-w-0 rounded-thumb border bg-surface px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:max-w-75 min-[33rem]:px-6">
+    <article className="w-full min-w-0 rounded-thumb border border-line-soft bg-surface px-5 py-5 xs:w-auto xs:max-w-75 xs:min-w-60 xs:px-6">
       <CardTitle as="h3" size="sm">
         {title}
       </CardTitle>
-      <p className="text-dim mt-2 text-xs leading-relaxed">{children}</p>
+      <p className="mt-2 text-xs leading-relaxed text-dim">{children}</p>
     </article>
   )
 }
@@ -154,7 +153,7 @@ function TrainingsJsonLd({ rows }: { rows: TrainingSlot[] }) {
 
   const byVenue = new Map<string, typeof parsed>()
   for (const slot of parsed) {
-    const key = slot.venue ?? 'HC Čestice'
+    const key = slot.venue ?? CLUB_NAME
     byVenue.set(key, [...(byVenue.get(key) ?? []), slot])
   }
 
@@ -198,8 +197,8 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
            v pohodě a stohovat je tam by byl krok zpátky.
            `min-w-0` je pojistka proti přetečení na 320px, kde je 240px + padding
            na hraně. */
-        'w-full min-w-0 rounded-thumb px-5 py-5 min-[33rem]:w-auto min-[33rem]:min-w-60 min-[33rem]:px-6',
-        slot.accent ? 'bg-contrast text-on-contrast' : 'border-line-soft border bg-surface',
+        'w-full min-w-0 rounded-thumb px-5 py-5 xs:w-auto xs:min-w-60 xs:px-6',
+        slot.accent ? 'bg-contrast text-on-contrast' : 'border border-line-soft bg-surface',
       )}
     >
       <div className="flex flex-wrap items-center gap-2.5">
@@ -225,7 +224,7 @@ function TrainingCard({ slot }: { slot: TrainingSlot }) {
         </div>
       )}
       {slot.note && (
-        <div className={cn('mt-1 text-xs', slot.accent ? 'text-white/55' : 'text-dim')}>
+        <div className={cn('mt-1 text-xs', slot.accent ? 'text-on-contrast-subtle' : 'text-dim')}>
           {slot.note}
         </div>
       )}

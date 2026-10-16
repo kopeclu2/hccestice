@@ -11,9 +11,17 @@ import type {
   AhlScore,
   AhlScoreSuffix,
 } from '../types'
-import { paramFromHref, parseDocument, phaseFromCompetition, requireInt, text, toInt } from './dom'
 
-const pad = (n: number) => String(n).padStart(2, '0')
+import {
+  pad2,
+  paramFromHref,
+  parseDocument,
+  parseScorePair,
+  phaseFromCompetition,
+  requireInt,
+  text,
+  toInt,
+} from './dom'
 
 function personFromLink(a: Element): AhlPersonRef {
   return {
@@ -32,8 +40,73 @@ function tableByCaption(doc: Document, re: RegExp): HTMLTableElement | null {
 
 function bodyRows(table: Element): Element[] {
   return Array.from(table.querySelectorAll('tr')).filter(
-    (tr) => tr.classList.contains('tabulka_radek_lichy') || tr.classList.contains('tabulka_radek_sudy'),
+    (tr) =>
+      tr.classList.contains('tabulka_radek_lichy') || tr.classList.contains('tabulka_radek_sudy'),
   )
+}
+
+/** „5 : 6" a nic jiného — hlavička i statistika zápasu mají dvojici samostatně. */
+function exactScorePair(raw: string): { home: number; away: number } | null {
+  const pair = parseScorePair(raw)
+  return pair && pair.rest === '' ? { home: pair.home, away: pair.away } : null
+}
+
+/** Skóre, přípona (PP/SN) a skóre třetin z boxu uprostřed hlavičky. */
+function parseScoreBox(
+  scoreBox: Element,
+  scoreDiv: Element,
+  page: string,
+): { score: AhlScore; periods: AhlPair[] } {
+  const pair = exactScorePair(text(scoreDiv))
+  if (!pair) throw new AhlParseError(page, 'nečitelné skóre v hlavičce')
+  const boxDivs = Array.from(scoreBox.children)
+  const suffixRaw = text(boxDivs[1]).toLowerCase()
+  const suffix: AhlScoreSuffix = suffixRaw === 'pp' || suffixRaw === 'sn' ? suffixRaw : null
+
+  const periodsRaw = text(boxDivs[2])
+  const periods = Array.from(periodsRaw.matchAll(/(\d+)\s*:\s*(\d+)/g)).map((m) => ({
+    home: +m[1],
+    away: +m[2],
+  }))
+  return { score: { ...pair, suffix }, periods }
+}
+
+/**
+ * Řádek s datem a místem:
+ * „VCHL VČHL 2.ročník | Základní část | Neděle 4. 10. 2026, 16:30 | Rychnov nad Kněžnou | Zápas č. 12"
+ */
+function parseMeta(portlet: Element, page: string) {
+  const metaDiv = Array.from(portlet.querySelectorAll('div')).find((d) =>
+    /\|/.test(
+      Array.from(d.childNodes)
+        .filter((n) => n.nodeType === 3)
+        .map((n) => n.textContent)
+        .join(''),
+    ),
+  )
+  const parts = text(metaDiv)
+    .split('|')
+    .map((p) => p.trim())
+  if (!metaDiv || parts.length < 3) throw new AhlParseError(page, 'chybí řádek s datem a místem')
+
+  const dateIdx = parts.findIndex((p) => /\d{1,2}\.\s*\d{1,2}\.\s*\d{4}/.test(p))
+  let dateISO: string | null = null
+  if (dateIdx >= 0) {
+    const dm = parts[dateIdx].match(
+      /(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})(?:,\s*(\d{1,2}):(\d{2}))?/,
+    )!
+    dateISO = `${dm[3]}-${pad2(+dm[2])}-${pad2(+dm[1])}T${dm[4] ? `${pad2(+dm[4])}:${dm[5]}` : '00:00'}:00`
+  }
+  const venueRaw = dateIdx >= 0 ? parts[dateIdx + 1] : undefined
+  const venue = venueRaw && !/^Zápas č\./i.test(venueRaw) ? venueRaw : null
+
+  // Soutěž ve tvaru jako ve výpisech („VČHL 2.ročník - ZČ").
+  const compName = parts[0].replace(/^[A-ZČ]{2,6}\s+(?=VČHL|\S+\.ročník)/, '').trim()
+  const phaseName = dateIdx > 1 ? parts[1] : ''
+  const phaseShort = /základní/i.test(phaseName) ? 'ZČ' : phaseName
+  const competition = phaseShort ? `${compName} - ${phaseShort}` : compName
+
+  return { dateISO, venue, competition, phaseName }
 }
 
 function parseHeader(doc: Document, matchId: number) {
@@ -42,7 +115,10 @@ function parseHeader(doc: Document, matchId: number) {
   if (!portlet) {
     // ahl.cz u neexistujícího zápasu vrací HTTP 200 a chybovou stránku
     // („požadavku nelze vyhovět"), takže status nestačí.
-    throw new AhlParseError(page, 'chybí #zapas_full_portlet (neexistující zápas nebo změna layoutu)')
+    throw new AhlParseError(
+      page,
+      'chybí #zapas_full_portlet (neexistující zápas nebo změna layoutu)',
+    )
   }
   const idInput = portlet.querySelector('input[name="zapasid"]')
   const pageId = toInt(idInput?.getAttribute('value'))
@@ -52,7 +128,7 @@ function parseHeader(doc: Document, matchId: number) {
 
   // Skóre je jediný `div` bez potomků-elementů, který vypadá jako „5 : 6".
   const scoreDiv = Array.from(portlet.querySelectorAll('div')).find(
-    (d) => d.children.length === 0 && /^\s*\d+\s*:\s*\d+\s*$/.test(d.textContent ?? ''),
+    (d) => d.children.length === 0 && exactScorePair(d.textContent ?? '') !== null,
   )
   const scoreBox = scoreDiv?.parentElement
   const homeBox = scoreBox?.previousElementSibling
@@ -64,43 +140,8 @@ function parseHeader(doc: Document, matchId: number) {
   const away = text(awayBox)
   if (!home || !away) throw new AhlParseError(page, 'prázdný název týmu v hlavičce')
 
-  const sm = text(scoreDiv).match(/^(\d+)\s*:\s*(\d+)$/)!
-  const boxDivs = Array.from(scoreBox.children)
-  const suffixRaw = text(boxDivs[1]).toLowerCase()
-  const suffix: AhlScoreSuffix = suffixRaw === 'pp' || suffixRaw === 'sn' ? suffixRaw : null
-  const score: AhlScore = { home: +sm[1], away: +sm[2], suffix }
-
-  const periodsRaw = text(boxDivs[2])
-  const periods = Array.from(periodsRaw.matchAll(/(\d+)\s*:\s*(\d+)/g)).map((m) => ({
-    home: +m[1],
-    away: +m[2],
-  }))
-
-  // „VCHL VČHL 2.ročník | Základní část | Neděle 4. 10. 2026, 16:30 | Rychnov nad Kněžnou | Zápas č. 12"
-  const metaDiv = Array.from(portlet.querySelectorAll('div')).find((d) =>
-    /\|/.test(Array.from(d.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join('')),
-  )
-  const parts = text(metaDiv)
-    .split('|')
-    .map((p) => p.trim())
-  if (!metaDiv || parts.length < 3) throw new AhlParseError(page, 'chybí řádek s datem a místem')
-
-  const dateIdx = parts.findIndex((p) => /\d{1,2}\.\s*\d{1,2}\.\s*\d{4}/.test(p))
-  let dateISO: string | null = null
-  if (dateIdx >= 0) {
-    const dm = parts[dateIdx].match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})(?:,\s*(\d{1,2}):(\d{2}))?/)!
-    dateISO = `${dm[3]}-${pad(+dm[2])}-${pad(+dm[1])}T${dm[4] ? `${pad(+dm[4])}:${dm[5]}` : '00:00'}:00`
-  }
-  const venueRaw = dateIdx >= 0 ? parts[dateIdx + 1] : undefined
-  const venue = venueRaw && !/^Zápas č\./i.test(venueRaw) ? venueRaw : null
-
-  // Soutěž ve tvaru jako ve výpisech („VČHL 2.ročník - ZČ").
-  const compName = parts[0].replace(/^[A-ZČ]{2,6}\s+(?=VČHL|\S+\.ročník)/, '').trim()
-  const phaseName = dateIdx > 1 ? parts[1] : ''
-  const phaseShort = /základní/i.test(phaseName) ? 'ZČ' : phaseName
-  const competition = phaseShort ? `${compName} - ${phaseShort}` : compName
-
-  return { home, away, score, periods, dateISO, venue, competition, phaseName }
+  const { score, periods } = parseScoreBox(scoreBox, scoreDiv, page)
+  return { home, away, score, periods, ...parseMeta(portlet, page) }
 }
 
 type Side = 'home' | 'away'
@@ -113,12 +154,17 @@ type Side = 'home' | 'away'
  */
 const PENALTY_CODE_MINUTES: Record<string, number> = { OK: 20 }
 
-function parseGoals(doc: Document, matchId: number): { goals: AhlGoal[]; codeSide: Map<string, Side> } {
+function parseGoals(
+  doc: Document,
+  matchId: number,
+): { goals: AhlGoal[]; codeSide: Map<string, Side> } {
   const page = `zapas ${matchId}`
   const table = tableByCaption(doc, /^Branky$/i)
   if (!table) throw new AhlParseError(page, 'chybí tabulka Branky')
 
-  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) => text(th))
+  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) =>
+    text(th),
+  )
   const idx = {
     team: headers.indexOf('Team'),
     time: headers.indexOf('Čas'),
@@ -156,7 +202,11 @@ function parseGoals(doc: Document, matchId: number): { goals: AhlGoal[]; codeSid
     if (h === prevHome + 1 && a === prevAway) side = 'home'
     else if (a === prevAway + 1 && h === prevHome) side = 'away'
     else side = codeSide.get(teamCode)
-    if (!side) throw new AhlParseError(page, `branka ${time}: stav ${state} nenavazuje na ${prevHome}:${prevAway}`)
+    if (!side)
+      throw new AhlParseError(
+        page,
+        `branka ${time}: stav ${state} nenavazuje na ${prevHome}:${prevAway}`,
+      )
     codeSide.set(teamCode, side)
     prevHome = h
     prevAway = a
@@ -188,7 +238,9 @@ function parsePenalties(
   const table = tableByCaption(doc, /^Tresty$/i)
   if (!table) return []
 
-  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) => text(th))
+  const headers = Array.from(table.querySelectorAll('tr.tabulka_radek_nadpis th')).map((th) =>
+    text(th),
+  )
   const idx = {
     team: headers.indexOf('Team'),
     time: headers.indexOf('Čas'),
@@ -249,7 +301,9 @@ function resolveSides(
   for (const r of ctx.lineups.away) if (r.playerId !== null) playerSide.set(r.playerId, 'away')
 
   const codeSide = new Map(ctx.codeSide)
-  const fromLineup = rows.map((r) => (r.player?.playerId != null ? playerSide.get(r.player.playerId) : undefined))
+  const fromLineup = rows.map((r) =>
+    r.player?.playerId != null ? playerSide.get(r.player.playerId) : undefined,
+  )
   // Sestava je nejspolehlivější, proto se z ní kódy učí první — a když si
   // protiřečí s tím, co už víme (z branek nebo z jiného řádku), je vstup
   // nedůvěryhodný celý, ne jen ten řádek.
@@ -284,10 +338,6 @@ function parseMatchStats(doc: Document): AhlMatchStats {
   const table = tableByCaption(doc, /^Statistika zápasu$/i)
   if (!table) return { ...NO_STATS }
 
-  const pair = (raw: string): AhlPair | null => {
-    const m = raw.match(/^(\d+)\s*:\s*(\d+)$/)
-    return m ? { home: +m[1], away: +m[2] } : null
-  }
   const values = new Map<string, string>()
   // Řádky tu nemají třídy lichy/sudy, takže se bere každé `tr` s dvěma buňkami.
   for (const tr of Array.from(table.querySelectorAll('tr'))) {
@@ -297,16 +347,23 @@ function parseMatchStats(doc: Document): AhlMatchStats {
   const ppTimeMatch = (values.get('Čas v PP') ?? '').match(/(\d+:\d{2})\s*:\s*(\d+:\d{2})/)
 
   return {
-    penalties: pair(values.get('Vyloučení') ?? ''),
-    majors: pair(values.get('Vyšší tresty') ?? ''),
-    ppGoals: pair(values.get('Využití') ?? ''),
+    penalties: exactScorePair(values.get('Vyloučení') ?? ''),
+    majors: exactScorePair(values.get('Vyšší tresty') ?? ''),
+    ppGoals: exactScorePair(values.get('Využití') ?? ''),
     ppTime: ppTimeMatch ? { home: ppTimeMatch[1], away: ppTimeMatch[2] } : null,
   }
 }
 
 function parseLineup(table: Element, matchId: number, label: string): AhlLineupRow[] {
   const page = `zapas ${matchId}`
-  const required = ['tabulka_cislo', 'tabulka_jmeno', 'tabulka_goly', 'tabulka_asistence', 'tabulka_body', 'tabulka_trestne_minuty']
+  const required = [
+    'tabulka_cislo',
+    'tabulka_jmeno',
+    'tabulka_goly',
+    'tabulka_asistence',
+    'tabulka_body',
+    'tabulka_trestne_minuty',
+  ]
   for (const c of required) {
     if (!table.querySelector(`tr.tabulka_radek_nadpis th.${c}`)) {
       throw new AhlParseError(page, `sestava ${label}: chybí sloupec ${c}`)

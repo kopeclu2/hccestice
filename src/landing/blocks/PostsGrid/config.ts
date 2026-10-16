@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { limitField, seasonFilter } from '../shared'
+import { limitField, seasonFilter } from '@/landing/blocks/shared'
 
 export const PostsGridWidget: Block = {
   slug: 'postsGrid',

@@ -35,7 +35,8 @@ const describeRecipient = (to: unknown): string => {
  * V devu je to feature (žádný účet u providera, nic neodejde skutečnému
  * adresátovi), v produkci chyba — proto se úroveň logu podle prostředí liší.
  */
-const logAdapter = (): EmailAdapter =>
+const logAdapter =
+  (): EmailAdapter =>
   ({ payload }) => ({
     name: 'log',
     defaultFromAddress: fromAddress(),
@@ -46,8 +47,7 @@ const logAdapter = (): EmailAdapter =>
         subject: message.subject,
         text: message.text,
       }
-      const msg =
-        'E-mail se NEODESLAL — chybí RESEND_API_KEY i SMTP_HOST (viz .env.example)'
+      const msg = 'E-mail se NEODESLAL — chybí RESEND_API_KEY i SMTP_HOST (viz .env.example)'
 
       if (process.env.NODE_ENV === 'production') {
         payload.logger.error({ ...detail, msg })

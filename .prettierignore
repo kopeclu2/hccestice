@@ -12,3 +12,25 @@
 **/docs/**
 tsconfig.json
 
+
+# Generované a vendorované soubory — přepíše je příští generate/build.
+src/app/(payload)/admin/importMap.js
+src/payload-generated-schema.ts
+.next
+public
+shots*
+screenshots
+bun.lock
+next-env.d.ts
+tsconfig.tsbuildinfo
+design_*
+
+# Konfigurace agentů; blok v AGENTS.md si `next dev` přepisuje sám.
+.agents
+.claude
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+src/migrations/*.json
+scripts/seed/data
+tests/fixtures

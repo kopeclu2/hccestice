@@ -9,6 +9,7 @@ import {
   vysledkyUrl,
 } from '@/ahl'
 import type { AhlListMatch } from '@/ahl'
+import { errorMessage } from '@/lib/errors'
 
 import { resolveSeasons, resolveTeamId, type SeasonCtx } from './context'
 import { isDue } from './isDue'
@@ -18,7 +19,12 @@ import { breadcrumb, captureFailure, captureWarning, rootSpan, span } from './se
 import { loadSettings } from './settings'
 import { createSyncContext, type SyncContext } from './sync/ctx'
 import { createDraftPost } from './sync/draftPost'
-import { syncSeasonMatches, type DraftCandidate, type SeasonLists, type SeasonMatchState } from './sync/matches'
+import {
+  syncSeasonMatches,
+  type DraftCandidate,
+  type SeasonLists,
+  type SeasonMatchState,
+} from './sync/matches'
 import { createOpponentResolver } from './sync/opponents'
 import { createPlayerResolver } from './sync/players'
 import { syncStandings } from './sync/standings'
@@ -66,7 +72,11 @@ const LOCK_STALE_MS = 15 * 60_000
  * Dotaz na `payload-jobs` (plán) nejde: tik sám je rozpracovaný job.
  */
 const LOCK_KEY = Symbol.for('hccestice.vchlSync.lock')
-type Lock = { running: boolean; since: number; /** kdo zámek drží; `finally` cizí zámek neuvolní */ token: symbol | null }
+type Lock = {
+  running: boolean
+  since: number
+  /** kdo zámek drží; `finally` cizí zámek neuvolní */ token: symbol | null
+}
 function lockState(): Lock {
   const g = globalThis as unknown as Record<symbol, Lock | undefined>
   return (g[LOCK_KEY] ??= { running: false, since: 0, token: null })
@@ -113,7 +123,11 @@ async function checkDue(payload: Payload, settings: VchlSettings, now: Date): Pr
     lastRunAt: lastRun?.startedAt ?? null,
     lastRunStatus: lastRun?.status ?? null,
     settings,
-    ourMatches: around.docs.map((m) => ({ date: m.date, status: m.status, hasReport: m.ahl?.hasReport })),
+    ourMatches: around.docs.map((m) => ({
+      date: m.date,
+      status: m.status,
+      hasReport: m.ahl?.hasReport,
+    })),
   })
   return { ...r, lastRun }
 }
@@ -134,7 +148,11 @@ async function lastSuccessfulRun(payload: Payload): Promise<VchlSyncRun | null> 
   }
 }
 
-function skipped(reason: 'disabled' | 'not-due' | 'locked', mode: VchlMode, t0: number): VchlRunResult {
+function skipped(
+  reason: 'disabled' | 'not-due' | 'locked',
+  mode: VchlMode,
+  t0: number,
+): VchlRunResult {
   return {
     runId: null,
     status: 'skipped',
@@ -197,6 +215,81 @@ async function runLocked(
   return rootSpan(() => executeRun(payload, opts, t0, now, settings, due))
 }
 
+/**
+ * Do Sentry jen NOVÁ upozornění: stejné varování v řadě běhů by jinak
+ * znamenalo spam (neznámý hráč se hlásí, dokud ho správce nepřiřadí).
+ * Vrací id odeslaných událostí.
+ */
+async function reportNewWarnings(
+  payload: Payload,
+  warnings: VchlRunResult['warnings'],
+  trigger: VchlTrigger,
+): Promise<string[]> {
+  // Porovnává se s posledním během, který skončil `ok`/`partial`: `error`
+  // běh varování nemá, takže by po něm další OK běh poslal všechna trvalá
+  // varování znovu.
+  const reference = await lastSuccessfulRun(payload)
+  const prev = new Set((reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`))
+  const ids: string[] = []
+  for (const w of warnings) {
+    if (prev.has(`${w.type}:${w.ref ?? ''}`)) continue
+    const id = captureWarning(w, trigger)
+    if (id) ids.push(id)
+  }
+  return ids
+}
+
+type RunRecord = {
+  trigger: VchlTrigger
+  status: VchlRunResult['status']
+  startedAt: number
+  requests: number
+  changes: VchlRunResult['changes']
+  warnings: VchlRunResult['warnings']
+  error: string | undefined
+  sentryEventId: string | undefined
+}
+
+/** Záznam běhu do `vchl-sync-runs`; selhání uložení běh neshodí. Vrací id nebo `null`. */
+async function persistRun(payload: Payload, run: RunRecord): Promise<number | string | null> {
+  try {
+    const rec = await payload.create({
+      collection: 'vchl-sync-runs',
+      data: {
+        trigger: run.trigger,
+        status: run.status,
+        startedAt: new Date(run.startedAt).toISOString(),
+        finishedAt: new Date().toISOString(),
+        requests: run.requests,
+        changes: { ...run.changes },
+        warnings: run.warnings.map((w) => ({ type: w.type, message: w.message, ref: w.ref })),
+        error: run.error,
+        sentryEventId: run.sentryEventId,
+      },
+      context: { disableRevalidate: true },
+    })
+    return rec.id
+  } catch (err) {
+    payload.logger.error({ err }, 'vchl-sync: záznam běhu se nepodařilo uložit')
+    captureFailure(err, 'write', run.trigger)
+    return null
+  }
+}
+
+/** Smaže záznamy starší než `RUN_RETENTION_DAYS`; chyba úklidu běh neshodí. */
+async function pruneOldRuns(payload: Payload): Promise<void> {
+  try {
+    const cutoff = new Date(Date.now() - RUN_RETENTION_DAYS * 86_400_000).toISOString()
+    await payload.delete({
+      collection: 'vchl-sync-runs',
+      where: { startedAt: { less_than: cutoff } },
+      context: { disableRevalidate: true },
+    })
+  } catch (err) {
+    payload.logger.error({ err }, 'vchl-sync: úklid starých běhů selhal')
+  }
+}
+
 async function executeRun(
   payload: Payload,
   opts: { trigger: VchlTrigger; force?: boolean },
@@ -218,73 +311,42 @@ async function executeRun(
     ctx = createSyncContext({ payload, client, trigger, settings, now, teamId, changes })
     await syncAll(ctx)
   } catch (err) {
-    error = err instanceof Error ? err.message : String(err)
-    const stage = err instanceof AhlParseError ? 'parse' : err instanceof AhlFetchError ? 'fetch' : 'write'
-    const id = captureFailure(err, stage, trigger, err instanceof AhlFetchError ? { url: err.url } : {})
+    error = errorMessage(err)
+    const id = captureFailure(
+      err,
+      stageOf(err),
+      trigger,
+      err instanceof AhlFetchError ? { url: err.url } : {},
+    )
     if (id) eventIds.push(id)
     payload.logger.error({ err }, 'vchl-sync: běh selhal')
   }
 
   const warnings = ctx?.warnings ?? warningsFallback
   eventIds.push(...(ctx?.sentryEventIds ?? []))
-  const status: VchlRunResult['status'] = error ? 'error' : ctx && ctx.partialErrors.length > 0 ? 'partial' : 'ok'
+  const status: VchlRunResult['status'] = error
+    ? 'error'
+    : ctx && ctx.partialErrors.length > 0
+      ? 'partial'
+      : 'ok'
   const dry = trigger === 'dry'
 
-  // Do Sentry jen NOVÁ upozornění: stejné varování v řadě běhů by jinak
-  // znamenalo spam (neznámý hráč se hlásí, dokud ho správce nepřiřadí).
-  if (!dry) {
-    // Porovnává se s posledním během, který skončil `ok`/`partial`: `error`
-    // běh varování nemá, takže by po něm další OK běh poslal všechna trvalá
-    // varování znovu.
-    const reference = await lastSuccessfulRun(payload)
-    const prev = new Set(
-      (reference?.warnings ?? []).map((w) => `${w.type}:${w.ref ?? ''}`),
-    )
-    for (const w of warnings) {
-      if (prev.has(`${w.type}:${w.ref ?? ''}`)) continue
-      const id = captureWarning(w, trigger)
-      if (id) eventIds.push(id)
-    }
-  }
+  if (!dry) eventIds.push(...(await reportNewWarnings(payload, warnings, trigger)))
 
   if (!dry && ctx && ctx.writes > 0) await revalidateAfterSync(payload, trigger)
 
-  const finished = new Date()
-  let runId: number | string | null = null
-  try {
-    const rec = await payload.create({
-      collection: 'vchl-sync-runs',
-      data: {
-        trigger,
-        status,
-        startedAt: new Date(t0).toISOString(),
-        finishedAt: finished.toISOString(),
-        requests: client.requestCount,
-        changes: { ...changes },
-        warnings: warnings.map((w) => ({ type: w.type, message: w.message, ref: w.ref })),
-        error: error ?? (ctx?.partialErrors.length ? ctx.partialErrors.join('\n') : undefined),
-        sentryEventId: eventIds[0],
-      },
-      context: { disableRevalidate: true },
-    })
-    runId = rec.id
-  } catch (err) {
-    payload.logger.error({ err }, 'vchl-sync: záznam běhu se nepodařilo uložit')
-    captureFailure(err, 'write', trigger)
-  }
+  const runId = await persistRun(payload, {
+    trigger,
+    status,
+    startedAt: t0,
+    requests: client.requestCount,
+    changes,
+    warnings,
+    error: error ?? (ctx?.partialErrors.length ? ctx.partialErrors.join('\n') : undefined),
+    sentryEventId: eventIds[0],
+  })
 
-  if (!dry) {
-    try {
-      const cutoff = new Date(Date.now() - RUN_RETENTION_DAYS * 86_400_000).toISOString()
-      await payload.delete({
-        collection: 'vchl-sync-runs',
-        where: { startedAt: { less_than: cutoff } },
-        context: { disableRevalidate: true },
-      })
-    } catch (err) {
-      payload.logger.error({ err }, 'vchl-sync: úklid starých běhů selhal')
-    }
-  }
+  if (!dry) await pruneOldRuns(payload)
 
   const result: VchlRunResult = {
     runId,
@@ -339,7 +401,11 @@ type Fetched = { season: SeasonCtx; lists: SeasonLists }
  * je čekáme, je spíš rozbitá stránka než prázdná sezóna — a „prázdný" výpis
  * by jinak vypadal jako nic nového. Běh skončí chybou dřív, než cokoli zapíše.
  */
-async function assertListsPlausible(ctx: SyncContext, season: SeasonCtx, lists: SeasonLists): Promise<void> {
+async function assertListsPlausible(
+  ctx: SyncContext,
+  season: SeasonCtx,
+  lists: SeasonLists,
+): Promise<void> {
   const { rozpis, vysledky } = lists
   const synced = await ctx.payload.count({
     collection: 'matches',
@@ -356,10 +422,16 @@ async function assertListsPlausible(ctx: SyncContext, season: SeasonCtx, lists: 
     },
   })
   if (vysledky && vysledky.length === 0 && played.totalDocs > 0) {
-    throw new AhlParseError('vysledky', `výpis výsledků je prázdný, ale v CMS je ${played.totalDocs} odehraných zápasů z AHL`)
+    throw new AhlParseError(
+      'vysledky',
+      `výpis výsledků je prázdný, ale v CMS je ${played.totalDocs} odehraných zápasů z AHL`,
+    )
   }
   if (rozpis && vysledky && rozpis.length === 0 && vysledky.length === 0 && synced.totalDocs > 0) {
-    throw new AhlParseError('rozpis/vysledky', `oba výpisy jsou prázdné, ale v CMS je ${synced.totalDocs} zápasů z AHL`)
+    throw new AhlParseError(
+      'rozpis/vysledky',
+      `oba výpisy jsou prázdné, ale v CMS je ${synced.totalDocs} zápasů z AHL`,
+    )
   }
 }
 

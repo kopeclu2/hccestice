@@ -1,16 +1,15 @@
-import type { PricingCardsBlock } from '@/payload-types'
-
 import { Check } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { SectionTitle } from '../../components/Heading'
-import { Eyebrow } from '../../components/Kicker'
-import { Numeral } from '../../components/Numeral'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
+import { Button } from '@/components/ui/button'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import { Numeral } from '@/landing/ui/Numeral'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { cn } from '@/lib/utils'
+import type { PricingCardsBlock } from '@/payload-types'
 
 /** Členské příspěvky — pricing karty, zvýrazněná je klubově zelená. */
 export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock }) {
@@ -22,7 +21,7 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
       <Reveal>
         {block.title && <SectionTitle className="text-center">{block.title}</SectionTitle>}
         {block.perex && (
-          <p className="text-dim mx-auto mt-3 max-w-120 text-center leading-relaxed text-pretty">
+          <p className="mx-auto mt-3 max-w-120 text-center leading-relaxed text-pretty text-dim">
             {block.perex}
           </p>
         )}
@@ -35,20 +34,30 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
               <div
                 className={cn(
                   'flex h-full flex-col rounded-panel p-4.5 md:p-6 lg:p-7',
-                  highlighted ? 'bg-club text-white' : 'bg-surface',
+                  highlighted ? 'bg-club text-on-contrast' : 'bg-surface',
                 )}
               >
                 <Eyebrow tone={highlighted ? 'lime' : 'club'}>{card.name}</Eyebrow>
                 <div className="mt-2 flex items-baseline gap-2">
                   <Numeral size="xl">{card.price}</Numeral>
                   {card.period && (
-                    <span className={cn('text-sm', highlighted ? 'text-white/65' : 'text-faint')}>
+                    <span
+                      className={cn(
+                        'text-sm',
+                        highlighted ? 'text-on-contrast-muted' : 'text-faint',
+                      )}
+                    >
                       {card.period}
                     </span>
                   )}
                 </div>
                 {card.description && (
-                  <p className={cn('mt-2 text-sm', highlighted ? 'text-white/85' : 'text-dim')}>
+                  <p
+                    className={cn(
+                      'mt-2 text-sm',
+                      highlighted ? 'text-on-contrast-strong' : 'text-dim',
+                    )}
+                  >
                     {card.description}
                   </p>
                 )}
@@ -67,15 +76,15 @@ export function PricingCardsBlockComponent({ block }: { block: PricingCardsBlock
                   ))}
                 </ul>
                 {card.ctaLabel && card.ctaHref && (
-                  <PillLink
+                  <Button
+                    asChild
                     className="mt-6 self-start"
-                    href={card.ctaHref}
                     size="md"
                     variant={highlighted ? 'light' : 'dark'}
                     withArrow
                   >
-                    {card.ctaLabel}
-                  </PillLink>
+                    <Link href={card.ctaHref}>{card.ctaLabel}</Link>
+                  </Button>
                 )}
               </div>
             </Reveal>

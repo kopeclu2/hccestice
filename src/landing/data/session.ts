@@ -1,6 +1,8 @@
-import configPromise from '@payload-config'
+import 'server-only'
+
 import { headers as nextHeaders } from 'next/headers'
-import { getPayload } from 'payload'
+
+import { getPayloadClient } from './query'
 
 /**
  * Je návštěvník přihlášený do administrace?
@@ -16,7 +18,7 @@ import { getPayload } from 'payload'
  */
 export async function hasSession(): Promise<boolean> {
   try {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayloadClient()
     const { user } = await payload.auth({ headers: await nextHeaders() })
     return Boolean(user)
   } catch {

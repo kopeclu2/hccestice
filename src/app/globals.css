@@ -15,6 +15,7 @@
 @custom-variant lg (@media (width >= theme(--breakpoint-lg)));
 @custom-variant xl (@media (width >= theme(--breakpoint-xl)));
 @custom-variant 2xl (@media (width >= theme(--breakpoint-2xl)));
+@custom-variant nav (@media (width >= theme(--breakpoint-nav)));
 
 @layer base {
   h1,
@@ -28,20 +29,20 @@
   }
 }
 
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 
-@source inline("lg:col-span-4");
-@source inline("lg:col-span-6");
-@source inline("lg:col-span-8");
-@source inline("lg:col-span-12");
-@source inline("border-border");
-@source inline("bg-card");
-@source inline("border-error");
-@source inline("bg-error/30");
-@source inline("border-success");
-@source inline("bg-success/30");
-@source inline("border-warning");
-@source inline("bg-warning/30");
+@source inline('lg:col-span-4');
+@source inline('lg:col-span-6');
+@source inline('lg:col-span-8');
+@source inline('lg:col-span-12');
+@source inline('border-border');
+@source inline('bg-card');
+@source inline('border-error');
+@source inline('bg-error/30');
+@source inline('border-success');
+@source inline('bg-success/30');
+@source inline('border-warning');
+@source inline('bg-warning/30');
 
 @theme {
   --breakpoint-sm: 40rem;
@@ -49,11 +50,20 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
-  /* Geist se načítá jen v (frontend)/layout.tsx — na (landing) routách se
-   * `--font-geist-*` nikam neresolvuje. Bez fallbacku bylo `font-mono`
-   * na /vzory a /widgety mrtvé (dědilo se sans-serif). */
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-sans: var(--font-geist-sans), var(--font-archivo), system-ui, sans-serif;
+  --breakpoint-nav: 90rem;
+  /* Mikro-breakpointy pod `sm`. Dřív arbitrární `min-[22.5rem]:` (3×),
+   * `max-[22.5rem]:` (7×), `min-[25rem]:` (5×) a `min-[33rem]:` (7×).
+   * `3xs:` = od 360px (zúžené řádky na malých telefonech), `2xs:` = od 400px,
+   * `xs:` = od 528px (Tréninky: karta přestane být přes celou šířku).
+   * `max-3xs:` je `width < 22.5rem`, tedy přesný protějšek `3xs:`. */
+  --breakpoint-3xs: 22.5rem;
+  --breakpoint-2xs: 25rem;
+  --breakpoint-xs: 33rem;
+  /* Základní písma. Archivo se načítá přes next/font v (landing)/layout.tsx
+   * (`--font-archivo`), Geist se nenačítá vůbec. `font-mono` nemá webfont,
+   * takže jde na systémový monospace (/vzory, /widgety). */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ── Landing page (design handoff „HC Cestice Modern") ──────────────────────
@@ -172,6 +182,31 @@
   --color-pine-deep: #081a10; /* základ tmavých gradientů přes fotky */
 
   --color-on-contrast: #ffffff; /* text a ikony na ploše `contrast` */
+  /* Bílá s průhledností na tmavých a zelených plochách a přes fotky. Nahrazuje
+   * 37 různých `white/N` (rozptyl 4–94 %) jedním žebříkem; sousední stupně
+   * se slily s odchylkou nejvýš ~5 procentních bodů. `on-contrast` je v obou
+   * režimech bílá, takže se žebřík s tématem nemění. Použitelný pro `text-`,
+   * `bg-`, `border-`, `divide-` i `placeholder:`.
+   *   strong 90 % — nejsilnější text a skleněné plochy (dřív 85, 90, 92, 94)
+   *   soft   80 % — hlavní text na tmavém (75, 80)
+   *   muted  70 % — meta text (65, 70, 72)
+   *   subtle 60 % — popisky (55, 60)
+   *   faint  50 % — velmi tlumený text (45, 50)
+   *   ghost  40 % — obrys tlačítka, placeholder, tečky (40)
+   *   line   30 % — linky a rámečky skla, hover skla (24, 25, 28, 30, 35)
+   *   glass  16 % — výplň skleněného tlačítka (14, 15, 16, 18)
+   *   wash   10 % — nejjemnější výplň, dělicí linka, watermark (4, 6, 8, 10, 12) */
+  --color-on-contrast-strong: --alpha(var(--color-on-contrast) / 90%);
+  --color-on-contrast-soft: --alpha(var(--color-on-contrast) / 80%);
+  --color-on-contrast-muted: --alpha(var(--color-on-contrast) / 70%);
+  --color-on-contrast-subtle: --alpha(var(--color-on-contrast) / 60%);
+  --color-on-contrast-faint: --alpha(var(--color-on-contrast) / 50%);
+  --color-on-contrast-ghost: --alpha(var(--color-on-contrast) / 40%);
+  --color-on-contrast-line: --alpha(var(--color-on-contrast) / 30%);
+  --color-on-contrast-glass: --alpha(var(--color-on-contrast) / 16%);
+  --color-on-contrast-wash: --alpha(var(--color-on-contrast) / 10%);
+  /* Čistá černá: překryvy (`bg-scrim/10`), kód a lišta admina. */
+  --color-scrim: #000000;
   --color-faint-dark: #a9b4ad; /* ztišený text na tmavém podkladu */
 
   /* Výsledky zápasů (V / R / P). Bez téhle rodiny si `Badge` a `FormStrip`
@@ -184,7 +219,7 @@
   --color-loss-ink: #8a4437;
 
   /* Trest na časové ose detailu zápasu — minuty ve žlutém poli jako na
-   * Livesportu (`zapas/MatchTimeline.tsx`). Vyšší tresty jdou do `danger`. */
+   * Livesportu (`features/matches/components/MatchTimeline.tsx`). Vyšší tresty jdou do `danger`. */
   --color-penalty: #f5c518;
   --color-penalty-ink: #2b2300;
 
@@ -196,28 +231,11 @@
   /* Typografie — Archivo se načítá přes next/font (var --font-archivo) */
   --font-display: var(--font-archivo), system-ui, sans-serif;
 
-  /* Velikosti textu — role, ne čísla. Nadpisy řeší komponenty
-   * `PageTitle`/`SectionTitle`/`CardTitle` (viz landing/components/Heading.tsx),
-   * tyhle tokeny pokrývají všechno ostatní. Nové arbitrární `text-[Xrem]`
-   * v landing komponentách nepřidávat — vždy sáhnout po tokenu.
+  /* Velikosti textu. Běžný text jede na standardní škále Tailwindu
+   * (`text-xs` … `text-5xl`, viz AGENTS.md → Typografie); tokeny níž pokrývají
+   * jen to, co škála nemá. Nové arbitrární `text-[Xrem]` nepřidávat.
    */
   --text-eyebrow: 0.6875rem; /* 11px — uppercase mikro-label nad nadpisem */
-  --text-caption: 0.75rem; /* 12px — badge, chip, tabulkové popisky */
-  --text-meta: 0.8125rem; /* 13px — meta text, datumy, malé pilulky */
-  --text-body: 0.9375rem; /* 15px — běžný text karet a odstavců */
-  --text-lead: 1.0625rem; /* 17px — perex, název karty, zvýrazněný řádek */
-
-  /* Nadpisová škála — jediný zdroj pro landing/components/Heading.tsx.
-   * Dřív to bylo 9 arbitrárních `text-[Xrem]` uvnitř souboru, který má být
-   * právě tím jediným zdrojem. */
-  --text-card-title: 1.3125rem; /* 21px — CardTitle sm */
-  --text-panel-title: 1.625rem; /* 26px — CardTitle lg (mobil) */
-  --text-panel-title-lg: 1.875rem; /* 30px — CardTitle lg (desktop), h2 článku */
-  --text-section-title: 1.75rem; /* 28px — SectionTitle md/lg (mobil) */
-  --text-section-title-md: 2.125rem; /* 34px — SectionTitle md (desktop) */
-  --text-section-title-lg: 2.375rem; /* 38px — SectionTitle lg (desktop) */
-  --text-claim: 2rem; /* 32px — SectionTitle xl (mobil) */
-  --text-claim-lg: 3.25rem; /* 52px — SectionTitle xl (desktop) */
 
   /* Obrysové watermarky za hlavičkami (dekorativní, viz utility `text-stroke`).
    * Škála vznikla z 18 arbitrárních hodnot; dvě nejbližší dvojice se slily. */
@@ -230,17 +248,80 @@
   --text-watermark-3xl: 13.75rem; /* 220px */
   --text-watermark-4xl: 16.25rem; /* 260px */
 
-  /* Číselné displaye — skóre, čísla dresů, statistiky, letopočty. Nejsou to
-   * nadpisy (nemají sémantiku ani text-wrap), ale mají vlastní škálu.
-   * Používej přes komponentu `Numeral` (landing/components/Numeral.tsx),
-   * která k velikosti přidá `tabular-nums` a správný tracking.
-   */
-  --text-numeral-xs: 1.1875rem; /* 19px — skóre v řádku výsledků */
-  --text-numeral-sm: 1.375rem; /* 22px — den v měsíci u mini karty */
-  --text-numeral-md: 1.625rem; /* 26px — datum v rozpisu zápasů */
-  --text-numeral-lg: 1.875rem; /* 30px — číslo dresu, monogram sponzora */
-  --text-numeral-xl: 2.25rem; /* 36px — hodnota ve statistické kartě */
-  --text-numeral-2xl: 3rem; /* 48px — skóre karty zápasu, velká statistika */
+  /* Fluidní display velikosti — plynulé `clamp()` pro nadpisy, skóre a obří
+   * číslice. Hodnoty jsou přesně ty, které bývaly arbitrární `text-[clamp(…)]`
+   * (min, plynulá část, max); komponenty je volají jen přes tyhle jména.
+   * Jména nesou roli, ne číslo, takže `text-title-md` zůstane smysluplné, i
+   * když se hodnota doladí. Každý token je zaregistrovaný v twMerge
+   * (`lib/utils.ts`), jinak by ho bral jako barvu textu. */
+  --text-title-hero: clamp(2.75rem, 5.4vw, 5.75rem); /* PageTitle hero — home page */
+  --text-title-xl: clamp(2.5rem, 6.2vw, 6rem); /* PageTitle xl — typografické hero článku */
+  --text-title-lg: clamp(2.375rem, 4.6vw, 4.5rem); /* PageTitle lg — hero podstránky */
+  --text-title-hero-sm: clamp(1.875rem, 3.4vw, 3.375rem); /* PageTitle hero-sm — HeroModern */
+  --text-title-md: clamp(2.125rem, 4.2vw, 4.125rem); /* PageTitle md — detail článku */
+  --text-title-system: clamp(1.875rem, 3.6vw, 3.5rem); /* PageTitle system — 404/500/údržba */
+  --text-title-sm: clamp(1.625rem, 2.6vw, 2.5rem); /* PageTitle sm — úzký panel přes fotku */
+
+  --text-score: clamp(3.5rem, 7vw, 6.75rem); /* Numeral score — skóre v hero zápasu */
+  --text-score-board: clamp(2.5rem, 12vw, 3rem); /* tabule zápasu na mobilu */
+  --text-score-arena: clamp(2.5rem, 11vw, 6.5rem); /* hlavička Arena */
+  --text-score-editorial: clamp(5.5rem, 24vw, 11.5rem); /* hlavička Editorial — řádek skóre */
+  --text-score-editorial-lg: clamp(6.5rem, 30vw, 14rem); /* hlavička Editorial — obří skóre */
+  --text-score-split: clamp(2.75rem, 13vw, 4rem); /* hlavička Split — mobil */
+  --text-score-split-lg: clamp(4.5rem, 9vw, 8.5rem); /* hlavička Split — od md */
+
+  --text-hero-meta: clamp(1.25rem, 1.8vw, 1.625rem); /* údaje o zápase v hero (soupeř, datum) */
+  --text-hero-value: clamp(1.875rem, 2.6vw, 2.625rem); /* hodnota/čas v hero zápasu */
+  --text-countdown: clamp(1.5rem, 2.6vw, 2.625rem); /* číslice odpočtu */
+  --text-countdown-label: clamp(1.125rem, 1.8vw, 1.625rem); /* název soupeře u odpočtu */
+  --text-contact-lg: clamp(1.25rem, 4vw, 3.625rem); /* e-mail v sekci Kontakt */
+  --text-contact-md: clamp(1.25rem, 2.6vw, 2rem); /* e-mail v panelu kontaktu */
+  --text-year: clamp(3rem, 6vw, 5.5rem); /* letopočet na časové ose historie */
+  --text-jersey: clamp(2.75rem, 18vw, 6.75rem); /* obrysové číslo dresu — mobil */
+  --text-jersey-md: clamp(5rem, 8vw, 6.75rem); /* obrysové číslo dresu — od md */
+  --text-error-code: clamp(8.75rem, 22vw, 21.25rem); /* obří 404/500 */
+  --text-watermark-maintenance: clamp(15rem, 34vw, 32.5rem); /* nápis za obrazovkou údržby */
+
+  /* Zarovnání a rozestupy. `--spacing-*` zároveň vytváří utility pro všechny
+   * rozměrové třídy (`px-gutter`, `-mx-gutter`, `gap-split-gap`, `inset-x-hero-inset`…).
+   * `gutter` je nejčastější arbitrární hodnota v repu (23×). */
+  --spacing-gutter: clamp(0.875rem, 3vw, 2.5rem); /* vodorovné odsazení stránky/sekce */
+  --spacing-gutter-tight: clamp(0.625rem, 1.4vw, 1.25rem); /* PageCanvas tight, chyba 500 */
+  --spacing-gutter-nav: clamp(0.5rem, 2vw, 1.5rem); /* vnitřní odsazení horní lišty článku */
+  --spacing-split-gap: clamp(1.25rem, 3vw, 2.5rem); /* mezera mezi sloupci dvousloupcového bloku */
+  --spacing-hero-gap: clamp(1.75rem, 4vw, 4rem); /* mezera uvnitř hero panelu */
+  --spacing-hero-inset: clamp(1.125rem, 3vw, 3rem); /* obsah hero přes fotku (od okraje) */
+  --spacing-panel: clamp(1.5rem, 4vw, 4rem); /* vodorovný padding velkého panelu */
+  --spacing-panel-y: clamp(2.25rem, 4vw, 3.75rem); /* svislý padding hlavičky zápasu */
+
+  /* Šířky obsahu. `max-w-page` je šířka celého webu (14×), `max-w-article`
+   * tělo článku a RawHtml. */
+  --container-page: 97.5rem;
+  --container-article: 51.25rem;
+
+  /* Tracking. Výchozí škála Tailwindu pokrývá -0.05em (`tracking-tighter`),
+   * -0.025em (`tracking-tight`), 0.025em, 0.05em a 0.1em (`tracking-widest`) —
+   * tyhle hodnoty token nedostaly. Záporné jdou od nejtěsnějšího po nejvolnější. */
+  --tracking-display: -0.06em; /* obrysové watermarky a obří číslice */
+  --tracking-title-tight: -0.04em; /* nadpisy hero/xl, skóre 2xl */
+  --tracking-title: -0.035em; /* PageTitle, SectionTitle xl */
+  --tracking-heading: -0.03em; /* nadpisy sekcí, čísla md–xl, kontaktní odkaz */
+  --tracking-subheading: -0.02em; /* CardTitle sm, číslice xs/sm, názvy týmů */
+  --tracking-snug: -0.01em; /* řádky výpisu, názvy v tabulkách */
+  /* Verzálky (uppercase labely). */
+  --tracking-caps-sm: 0.08em;
+  --tracking-caps-md: 0.12em;
+  --tracking-caps-lg: 0.16em; /* Eyebrow / Kicker */
+
+  /* Řádkování. Výchozí 1.25 (`leading-tight`), 1.5 (`leading-normal`) atd.
+   * token nedostaly. */
+  --leading-copy: 1.55; /* perex a běžný odstavec podstránek */
+  --leading-title: 1.02; /* nadpisy md, hero-sm, system */
+  --leading-title-tight: 0.98; /* nadpisy hero a xl */
+  --leading-heading: 1.15; /* CardTitle sm, položky časové osy */
+  --leading-heading-tight: 1.05; /* názvy týmů v hlavičce Editorial */
+  --leading-display: 0.9; /* obrysový letopočet a 404/500 */
+  --leading-score: 0.82; /* obří skóre Editorial */
 
   /* Tvary — pojmenované radiusy dle rolí v designu.
    * `section` a `block` byly nejčastější arbitrární hodnoty v celém repu
@@ -254,6 +335,10 @@
   --radius-row: 1.25rem; /* řádek výsledku, accordion (20px) */
   --radius-badge: 1.125rem; /* mini karty, sponzorské dlaždice (18px) */
   --radius-field: 0.875rem; /* inputy, čtverečky formy, média (14px) */
+  --radius-icon: 1rem; /* ikonové dlaždice, čísla v kartě (16px) */
+  --radius-item: 0.75rem; /* položky seznamů, tooltipy, volby (12px) */
+  --radius-chip: 0.5rem; /* malé štítky a embedy videa (8px) */
+  --radius-tag: 0.25rem; /* inline kód, minuty trestu, drobné značky (4px) */
 
   /* Elevace — barvy přes `--alpha()`, ne ručně přepsané rgb() trojice. */
   --shadow-hero: 0 1.875rem 5rem --alpha(var(--color-ink) / 10%);
@@ -309,6 +394,20 @@
   }
 }
 
+/*
+ * Půlený podklad pro prohru po prodloužení/nájezdech: cihlová (prohra)
+ * | zelená (bod). `bg-split` dělí svisle (štítek `Badge split`),
+ * `bg-split-diagonal` úhlopříčkou (čtvereček formy). Dřív oba přepsané
+ * ručně jako arbitrární `bg-[linear-gradient(…)]`.
+ */
+@utility bg-split {
+  background-image: linear-gradient(90deg, var(--color-loss) 50%, var(--color-win) 50%);
+}
+
+@utility bg-split-diagonal {
+  background-image: linear-gradient(135deg, var(--color-loss) 50%, var(--color-win) 50%);
+}
+
 /* Landing utility — diagonální šrafování (podpis designu, viz handoff). */
 @utility hatch {
   background-image: repeating-linear-gradient(
@@ -356,6 +455,20 @@
  * Proti `hatch-white` je barevné: na `contrast` ploše bez zelené fotky pod
  * sebou by bílé linky vypadaly jako šum, lime je čte jako klubový akcent.
  */
+/*
+ * Tečkovaná mřížka pro `DotGrid`. `--alpha()` je build-time funkce Tailwindu
+ * a funguje jen v CSS, které Tailwind zpracovává (`@utility`, `@theme`) —
+ * v inline `style` ji prohlížeč nezná, `background-image` je pak neplatný
+ * a tečky se nevykreslí. Proto vzor žije tady a komponenta nese jen třídu.
+ */
+@utility dot-grid {
+  background-image: radial-gradient(
+    --alpha(var(--color-club) / 20%) 0.09375rem,
+    transparent 0.1rem
+  );
+  background-size: 1.375rem 1.375rem;
+}
+
 @utility hatch-lime {
   background-image: repeating-linear-gradient(
     115deg,
@@ -525,8 +638,15 @@
 }
 
 @layer utilities {
+  /*
+   * Tailwind generuje vlastní `.container` s `max-width` pro KAŽDÝ
+   * `--breakpoint-*`, včetně mikro-breakpointů pod `sm`. Bez `max-width: none`
+   * by se kontejner na 360–639px displeji ořezal na 360/400/528px.
+   * Rozměry od `sm` výš přebíjejí `@variant` bloky níž (jsou v souboru později).
+   */
   .container {
     width: 100%;
+    max-width: none;
     margin-inline: auto;
     padding-inline: 1rem;
   }
@@ -564,55 +684,41 @@
 }
 
 :root {
-  --background: oklch(100% 0 0deg);
-  --foreground: oklch(14.5% 0 0deg);
-  --card: oklch(96.5% 0.005 265deg);
-  --card-foreground: oklch(14.5% 0 0deg);
-  --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(14.5% 0 0deg);
-  --primary: oklch(20.5% 0 0deg);
-  --primary-foreground: oklch(98.5% 0 0deg);
-  --secondary: oklch(97% 0 0deg);
-  --secondary-foreground: oklch(20.5% 0 0deg);
-  --muted: oklch(97% 0 0deg);
-  --muted-foreground: oklch(55.6% 0 0deg);
-  --accent: oklch(97% 0 0deg);
-  --accent-foreground: oklch(20.5% 0 0deg);
-  --destructive: oklch(57.7% 0.245 27.325deg);
-  /* Dřív shodná s --destructive → červený text na červeném pozadí. */
-  --destructive-foreground: oklch(98.5% 0 0deg);
-  --border: oklch(92.2% 0 0deg);
-  --input: oklch(92.2% 0 0deg);
-  --ring: oklch(70.8% 0 0deg);
-  --success: oklch(78% 0.08 200deg);
-  --warning: oklch(89% 0.1 75deg);
-  --error: oklch(75% 0.15 25deg);
-}
-
-[data-theme='dark'] {
-  --background: oklch(14.5% 0 0deg);
-  --foreground: oklch(98.5% 0 0deg);
-  --card: oklch(17% 0 0deg);
-  --card-foreground: oklch(98.5% 0 0deg);
-  --popover: oklch(14.5% 0 0deg);
-  --popover-foreground: oklch(98.5% 0 0deg);
-  --primary: oklch(98.5% 0 0deg);
-  --primary-foreground: oklch(20.5% 0 0deg);
-  --secondary: oklch(26.9% 0 0deg);
-  --secondary-foreground: oklch(98.5% 0 0deg);
-  --muted: oklch(26.9% 0 0deg);
-  --muted-foreground: oklch(70.8% 0 0deg);
-  --accent: oklch(26.9% 0 0deg);
-  --accent-foreground: oklch(98.5% 0 0deg);
-  --destructive: oklch(39.6% 0.141 25.723deg);
-  /* Stejný problém jako ve světlém režimu — červená na tmavě červené. */
-  --destructive-foreground: oklch(98.5% 0 0deg);
-  --border: oklch(26.9% 0 0deg);
-  --input: oklch(26.9% 0 0deg);
-  --ring: oklch(43.9% 0 0deg);
-  --success: oklch(28% 0.1 200deg);
-  --warning: oklch(35% 0.08 70deg);
-  --error: oklch(45% 0.1 25deg);
+  /*
+   * shadcn vrstva (`components/ui`, šablonové bloky Form/Banner/Code) je
+   * napojená na klubovou paletu — žádné samostatné šedé oklch hodnoty.
+   * Jsou to aliasy na `--ds-*` a značkové tokeny, takže tmavý režim
+   * (`[data-theme='dark']` výš) se přenáší sám a nepotřebuje druhý blok.
+   * Názvy zůstávají shadcn (`--background`, `--primary`…), aby `shadcn add`
+   * umělo komponenty napojit bez zásahu.
+   *
+   * `primary` je `club-dark`, ne `club`: bílý text na `club` (#5e9e46) má
+   * jen ~3,4:1, na `club-dark` ~5,1:1 (AA). `ring` je naopak `club` — u
+   * prstence stačí 3:1 pro netextové prvky a `lime` (~2:1 na bílé) by nestačil.
+   */
+  --background: var(--ds-paper);
+  --foreground: var(--ds-ink);
+  --card: var(--ds-surface);
+  --card-foreground: var(--ds-ink);
+  --popover: var(--ds-surface);
+  --popover-foreground: var(--ds-ink);
+  --primary: var(--color-club-dark);
+  --primary-foreground: var(--color-on-contrast);
+  --secondary: var(--ds-chip);
+  --secondary-foreground: var(--ds-ink);
+  --muted: var(--ds-chip);
+  /* `dim`, ne `faint`: placeholder a popisky na `paper` potřebují AA. */
+  --muted-foreground: var(--ds-dim);
+  --accent: var(--ds-tint);
+  --accent-foreground: var(--ds-ink);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-on-contrast);
+  --border: var(--ds-line-mid);
+  --input: var(--ds-line);
+  --ring: var(--color-club);
+  --success: var(--color-club);
+  --warning: var(--color-penalty);
+  --error: var(--color-danger);
 }
 
 @theme inline {
@@ -645,7 +751,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground min-h-[100vh] flex flex-col;
+    @apply flex min-h-screen flex-col bg-background text-foreground;
   }
 }
 

@@ -1,10 +1,8 @@
-import type { StatCardsBlockType } from '@/payload-types'
-
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
-
-import { Numeral } from '../../components/Numeral'
+import { Numeral } from '@/landing/ui/Numeral'
+import { cn } from '@/lib/utils'
+import type { StatCardsBlockType } from '@/payload-types'
 
 /**
  * Statistické karty v těle článku — bílé/tmavé karty s velkým číslem
@@ -28,7 +26,10 @@ export function StatCardsBlockComponent({ block }: { block: StatCardsBlockType }
             {item.value}
           </Numeral>
           <div
-            className={cn('mt-1 text-sm font-medium', item.dark ? 'text-white/60' : 'text-faint')}
+            className={cn(
+              'mt-1 text-sm font-medium',
+              item.dark ? 'text-on-contrast-subtle' : 'text-faint',
+            )}
           >
             {item.label}
           </div>

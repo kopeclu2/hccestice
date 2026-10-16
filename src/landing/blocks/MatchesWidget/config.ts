@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { limitField, seasonFilter, teamFilter } from '../shared'
+import { limitField, seasonFilter, teamFilter } from '@/landing/blocks/shared'
 
 export const MatchesWidget: Block = {
   slug: 'matchesWidget',

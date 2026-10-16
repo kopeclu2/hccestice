@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { GlowCircle } from '@/landing/components/Decorations'
-import { Reveal } from '@/landing/components/Reveal'
-import { SectionShell } from '@/landing/components/SectionShell'
-import { SubpageShell } from '@/landing/components/SubpageShell'
-import { countLabel } from '@/landing/data/format'
-import { fetchSeason, seasonShortLabel } from '@/landing/data/seasons'
-import { fetchSponsors } from '@/landing/data/sponsors'
-import { PartnerCard } from '@/landing/sponzori/PartnerCard'
-import { PartnerSlotCta } from '@/landing/sponzori/PartnerSlotCta'
-import { SponzoriHeader } from '@/landing/sponzori/SponzoriHeader'
+import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import { PartnerCard } from '@/landing/features/sponsors/components/PartnerCard'
+import { PartnerSlotCta } from '@/landing/features/sponsors/components/PartnerSlotCta'
+import { SponsorsHeader } from '@/landing/features/sponsors/components/SponsorsHeader'
+import { fetchSponsors } from '@/landing/features/sponsors/data'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { GlowCircle } from '@/landing/ui/Decorations'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import { brandTitle } from '@/lib/brandTitle'
+import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
 
@@ -25,17 +25,14 @@ const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partne
  * prázdné se nevykreslují.
  */
 export default async function SponzoriPage() {
-  const [sponsors, season] = await Promise.all([
-    fetchSponsors(),
-    fetchSeason(null),
-  ])
+  const [sponsors, season] = await Promise.all([fetchSponsors(), fetchSeason(null)])
 
   const seasonLabel = season ? seasonShortLabel(season) : null
   const count = countLabel(sponsors.length, PARTNER_FORMS)
 
   return (
     <SubpageShell>
-<SponzoriHeader
+      <SponsorsHeader
         count={seasonLabel ? `${count} v sezóně ${seasonLabel}` : count}
         seasonLabel={seasonLabel}
       />
@@ -62,7 +59,7 @@ export default async function SponzoriPage() {
 }
 
 export const metadata: Metadata = {
-  title: 'Partneři | HC Čestice',
+  title: brandTitle('Partneři'),
   description:
     'Firmy a lidé z okolí, kteří drží vesnický hokej v Česticích nad vodou — partneři a sponzoři HC Čestice.',
   alternates: { canonical: '/sponzori' },

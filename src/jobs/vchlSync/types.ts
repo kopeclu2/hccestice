@@ -1,6 +1,6 @@
 import type { Payload } from 'payload'
 
-import type { Match, VchlSyncRun } from '@/payload-types'
+import type { VchlSyncRun } from '@/payload-types'
 
 export type { VchlSyncRun }
 
@@ -104,5 +104,4 @@ export type VchlStatus = {
   running: boolean
 }
 
-export type MatchDoc = Match
 export type { Payload }

@@ -1,19 +1,20 @@
 /**
  * Výchozí redakční obsah landing page.
  *
- * ⚠️ Obsah se nyní spravuje v Payload adminu — global „Landing page"
- * (+ kolekce „Lidé v klubu"). Tento soubor slouží jako:
- *  1. zdroj pro prvotní seed (`migration/seed-landing.ts`),
- *  2. fallback v `queries.ts` — pole nevyplněné v adminu se vrátí
- *     k výchozímu znění, stránka se nikdy nerozbije.
- *
- * Fotky se odkazují názvem souboru; na media je převádí seed.
+ * Obsah spravuje správce v Payload adminu (bloky landing page, globaly
+ * a kolekce). Tento soubor je **fallback**: komponenty bloků
+ * (`blocks/<blok>/Component.tsx`) a datové moduly (`features/history/data.ts`,
+ * `features/navigation/data.ts`, `features/matches/data/seasons.ts`, `data/site.ts`) z něj berou
+ * výchozí znění pro pole, která v adminu nejsou vyplněná, takže se stránka
+ * nikdy nerozbije.
  *
  * Navigace se spravuje v adminu (Nastavení → Menu); `FALLBACK_NAV` je
- * fallback pro prázdné CMS a zdroj pro `migration/seed-navigation.ts`.
+ * fallback pro prázdné CMS a zdroj pro `scripts/seed/seed-navigation.ts`.
  */
 
-import type { NavItem } from './types'
+import type { NavItem } from '@/landing/features/navigation/types'
+import { CLUB_NAME } from '@/lib/club'
+import { routes } from '@/lib/routes'
 
 /**
  * Fallback hlavní navigace — použije se, když je v CMS prázdná.
@@ -23,7 +24,7 @@ import type { NavItem } from './types'
  * pokud sekce nějakou má. Položka bez `anchor` na homepage jako sekce
  * neexistuje, takže i home nav vede přímo na podstránku.
  *
- * Pořadí kopíruje skutečné pořadí bloků na homepage (`migration/seed-home-
+ * Pořadí kopíruje skutečné pořadí bloků na homepage (`scripts/seed/seed-home-
  * landing.ts`): Aktuality → Sezóna → Tréninky → O klubu → Fotoalbum →
  * Historie → Lidé v klubu → Partneři. Položky bez vlastní sekce (Zápasy,
  * Soupiska) jsou zařazené tematicky vedle Sezóny. Dřív menu jelo v jiném
@@ -32,13 +33,13 @@ import type { NavItem } from './types'
  * kde na stránce co je.
  */
 export const FALLBACK_NAV: NavItem[] = [
-  { label: 'Aktuality', anchor: 'aktuality', path: '/aktuality' },
+  { label: 'Aktuality', anchor: 'aktuality', path: routes.list.posts },
   { label: 'Sezóna', anchor: 'sezona', path: null },
-  { label: 'Zápasy', anchor: null, path: '/zapasy' },
+  { label: 'Zápasy', anchor: null, path: routes.list.matches },
   { label: 'Soupiska', anchor: null, path: '/soupiska' },
   { label: 'Tréninky', anchor: 'treninky', path: '/treninky' },
   { label: 'O klubu', anchor: 'klub', path: null },
-  { label: 'Fotoalbum', anchor: 'fotoalbum', path: '/fotogalerie' },
+  { label: 'Fotoalbum', anchor: 'fotoalbum', path: routes.list.galleries },
   { label: 'Historie', anchor: 'historie', path: '/historie-klubu' },
   { label: 'Lidé v klubu', anchor: 'lide', path: null },
   { label: 'Partneři', anchor: 'sponzori', path: '/sponzori' },
@@ -54,22 +55,14 @@ export const HERO = {
   navCta: { href: '/kontakt', label: 'Kontakt' },
 } as const
 
-/** Fotky ke kartám reportů (pořadí = pořadí zápasů od nejnovějšího). */
-export const REPORT_PHOTOS = [
-  'p3081726.jpg',
-  'p3081434.jpg',
-  'p3080742.jpg',
-  'p3080507.jpg',
-] as const
-
 /** Tabulka VČHL — základní část 2025/26 (top 5, spravuje ahl.cz). */
 export const STANDINGS = {
   seasonLabel: 'základní část 2025/26',
-  ourTeam: 'HC Čestice',
+  ourTeam: CLUB_NAME,
   fullTableUrl: 'https://www.ahl.cz/soutez/vychodoceska_hokejova_liga/tabulky/',
   rows: [
     { pos: 1, team: 'HC Skuteč', games: 18, points: 49 },
-    { pos: 2, team: 'HC Čestice', games: 18, points: 38 },
+    { pos: 2, team: CLUB_NAME, games: 18, points: 38 },
     { pos: 3, team: 'HC Baroni Opočno', games: 18, points: 36 },
     { pos: 4, team: 'HC Spartak Choceň B', games: 18, points: 34 },
     { pos: 5, team: 'Rebels Polička', games: 18, points: 27 },
@@ -195,7 +188,7 @@ export const HISTORY_PAGE = {
     headline: 'Historické fotky a archivy sezón',
     perex: 'Družstva z 60. let, stavba ledu, archiv výsledků od sezóny 2015/16.',
     label: 'Otevřít fotoalbum',
-    href: '/fotogalerie',
+    href: routes.list.galleries,
   },
   fallbackMilestones: [
     {
@@ -248,50 +241,6 @@ export const HISTORY_PAGE = {
     },
   ],
 } as const
-
-/** Lidé v klubu — portréty jsou media z importu (soupiska 2025). */
-export const PEOPLE = [
-  {
-    name: 'Ing. Lukáš Beránek',
-    role: 'Předseda oddílu',
-    note: 'Vedení oddílu, mužstvo mužů',
-    mail: 'lukas.beranek84@seznam.cz',
-    phone: '+420 732 713 435',
-    portrait: 'beranek-lukas.jpg',
-  },
-  {
-    name: 'Jaroslav Macháček',
-    role: 'Trenér mužů',
-    note: 'Tréninky a sestava A-týmu',
-    mail: null,
-    phone: '+420 737 731 747',
-    portrait: 'machacek-jaroslav.jpg',
-  },
-  {
-    name: 'Jaroslav Bárta st.',
-    role: 'Asistent trenéra mužů',
-    note: 'Mužstvo mužů',
-    mail: null,
-    phone: '+420 777 018 123',
-    portrait: 'barta-jaroslav.jpg',
-  },
-  {
-    name: 'Michal Javůrek',
-    role: 'Trenér žáků a přípravky',
-    note: 'Mládež a přípravka',
-    mail: 'michal.javurek@centrum.cz',
-    phone: '+420 603 868 616',
-    portrait: 'javurek-michal.jpg',
-  },
-  {
-    name: 'Lukáš Sajdl',
-    role: 'PR manager',
-    note: 'Web, Facebook, Instagram',
-    mail: 'lukas.sajdll@seznam.cz',
-    phone: '+420 603 992 752',
-    portrait: 'sajdl-lukas.jpg',
-  },
-] as const
 
 export const FAQ = [
   {
@@ -385,6 +334,5 @@ export const FOOTER = {
       ],
     },
   ],
-  copyright: `© ${new Date().getFullYear()} HC Čestice — TJ Sokol Čestice`,
   league: 'Východočeská hokejová liga',
 } as const

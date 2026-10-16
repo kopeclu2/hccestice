@@ -1,6 +1,7 @@
 import { normalizeName } from '@/ahl'
 
 import { buildPatch } from '../diff'
+
 import type { SyncContext } from './ctx'
 
 export type PlayerCandidate = {
@@ -58,9 +59,15 @@ export type PlayerResolver = {
 const validNumber = (n: number | null | undefined): n is number => n != null && n >= 1 && n <= 99
 
 export async function createPlayerResolver(ctx: SyncContext): Promise<PlayerResolver> {
-  const players: PlayerLike[] = (await ctx.payload.find({ collection: 'players', limit: 0, depth: 0 })).docs.map(
-    (d) => ({ id: d.id, name: d.name, number: d.number, ahlPlayerId: d.ahlPlayerId, position: d.position }),
-  )
+  const players: PlayerLike[] = (
+    await ctx.payload.find({ collection: 'players', limit: 0, depth: 0 })
+  ).docs.map((d) => ({
+    id: d.id,
+    name: d.name,
+    number: d.number,
+    ahlPlayerId: d.ahlPlayerId,
+    position: d.position,
+  }))
   const resolved = new Map<string, number | null>()
   const idKey = (id: number) => `id:${id}`
 
@@ -116,7 +123,10 @@ export async function createPlayerResolver(ctx: SyncContext): Promise<PlayerReso
           const desired: Record<string, unknown> = {}
           if (c.ahlPlayerId != null && p.ahlPlayerId == null) desired.ahlPlayerId = c.ahlPlayerId
           if (p.number == null && validNumber(c.number)) desired.number = c.number
-          const { patch, fields, before, after } = buildPatch(p as unknown as Record<string, unknown>, desired)
+          const { patch, fields, before, after } = buildPatch(
+            p as unknown as Record<string, unknown>,
+            desired,
+          )
           if (fields.length > 0) {
             ctx.recordDiff({
               entity: 'players',

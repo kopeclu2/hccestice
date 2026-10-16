@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
-
 import { notFound, permanentRedirect } from 'next/navigation'
 
-import { getCachedRedirects } from '@/utilities/getRedirects'
+import { getCachedRedirects } from '@/server/getRedirects'
 
 /**
  * Catch-all pro staré eStránky URL /fotoalbum/... — 301 přes kolekci redirects

@@ -1,14 +1,13 @@
-import type { ProductCardBlock } from '@/payload-types'
-
 import React from 'react'
 
-import { Kicker } from '../../components/Kicker'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
-import { relId } from '../../data/format'
-import { fetchProduct } from '../../data/products'
-import { fetchSite } from '../../data/site'
-import { ProductTile } from '../ProductsGrid/Component'
+import { fetchSite } from '@/landing/data/site'
+import { ProductTile } from '@/landing/features/products/components/ProductTile'
+import { fetchProduct } from '@/landing/features/products/data'
+import { relId } from '@/landing/lib/payload'
+import { Kicker } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { ProductCardBlock } from '@/payload-types'
 
 /** Karta jednoho produktu — vypíchnutí konkrétního merche. */
 export async function ProductCardBlockComponent({ block }: { block: ProductCardBlock }) {
@@ -29,7 +28,7 @@ export async function ProductCardBlockComponent({ block }: { block: ProductCardB
           )}
           <ProductTile ctaLabel="Objednat e-mailem" email={site.email} product={product} />
           {!product.available && (
-            <p className="text-faint mt-3 text-center text-sm font-medium">
+            <p className="mt-3 text-center text-sm font-medium text-faint">
               Momentálně mimo nabídku.
             </p>
           )}

@@ -1,0 +1,12 @@
+# Formát a lint jen na staged souborech.
+bunx lint-staged || exit 1
+
+# Hlídač design tokenů — brání návratu random barev do repa
+# (dřív .git/hooks/pre-commit, ten husky obchází přes core.hooksPath).
+# Přeskočit lze `git commit --no-verify`.
+if ! node scripts/check-tokens.mjs; then
+  echo ""
+  echo "pre-commit: commit zastaven kvůli únikům z design systému (výš)."
+  echo "Buď použij token, nebo doplň 'token-check-ignore: <důvod>'."
+  exit 1
+fi

@@ -1,0 +1,152 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
+
+import {
+  PatternBackground,
+  type PatternFade,
+  type PatternTone,
+  type PatternVariant,
+} from '@/landing/ui/PatternBackground'
+import { cn } from '@/lib/utils'
+
+/**
+ * DEV přepínač vzorů pozadí — plovoucí lišta dole (vzor: přepínač hero
+ * variant z prototypu). Vybraný vzor se promítne přes celou stránku,
+ * takže jde posoudit přímo v kontextu obsahu.
+ *
+ * Montuje se jen ve vývoji (viz layout `(landing)`); volba se drží
+ * v localStorage, přežije tedy navigaci mezi stránkami.
+ */
+
+const VARIANTS: Array<{ id: PatternVariant | null; label: string }> = [
+  { id: null, label: 'vyp' },
+  { id: 'grid', label: 'grid' },
+  { id: 'grid-dashed', label: 'dash' },
+  { id: 'cross', label: 'cross' },
+  { id: 'dots', label: 'dots' },
+  { id: 'hatch', label: 'hatch' },
+  { id: 'circuit', label: 'circuit' },
+  { id: 'glow', label: 'glow' },
+  { id: 'glow-duo', label: 'duo' },
+  { id: 'noise', label: 'noise' },
+]
+
+const FADES: PatternFade[] = [
+  'none',
+  'center',
+  'top',
+  'bottom',
+  'left',
+  'right',
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+]
+
+const TONES: PatternTone[] = ['club', 'lime', 'ink', 'white']
+
+const STORAGE_KEY = 'dev-pattern-switcher'
+
+type SwitcherState = {
+  variant: PatternVariant | null
+  fade: PatternFade
+  tone: PatternTone
+}
+
+const DEFAULT_STATE: SwitcherState = { variant: null, fade: 'center', tone: 'club' }
+
+const readStoredState = (): SwitcherState => {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY)
+    if (saved) return { ...DEFAULT_STATE, ...JSON.parse(saved) }
+  } catch {
+    /* poškozený záznam — zůstane výchozí stav */
+  }
+  return DEFAULT_STATE
+}
+
+export function PatternDevSwitcher() {
+  // Lazy initial state místo setState v efektu — localStorage se čte jen
+  // jednou, při prvním renderu na klientovi (SSR dostane výchozí stav).
+  const [state, setState] = useState<SwitcherState>(() =>
+    typeof window === 'undefined' ? DEFAULT_STATE : readStoredState(),
+  )
+  const [loaded, setLoaded] = useState(false)
+
+  // `loaded` je úmyslný jednorázový příznak po hydrataci (localStorage není
+  // na serveru k dispozici), ne odvozený stav.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setLoaded(true), [])
+
+  const update = (patch: Partial<SwitcherState>) => {
+    setState((prev) => {
+      const next = { ...prev, ...patch }
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        /* private mode — volba se neuloží */
+      }
+      return next
+    })
+  }
+
+  const cycle = <T,>(list: readonly T[], current: T): T =>
+    list[(list.indexOf(current) + 1) % list.length] as T
+
+  if (!loaded) return null
+
+  return (
+    <>
+      {/* náhledová vrstva vzoru přes celou stránku (pod lištou, nad obsahem — jen dev) */}
+      {state.variant && (
+        <div className="pointer-events-none fixed inset-0 z-40">
+          <PatternBackground fade={state.fade} tone={state.tone} variant={state.variant} />
+        </div>
+      )}
+
+      <div className="fixed bottom-4.5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-on-contrast-glass bg-contrast/92 p-1.5 shadow-overlay backdrop-blur-xl md:flex">
+        <span className="px-2 pl-3 text-eyebrow font-bold tracking-[0.14em] text-on-contrast-faint uppercase">
+          Vzor
+        </span>
+
+        {VARIANTS.map((item) => (
+          <button
+            className={cn(
+              'cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap transition-colors',
+              state.variant === item.id
+                ? 'bg-lime text-ink'
+                : 'text-on-contrast-soft hover:bg-on-contrast-wash hover:text-on-contrast',
+            )}
+            key={item.label}
+            onClick={() => update({ variant: item.id })}
+            type="button"
+          >
+            {item.label}
+          </button>
+        ))}
+
+        <span className="mx-1 h-5 w-px bg-on-contrast-glass" />
+
+        <button
+          className="cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap text-on-contrast-soft transition-colors hover:bg-on-contrast-wash hover:text-on-contrast"
+          onClick={() => update({ fade: cycle(FADES, state.fade) })}
+          title="Přepnout fade masku"
+          type="button"
+        >
+          fade: <span className="text-lime">{state.fade}</span>
+        </button>
+
+        <button
+          className="cursor-pointer rounded-full px-3 py-2 text-xs font-semibold whitespace-nowrap text-on-contrast-soft transition-colors hover:bg-on-contrast-wash hover:text-on-contrast"
+          onClick={() => update({ tone: cycle(TONES, state.tone) })}
+          title="Přepnout barvu vzoru"
+          type="button"
+        >
+          tone: <span className="text-lime">{state.tone}</span>
+        </button>
+      </div>
+    </>
+  )
+}

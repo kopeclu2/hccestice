@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { pragueLocalToUtc, utcToPragueLocal } from '../../src/jobs/vchlSync/time'
+import { pragueLocalToUtc, utcToPragueLocal } from '@/lib/datetime'
 
 const utc = (s: string) => pragueLocalToUtc(s).toISOString()
 
@@ -21,13 +21,21 @@ describe('vchl čas Europe/Prague → UTC', () => {
   })
 
   it('nezávisí na zóně stroje: zpětný převod vrátí původní čas', () => {
-    for (const local of ['2026-10-04T16:30:00', '2026-12-05T18:00:00', '2027-03-28T16:30:00', '2027-07-01T00:00:00']) {
+    for (const local of [
+      '2026-10-04T16:30:00',
+      '2026-12-05T18:00:00',
+      '2027-03-28T16:30:00',
+      '2027-07-01T00:00:00',
+    ]) {
       const back = utcToPragueLocal(pragueLocalToUtc(local))
       expect(`${back.day}T${back.time}:00`).toBe(local)
     }
   })
 
   it('půlnoc zůstane v místním dni', () => {
-    expect(utcToPragueLocal('2026-10-03T22:00:00.000Z')).toEqual({ day: '2026-10-04', time: '00:00' })
+    expect(utcToPragueLocal('2026-10-03T22:00:00.000Z')).toEqual({
+      day: '2026-10-04',
+      time: '00:00',
+    })
   })
 })

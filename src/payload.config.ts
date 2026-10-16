@@ -1,10 +1,14 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
+
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { cs } from '@payloadcms/translations/languages/cs'
 import { en } from '@payloadcms/translations/languages/en'
-import sharp from 'sharp'
-import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
-import { fileURLToPath } from 'url'
+import sharp from 'sharp'
+
+import { defaultLexical } from '@/fields/defaultLexical'
+import { getServerSideURL } from '@/lib/getURL'
 
 import { Categories } from './collections/Categories'
 import { Galleries } from './collections/Galleries'
@@ -13,26 +17,21 @@ import { Media } from './collections/Media'
 import { Milestones } from './collections/Milestones'
 import { Opponents } from './collections/Opponents'
 import { Pages } from './collections/Pages'
+import { People } from './collections/People'
 import { Players } from './collections/Players'
 import { Posts } from './collections/Posts'
+import { Products } from './collections/Products'
 import { Seasons } from './collections/Seasons'
 import { Sponsors } from './collections/Sponsors'
-import { People } from './collections/People'
-import { Products } from './collections/Products'
 import { Teams } from './collections/Teams'
 import { Users } from './collections/Users'
 import { VchlSyncRuns } from './collections/VchlSyncRuns'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
-import { Sidebar } from './globals/Sidebar/config'
-import { SiteConfig } from './globals/SiteConfig/config'
-import { VchlSync } from './globals/VchlSync/config'
-import { plugins } from './plugins'
-import { vchlSyncTask, VCHL_CRON, VCHL_QUEUE } from './jobs/vchlSync/task'
 import { emailAdapter } from './email/adapter'
 import { vchlSyncEndpoints } from './endpoints/vchlSync'
-import { defaultLexical } from '@/fields/defaultLexical'
-import { getServerSideURL } from './utilities/getURL'
+import { SiteConfig } from './globals/SiteConfig/config'
+import { VchlSync } from './globals/VchlSync/config'
+import { vchlSyncTask, VCHL_CRON, VCHL_QUEUE } from './jobs/vchlSync/task'
+import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -126,7 +125,7 @@ export default buildConfig({
   // `email` bere i Promise, takže se tu záměrně nečeká na `await`.
   email: emailAdapter(),
   endpoints: vchlSyncEndpoints,
-  globals: [Header, Footer, SiteConfig, Sidebar, VchlSync],
+  globals: [SiteConfig, VchlSync],
   // Administrace v češtině (fallback en pro nepřeložené řetězce)
   i18n: {
     fallbackLanguage: 'cs',

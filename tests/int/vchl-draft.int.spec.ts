@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
+
 import { describe, expect, it } from 'vitest'
 
 import { parseMatchDetail } from '../../src/ahl'
@@ -13,7 +14,8 @@ import {
 } from '../../src/jobs/vchlSync/sync/draftPost'
 import { ourSide } from '../../src/jobs/vchlSync/sync/matchDetail'
 
-const fx = (name: string) => readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')
+const fx = (name: string) =>
+  readFileSync(path.resolve(import.meta.dirname, '../fixtures/ahl', name), 'utf8')
 const detail = parseMatchDetail(fx('zapas-46616.html'), 46616)
 
 type Node = { type: string; children?: Node[]; text?: string; format?: number | string }
@@ -51,7 +53,9 @@ describe('vchl koncept reportáže', () => {
   })
 
   it('Lexical: root, tři odstavce, tučný štítek, placeholder na konci', () => {
-    const c = buildDraftContent(detail, 'home', 'Pardubice', true) as unknown as { root: Node & { direction: string } }
+    const c = buildDraftContent(detail, 'home', 'Pardubice', true) as unknown as {
+      root: Node & { direction: string }
+    }
     expect(c.root.type).toBe('root')
     expect(c.root.children).toHaveLength(3)
     const [result, goals, todo] = c.root.children!
@@ -59,7 +63,8 @@ describe('vchl koncept reportáže', () => {
     expect(plain(goals)).toMatch(/^Branky Čestic: /)
     expect(result.children![0]).toMatchObject({ type: 'text', format: 1, version: 1 })
     expect(plain(todo)).toBe('Doplňte text reportáže…')
-    for (const p of c.root.children!) expect(p).toMatchObject({ type: 'paragraph', version: 1, direction: 'ltr' })
+    for (const p of c.root.children!)
+      expect(p).toMatchObject({ type: 'paragraph', version: 1, direction: 'ltr' })
   })
 
   it('bez našich branek to řekne slovy', () => {

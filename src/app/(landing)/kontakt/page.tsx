@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-
 import React from 'react'
 
-import { SubpageShell } from '@/landing/components/SubpageShell'
 import { fetchAllPeople, fetchSite } from '@/landing/data/site'
-import { KontaktCta } from '@/landing/kontakt/KontaktCta'
-import { KontaktHeader } from '@/landing/kontakt/KontaktHeader'
-import { KontaktMap } from '@/landing/kontakt/KontaktMap'
-import { KontaktPanel } from '@/landing/kontakt/KontaktPanel'
+import { ContactCta } from '@/landing/features/contact/components/ContactCta'
+import { ContactHeader } from '@/landing/features/contact/components/ContactHeader'
+import { ContactMap } from '@/landing/features/contact/components/ContactMap'
+import { ContactPanel } from '@/landing/features/contact/components/ContactPanel'
+import { SubpageShell } from '@/landing/layout/SubpageShell'
+import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
 
@@ -24,16 +24,16 @@ export default async function KontaktPage() {
 
   return (
     <SubpageShell>
-      <KontaktHeader />
-      <KontaktPanel people={people} site={site} />
-      <KontaktMap />
-      <KontaktCta />
+      <ContactHeader />
+      <ContactPanel people={people} site={site} />
+      <ContactMap />
+      <ContactCta />
     </SubpageShell>
   )
 }
 
 export const metadata: Metadata = {
-  title: 'Kontakt | HC Čestice',
+  title: brandTitle('Kontakt'),
   description:
     'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám na hccestice@seznam.cz nebo přes formulář.',
   alternates: { canonical: '/kontakt' },

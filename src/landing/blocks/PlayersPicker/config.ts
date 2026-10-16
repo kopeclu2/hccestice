@@ -1,6 +1,5 @@
 import type { Block } from 'payload'
 
-
 export const PlayersPickerWidget: Block = {
   slug: 'playersPicker',
   interfaceName: 'PlayersPickerBlock',

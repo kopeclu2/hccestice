@@ -1,12 +1,12 @@
-import type { SectionHeadingBlockType } from '@/payload-types'
-
+import Link from 'next/link'
 import React from 'react'
 
-import { SectionTitle } from '../../components/Heading'
-import { Highlight, Kicker } from '../../components/Kicker'
-import { PillLink } from '../../components/PillLink'
-import { Reveal } from '../../components/Reveal'
-import { SectionShell } from '../../components/SectionShell'
+import { Button } from '@/components/ui/button'
+import { SectionTitle } from '@/landing/ui/Heading'
+import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Reveal } from '@/landing/ui/Reveal'
+import { SectionShell } from '@/landing/ui/SectionShell'
+import type { SectionHeadingBlockType } from '@/payload-types'
 
 /** Nadpis sekce — kicker + H2 s lime zvýrazněním + volitelné CTA vpravo. */
 export function SectionHeadingBlockComponent({ block }: { block: SectionHeadingBlockType }) {
@@ -20,14 +20,14 @@ export function SectionHeadingBlockComponent({ block }: { block: SectionHeadingB
               {block.title} {block.titleHighlight && <Highlight>{block.titleHighlight}</Highlight>}
             </SectionTitle>
             {block.perex && (
-              <p className="text-dim mt-3 max-w-140 leading-relaxed text-pretty">{block.perex}</p>
+              <p className="mt-3 max-w-140 leading-relaxed text-pretty text-dim">{block.perex}</p>
             )}
           </div>
           <div className="flex-1" />
           {block.ctaLabel && block.ctaHref && (
-            <PillLink href={block.ctaHref} size="md" variant="dark" withArrow>
-              {block.ctaLabel}
-            </PillLink>
+            <Button asChild size="md" variant="dark" withArrow>
+              <Link href={block.ctaHref}>{block.ctaLabel}</Link>
+            </Button>
           )}
         </div>
       </Reveal>

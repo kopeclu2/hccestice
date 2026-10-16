@@ -32,6 +32,8 @@ export const LANDING_COLORS = {
   'faint-dark': '#a9b4ad',
   tint: '#e8f2ec',
   paper: '#f4f6f4',
+  surface: '#ffffff',
+  'on-contrast': '#ffffff',
   'line-mid': '#e2e9e4',
   danger: '#b91c1c',
   'danger-soft': '#f87171',
