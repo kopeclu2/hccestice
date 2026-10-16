@@ -37,6 +37,29 @@ import { plugins } from './plugins'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+/**
+ * Původy, ze kterých smí přijít request s cookie přihlášení (`payload-token`).
+ * Bez `csrf` Payload bere cookie z libovolného původu, takže cizí stránka by
+ * mohla cookie přihlášeného správce zneužít (CSRF). Request s `Origin` mimo
+ * seznam se tváří jako nepřihlášený; bez `Origin` (GET z prohlížeče) rozhoduje
+ * `Sec-Fetch-Site`, takže same-origin navigace v adminu a v draft módu fungují.
+ *
+ * Lokálně se přidává `localhost:3000`, jinak by `getServerSideURL()` s
+ * nastaveným `NEXT_PUBLIC_SERVER_URL` na ostrou doménu vyřadil přihlášení v devu.
+ * V produkci musí `NEXT_PUBLIC_SERVER_URL` odpovídat doméně, ze které se do
+ * adminu chodí (zapéká se při buildu).
+ *
+ * `serverURL` záměrně nenastavujeme: změnil by URL adminu a API na absolutní,
+ * takže by admin přestal fungovat na jiném hostu než tom z env (localhost vs.
+ * 127.0.0.1, preview domény). Pro `csrf` stačí seznam výš.
+ */
+const csrfOrigins = [
+  getServerSideURL(),
+  ...(process.env.NODE_ENV === 'production'
+    ? []
+    : ['http://localhost:3000', 'http://127.0.0.1:3000']),
+].filter((origin, index, all) => Boolean(origin) && all.indexOf(origin) === index)
+
 export default buildConfig({
   admin: {
     importMap: {
@@ -111,6 +134,7 @@ export default buildConfig({
     VchlSyncRuns,
   ],
   cors: [getServerSideURL()].filter(Boolean),
+  csrf: csrfOrigins,
   /**
    * Strop `depth` pro všechny dotazy (Payload ho uplatňuje v `afterRead`
    * i pro Local API; výchozích 10 je pro veřejné REST zbytečně hodně).

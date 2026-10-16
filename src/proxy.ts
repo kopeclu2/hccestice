@@ -38,7 +38,13 @@ const sessionMemo = new Map<string, { authenticated: boolean; expires: number }>
 async function readState(path: string, cookie?: string) {
   const res = await fetch(`${INTERNAL_ORIGIN}${path}`, {
     cache: 'no-store',
-    headers: cookie ? { cookie } : undefined,
+    // `payload.auth` v interní route s nastaveným `csrf` bere cookie jen u requestu
+    // s `Origin` ze seznamu, nebo (bez `Origin`) se `Sec-Fetch-Site` same-origin.
+    // Tenhle interní fetch žádnou z hlaviček nenese, takže bez ní by správce
+    // nikdy neprošel bránou. Je to volání proxy → vlastní route na loopbacku,
+    // ne request prohlížeče, a rozhoduje se jím jen o zobrazení veřejného webu
+    // (platnost tokenu pořád ověřuje podpis JWT).
+    headers: cookie ? { cookie, 'sec-fetch-site': 'same-origin' } : undefined,
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   })
   if (!res.ok) throw new Error(`/internal/maintenance → ${res.status}`)
