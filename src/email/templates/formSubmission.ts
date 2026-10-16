@@ -13,6 +13,7 @@
  * - **autoresponder odesílateli** — jen text z admina, `replyTo` na klub.
  */
 import type { BeforeEmail, FormattedEmail } from '@payloadcms/plugin-form-builder/types'
+import { z } from 'zod'
 
 import { getServerSideURL } from '@/lib/getURL'
 
@@ -23,6 +24,32 @@ import { renderEmail, type EmailRow } from '../render'
 const SUBMITTER_EMAIL_FIELD = 'email'
 
 type SubmissionEntry = { field: string; value?: unknown }
+
+const singleEmail = z.email()
+
+/**
+ * Adresa odesílatele, nebo `null`, když to není **právě jedna platná**
+ * adresa. Hodnota pole `email` jde přes `POST /api/form-submissions`
+ * nevalidovaná a plugin ji dosazuje do `to` autoresponderu (`{{email}}`),
+ * takže `a@x.cz, b@y.cz` by potvrzení poslalo oběma — klubová schránka by
+ * sloužila jako open relay pro cizí adresy.
+ */
+export const parseSubmitterEmail = (raw: string): string | null => {
+  const parsed = singleEmail.safeParse(raw.trim())
+  return parsed.success ? parsed.data.toLowerCase() : null
+}
+
+/** Adresy v poli `to` — plugin je rozděluje čárkou, nodemailer i středníkem. */
+const recipientsOf = (to: string): string[] =>
+  to
+    .split(/[,;]/)
+    .map((part) =>
+      part
+        .replace(/^.*<(.+)>.*$/, '$1')
+        .trim()
+        .toLowerCase(),
+    )
+    .filter(Boolean)
 
 /**
  * `beforeEmail` se volá z **afterChange** hooku
@@ -75,11 +102,24 @@ export const wrapFormEmails: BeforeEmail = async (emails, params) => {
   }
 
   const rows = toRows(entries, labels)
-  const submitterEmail = String(
+  const rawSubmitter = String(
     entries.find((entry) => entry.field === SUBMITTER_EMAIL_FIELD)?.value ?? '',
   )
     .trim()
     .toLowerCase()
+  const submitterEmail = parseSubmitterEmail(rawSubmitter) ?? ''
+  // Vyplněné, ale nepoužitelné (víc adres, nesmysl): z e-mailů, které by na
+  // takovou hodnotu šly, se nepošle nic.
+  const submitterRejected = Boolean(rawSubmitter) && !submitterEmail
+  // Míří hlavička na vadnou hodnotu? Rovnost pro `{{email}}` samotné, `includes`
+  // jen u hodnoty s `@` — „a" by jinak „našlo" i klubovou adresu.
+  const carriesRejected = (header: string | undefined): boolean => {
+    const value = (header ?? '').trim().toLowerCase()
+    return (
+      submitterRejected &&
+      (value === rawSubmitter || (rawSubmitter.includes('@') && value.includes(rawSubmitter)))
+    )
+  }
 
   const submissionId = (params as typeof params & WithDoc).doc?.id
 
@@ -89,9 +129,18 @@ export const wrapFormEmails: BeforeEmail = async (emails, params) => {
 
   const branding = emailBranding()
 
-  const prepared = emails.map((email) => {
+  const deliverable = emails.filter((email) => {
+    if (!carriesRejected(email.to)) return true
+    // Bez adres a bez textu — v logu je PII zbytečné, stačí, že se to stalo.
+    payload.logger.warn({
+      msg: 'Autoresponder zahozen: pole e-mail není právě jedna platná adresa',
+    })
+    return false
+  })
+
+  const prepared = deliverable.map((email) => {
     const isAutoresponder =
-      Boolean(submitterEmail) && email.to.toLowerCase().includes(submitterEmail)
+      Boolean(submitterEmail) && recipientsOf(email.to).includes(submitterEmail)
 
     const { html, text } = renderEmail({
       ...branding,
@@ -117,7 +166,9 @@ export const wrapFormEmails: BeforeEmail = async (emails, params) => {
       // PŘEPÍŠE a SMTP odmítne mail bez odesílatele.
       from: email.from || formattedFrom(),
       to: email.to || notificationAddress(),
-      replyTo: email.replyTo || (isAutoresponder ? notificationAddress() : submitterEmail),
+      replyTo:
+        (carriesRejected(email.replyTo) ? '' : email.replyTo) ||
+        (isAutoresponder ? notificationAddress() : submitterEmail),
       html,
       text,
     }
