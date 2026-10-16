@@ -15,7 +15,7 @@ function mapFaq(block: LandingFaqBlock): FaqItem[] {
   }))
 }
 
-/** FAQ — server komponenta namapuje položky a předá klientskému accordionu. */
+/** FAQ — server komponenta namapuje položky a předá accordionu na nativním `<details>`. */
 export function FaqBlockComponent({ block }: { block: LandingFaqBlock }) {
   return <FaqAccordion items={mapFaq(block)} />
 }
