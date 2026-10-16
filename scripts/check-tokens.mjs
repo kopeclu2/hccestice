@@ -15,10 +15,9 @@
  * Výjimka: `// token-check-ignore: <důvod>` na stejném nebo předchozím
  * řádku. Důvod je POVINNÝ — prázdný je pořád chyba.
  *
- * Všechna pravidla jsou `error` (exit 1). Pravidla s `legacyWarn: true`
- * (bílá/černá, výchozí radiusy, arbitrární rozměry s tokenem, inline `style`)
- * zůstávají `warn` jen v šablonových pozůstatcích z `LEGACY_TEMPLATE_PATHS`,
- * které smaže fáze 6 refaktoru. `--strict` povýší i ta upozornění na chyby.
+ * Všechna pravidla jsou `error` (exit 1). Přepínač `--strict` zůstal jako
+ * no-op, aby fungovala stará volání (šablonové pozůstatky, kvůli kterým
+ * existovala upozornění, jsou pryč).
  *
  * Pravidla `no-arbitrary-*` si seznam tokenů čtou z `@theme` v globals.css,
  * takže nový token se začne hlídat sám.
@@ -37,19 +36,6 @@ const TOKENS_FILE = 'src/landing/tokens.ts'
 const SKIP = ['src/payload-types.ts', 'src/payload-generated-schema.ts']
 
 const LANDING = ['src/landing/', 'src/app/(landing)/']
-
-/**
- * Šablonové pozůstatky Payload website template, které ještě nepřešly na
- * tokeny. Pravidla s `legacyWarn` tu hlásí jen upozornění, jinde chybu.
- */
-// TODO(fáze 6): smazat s šablonovými pozůstatky (celé pole i `legacyWarn`)
-const LEGACY_TEMPLATE_PATHS = [
-  'src/heros/',
-  'src/Header/',
-  'src/Footer/',
-  'src/blocks/',
-  'src/globals/Sidebar/',
-]
 
 /** Barvy shadcn vrstvy — v landingu nemají co dělat (viz dvě vrstvy v globals.css). */
 const SHADCN_COLORS =
@@ -83,7 +69,6 @@ function arbitraryRule({ name, prefix, values, hint, onlyIn }) {
   const alt = [...values.keys()].map(escapeRe).join('|')
   return {
     name,
-    legacyWarn: true,
     onlyIn,
     re: new RegExp(`(?<![\\w-])-?(?:${prefix})-\\[(${alt})\\](?![\\w-])`, 'g'),
     hintFor: (m) => {
@@ -223,10 +208,9 @@ const RULES = [
     hint: 'použij <Button>, <Button asChild><Link …/></Button> nebo buttonVariants z @/components/ui/button',
   },
 
-  /* ── pravidla `legacyWarn`: v šablonových pozůstatcích jen upozornění ── */
+  /* ── bílá/černá, výchozí radiusy, arbitrární rozměry s tokenem, inline `style` ── */
   {
     name: 'no-white-black',
-    legacyWarn: true,
     re: /(?<![\w-])(?:text|bg|border|ring|fill|stroke|from|via|to|shadow|outline|divide|placeholder)-(?:white|black)(?:\/\d+)?(?![\w-])/g,
     hintFor: (m) => {
       const [, prop, color, alpha] = m[0].match(/^(\w+)-(white|black)(?:\/(\d+))?$/) ?? []
@@ -239,7 +223,6 @@ const RULES = [
   },
   {
     name: 'no-default-radius',
-    legacyWarn: true,
     // Holé `rounded` a výchozí stupně sm–3xl; `full`, `none` a `[50%]` jsou v pořádku.
     re: /(?<![\w-])rounded(?:-(?:t|b|l|r|tl|tr|bl|br|s|e|ss|se|es|ee))?(?:-(?:sm|md|lg|xl|2xl|3xl))?(?![\w\[-])(?!\s*:)/g,
     hint: 'použij --radius-* token (icon 16, item 12, chip 8, tag 4, field 14…)',
@@ -271,7 +254,6 @@ const RULES = [
   }),
   {
     name: 'no-arbitrary-breakpoint',
-    legacyWarn: true,
     re: new RegExp(
       `(?<![\\w-])(min|max)-\\[(${[...breakpointValues.keys()].map(escapeRe).join('|')})\\]:`,
       'g',
@@ -283,13 +265,11 @@ const RULES = [
   },
   {
     name: 'no-arbitrary-aspect',
-    legacyWarn: true,
     re: /(?<![\w-])aspect-\[(\d+)\/(\d+)\](?![\w-])/g,
     hintFor: (m) => `aspect-${m[1]}/${m[2]}`,
   },
   {
     name: 'style-allowlist',
-    legacyWarn: true,
     re: /\bstyle=\{\{/g,
     hint: 'inline style jen v souborech z allowlistu (dynamická hodnota); jinak utility třída',
     exceptPathRe: STYLE_ALLOWLIST,
@@ -350,10 +330,7 @@ for (const file of files) {
           rule: rule.name,
           text: line.trim().slice(0, 100),
           hint: rule.hintFor ? rule.hintFor(match) : rule.hint,
-          severity:
-            rule.legacyWarn && LEGACY_TEMPLATE_PATHS.some((p) => rel.startsWith(p))
-              ? 'warn'
-              : 'error',
+          severity: 'error',
         })
       }
     }
@@ -454,12 +431,9 @@ for (const group of ['spacing', 'container', 'tracking', 'leading']) {
 
 /* ── výstup ────────────────────────────────────────────────────────────── */
 
-const strict = process.argv.includes('--strict')
 const quiet = process.argv.includes('--quiet')
-if (strict) for (const f of findings) f.severity = 'error'
 
-const errors = findings.filter((f) => f.severity === 'error')
-const warnings = findings.filter((f) => f.severity === 'warn')
+const errors = findings
 
 function countByRule(list) {
   const byRule = new Map()
@@ -480,16 +454,7 @@ if (!findings.length) {
   process.exit(0)
 }
 
-// Upozornění se vypisují jen v plném módu; v `--quiet` stačí souhrn.
-if (!quiet) printFindings(warnings, '⚠')
 printFindings(errors, '✗')
-
-if (warnings.length) {
-  console.log(`\n⚠ ${warnings.length} upozornění (šablonové pozůstatky, smaže je fáze 6):`)
-  for (const [rule, count] of countByRule(warnings)) {
-    console.log(`   ${String(count).padStart(4)}  ${rule}`)
-  }
-}
 
 if (errors.length) {
   console.log(`\n✗ ${errors.length} nálezů:`)
@@ -499,6 +464,3 @@ if (errors.length) {
   console.log('\nVýjimku lze povolit komentářem `token-check-ignore: <důvod>` (důvod povinný).')
   process.exit(1)
 }
-
-console.log(`\n✓ check-tokens: ${files.length} souborů, žádná chyba (jen upozornění)`)
-process.exit(0)

@@ -45,7 +45,6 @@ await payload.create({
     title: 'Ukázka bloků',
     slug: 'ukazka-bloku',
     generateSlug: false,
-    hero: { type: 'none' },
     layout: [
       { blockType: 'matchWidget', mode: 'played', season: season?.id, limit: 5 },
       {

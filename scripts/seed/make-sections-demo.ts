@@ -45,7 +45,6 @@ await payload.create({
     title: 'Ukázka sekcí (stavebnice)',
     slug: 'ukazka-sekci',
     generateSlug: false,
-    hero: { type: 'none' },
     layout: [
       {
         blockType: 'sectionHeading',

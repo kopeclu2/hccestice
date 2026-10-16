@@ -146,7 +146,6 @@ const homeData = {
   title: 'HC Čestice — hokejový klub',
   slug: 'home',
   generateSlug: false,
-  hero: { type: 'none' },
   layout,
   meta: {
     title: 'HC Čestice — hokejový klub | TJ Sokol Čestice',

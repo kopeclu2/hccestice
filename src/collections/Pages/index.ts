@@ -8,7 +8,6 @@ import {
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
-import { hero } from '@/heros/config'
 import { FormBlock } from '@/landing/blocks/Form/config'
 import { RawHtml } from '@/landing/blocks/RawHtml/config'
 import { generatePreviewPath } from '@/lib/generatePreviewPath'
@@ -67,10 +66,6 @@ export const Pages: CollectionConfig<'pages'> = {
     {
       type: 'tabs',
       tabs: [
-        {
-          fields: [hero],
-          label: 'Hero',
-        },
         {
           fields: [
             {

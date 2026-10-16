@@ -110,9 +110,6 @@ if (!legacyContact) {
       data: {
         title: 'Kontakty',
         slug: 'kontakty',
-        hero: JSON.parse(JSON.stringify(legacyContact.hero ?? null), (key, value) =>
-          key === 'id' ? undefined : value,
-        ),
         layout: cleanedLayout,
         meta: {
           title: 'Kontakty',

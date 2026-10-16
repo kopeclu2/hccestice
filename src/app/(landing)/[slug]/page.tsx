@@ -5,7 +5,6 @@ import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { RenderHero } from '@/heros/RenderHero'
 import { RenderBlocks } from '@/landing/blocks/render'
 import { fetchPageBySlug, fetchPageSlugs } from '@/landing/features/pages/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
@@ -54,26 +53,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     return <PayloadRedirects url={url} />
   }
 
-  const { hero, layout } = page
-
-  /**
-   * Všech sedm dokumentů v `pages` má `hero.type = 'none'`, takže
-   * `RenderHero` vrátí `null` a `page.title` se nevykreslil nikdy —
-   * `/kontakty`, `/nabor` i `/reklamni-predmety` byly bez `<h1>` a bez
-   * drobečků. Titulek v CMS přitom vyplněný je; chyběla jen hlavička,
-   * která ho zobrazí. `PageHeader` je tatáž komponenta, jakou používá
-   * sedm ručně psaných podstránek, takže se vzhled ani drobečková
-   * strukturovaná data nemohou rozejít.
-   *
-   * Nestačí ale typ: hero bez obsahu se taky nevykreslí (`LowImpactHero`
-   * vrací `null` pro prázdný `richText`, viz `heros/LowImpact/index.tsx`),
-   * takže `/produkty-merch` s herem `lowImpact` a prázdným textem zůstalo
-   * bez hlavičky úplně stejně. Podmínka proto hlídá i obsah — jinak
-   * mřížka produktů začínala hned pod navigací a bez `<h1>`.
-   */
-  const hasHero = Boolean(
-    hero?.type && hero.type !== 'none' && (hero.richText || hero.media || hero.links?.length),
-  )
+  const { layout } = page
 
   return (
     <SubpageShell>
@@ -82,11 +62,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      {hasHero ? (
-        <RenderHero {...hero} />
-      ) : (
-        <PageHeader title={page.title} trail={[{ label: page.title }]} />
-      )}
+      <PageHeader title={page.title} trail={[{ label: page.title }]} />
       <RenderBlocks blocks={layout} />
     </SubpageShell>
   )
