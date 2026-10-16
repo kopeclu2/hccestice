@@ -17,11 +17,15 @@ import { Watermark } from '@/landing/ui/Watermark'
  * stránce s FAQ.
  *
  * Společné `name` dělá z `<details>` výlučnou skupinu (otevření jedné zavře
- * ostatní): Chrome 120, Safari 17.2, Firefox 130. Starší prohlížeč skupinu
- * ignoruje a nechá otevřít víc otázek najednou, nic se nerozbije.
+ * ostatní). Skupina je **na blok** (`useId`, funguje i v Server Componentě):
+ * se sdíleným `name="faq"` by dva FAQ bloky na jedné stránce zavíraly jeden
+ * druhého. Podpora: Chrome 120, Safari 17.2, Firefox 130; starší prohlížeč
+ * skupinu ignoruje a nechá otevřít víc otázek najednou, nic se nerozbije.
  * Ikona +/− se přepíná CSS podle `open`, ne Reactem.
  */
 export function FaqAccordion({ items }: { items: FaqItem[] }) {
+  const groupName = `faq-${React.useId()}`
+
   if (items.length === 0) return null
 
   return (
@@ -36,8 +40,8 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
         {items.map((item, index) => (
           <details
             className="group mb-4 break-inside-avoid rounded-row bg-surface"
-            key={item.question}
-            name="faq"
+            key={`${index}-${item.question}`}
+            name={groupName}
             open={index === 0}
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-row px-4.5 py-4 text-base marker:content-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-club md:px-5 md:py-4.25 lg:px-5.5 lg:py-4.5 [&::-webkit-details-marker]:hidden">
