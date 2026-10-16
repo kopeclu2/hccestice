@@ -13,9 +13,9 @@ import { notificationAddress } from '@/email/config'
 import { wrapFormEmails } from '@/email/templates/formSubmission'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { brandTitle } from '@/lib/brandTitle'
-import { getServerSideURL } from '@/lib/getURL'
 import { getClientIp, isRateLimited } from '@/lib/rateLimit'
 import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/lib/recaptcha/config'
+import { seoPreviewUrl } from '@/lib/seoPreviewUrl'
 import { Page, Post } from '@/payload-types'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { searchFields } from '@/search/fieldOverrides'
@@ -29,11 +29,8 @@ const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return brandTitle(doc?.title)
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-  const url = getServerSideURL()
-
-  return doc?.slug ? `${url}/${doc.slug}` : url
-}
+const generateURL: GenerateURL<Post | Page> = ({ doc, collectionSlug, collectionConfig }) =>
+  seoPreviewUrl({ collectionSlug, collectionConfig, slug: doc?.slug })
 
 export const plugins: Plugin[] = [
   redirectsPlugin({

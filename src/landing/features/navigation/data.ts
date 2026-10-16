@@ -7,6 +7,7 @@ import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
+import { routes } from '@/lib/routes'
 import type { NavigationItem } from '@/payload-types'
 
 /** Resolvery cílů jsou v `navHref.ts` (client-safe) — tady jen re-export. */
@@ -32,7 +33,11 @@ function toNavItem(doc: NavigationItem): NavItem | null {
     const reference = link?.reference
     if (reference && typeof reference === 'object' && 'value' in reference) {
       const page = reference.value
-      if (page && typeof page === 'object' && 'slug' in page && page.slug) return `/${page.slug}`
+      // Relace míří jen na `pages`; `routes.page` navíc dá `/` místo `/home`
+      // (ten by skončil 308 přesměrováním).
+      if (page && typeof page === 'object' && 'slug' in page && page.slug) {
+        return routes.page(page.slug)
+      }
     }
     return null
   })()
