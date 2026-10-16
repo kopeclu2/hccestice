@@ -2,7 +2,7 @@
  * Import dat z eStránky do Payload (Local API).
  *
  * Pořadí: média → sezóny/týmy/soupeři → galerie → články (pages/posts)
- *         → siteConfig/sidebar/homepage → redirecty
+ *         → siteConfig/homepage → redirecty
  *
  * Idempotentní: existující záznamy (podle legacy markerů) se přeskakují,
  * takže skript lze po přerušení spustit znovu.
@@ -110,7 +110,6 @@ async function main() {
   const pictures = DATA('pictures.json') as any[]
   const files = DATA('files.json') as any[]
   const settings = DATA('settings.json') as Record<string, string>
-  const codes = DATA('codes.json') as any[]
   const homepage = DATA('homepage.json') as any[]
 
   // ==========================================================================
@@ -480,7 +479,7 @@ async function main() {
   log(`  hotovo`)
 
   // ==========================================================================
-  // 6) SITE CONFIG, SIDEBAR, HOMEPAGE
+  // 6) SITE CONFIG, HOMEPAGE
   // ==========================================================================
 
   await payload.updateGlobal({
@@ -494,20 +493,6 @@ async function main() {
     ...noRevalidate,
   })
   log('siteConfig nastaven')
-
-  const enabledCodes = codes.filter((c: any) => c.enabled)
-  await payload.updateGlobal({
-    slug: 'sidebar',
-    data: {
-      widgets: enabledCodes.map((c: any) => ({
-        blockType: 'rawHtml',
-        blockName: c.title.trim() || undefined,
-        html: rewriteHtml(c.html),
-      })),
-    } as any,
-    ...noRevalidate,
-  })
-  log(`sidebar: ${enabledCodes.length} widgetů (RawHtml, k postupnému překlopení)`)
 
   // homepage → page se slugem 'home'
   const hp = homepage[0]

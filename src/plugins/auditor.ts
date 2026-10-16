@@ -53,7 +53,7 @@ const TRACKED_COLLECTIONS = [
   'navigation-items',
 ] as const
 
-const TRACKED_GLOBALS = ['header', 'footer', 'siteConfig', 'sidebar', 'vchl-sync'] as const
+const TRACKED_GLOBALS = ['siteConfig', 'vchl-sync'] as const
 
 /**
  * Strukturální nadtyp argumentů všech hooků — balíček své typy neexportuje

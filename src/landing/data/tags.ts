@@ -38,10 +38,6 @@ export const CACHE_TAGS = {
   gallerySitemap: 'gallery-sitemap',
   /** `/matches-sitemap.xml`. */
   matchesSitemap: 'matches-sitemap',
-
-  /* ── Dědictví Payload šablony: hooky je invalidují, ale žádná cache je netaguje ── */
-  globalHeader: 'global_header',
-  globalFooter: 'global_footer',
 } as const
 
 /** Libovolný tag z `CACHE_TAGS` — typ pro `unstable_cache` i revalidační hooky. */

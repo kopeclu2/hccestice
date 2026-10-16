@@ -17,8 +17,6 @@ import {
   revalidateDelete as revalidatePostDelete,
   revalidatePost,
 } from '@/collections/Posts/hooks/revalidatePost'
-import { revalidateFooter } from '@/Footer/hooks/revalidateFooter'
-import { revalidateHeader } from '@/Header/hooks/revalidateHeader'
 import { revalidateLanding, revalidateLandingDelete } from '@/hooks/revalidateLanding'
 import { revalidateMaintenance } from '@/hooks/revalidateMaintenance'
 import { revalidateMatchFeeds, revalidateMatchFeedsDelete } from '@/hooks/revalidateMatchFeeds'
@@ -85,15 +83,6 @@ describe('crawlerské feedy s profilem max', () => {
     revalidateTag.mockClear()
     revalidateRedirects(args({}, { disableRevalidate: true }))
     expect(revalidateTag).not.toHaveBeenCalled()
-  })
-
-  it('hlavička a patička (globaly)', () => {
-    revalidateHeader(args({}))
-    revalidateFooter(args({}))
-    expect(tagCalls()).toEqual([
-      ['global_header', 'max'],
-      ['global_footer', 'max'],
-    ])
   })
 })
 

@@ -28,11 +28,8 @@ import { Users } from './collections/Users'
 import { VchlSyncRuns } from './collections/VchlSyncRuns'
 import { emailAdapter } from './email/adapter'
 import { vchlSyncEndpoints } from './endpoints/vchlSync'
-import { Footer } from './Footer/config'
-import { Sidebar } from './globals/Sidebar/config'
 import { SiteConfig } from './globals/SiteConfig/config'
 import { VchlSync } from './globals/VchlSync/config'
-import { Header } from './Header/config'
 import { vchlSyncTask, VCHL_CRON, VCHL_QUEUE } from './jobs/vchlSync/task'
 import { plugins } from './plugins'
 
@@ -128,7 +125,7 @@ export default buildConfig({
   // `email` bere i Promise, takže se tu záměrně nečeká na `await`.
   email: emailAdapter(),
   endpoints: vchlSyncEndpoints,
-  globals: [Header, Footer, SiteConfig, Sidebar, VchlSync],
+  globals: [SiteConfig, VchlSync],
   // Administrace v češtině (fallback en pro nepřeložené řetězce)
   i18n: {
     fallbackLanguage: 'cs',

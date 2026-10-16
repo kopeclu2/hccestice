@@ -191,8 +191,6 @@ describe('CACHE_TAGS', () => {
         'pages-sitemap',
         'gallery-sitemap',
         'matches-sitemap',
-        'global_header',
-        'global_footer',
       ].sort(),
     )
   })
