@@ -84,6 +84,11 @@ const fieldVariants = cva('group/field flex w-full gap-3 data-[invalid=true]:tex
 /**
  * Jedno pole formuláře: popisek, ovládací prvek, nápověda a chyba. Neplatné
  * pole se značí `data-invalid` tady a `aria-invalid` na ovládacím prvku.
+ *
+ * Bez `role="group"`: shadcn ho dává výchozí, jenže skupina bez názvu čtečku
+ * jen zahlcuje („skupina" kolem každého políčka) a popisek už je navázaný
+ * přes `htmlFor`. Skupinu s názvem (radia, checkboxy) udělá `FieldSet`
+ * s `FieldLegend`, případně `role` + `aria-labelledby` předané v props.
  */
 function Field({
   className,
@@ -92,7 +97,6 @@ function Field({
 }: React.ComponentProps<'div'> & VariantProps<typeof fieldVariants>) {
   return (
     <div
-      role="group"
       data-slot="field"
       data-orientation={orientation}
       className={cn(fieldVariants({ orientation }), className)}

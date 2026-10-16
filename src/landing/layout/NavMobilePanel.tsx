@@ -59,7 +59,6 @@ export function NavMobilePanel({
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
       <SheetContent
-        aria-describedby={undefined}
         className={cn(
           'gap-0 overflow-y-auto border-0 bg-pine-deep/97 p-5 shadow-none backdrop-blur-lg data-[state=open]:duration-300 motion-reduce:animate-none',
           !always && 'nav:hidden',
