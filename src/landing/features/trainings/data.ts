@@ -20,6 +20,9 @@ export const fetchTrainingsBlock = cache(async (): Promise<LandingTrainingsBlock
     limit: 1,
     pagination: false,
     depth: 0,
+    // Local API má `overrideAccess` výchozí `true` — bez toho by se po
+    // odpublikování homepage rozpis dál četl z konceptu.
+    overrideAccess: false,
   })
 
   const layout = docs[0]?.layout ?? []

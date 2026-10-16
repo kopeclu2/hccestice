@@ -7,6 +7,8 @@ import {
   resetPasswordSubject,
 } from '../../email/templates/resetPassword'
 
+import { guardAuthOperations } from './hooks/guardAuthOperations'
+
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: {
@@ -34,6 +36,11 @@ export const Users: CollectionConfig = {
     cookies: {
       secure: process.env.NODE_ENV === 'production',
     },
+    // Výchozí hodnoty Payloadu (5 pokusů, 10 minut), uvedené explicitně, aby
+    // zamykání účtu bylo vidět v kódu a nezměnilo se tiše updatem Payloadu.
+    // Počítá se per účet; rate limit podle IP je v `guardAuthOperations`.
+    maxLoginAttempts: 5,
+    lockTime: 10 * 60 * 1000,
     forgotPassword: {
       // Hodinu drží i výchozí Payload, uvedeno explicitně, protože stejnou
       // dobu píše šablona do textu mailu (`RESET_TOKEN_HOURS`).
@@ -77,6 +84,7 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeOperation: [guardAuthOperations],
     beforeChange: [
       ({ data }) => {
         if (data && (data.firstName || data.lastName)) {

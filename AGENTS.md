@@ -1616,3 +1616,35 @@ find public/media -type f -exec stat -f %z {} + | awk '{s+=$1} END {print s}'
 
 Uživatelé adminu přišli s dumpem, takže **přihlašovací údaje do produkce jsou
 tytéž jako lokálně**.
+
+# Zabezpečení: přístup a API
+
+Všichni přihlášení uživatelé jsou si rovni (žádné role) — `users` zůstává
+`authenticated`. Co stojí za zmínku:
+
+- **Veřejné REST a GraphQL mají stropy** (`plugins/limitPublicQueries.ts`):
+  anonymní čtení má `limit` ≤ 100 (`0` a `pagination: false` se berou jako 100)
+  a `depth` ≤ 2. Local API a přihlášení se neomezují. Plugin musí být v
+  `plugins` za všemi, které přidávají kolekce, a před `auditor()`.
+  `maxDepth` v configu je 2 — fetcher s hlubším `depth` ho musí zvednout.
+- **`csrf`** v `payload.config.ts` pouští cookie přihlášení jen z
+  `NEXT_PUBLIC_SERVER_URL` (lokálně i `localhost:3000`). Request bez `Origin`
+  rozhoduje podle `Sec-Fetch-Site`, proto `proxy.ts` posílá do
+  `/internal/maintenance` `sec-fetch-site: same-origin`. `serverURL` se
+  nenastavuje. Do adminu se tedy chodí jen z domény v `NEXT_PUBLIC_SERVER_URL`.
+- **Tajemství se porovnávají v konstantním čase** (`lib/bearer`: `safeEqual`,
+  `hasBearerSecret`) — `CRON_SECRET`, `PREVIEW_SECRET`, `jobs.access.run`.
+  Cílová cesta `/next/preview` projde přes `lib/previewPath` (open redirect).
+- **`getClientIp`** bere poslední záznam `x-forwarded-for`, záloha `x-real-ip`.
+  Traefik (Coolify) klientské hlavičky zahazuje a IP nastaví sám.
+- **Přihlášení**: `collections/Users/hooks/guardAuthOperations.ts` — rate limit
+  login (10 / 10 min / IP) a forgot-password (3 / 15 min / IP), odpověď 429;
+  heslo min. 12 znaků při `create` / `update` / `resetPassword`. Hlídá se jen
+  REST/GraphQL, Local API (seed, e2e helper) ne.
+- **Koncepty**: fetchery `pages` a `posts` čtou koncepty jen pro ověřenou
+  session (`landing/data/draft.ts` → `fetchDraftUser`), ne podle samotné cookie
+  draft módu. `headers()` se volá jen ve větvi draft módu.
+- Plugin `payload-cms-navigation-plugin` si registruje vlastní nechráněné
+  endpointy `/api/navigation*`; `navigationOverrides` je maže.
+- `posts.populatedAuthors` nenese `email` ani `phone` (veřejné `GET /api/posts`);
+  migrace `20261016_084515_drop_author_contacts` dropuje jen tyhle dva sloupce.

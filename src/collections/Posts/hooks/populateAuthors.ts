@@ -5,6 +5,8 @@ import { User } from 'src/payload-types'
 // The `user` collection has access control locked so that users are not publicly accessible
 // This means that we need to populate the authors manually here to protect user privacy
 // GraphQL will not return mutated user data that differs from the underlying schema
+// `email` a `phone` se sem NEKOPÍRUJÍ: `GET /api/posts` je veřejné, takže by kontakty
+// správců četl kdokoli. Kontakt autora na webu nese `authorPerson` (kolekce `people`).
 // So we use an alternative `populatedAuthors` field to populate the user data, hidden from the admin UI
 export const populateAuthors: CollectionAfterReadHook = async ({ doc, req: { payload } }) => {
   if (doc?.authors && doc?.authors?.length > 0) {
@@ -28,8 +30,6 @@ export const populateAuthors: CollectionAfterReadHook = async ({ doc, req: { pay
             id: authorDoc.id,
             name: authorDoc.name,
             role: authorDoc.role,
-            email: authorDoc.email,
-            phone: authorDoc.phone,
             photo: typeof authorDoc.photo === 'object' ? authorDoc.photo : null,
           }))
         }

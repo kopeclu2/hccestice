@@ -1,8 +1,8 @@
 import 'server-only'
 
-import { draftMode } from 'next/headers'
 import { cache } from 'react'
 
+import { fetchDraftUser } from '@/landing/data/draft'
 import { getPayloadClient } from '@/landing/data/query'
 import type { Page } from '@/payload-types'
 
@@ -16,20 +16,22 @@ import type { Page } from '@/payload-types'
  */
 
 /**
- * Stránka podle slugu. Čte `draftMode()`, takže v náhledu vrací i koncepty
- * (a obchází přístupová pravidla — přihlášený redaktor); mimo náhled jen
- * publikované. `slug: 'home'` je domovská stránka.
+ * Stránka podle slugu. V draft módu s ověřeným přihlášením (`fetchDraftUser`)
+ * vrací i koncepty, a to přes běžná přístupová pravidla (`overrideAccess:
+ * false` + uživatel); jinak — i se zapomenutou cookie draft módu po odhlášení —
+ * jen publikované. `slug: 'home'` je domovská stránka.
  */
 export const fetchPageBySlug = cache(async (slug: string): Promise<Page | null> => {
-  const { isEnabled: draft } = await draftMode()
+  const user = await fetchDraftUser()
   const payload = await getPayloadClient()
 
   const result = await payload.find({
     collection: 'pages',
-    draft,
+    draft: Boolean(user),
     limit: 1,
     pagination: false,
-    overrideAccess: draft,
+    overrideAccess: false,
+    user,
     where: { slug: { equals: slug } },
     depth: 2,
   })

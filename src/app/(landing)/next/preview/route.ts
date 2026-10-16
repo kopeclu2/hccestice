@@ -3,7 +3,10 @@ import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 
 import { getPayloadClient } from '@/landing/data/query'
+import { safeEqual } from '@/lib/bearer'
 import type { PreviewSearchParams } from '@/lib/generatePreviewPath'
+import { getServerSideURL } from '@/lib/getURL'
+import { isSafePreviewPath } from '@/lib/previewPath'
 
 export async function GET(req: NextRequest): Promise<Response> {
   const payload = await getPayloadClient()
@@ -15,7 +18,10 @@ export async function GET(req: NextRequest): Promise<Response> {
   const path = searchParams.get('path' satisfies keyof PreviewSearchParams)
   const previewSecret = searchParams.get('previewSecret' satisfies keyof PreviewSearchParams)
 
-  if (previewSecret !== process.env.PREVIEW_SECRET) {
+  // Prázdný `PREVIEW_SECRET` nepustí nikoho (`PREVIEW_SECRET=` a
+  // `?previewSecret=` by se jinak rovnaly); porovnání v konstantním čase.
+  const expectedSecret = process.env.PREVIEW_SECRET
+  if (!expectedSecret || !previewSecret || !safeEqual(previewSecret, expectedSecret)) {
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
@@ -23,9 +29,9 @@ export async function GET(req: NextRequest): Promise<Response> {
     return new Response('Insufficient search params', { status: 404 })
   }
 
-  // `//evil.com` taky splňuje `startsWith('/')` — prohlížeč ho ale čte jako
-  // protokol-relativní URL a přesměruje na cizí doménu (open redirect).
-  if (!path.startsWith('/') || path.startsWith('//')) {
+  // `//evil.com` i `/\evil.com` splňují `startsWith('/')` — prohlížeč je ale
+  // čte jako protokol-relativní URL a přesměruje na cizí doménu (open redirect).
+  if (!isSafePreviewPath(path, getServerSideURL())) {
     return new Response('This endpoint can only be used for relative previews', { status: 500 })
   }
 
