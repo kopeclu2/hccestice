@@ -31,6 +31,26 @@ const REPORT_SELECT = {
 } as const
 
 /**
+ * `findByID` s odolností: `disableErrors` potlačí jen „nenalezeno", výpadek
+ * databáze by dál odletěl. Vedlejší dohledání (karta reportáže, odkaz
+ * na detail zápasu) ale nesmí shodit celou stránku, takže jiná chyba se
+ * zaloguje a vrátí `null` — stejně jako dřívější `.catch(() => null)`,
+ * jen už ne potichu.
+ */
+const findByIdOrNull = async <T>(
+  payload: Awaited<ReturnType<typeof getPayloadClient>>,
+  label: string,
+  load: () => Promise<T | null>,
+): Promise<T | null> => {
+  try {
+    return await load()
+  } catch (err) {
+    payload.logger.error({ err }, `Detail zápasu: ${label} se nepodařilo načíst`)
+    return null
+  }
+}
+
+/**
  * Reportáž k zápasu. Vazba je dvojí (`matches.report` ručně, `posts.match`
  * ze synchronizace) a rozhodnutí je v `pickReport`: publikovaná
  * `matches.report`, jinak nejnovější publikovaný článek s `match` na tenhle
@@ -46,13 +66,16 @@ export const resolveReport = async (match: Match): Promise<Post | null> => {
   // číslo se dotáhne, jinak by se publikovaná reportáž tiše ztratila.
   let linked = match.report ?? null
   if (typeof linked === 'number') {
-    const doc = await payload.findByID({
-      collection: 'posts',
-      id: linked,
-      depth: 1,
-      select: REPORT_SELECT,
-      disableErrors: true,
-    })
+    const id = linked
+    const doc = await findByIdOrNull(payload, 'reportáž zápasu', () =>
+      payload.findByID({
+        collection: 'posts',
+        id,
+        depth: 1,
+        select: REPORT_SELECT,
+        disableErrors: true,
+      }),
+    )
     linked = doc as Post | null
   }
 
@@ -159,13 +182,15 @@ export const fetchMatchSlugForPost = cache(async (post: Post): Promise<string | 
   const payload = await getPayloadClient()
   const matchId = relId(post.match)
   if (matchId) {
-    const match = await payload.findByID({
-      collection: 'matches',
-      id: matchId,
-      depth: 0,
-      select: { slug: true },
-      disableErrors: true,
-    })
+    const match = await findByIdOrNull(payload, 'zápas k reportáži', () =>
+      payload.findByID({
+        collection: 'matches',
+        id: matchId,
+        depth: 0,
+        select: { slug: true },
+        disableErrors: true,
+      }),
+    )
     return match?.slug ?? null
   }
 
