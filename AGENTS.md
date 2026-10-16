@@ -99,9 +99,9 @@ cva, napojené na značku přes proměnné v `globals.css`).
   o overlay ani když je panel přes celou obrazovku: Radix v něm drží zámek
   scrollu (`RemoveScroll`), proto `overlayClassName="bg-transparent"`.
 - **FAQ** shadcn nepoužívá: `blocks/Faq/Accordion.tsx` je Server Component
-  s nativním `<details name="faq">` bez řádku klientského JS (`ui/accordion.tsx`
+  s nativním `<details name>` bez řádku klientského JS (`ui/accordion.tsx`
   neexistuje, `@radix-ui/react-accordion` je z `package.json` pryč). Společné
-  `name` dělá z položek výlučnou skupinu (Chrome 120, Safari 17.2, Firefox 130;
+  `name` (unikátní na blok, `useId`) dělá z položek výlučnou skupinu (Chrome 120, Safari 17.2, Firefox 130;
   starší prohlížeč nechá otevřít víc otázek najednou, nic se nerozbije), ikona
   +/− se přepíná CSS (`group-open:`). Radix navíc uměl šipky a Home/End mezi
   otázkami; to je ve WAI-ARIA vzoru volitelné a za ~7 kB gzip na každé stránce
@@ -113,8 +113,13 @@ cva, napojené na značku přes proměnné v `globals.css`).
   dostane do bundlu jen přes `import()`:
   - `dynamic()` musí být volané uvnitř klientského modulu (`'use client'`);
     ze Server Componenty by hranici chunku nevytvořilo.
-  - Přednačtení při `onPointerEnter` a `onFocus` na burgeru, nejpozději při
-    kliknutí; oba spouštěče sdílí `loadPanel`, takže se `import()` dedupuje.
+  - Přednačtení při `onPointerEnter` a `onFocus` na burgeru; oba spouštěče
+    sdílí `loadPanel`, takže se `import()` dedupuje. Na dotyku najetí není,
+    proto klik **nejdřív počká na chunk** (`aria-busy` na burgeru,
+    `aria-expanded` zůstává `false`) a teprve pak menu otevře.
+  - Selhání importu (po deployi chunk starého buildu už neexistuje) řeší
+    `window.location.reload()`, ne error boundary stránky; offline se jen
+    zruší stav „načítá se".
   - Panel se montuje při prvním otevření a pak zůstane (zavírací animace).
   - Fokus po zavření se vrací **výslovně** (`onCloseAutoFocus` →
     `triggerRef.current?.focus()`). Radix by ho vrátil na prvek, který měl
@@ -127,11 +132,13 @@ cva, napojené na značku přes proměnné v `globals.css`).
   | `/` | 312 | 330 | 311 |
   | detail článku | 307 | 320 | 307 |
   | `/soupiska` | 304 | 319 | 306 |
-  | `/kontakt` | 312 | 330 | 311 |
+  | `/kontaky` | 312 | 330 | 311 |
 
   Accordion a Sheet v hlavním bundlu přidaly 13–18 kB na každou stránku,
   proto se nový klientský primitiv z shadcn nejdřív měří (`next build`,
-  First Load JS).
+  First Load JS). `/kontaky` je **CMS stránka** renderovaná přes `[slug]`
+  (`.next/server/app/kontaky.html`); `/kontakt` je jiná, ručně psaná route
+  a tahle řada se na ní neměřila.
 - **Formuláře** se skládají z `Field` / `FieldLabel` / `FieldError` a
   `Controller` z react-hook-form (doporučený vzor shadcn, komponenta `form` se
   dál nevyvíjí). Vzor je `ContactField` v `ContactForm.tsx`; `ui/field.tsx` je
@@ -149,8 +156,14 @@ cva, napojené na značku přes proměnné v `globals.css`).
 - Named exporty. `export default` jen tam, kde ho vyžaduje Next
   (`page`, `layout`, `route`, `error`, `not-found`, `loading`) nebo Payload;
   výjimkou zůstává `components/RichText` (obě varianty) a `lib/canUseDOM`.
-- Komponenty jsou deklarace `function`. `const X: React.FC` přežívá jen
-  v `RenderBlocks` (`blocks/render.tsx`) a `FormBlockServer`.
+- Komponenty jsou deklarace `function`; nový kód nepoužívá `React.FC`.
+  `const X: React.FC` zůstává (~55 výskytů) v kódu zděděném ze šablony
+  Payloadu a v kódu, který ho přebírá jako typ: `components/admin` a
+  `VchlSync` (admin komponenty), `components/ui`, `components/Media`,
+  `AdminBar`, `LivePreviewListener`, `PayloadRedirects`, `landing/blocks/Form/*`
+  a pár bloků (`Banner`, `Code`, `MediaBlock`, `RawHtml`, `Trainings`,
+  `YouTube`, `RenderBlocks`). Při úpravě takového souboru se převádí jen
+  tehdy, když tím nevznikne zbytečně velký diff.
 - Žádné `any`. `eslint-disable` a `@ts-expect-error` jen s důvodem
   v komentáři (dnes `plugins/index.ts`, `plugins/auditor.ts`, `blocks/Form`
   a React hooky v klientských komponentech). Kde se typy nedají srovnat,
@@ -678,9 +691,6 @@ variant je na `/vzory/prazdne-stavy`.
 - `tests/e2e/frontend.e2e.spec.ts` je nedotčená Payload šablona a padá už
   dnes — regresní síť pro navigaci neexistuje. Unit testy pokrývají jen čistou
   logiku (`navHref`, `isNavItemActive`, adaptér `navigationOverrides`).
-- `revalidateRedirects` je jen na `afterChange` (`plugins/index.ts`). Smazané
-  přesměrování zůstane v cache `getCachedRedirects` do vypršení TTL (3600 s).
-  Řešením je přidat `afterDelete` do `overrides.hooks` pluginu.
 - `matches.displayTitle` (titulek v adminu) odděluje týmy malým „x", web
   (`matchTitle`) „×". Hodnota je uložená, takže sjednocení znamená migraci
   dat všech zápasů a změnu hooku `matchDisplayTitle`; zatím se nevyplatí.
