@@ -546,8 +546,6 @@ export interface Post {
         id?: string | null;
         name?: string | null;
         role?: string | null;
-        email?: string | null;
-        phone?: string | null;
         photo?: (number | null) | Media;
       }[]
     | null;
@@ -3227,8 +3225,6 @@ export interface PostsSelect<T extends boolean = true> {
         id?: T;
         name?: T;
         role?: T;
-        email?: T;
-        phone?: T;
         photo?: T;
       };
   generateSlug?: T;

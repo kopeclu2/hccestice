@@ -108,7 +108,7 @@ describe('navigationOverrides', () => {
   it('odstraní veřejné endpointy pluginu /api/navigation*, ostatní nechá', () => {
     const noop = async () => new Response()
     const other = { path: '/vchl-sync/status', method: 'get' as const, handler: noop }
-    const config = navigationOverrides()({
+    const input = {
       collections: [pluginContainer(), pluginItem()],
       endpoints: [
         { path: '/api/navigation', method: 'get', handler: noop },
@@ -116,7 +116,9 @@ describe('navigationOverrides', () => {
         { path: '/api/navigation-items', method: 'get', handler: noop },
         other,
       ],
-    } as Config) as Config
+    }
+    // Test dává pluginu jen pole, která čte (viz výše) — zbytek `Config` nechybí.
+    const config = navigationOverrides()(input as unknown as Config) as Config
     expect(config.endpoints).toEqual([other])
   })
 

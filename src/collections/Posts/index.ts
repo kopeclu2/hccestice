@@ -332,14 +332,6 @@ export const Posts: CollectionConfig<'posts'> = {
           type: 'text',
         },
         {
-          name: 'email',
-          type: 'text',
-        },
-        {
-          name: 'phone',
-          type: 'text',
-        },
-        {
           name: 'photo',
           type: 'upload',
           relationTo: 'media',

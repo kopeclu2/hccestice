@@ -74,7 +74,7 @@ export const toPostCard = (post: Post, defaultPhoto: Photo | null = null): PostC
 
 const toArticleAuthor = (post: Post): ArticleAuthor => {
   const person = typeof post.authorPerson === 'object' ? post.authorPerson : null
-  // Fallback na uživatele z pole Autoři (jméno, portrét, e-mail z kolekce users)
+  // Fallback na uživatele z pole Autoři (jméno, role, portrét; e-mail se veřejně nevystavuje)
   const user = post.populatedAuthors?.[0] ?? null
   const name = person?.name ?? user?.name ?? CLUB_NAME
   return {
@@ -82,7 +82,7 @@ const toArticleAuthor = (post: Post): ArticleAuthor => {
     initials: initials(name) || 'HC',
     role: person?.role ?? user?.role ?? null,
     note: person?.note ?? null,
-    email: person?.email ?? user?.email ?? null,
+    email: person?.email ?? null,
     photo: person ? uploadToPhoto(person.photo) : uploadToPhoto(user?.photo),
   }
 }
