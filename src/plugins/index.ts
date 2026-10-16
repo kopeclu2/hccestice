@@ -11,7 +11,7 @@ import reCAPTCHAv3 from 'payload-recaptcha-v3'
 
 import { notificationAddress } from '@/email/config'
 import { wrapFormEmails } from '@/email/templates/formSubmission'
-import { revalidateRedirects } from '@/hooks/revalidateRedirects'
+import { revalidateRedirects, revalidateRedirectsDelete } from '@/hooks/revalidateRedirects'
 import { brandTitle } from '@/lib/brandTitle'
 import { getClientIp, isRateLimited } from '@/lib/rateLimit'
 import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/lib/recaptcha/config'
@@ -54,6 +54,7 @@ export const plugins: Plugin[] = [
       },
       hooks: {
         afterChange: [revalidateRedirects],
+        afterDelete: [revalidateRedirectsDelete],
       },
     },
   }),

@@ -21,7 +21,7 @@ import { revalidateLanding, revalidateLandingDelete } from '@/hooks/revalidateLa
 import { revalidateMaintenance } from '@/hooks/revalidateMaintenance'
 import { revalidateMatchFeeds, revalidateMatchFeedsDelete } from '@/hooks/revalidateMatchFeeds'
 import { revalidateNavigation, revalidateNavigationDelete } from '@/hooks/revalidateNavigation'
-import { revalidateRedirects } from '@/hooks/revalidateRedirects'
+import { revalidateRedirects, revalidateRedirectsDelete } from '@/hooks/revalidateRedirects'
 
 const info = vi.fn()
 
@@ -82,6 +82,14 @@ describe('crawlerské feedy s profilem max', () => {
     expect(tagCalls()).toEqual([['redirects', 'max']])
     revalidateTag.mockClear()
     revalidateRedirects(args({}, { disableRevalidate: true }))
+    expect(revalidateTag).not.toHaveBeenCalled()
+  })
+
+  it('přesměrování: smazání taky invaliduje cache', () => {
+    revalidateRedirectsDelete(args({ id: 1 }))
+    expect(tagCalls()).toEqual([['redirects', 'max']])
+    revalidateTag.mockClear()
+    revalidateRedirectsDelete(args({ id: 1 }, { disableRevalidate: true }))
     expect(revalidateTag).not.toHaveBeenCalled()
   })
 })
