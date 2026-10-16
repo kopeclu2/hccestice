@@ -12,6 +12,15 @@ import { cn } from '@/lib/utils'
 const loadPanel = () => import('./NavMobilePanel')
 
 /**
+ * Přednačtení z hoveru a fokusu je jen optimalizace, jeho selhání se spolkne
+ * (jinak by skončilo jako neodchycený rejection v konzoli). Skutečné selhání
+ * řeší až klik, který import zopakuje a umí na něj zareagovat.
+ */
+const prefetchPanel = () => {
+  loadPanel().catch(() => {})
+}
+
+/**
  * Panel (Radix Dialog + obsah menu) je líný chunk. `dynamic()` je volané
  * v `'use client'` modulu, jen tak vznikne skutečná hranice — ze Server
  * Componenty by nic neštěpilo (viz `ContactFormLazy`). `loadPanel` sdílí
@@ -29,9 +38,17 @@ const NavMobilePanel = dynamic(() => loadPanel().then((mod) => mod.NavMobilePane
  *
  * Burger se vykreslí hned a nese ARIA, kterou by jinak dodal Radix trigger
  * (`aria-expanded`, `aria-haspopup`, `aria-controls`). Panel se stáhne při
- * prvním najetí nebo zaostření na burger, nejpozději při kliknutí; dokud se
- * menu neotevře, panel se nemontuje vůbec. Po prvním otevření zůstane
- * namontovaný, aby Radix stihl zavírací animaci a vrátil fokus.
+ * prvním najetí nebo zaostření na burger; na dotyku žádné najetí není, takže
+ * se stáhne až při klepnutí. Menu se proto otevře **až po** doručení chunku
+ * (`aria-expanded` zůstane `false` a burger má `aria-busy`), ne dřív, než je
+ * co ukázat. Dokud se menu neotevře, panel se nemontuje vůbec. Po prvním
+ * otevření zůstane namontovaný, aby Radix stihl zavírací animaci a vrátil
+ * fokus.
+ *
+ * Když import chunku selže, po deployi to typicky znamená, že stránka ještě
+ * odkazuje na chunk starého buildu (a ten už na serveru není). Nepomůže
+ * opakovat požadavek, pomůže nová stránka, proto `location.reload()` —
+ * bez toho by `ChunkLoadError` propadl na error boundary celé stránky.
  *
  * `context` rozhoduje o cílech odkazů — na homepage kotvy, na
  * podstránkách cesty (viz `navHref`).
@@ -62,6 +79,8 @@ export function NavMobile({
   const [open, setOpen] = React.useState(false)
   // Panel se montuje při prvním otevření a pak už zůstává (zavírací animace).
   const [mounted, setMounted] = React.useState(false)
+  // Chunk panelu se právě stahuje (první klepnutí bez přednačtení).
+  const [loading, setLoading] = React.useState(false)
   const pathname = usePathname()
   const triggerRef = React.useRef<HTMLButtonElement>(null)
   const panelId = React.useId()
@@ -107,20 +126,33 @@ export function NavMobile({
        */}
       <Button
         aria-controls={mounted ? panelId : undefined}
+        aria-busy={loading || undefined}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label="Otevřít menu"
         className={cn(
-          'flex-none [&_svg]:size-5',
+          'flex-none aria-busy:cursor-progress aria-busy:opacity-60 [&_svg]:size-5',
           !always && 'nav:hidden',
           tone === 'glass' ? 'border-on-contrast-ghost bg-pine-deep/32' : 'bg-surface',
         )}
-        onClick={() => {
+        onClick={async () => {
+          if (loading) return
+          setLoading(true)
+          try {
+            await loadPanel()
+          } catch {
+            // Bez sítě reload nepomůže (ukázal by chybovou stránku prohlížeče),
+            // stačí nechat uživatele zkusit to znovu.
+            if (navigator.onLine) window.location.reload()
+            setLoading(false)
+            return
+          }
+          setLoading(false)
           setMounted(true)
           setOpen(true)
         }}
-        onFocus={() => void loadPanel()}
-        onPointerEnter={() => void loadPanel()}
+        onFocus={prefetchPanel}
+        onPointerEnter={prefetchPanel}
         ref={triggerRef}
         size="circle"
         type="button"
