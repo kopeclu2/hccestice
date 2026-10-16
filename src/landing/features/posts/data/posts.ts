@@ -27,7 +27,7 @@ const PUBLISHED: Where = { _status: { equals: 'published' } }
  * Publikované články, které patří do výpisů webu (novinky + reportáže).
  * Typ `other` (stránkové texty, archiv) se do karet nedostává.
  */
-export const PUBLISHED_ARTICLES: Where = {
+const PUBLISHED_ARTICLES: Where = {
   and: [PUBLISHED, { type: { in: ['news', 'report'] } }],
 }
 
