@@ -27,7 +27,12 @@ import {
   resolveMatchDate,
   shouldFetchDetail,
 } from '../../src/jobs/vchlSync/sync/matches'
-import { foldTeam, opponentKeys } from '../../src/jobs/vchlSync/sync/opponents'
+import {
+  ahlNameKeys,
+  foldTeam,
+  keysIntersect,
+  opponentKeys,
+} from '../../src/jobs/vchlSync/sync/opponents'
 import { stripClubPrefix } from '../../src/lib/teamName'
 
 const fx = (name: string) =>
@@ -433,6 +438,15 @@ describe('vchl soupeři', () => {
     } as never)
     expect(k.has('pardubice')).toBe(true)
     expect(k.has('zavodni hokejova pardubice')).toBe(true)
+  })
+
+  it('párování zahazuje jen původních pět předpon: „HCM Foo" se nespáruje na „Foo"', () => {
+    const foo = opponentKeys({ name: 'Foo', aliases: [] } as never)
+    expect(keysIntersect(ahlNameKeys('HCM Foo'), foo)).toBe(false)
+    expect(keysIntersect(ahlNameKeys('HC Foo'), foo)).toBe(true)
+    const hcmFoo = opponentKeys({ name: 'HCM Foo', aliases: [] } as never)
+    expect(hcmFoo.has('foo')).toBe(false)
+    expect(hcmFoo.has('hcm foo')).toBe(true)
   })
 })
 

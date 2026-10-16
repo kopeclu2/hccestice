@@ -11,7 +11,10 @@ import { CLUB_PREFIXES } from './club'
 const PREFIX_SET: ReadonlySet<string> = new Set(CLUB_PREFIXES)
 
 /** Předpona na začátku názvu, za kterou následuje mezera („HC Zdar"). */
-const LEADING_PREFIX_RE = new RegExp(`^(?:${CLUB_PREFIXES.join('|')})\\s+`, 'i')
+const leadingPrefixRe = (prefixes: readonly string[]): RegExp =>
+  new RegExp(`^(?:${prefixes.join('|')})\\s+`, 'i')
+
+const DEFAULT_LEADING_PREFIX_RE = leadingPrefixRe(CLUB_PREFIXES)
 
 const words = (name: string): string[] => name.split(/\s+/).filter(Boolean)
 
@@ -26,8 +29,17 @@ const keyWord = (name: string): string => {
  * Odstraní jen jednu předponu a jen když za ní něco zůstane („HC" samotné
  * se nemění). Velikost písmen vstupu zůstává, takže funguje i na názvu
  * po `fold` („hc policka b" → „policka b").
+ *
+ * `prefixes` přebije výchozí sadu `CLUB_PREFIXES`; potřebuje ji kód, který
+ * porovnává názvy mezi systémy a nesmí se tiše změnit s širší sadou pro web.
  */
-export const stripClubPrefix = (name: string): string => name.trim().replace(LEADING_PREFIX_RE, '')
+export const stripClubPrefix = (
+  name: string,
+  prefixes: readonly string[] = CLUB_PREFIXES,
+): string => {
+  const re = prefixes === CLUB_PREFIXES ? DEFAULT_LEADING_PREFIX_RE : leadingPrefixRe(prefixes)
+  return name.trim().replace(re, '')
+}
 
 /** Písmeno do kroužku u týmu bez loga: „HC Zdar" → „Z". */
 export const monogram = (name: string): string => keyWord(name).charAt(0).toUpperCase()

@@ -136,8 +136,15 @@ describe('stripClubPrefix', () => {
     }
   })
 
-  it('nově odstraní i HHK, HCM a SKP (opponents.ts je dosud neznal)', () => {
+  it('výchozí sada odstraní i HHK, HCM a SKP', () => {
     expect(stripClubPrefix('hhk velke mezirici')).toBe('velke mezirici')
+  })
+
+  it('předaná sada předpon přebije výchozí', () => {
+    const five = ['HC', 'SK', 'ZH', 'TJ', 'HK']
+    expect(stripClubPrefix('hhk velke mezirici', five)).toBe('hhk velke mezirici')
+    expect(stripClubPrefix('hcm foo', five)).toBe('hcm foo')
+    expect(stripClubPrefix('hc foo', five)).toBe('foo')
   })
 })
 

@@ -4,6 +4,15 @@ import type { Opponent } from '@/payload-types'
 
 import type { SyncContext } from './ctx'
 
+/**
+ * Předpony, které se při párování soupeře s AHL zahazují. Záměrně užší než
+ * `CLUB_PREFIXES`: ta platí pro monogram a kód týmu na webu, kdežto tady by
+ * širší sada tiše změnila, co se spáruje („HCM Foo" by splynulo s „Foo").
+ * Rozšíření je změna párování, ne kosmetika — dělat vědomě a s kontrolou
+ * nad existujícími soupeři.
+ */
+export const SYNC_MATCH_PREFIXES = ['HC', 'SK', 'ZH', 'TJ', 'HK'] as const
+
 /** Klíč pro porovnání názvů týmů: bez diakritiky, velikosti písmen a interpunkce. */
 export const foldTeam = (s: string): string => fold(s, { alnumOnly: true })
 
@@ -34,14 +43,14 @@ export function opponentKeys(opp: Pick<Opponent, 'name' | 'aliases'>): Set<strin
     if (!raw) continue
     const f = foldTeam(raw)
     keys.add(f)
-    keys.add(stripClubPrefix(f))
+    keys.add(stripClubPrefix(f, SYNC_MATCH_PREFIXES))
   }
   return keys
 }
 
 export function ahlNameKeys(name: string): Set<string> {
   const f = foldTeam(name)
-  return new Set([f, stripClubPrefix(f)])
+  return new Set([f, stripClubPrefix(f, SYNC_MATCH_PREFIXES)])
 }
 
 export function keysIntersect(a: Set<string>, b: Set<string>): boolean {
