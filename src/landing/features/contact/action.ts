@@ -42,7 +42,8 @@ export async function sendContactMessage(
   const verified = await verifyRecaptchaToken({
     token: recaptchaToken,
     action: RECAPTCHA_ACTIONS.contact,
-    remoteIp: requestHeaders.get('x-forwarded-for'),
+    // Google čeká jednu adresu, ne celý řetěz `x-forwarded-for`.
+    remoteIp: clientIp === 'unknown' ? null : clientIp,
   })
   if (!verified.ok) {
     payload.logger.warn(

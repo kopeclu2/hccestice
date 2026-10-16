@@ -8,6 +8,7 @@ import { buildConfig, PayloadRequest } from 'payload'
 import sharp from 'sharp'
 
 import { defaultLexical } from '@/fields/defaultLexical'
+import { hasBearerSecret } from '@/lib/bearer'
 import { getServerSideURL } from '@/lib/getURL'
 
 import { Categories } from './collections/Categories'
@@ -143,14 +144,9 @@ export default buildConfig({
         // Allow logged in users to execute this endpoint (default)
         if (req.user) return true
 
-        const secret = process.env.CRON_SECRET
-        if (!secret) return false
-
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
-        const authHeader = req.headers.get('authorization')
-        return authHeader === `Bearer ${secret}`
+        // Bez přihlášení musí sedět `Authorization: Bearer <CRON_SECRET>`;
+        // porovnání v konstantním čase, prázdný secret neprojde nikdy.
+        return hasBearerSecret(req.headers.get('authorization'), process.env.CRON_SECRET)
       },
     },
     tasks: [vchlSyncTask],

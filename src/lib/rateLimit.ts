@@ -38,7 +38,23 @@ export function isRateLimited(
   return bucket.count > max
 }
 
-/** Bere první adresu z `x-forwarded-for` (klient), zbytek je proxy řetězec. */
+/**
+ * IP klienta z hlaviček proxy. Bere **poslední** (nejpravější) neprázdný
+ * záznam `x-forwarded-for`, ne první: levé záznamy si klient může
+ * v requestu podvrhnout, kdežto pravý připsala nejbližší důvěryhodná proxy.
+ *
+ * Produkce běží za Traefikem v3 (Coolify) s výchozím nastavením
+ * `forwardedHeaders` (klientům nevěří): klientské `x-forwarded-for`
+ * zahodí a nastaví skutečnou IP, takže tam je první i poslední záznam
+ * totéž. Poslední je robustnější, kdyby se proxy řetěz někdy prodloužil
+ * nebo se nastavení Traefiku změnilo. Záloha je `x-real-ip`; bez obou
+ * hlaviček (dev, testy) vrací `'unknown'`.
+ */
 export function getClientIp(headers: Headers): string {
-  return headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const forwarded = headers
+    .get('x-forwarded-for')
+    ?.split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+  return forwarded?.at(-1) || headers.get('x-real-ip')?.trim() || 'unknown'
 }

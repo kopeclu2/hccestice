@@ -1,8 +1,7 @@
-import { timingSafeEqual } from 'node:crypto'
-
 import { applyRevalidation } from '@/hooks/createRevalidateHooks'
 import { LANDING_REVALIDATION } from '@/hooks/revalidateLanding'
 import { CACHE_TAGS } from '@/landing/data/tags'
+import { hasBearerSecret } from '@/lib/bearer'
 
 /**
  * Interní revalidace pro synchronizaci VČHL (`jobs/vchlSync/revalidate.ts`).
@@ -19,11 +18,7 @@ import { CACHE_TAGS } from '@/landing/data/tags'
 export const dynamic = 'force-dynamic'
 
 function authorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET
-  if (!secret) return false
-  const given = Buffer.from(req.headers.get('authorization') ?? '')
-  const expected = Buffer.from(`Bearer ${secret}`)
-  return given.length === expected.length && timingSafeEqual(given, expected)
+  return hasBearerSecret(req.headers.get('authorization'), process.env.CRON_SECRET)
 }
 
 export function POST(req: Request) {
