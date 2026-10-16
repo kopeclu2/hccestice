@@ -1,22 +1,25 @@
 'use client'
 
-import { Menu, X } from 'lucide-react'
-import Link from 'next/link'
+import { Menu } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
-import { isNavItemActive, navHref } from '@/landing/features/navigation/navHref'
 import type { NavItem } from '@/landing/features/navigation/types'
 import { cn } from '@/lib/utils'
+
+const loadPanel = () => import('./NavMobilePanel')
+
+/**
+ * Panel (Radix Dialog + obsah menu) je líný chunk. `dynamic()` je volané
+ * v `'use client'` modulu, jen tak vznikne skutečná hranice — ze Server
+ * Componenty by nic neštěpilo (viz `ContactFormLazy`). `loadPanel` sdílí
+ * s přednačtením z burgeru, takže se `import()` dedupuje.
+ */
+const NavMobilePanel = dynamic(() => loadPanel().then((mod) => mod.NavMobilePanel), {
+  ssr: false,
+})
 
 /**
  * Mobilní navigace — burger tlačítko a přes celou obrazovku rozbalený
@@ -24,12 +27,11 @@ import { cn } from '@/lib/utils'
  * (desktopové pilulky jsou `hidden nav:flex` — deset položek se vejde vedle
  * loga a CTA až od 1440px, viz `NavPills`).
  *
- * Overlay je shadcn `Sheet` (Radix Dialog) a Radix ho vykresluje portálem do
- * `document.body`. Portál je nutnost, ne volba: navigace na homepage sedí
- * uvnitř `<main class="overflow-x-clip">` (`(landing)/page.tsx`), který by
- * `position: fixed` overlay ostříhal. Stejný Radix řeší i fokus (uvěznění
- * v panelu a návrat na burger), Esc, `aria-modal` a zámek scrollu — dřív to
- * bylo ručně a Tab z panelu unikal na stránku pod ním.
+ * Burger se vykreslí hned a nese ARIA, kterou by jinak dodal Radix trigger
+ * (`aria-expanded`, `aria-haspopup`, `aria-controls`). Panel se stáhne při
+ * prvním najetí nebo zaostření na burger, nejpozději při kliknutí; dokud se
+ * menu neotevře, panel se nemontuje vůbec. Po prvním otevření zůstane
+ * namontovaný, aby Radix stihl zavírací animaci a vrátil fokus.
  *
  * `context` rozhoduje o cílech odkazů — na homepage kotvy, na
  * podstránkách cesty (viz `navHref`).
@@ -58,8 +60,11 @@ export function NavMobile({
   always?: boolean
 }) {
   const [open, setOpen] = React.useState(false)
+  // Panel se montuje při prvním otevření a pak už zůstává (zavírací animace).
+  const [mounted, setMounted] = React.useState(false)
   const pathname = usePathname()
   const triggerRef = React.useRef<HTMLButtonElement>(null)
+  const panelId = React.useId()
 
   // Zavřít při přechodu na jinou stránku. U kotev na téže stránce se
   // pathname nemění, proto navíc onClick na položkách. Nastavuje se přímo
@@ -88,7 +93,7 @@ export function NavMobile({
   }, [always, open])
 
   return (
-    <Sheet onOpenChange={setOpen} open={open}>
+    <>
       {/*
        * `size="circle"` (44px mobil, 40px desktop): burger je do `nav` jediná
        * cesta k navigaci, takže 40px tap target byl pod hranicí 44px, kterou
@@ -100,85 +105,43 @@ export function NavMobile({
        * střechy) prakticky neodlišila; tmavá průsvitka charakter skla
        * zachová a ikonu podloží.
        */}
-      <SheetTrigger asChild>
-        <Button
-          aria-label="Otevřít menu"
-          className={cn(
-            'flex-none [&_svg]:size-5',
-            !always && 'nav:hidden',
-            tone === 'glass' ? 'border-on-contrast-ghost bg-pine-deep/32' : 'bg-surface',
-          )}
-          ref={triggerRef}
-          size="circle"
-          variant={tone === 'glass' ? 'glass' : 'outline'}
-        >
-          <Menu strokeWidth={2.25} />
-        </Button>
-      </SheetTrigger>
-
-      <SheetContent
-        aria-describedby={undefined}
+      <Button
+        aria-controls={mounted ? panelId : undefined}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        aria-label="Otevřít menu"
         className={cn(
-          'gap-0 overflow-y-auto border-0 bg-pine-deep/97 p-5 shadow-none backdrop-blur-lg data-[state=open]:duration-300 motion-reduce:animate-none',
+          'flex-none [&_svg]:size-5',
           !always && 'nav:hidden',
+          tone === 'glass' ? 'border-on-contrast-ghost bg-pine-deep/32' : 'bg-surface',
         )}
-        showCloseButton={false}
-        overlayClassName="bg-transparent"
-        side="full"
+        onClick={() => {
+          setMounted(true)
+          setOpen(true)
+        }}
+        onFocus={() => void loadPanel()}
+        onPointerEnter={() => void loadPanel()}
+        ref={triggerRef}
+        size="circle"
+        type="button"
+        variant={tone === 'glass' ? 'glass' : 'outline'}
       >
-        <SheetTitle className="sr-only">Menu</SheetTitle>
-        <SheetDescription className="sr-only">Navigace webu</SheetDescription>
+        <Menu strokeWidth={2.25} />
+      </Button>
 
-        {/* Menu drží šířku i na 1024px, kde je od změny hranice pilulek
-            na `nav` pořád jedinou navigací — odkazy přes celou šířku
-            obrazovky by měly zbytečně dlouhou aktivní plochu. */}
-        <div className="mx-auto flex w-full max-w-160 items-center justify-end">
-          <SheetClose asChild>
-            <Button
-              aria-label="Zavřít menu"
-              className="[&_svg]:size-5"
-              size="circle"
-              variant="glass"
-            >
-              <X strokeWidth={2.25} />
-            </Button>
-          </SheetClose>
-        </div>
-
-        {/* Aktivní odkaz se značí lime barvou a `aria-current` — stejným
-            predikátem jako pilulky (`isNavItemActive`). Bez toho nebylo
-            do 1280px v navigaci vůbec vidět, na které stránce uživatel
-            stojí: pilulky, které aktivní stav řeší, jsou `hidden nav:flex`. */}
-        <nav className="mx-auto mt-6 flex w-full max-w-160 flex-col gap-1">
-          {items.map((item) => {
-            const active = isNavItemActive(item, pathname)
-            return (
-              <Link
-                aria-current={active ? 'page' : undefined}
-                className={cn(
-                  'border-b border-on-contrast-wash py-3.5 text-2xl font-extrabold tracking-subheading transition-colors hover:text-lime',
-                  active ? 'text-lime' : 'text-on-contrast',
-                )}
-                href={navHref(item, context)}
-                key={item.label}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {ctaHref && ctaLabel && (
-          <div className="mx-auto mt-7 w-full max-w-160">
-            <Button asChild size="lg" variant="lime" withArrow>
-              <Link href={ctaHref} onClick={() => setOpen(false)}>
-                {ctaLabel}
-              </Link>
-            </Button>
-          </div>
-        )}
-      </SheetContent>
-    </Sheet>
+      {mounted && (
+        <NavMobilePanel
+          always={always}
+          context={context}
+          ctaHref={ctaHref}
+          ctaLabel={ctaLabel}
+          id={panelId}
+          items={items}
+          onOpenChange={setOpen}
+          open={open}
+          triggerRef={triggerRef}
+        />
+      )}
+    </>
   )
 }
