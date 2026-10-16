@@ -86,7 +86,22 @@ export const navigationOverrides = (): Plugin => (config) => {
   patchContainer(container)
   patchItem(item)
 
+  // Plugin si vedle kolekcí registruje vlastní `config.endpoints`
+  // (`/api/navigation…`, vč. POST/PUT/DELETE) bez jakékoli kontroly
+  // přístupu, tedy zapisovatelné i anonymně. Web čte menu Local API
+  // (`features/navigation/data.ts`) a admin standardní REST kolekcí, který
+  // zakládá Payload sám podle `access`, takže tyhle endpointy nepotřebuje
+  // nikdo a jejich existence je čistá útočná plocha.
+  config.endpoints = config.endpoints?.filter((endpoint) => !isPluginEndpoint(endpoint.path))
+
   return config
+}
+
+/** Cesty, které si plugin zaregistroval vedle kolekcí (`/api/navigation…`). */
+const PLUGIN_ENDPOINT_PREFIX = '/api/navigation'
+
+function isPluginEndpoint(path: string): boolean {
+  return path.startsWith(PLUGIN_ENDPOINT_PREFIX)
 }
 
 function patchContainer(container: CollectionConfig): void {

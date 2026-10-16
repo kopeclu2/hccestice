@@ -105,6 +105,25 @@ describe('navigationOverrides', () => {
     expect(type.options).toContainEqual({ label: 'Cesta nebo kotva', value: 'external' })
   })
 
+  it('odstraní veřejné endpointy pluginu /api/navigation*, ostatní nechá', () => {
+    const noop = async () => new Response()
+    const other = { path: '/vchl-sync/status', method: 'get' as const, handler: noop }
+    const config = navigationOverrides()({
+      collections: [pluginContainer(), pluginItem()],
+      endpoints: [
+        { path: '/api/navigation', method: 'get', handler: noop },
+        { path: '/api/navigation/:slug', method: 'get', handler: noop },
+        { path: '/api/navigation-items', method: 'get', handler: noop },
+        other,
+      ],
+    } as Config) as Config
+    expect(config.endpoints).toEqual([other])
+  })
+
+  it('bez endpointů v configu nespadne', () => {
+    expect(() => run([pluginContainer(), pluginItem()])).not.toThrow()
+  })
+
   it('obě kolekce dostanou revalidační hooky na změnu i smazání', () => {
     const config = run([pluginContainer(), pluginItem()])
     for (const slug of ['navigation-containers', 'navigation-items']) {
