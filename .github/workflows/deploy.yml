@@ -22,6 +22,11 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+# Výchozí oprávnění GITHUB_TOKENu jen pro čtení; job `build` si níž přidává
+# `packages: write` pro push do GHCR.
+permissions:
+  contents: read
+
 env:
   IMAGE: ghcr.io/${{ github.repository }}
 
@@ -31,8 +36,11 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      # Verze bunu je pinovaná; musí sedět s `BUN_VERSION` v Dockerfile.
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.3.11
       - run: bun install --frozen-lockfile
       - run: bun run format:check
       - run: bun run lint
@@ -49,14 +57,21 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 
       - name: Nastavit SSH klíč
         run: |
           mkdir -p ~/.ssh
           printf '%s\n' "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "${{ secrets.HETZNER_HOST }}" >> ~/.ssh/known_hosts
+          # Hostitelský klíč serveru je pinovaný, ne stahovaný přes `ssh-keyscan`
+          # (ten by důvěřoval komukoli, kdo se do spojení vloží). Klíč je
+          # veřejný a ověřený mimo pásmo proti
+          # /etc/ssh/ssh_host_ed25519_key.pub na serveru. Při výměně
+          # hostitelského klíče serveru se musí aktualizovat i tady.
+          echo "${{ secrets.HETZNER_HOST }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICJdwQHGze5TFDDK57jPBfTXXlYxKhYRuq8OrdIP086Y" >> ~/.ssh/known_hosts
+          printf 'Host *\n  StrictHostKeyChecking yes\n  UserKnownHostsFile ~/.ssh/known_hosts\n' > ~/.ssh/config
+          chmod 600 ~/.ssh/known_hosts ~/.ssh/config
 
       - name: Otevřít tunel na Postgres
         run: |
@@ -66,7 +81,8 @@ jobs:
           # se po redeployi databáze mění.
           PG_IP=$(ssh -i ~/.ssh/id_ed25519 "${{ secrets.HETZNER_USER }}@${{ secrets.HETZNER_HOST }}" pgip)
           test -n "$PG_IP" || { echo "Postgres kontejner nenalezen."; exit 1; }
-          echo "Postgres na $PG_IP"
+          # Interní adresa databáze se do logu nesmí dostat.
+          echo "::add-mask::$PG_IP"
 
           ssh -i ~/.ssh/id_ed25519 -f -N -o ExitOnForwardFailure=yes \
             -L 5432:"$PG_IP":5432 \
@@ -81,7 +97,7 @@ jobs:
           nc -z 127.0.0.1 5432 || { echo "Tunel nenaběhl."; exit 1; }
 
       - name: Přihlásit se do GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -91,18 +107,27 @@ jobs:
         # `--network host` je tu kvůli tunelu: build kontejner tak vidí
         # 127.0.0.1:5432 runneru. Proto ne buildx s docker-container
         # driverem, ten host network nepodporuje.
+        #
+        # Tajemství jdou jako BuildKit secrets (`--secret`), ne `--build-arg`:
+        # build arg zůstává v metadatech image, který se pushuje do GHCR.
+        # Dockerfile je čte přes `RUN --mount=type=secret`.
+        env:
+          DOCKER_BUILDKIT: 1
+          BUILD_DATABASE_URL: ${{ secrets.BUILD_DATABASE_URL }}
+          BUILD_PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+          BUILD_SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           docker build \
             --network host \
-            --build-arg DATABASE_URL="${{ secrets.BUILD_DATABASE_URL }}" \
-            --build-arg PAYLOAD_SECRET="${{ secrets.PAYLOAD_SECRET }}" \
+            --secret id=database_url,env=BUILD_DATABASE_URL \
+            --secret id=payload_secret,env=BUILD_PAYLOAD_SECRET \
+            --secret id=sentry_auth_token,env=BUILD_SENTRY_AUTH_TOKEN \
             --build-arg NEXT_PUBLIC_SERVER_URL="${{ vars.NEXT_PUBLIC_SERVER_URL }}" \
             --build-arg NEXT_PUBLIC_RECAPTCHA_SITE_KEY="${{ vars.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}" \
             --build-arg NEXT_PUBLIC_SENTRY_DSN="${{ vars.NEXT_PUBLIC_SENTRY_DSN }}" \
             --build-arg NEXT_PUBLIC_GA_MEASUREMENT_ID="${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}" \
             --build-arg SENTRY_ORG="${{ vars.SENTRY_ORG }}" \
             --build-arg SENTRY_PROJECT="${{ vars.SENTRY_PROJECT }}" \
-            --build-arg SENTRY_AUTH_TOKEN="${{ secrets.SENTRY_AUTH_TOKEN }}" \
             -t "$IMAGE:latest" \
             -t "$IMAGE:${{ github.sha }}" \
             .

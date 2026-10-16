@@ -8,6 +8,7 @@ import type { NextConfig } from 'next'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 import { redirects } from './redirects'
+import { sentryCspReportUri } from './src/lib/csp'
 
 // Pořadí je záměrné: na Coolify je zdroj pravdy `NEXT_PUBLIC_SERVER_URL`
 // (build variable). Kdyby se čtla až za Vercelem, `remotePatterns` níž by
@@ -17,6 +18,58 @@ const NEXT_PUBLIC_SERVER_URL =
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000')
+
+const cspReportUri = sentryCspReportUri(process.env.NEXT_PUBLIC_SENTRY_DSN)
+
+/**
+ * Ostré direktivy, které nemohou rozbít stránku: nic z toho se netýká
+ * načítání skriptů, stylů ani obrázků.
+ *
+ * - `frame-ancestors 'self'` je moderní protějšek `X-Frame-Options`; live
+ *   preview v adminu je iframe téhož originu.
+ * - `form-action 'self'`: kontaktní formulář je server action, formuláře
+ *   z form-builderu jdou `fetch`em na `/api/form-submissions` a admin se
+ *   přihlašuje taky přes JS — žádný formulář neodesílá na cizí origin.
+ * - `object-src 'none'` a `base-uri 'self'`: nic z webu nepoužívá `<object>`
+ *   ani `<base>`, takže jde jen o zavření vektoru po případné injekci.
+ */
+const ENFORCED_CSP = [
+  "frame-ancestors 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ')
+
+/**
+ * Plná politika jen k hlášení. Hosty v `frame-src` jsou vložená videa
+ * a mapy ze starých článků a z bloku RawHtml.
+ */
+const REPORT_ONLY_CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: https:",
+  "font-src 'self' data:",
+  [
+    "frame-src 'self'",
+    'https://www.google.com',
+    'https://maps.google.com',
+    'https://www.googletagmanager.com',
+    'https://www.youtube.com',
+    'https://www.youtube-nocookie.com',
+    'https://player.vimeo.com',
+    'https://www.facebook.com',
+    'https://mapy.cz',
+    'https://frame.mapy.cz',
+  ].join(' '),
+  "connect-src 'self' https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  // Sentry endpoint pro hlášení; `report-uri` se na `connect-src` nevztahuje.
+  ...(cspReportUri ? [`report-uri ${cspReportUri}`] : []),
+].join('; ')
 
 const nextConfig: NextConfig = {
   // Docker image nese jen `.next/standalone` + traced node_modules.
@@ -115,9 +168,11 @@ const nextConfig: NextConfig = {
   // Neinzerovat stack návštěvníkům ani skenerům (`X-Powered-By: Next.js, Payload`).
   poweredByHeader: false,
   /**
-   * Bezpečnostní hlavičky. Web je zatím na HTTP, takže HSTS tu **není** —
-   * `Strict-Transport-Security` bez TLS nemá co vynucovat a po přechodu na
-   * klubovou doménu s certifikátem se doplní (fáze 6 plánu).
+   * Bezpečnostní hlavičky. Produkce jede na HTTPS (Traefik v Coolify),
+   * takže `Strict-Transport-Security` je zapnutá — bez `includeSubDomains`
+   * a `preload`: dočasná doména `*.sslip.io` je sdílená s cizími weby
+   * a preload se nedá vzít zpět. Po přechodu na klubovou doménu se dá
+   * `includeSubDomains` zvážit.
    *
    * `X-Frame-Options: SAMEORIGIN`, ne `DENY`: Payload vkládá frontend do
    * iframe v admin náhledu (live preview), `DENY` by ho rozbil.
@@ -131,29 +186,24 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+          { key: 'Content-Security-Policy', value: ENFORCED_CSP },
           /**
-           * Report-only záměrně: `script-src`/`style-src` musí povolit
-           * `unsafe-inline` (Next.js inlinuje hydratační data a Payload
-           * admin vlastní styly), takže reálné vynucení by dnes nechránilo
-           * skoro proti ničemu a riskovalo rozbití admin UI, které audit
-           * neprošel. Report-only jen loguje porušení do konzole/`report-to`
-           * bez blokování — bezpečný první krok, ostré vynucení je
-           * navazující úkol (nonce-based CSP).
+           * Plná politika zůstává report-only: `script-src`/`style-src` musí
+           * povolit `unsafe-inline` (Next inlinuje hydratační data a Payload
+           * admin vlastní styly), takže vynucení by dnes nechránilo skoro
+           * proti ničemu a riskovalo rozbití admin UI. Porušení jdou do Sentry
+           * (`report-uri`), takže je z nich vidět, co by ostrá politika zlomila.
+           *
+           * CSP s nonce tu **není záměrně**. Nonce se v Next aplikuje při
+           * serverovém renderu podle hlavičky požadavku, takže každá stránka
+           * musí být dynamická — statická stránka vzniká při buildu, kdy
+           * žádný požadavek ani nonce neexistuje (`node_modules/next/dist/docs/
+           * 01-app/02-guides/content-security-policy.md`, „How nonces work in
+           * Next.js"). Web je ale SSG + ISR, takže by nonce zahodil statické
+           * HTML a každé zobrazení by šlo na origin.
            */
-          {
-            key: 'Content-Security-Policy-Report-Only',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "font-src 'self' data:",
-              "frame-src 'self' https://www.google.com",
-              "connect-src 'self' https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com",
-              "object-src 'none'",
-              "base-uri 'self'",
-            ].join('; '),
-          },
+          { key: 'Content-Security-Policy-Report-Only', value: REPORT_ONLY_CSP },
         ],
       },
     ]
