@@ -3,19 +3,17 @@ import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 
 import { getPayloadClient } from '@/landing/data/query'
-
-export type PreviewSearchParams = {
-  path: string
-  previewSecret: string
-}
+import type { PreviewSearchParams } from '@/lib/generatePreviewPath'
 
 export async function GET(req: NextRequest): Promise<Response> {
   const payload = await getPayloadClient()
 
   const { searchParams } = new URL(req.url)
 
-  const path = searchParams.get('path')
-  const previewSecret = searchParams.get('previewSecret')
+  // Typ parametrů žije v `lib` (ne tady), aby `lib` nesahal do `app/`; klíče
+  // přes něj hlídají, že handler čte totéž, co generátor zapisuje.
+  const path = searchParams.get('path' satisfies keyof PreviewSearchParams)
+  const previewSecret = searchParams.get('previewSecret' satisfies keyof PreviewSearchParams)
 
   if (previewSecret !== process.env.PREVIEW_SECRET) {
     return new Response('You are not allowed to preview this page', { status: 403 })

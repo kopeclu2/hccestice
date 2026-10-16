@@ -1,7 +1,12 @@
-import { PayloadRequest, CollectionSlug } from 'payload'
+import type { CollectionSlug, PayloadRequest } from 'payload'
 
-import { PreviewSearchParams } from '@/app/(landing)/next/preview/route'
 import { collectionDocPath, routes } from '@/lib/routes'
+
+/** Query parametry `/next/preview` — sdílí generátor URL i route handler. */
+export type PreviewSearchParams = {
+  path: string
+  previewSecret: string
+}
 
 type Props = {
   collection: Extract<CollectionSlug, 'pages' | 'posts'>
