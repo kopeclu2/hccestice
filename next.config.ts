@@ -8,6 +8,7 @@ import type { NextConfig } from 'next'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 import { redirects } from './redirects'
+import { MEDIA_CONTENT_SECURITY_POLICY, MEDIA_DOWNLOAD_EXTENSIONS } from './src/lib/mediaTypes'
 
 // Pořadí je záměrné: na Coolify je zdroj pravdy `NEXT_PUBLIC_SERVER_URL`
 // (build variable). Kdyby se čtla až za Vercelem, `remotePatterns` níž by
@@ -156,6 +157,26 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      /**
+       * Statické soubory z `public/media` (Next je servíruje přímo, mimo
+       * Payload, a `Content-Type` bere z přípony). Soubor otevřený jako
+       * dokument tak nesmí spustit skript ani načíst cizí zdroje — viz
+       * `lib/mediaTypes`. Stejnou logiku nese `modifyResponseHeaders`
+       * kolekce `media` pro `/api/media/file/*`.
+       */
+      {
+        source: '/media/:path*',
+        headers: [{ key: 'Content-Security-Policy', value: MEDIA_CONTENT_SECURITY_POLICY }],
+      },
+      /**
+       * PDF a Office se stahují: `sandbox` v CSP vestavěný prohlížeč PDF
+       * v Chrome nenačte, takže by se PDF z odkazu v článku neotevřelo.
+       * Jedno pravidlo na příponu — `(?:…)` path-to-regexp v `source` nezná.
+       */
+      ...MEDIA_DOWNLOAD_EXTENSIONS.map((extension) => ({
+        source: `/media/:name.${extension}`,
+        headers: [{ key: 'Content-Disposition', value: 'attachment' }],
+      })),
     ]
   },
   turbopack: {
