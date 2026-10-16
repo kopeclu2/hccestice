@@ -12,6 +12,7 @@ import * as migration_20261014_134131_vchl_penalties from './20261014_134131_vch
 import * as migration_20261014_150444_match_slug from './20261014_150444_match_slug'
 import * as migration_20261015_085423_match_header_variant from './20261015_085423_match_header_variant'
 import * as migration_20261016_041722_remove_template_leftovers from './20261016_041722_remove_template_leftovers'
+import * as migration_20261016_084321_security_deps_upgrade from './20261016_084321_security_deps_upgrade'
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20261016_041722_remove_template_leftovers.up,
     down: migration_20261016_041722_remove_template_leftovers.down,
     name: '20261016_041722_remove_template_leftovers',
+  },
+  {
+    up: migration_20261016_084321_security_deps_upgrade.up,
+    down: migration_20261016_084321_security_deps_upgrade.down,
+    name: '20261016_084321_security_deps_upgrade',
   },
 ]
