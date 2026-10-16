@@ -17,7 +17,12 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
  * (ze seed importu z eStránky) se tím nevrátí; zdroj je
  * `scripts/seed/data/codes.json` (5 záznamů s `enabled`), který dřív
  * četl `scripts/seed/import.ts` a po odstranění globalu už je nepoužívá.
- * Před spuštěním `up` v produkci případně zálohovat tabulky `sidebar*`.
+ * Před spuštěním `up` v produkci zálohovat tabulky `sidebar*`.
+ *
+ * POŘADÍ NASAZENÍ: pouštět až PO nasazení nového image (výjimka z pravidla
+ * „migrace před buildem“). Starý běžící build čte `pages` přes `find` bez
+ * `select`, takže Drizzle vybírá `hero_*` a joinuje `pages_hero_links`; po
+ * dropu by padal. Nový kód hero sloupce nepotřebuje a běží na obou schématech.
  */
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {

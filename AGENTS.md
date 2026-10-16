@@ -1506,19 +1506,31 @@ DATABASE_URL=postgres://…@127.0.0.1:5433/postgres bun run migrate
 Runner image je standalone, takže `payload migrate` v něm **nejde spustit** —
 nemá `node_modules` ani `src`. Tunel to řeší bez druhého image.
 
-Migrace `20261016_041722_remove_template_leftovers` **před buildem**, stejně
-jako předchozí. Je **destruktivní** (jedna z mála): dropne globaly `header`,
-`footer` a `sidebar` (tabulky `header*`, `footer*`, `sidebar*` včetně
+Migrace `20261016_041722_remove_template_leftovers` je **výjimka z pravidla
+„migrace před buildem“ — pouští se až PO nasazení nového image.** Starý běžící
+build čte `pages` přes Payload `find` bez `select`, takže Drizzle vybírá
+sloupce `hero_*` a joinuje `pages_hero_links`; po dropu by každá stránka
+starého buildu padala. Nový kód hero sloupce nepotřebuje, takže běží na obou
+schématech (před i po migraci) a pořadí „nový image → migrace“ nemá výpadek.
+Prerender na runneru prochází také bez migrace, protože novému kódu
+dropnuté sloupce nechybí. Postup: deploy → ověřit, že nový kontejner běží →
+`bun run migrate` přes tunel.
+
+Je **destruktivní** (jedna z mála): dropne globaly `header`, `footer`
+a `sidebar` (tabulky `header*`, `footer*`, `sidebar*` včetně
 `sidebar_blocks_*` a jejich enumů), hero kolekce `pages`
 (`pages_hero_links`, `_pages_v_version_hero_links`, sloupce `hero_*` na
 `pages` a `version_hero_*` na `_pages_v`) a sloupce `pages_id` / `posts_id`
 na `pages_rels` a `_pages_v_rels` (patřily jen odkazům v hero, v datech byly
-NULL). Běžící starý build po ní přestane fungovat jen tam, kde by tyto
-tabulky četl — frontend je nečetl. `down` vrací **jen schéma, ne data**:
-obsah 5 RawHtml widgetů Sidebaru (po `up` ho má jen záloha databáze) pochází
-ze seed dat `scripts/seed/data/codes.json`. Ověřeno `up` → `down` → `up` na
-čisté databázi a `up` na kopii reálných dat (počty `pages`, `posts`,
-`matches` beze změny).
+NULL). **Před spuštěním zálohovat tabulky `sidebar*`**: `down` vrací jen
+schéma, ne data, a obsah 5 RawHtml widgetů Sidebaru by měl po `up` jen
+záloha databáze (originál je v seed datech `scripts/seed/data/codes.json`).
+Ověřeno `up` → `down` → `up` na čisté databázi a `up` na kopii reálných dat
+(počty `pages`, `posts`, `matches` beze změny).
+
+**Lokální vývoj** jede na `push`: po merge Payload při startu `next dev`
+zahlásí ztrátu dat (drop `header` / `footer` / `sidebar` / hero) a zeptá se na
+potvrzení. Je to očekávané, potvrdit.
 
 Čerstvá databáze, na které proběhnou **všechny** migrace od nuly, se liší od
 schématu v `push` módu u bloku News (`pages_blocks_landing_news` a verze:
