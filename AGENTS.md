@@ -584,7 +584,7 @@ Handoff `design_maintance/HC Cestice Systemove Stranky.dc.html` — 404, 500,
 | 404 | `src/app/(landing)/not-found.tsx` |
 | 500 | `src/app/(landing)/error.tsx` |
 | chyba v root layoutu | `src/app/global-error.tsx` |
-| údržba | brána v `src/app/(landing)/layout.tsx` + náhled `/udrzba` |
+| údržba | brána v `src/proxy.ts` (HTTP 503) + stránka `/udrzba` |
 
 Společné díly: `landing/ui/ErrorCode.tsx` (obří obrysový kód + `ErrorMeta`),
 `landing/ui/PuckTrail.tsx`, utility `text-stroke-none`, `hatch-lime` a
@@ -613,41 +613,60 @@ při první změně designu.
 
 Přepínač je v adminu: **Nastavení webu → Režim údržby** (`siteConfig.maintenance`).
 
-Brána žije v root layoutu, protože je to jediné místo, kterým prochází celý
-veřejný web. Admin má vlastní root layout pod `(payload)`, takže se do
-administrace dostanete i při zapnuté údržbě — proto tu **není middleware**.
+Brána žije v **`src/proxy.ts`** (v Next 16 nástupce `middleware`), ne
+v root layoutu. Proxy běží před každou routou, takže funguje stejně pro
+prerenderované, ISR i dynamické stránky a vrací korektní **HTTP 503**
+s `Retry-After: 600`, `X-Robots-Tag: noindex` a `Cache-Control: no-store`.
 
-- `fetchMaintenance()` (`landing/data/maintenance.ts`) je tagovaná cache, ne
-  `fetchSiteConfig()`: ta je obalená jen React `cache()`, což platí v rámci
-  jednoho renderu, ne mezi requesty. Tag přepíná `hooks/revalidateMaintenance.ts`
-  — bez něj by změna v adminu nezabrala vůbec (TTL `unstable_cache` je rok).
-- Hook revaliduje profilem `{ expire: 0 }`, **ne doporučovaným `'max'`**.
-  `'max'` je stale-while-revalidate: první návštěvník po zapnutí dostane
-  ještě starou stránku a údržba se objeví až tomu dalšímu (ověřeno — první
-  request po `revalidateTag(tag, 'max')` vrací běžný web). U vypínače webu
-  je to chyba. `updateTag()` expiruje okamžitě taky, ale jde volat jen ze
-  Server Action; admin ukládá přes REST route handler, kde vyhodí `E872`.
-- `hasSession()` (`landing/data/session.ts`) se volá **jen když je režim
-  zapnutý**. `headers()` je dynamické API a jeho bezpodmínečné čtení v root
-  layoutu by zrušilo prerender celého webu.
-- Přihlášeného správce brána pouští dál, takže z jeho prohlížeče zapnutý
-  režim vypadá jako nefunkční. Proto se mu (a v náhledu konceptů) nad
-  obsahem vykreslí `MaintenanceNotice` — lišta „Režim údržby je zapnutý".
-- Obě funkce chybu spolknou a vrátí `false`. Nedostupná databáze nesmí
-  shodit stránku, na které se právě hlásí, že je něco rozbité.
+**Proč ne layout** (16. 10. 2026, výpadek produkce): brána byla v root
+layoutu a přihlášení ověřovala přes `headers()` jen při zapnutém režimu.
+Prerenderované stránky (home, detaily zápasů, galerií, článků) se ale
+regenerují přes ISR, a jakmile regenerace se zapnutým režimem sáhla na
+`headers()`, Next stránku shodil na „Page changed from static to dynamic
+at runtime" → návštěvník dostal **HTTP 500**, ne údržbovou stránku.
+Layout proto `headers()` nesmí volat vůbec.
+
+| díl | role |
+|---|---|
+| `src/lib/maintenanceGate.ts` | čistá logika: které cesty brána zavírá (`isGatedPath`), rozhodnutí `pass` / `bypass` / `block`, názvy cookies |
+| `src/proxy.ts` | čte stav, ověří správce, vrací 503 s HTML údržbové stránky |
+| `src/app/internal/maintenance/route.ts` | stav pro proxy z tagované cache; s `?session=1` ověří přihlášení přes `payload.auth` |
+| `src/app/(landing)/udrzba/page.tsx` | údržbová stránka — náhled pro správce i zdroj HTML, které proxy vrací |
+| `landing/layout/MaintenanceNotice.tsx` | lišta „Režim údržby je zapnutý" pro správce (klientská, podle cookie) |
+
+- **Stav** proxy čte z `/internal/maintenance` (volá se na
+  `127.0.0.1:$PORT`, standalone poslouchá jen IPv4) a drží ho 5 s v paměti
+  procesu. Route čte `fetchMaintenance()` — tagovanou cache, kterou
+  `hooks/revalidateMaintenance.ts` expiruje profilem `{ expire: 0 }`, **ne
+  `'max'`** (stale-while-revalidate by první návštěvník po zapnutí dostal
+  ještě běžný web). Přepnutí v adminu se tak projeví do ~5 s.
+- **Přihlášený správce projde.** Proxy ověří `payload-token` přes
+  `payload.auth` (výsledek drží 60 s na token) — podvržená cookie bránu
+  neotevře. Náhled konceptu se zvlášť nepouští: otevírá ho přihlášený
+  správce a cookie draft módu by šla podvrhnout.
+- **Lišta pro správce**: layout prerenderovaných stránek neví, kdo se dívá,
+  takže proxy průchozímu nastaví cookie `hc-maintenance-bypass` (ne
+  `httpOnly`) a `MaintenanceNotice` se podle ní ukáže až na klientu. Po
+  vypnutí režimu proxy cookie smaže.
+- **HTML bez skriptů**: proxy vrací obsah `/udrzba` na cizí URL
+  (`/zapasy`…), proto z něj vyřeže `<script>`. Kdyby se hydratoval,
+  klientský router by v něm našel strom routy `/udrzba` pod jinou adresou.
+  Stránka JS nepotřebuje. RSC požadavky klientského routeru dostanou 503 —
+  router pak udělá plnou navigaci, která skončí na údržbové stránce.
+- **Mimo bránu**: `/admin`, `/api`, `/internal`, `/next` (preview),
+  `/health`, `/udrzba`, `/_next` a cokoli s příponou (sitemapy, `llms.txt`,
+  legacy `*.html` — ty jen přesměrují na stránku, kterou brána zachytí).
+- **Fail open**: chyba při čtení stavu web otevře. Nedostupná interní routa
+  nesmí zavřít celý web; `fetchMaintenance` navíc chybu databáze spolkne.
+- Přepnutí režimu **nezneplatňuje cache stránek** — layout stav nečte,
+  takže se po vypnutí nemusí nic regenerovat.
 - Fáze schématu: lokálně to dojede na `push`, do produkce jde migrace
   `20260821_053907_add_maintenance_mode` (tři sloupce na `site_config`).
 
-Co brána **neumí** a je potřeba o tom vědět:
-
-- **Nevrací HTTP 503.** Layout na to nemá API; indexaci brzdí jen
-  `<meta name="robots" content="noindex">`. Pro krátkou plánovanou údržbu to
-  stačí, pro delší odstávku je korektní 503 s `Retry-After` — to už chce
-  middleware, který si flag čte přes vlastní API routu s krátkou TTL.
-- **Neušetří dotazy do databáze.** Layout `children` nevykreslí, ale Next je
-  stejně vyrenderuje, takže obsah stránky skončí v RSC payloadu (ne ve
-  viditelném HTML) a dotazy proběhnou. Údržba je tedy vzkaz návštěvníkům,
-  ne odlehčení serveru.
+Ověřeno na produkčním buildu s režimem zapnutým: veřejné stránky (statické,
+ISR i dynamické) 503 bez `<script>`, přihlášený správce 200 + lišta,
+podvržený `payload-token` 503, admin, `/health` a sitemapy 200, legacy
+`*.html` 308.
 
 ## Prázdné stavy
 

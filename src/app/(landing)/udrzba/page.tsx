@@ -7,9 +7,13 @@ import { MaintenanceScreen } from '@/landing/layout/MaintenanceScreen'
 import { brandTitle } from '@/lib/brandTitle'
 
 /**
- * Náhled údržbové stránky s texty z adminu — aby si správce mohl ověřit,
- * co návštěvníci uvidí, **než** režim zapne. Zapnutý režim řeší brána
- * v root layoutu (`src/app/(landing)/layout.tsx`), ne tahle routa.
+ * Údržbová stránka s texty z adminu. Dvě role:
+ *
+ * - náhled pro správce — co návštěvníci uvidí, **než** režim zapne;
+ * - zdroj HTML, které brána (`src/proxy.ts`) při zapnutém režimu vrací
+ *   s HTTP 503 na všech veřejných adresách (bez skriptů, viz `stripScripts`).
+ *
+ * Proto je `/udrzba` z brány vyjmutá (`isGatedPath`).
  *
  * Neindexuje se: je to systémová stránka, ne obsah webu.
  */
