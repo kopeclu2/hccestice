@@ -112,6 +112,13 @@ export default buildConfig({
   ],
   cors: [getServerSideURL()].filter(Boolean),
   /**
+   * Strop `depth` pro všechny dotazy (Payload ho uplatňuje v `afterRead`
+   * i pro Local API; výchozích 10 je pro veřejné REST zbytečně hodně).
+   * Nejhlubší dotaz ve fetcherech webu je `depth: 2` (`grep 'depth:' src`),
+   * takže 2 nic nerozbije. Při přidání hlubšího fetcheru tohle zvednout.
+   */
+  maxDepth: 2,
+  /**
    * Globální limit velikosti nahrávaného souboru — bez něj šlo nahrát cokoli
    * libovolně velkého a zaplnit disk produkčního boxu (`AGENTS.md`: 3,7 GB
    * RAM bez swapu, omezený prostor). 25 MB má rezervu nad největším reálným
