@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -23,6 +24,7 @@ import {
 import { toArticleDetail } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { brandTitle } from '@/lib/brandTitle'
+import { decodeSlug } from '@/lib/decodeSlug'
 import { generateMeta } from '@/lib/generateMeta'
 import { routes } from '@/lib/routes'
 
@@ -46,7 +48,9 @@ type Args = { params: Promise<{ slug: string }> }
  */
 export default async function ArticlePage({ params }: Args) {
   const { slug: rawSlug } = await params
-  const slug = decodeURIComponent(rawSlug)
+  const slug = decodeSlug(rawSlug)
+  // Neplatné procentové kódování (`%zz`) je 404, ne 500.
+  if (slug === null) notFound()
   const { isEnabled: draft } = await draftMode()
 
   const post = await fetchPostBySlug(slug, draft)
@@ -94,7 +98,8 @@ export default async function ArticlePage({ params }: Args) {
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug: rawSlug } = await params
-  const slug = decodeURIComponent(rawSlug)
+  const slug = decodeSlug(rawSlug)
+  if (slug === null) return { title: brandTitle('Článek nenalezen') }
   const post = await fetchPostBySlug(slug, false)
   if (!post) return { title: brandTitle('Článek nenalezen') }
 

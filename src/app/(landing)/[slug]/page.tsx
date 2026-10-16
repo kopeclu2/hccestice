@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
-import { permanentRedirect } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -9,6 +9,7 @@ import { RenderBlocks } from '@/landing/blocks/render'
 import { fetchPageBySlug, fetchPageSlugs } from '@/landing/features/pages/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PageHeader } from '@/landing/ui/PageHeader'
+import { decodeSlug } from '@/lib/decodeSlug'
 import { generateMeta } from '@/lib/generateMeta'
 
 /**
@@ -35,8 +36,9 @@ type Args = {
 export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = 'home' } = await paramsPromise
-  // Decode to support slugs with special characters
-  const decodedSlug = decodeURIComponent(slug)
+  // Decode to support slugs with special characters; neplatné kódování je 404.
+  const decodedSlug = decodeSlug(slug)
+  if (decodedSlug === null) notFound()
 
   // Domovská stránka se renderuje landing routou `(landing)/page.tsx`.
   // `permanentRedirect` (308), ne `redirect` (307 Temporary) — `/home`
@@ -71,7 +73,8 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = 'home' } = await paramsPromise
   // Decode to support slugs with special characters
-  const decodedSlug = decodeURIComponent(slug)
+  const decodedSlug = decodeSlug(slug)
+  if (decodedSlug === null) return {}
   const page = await fetchPageBySlug(decodedSlug)
 
   return generateMeta({ doc: page })
