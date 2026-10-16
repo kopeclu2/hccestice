@@ -1319,6 +1319,27 @@ DATABASE_URL=postgres://…@127.0.0.1:5433/postgres bun run migrate
 Runner image je standalone, takže `payload migrate` v něm **nejde spustit** —
 nemá `node_modules` ani `src`. Tunel to řeší bez druhého image.
 
+Migrace `20261016_041722_remove_template_leftovers` **před buildem**, stejně
+jako předchozí. Je **destruktivní** (jedna z mála): dropne globaly `header`,
+`footer` a `sidebar` (tabulky `header*`, `footer*`, `sidebar*` včetně
+`sidebar_blocks_*` a jejich enumů), hero kolekce `pages`
+(`pages_hero_links`, `_pages_v_version_hero_links`, sloupce `hero_*` na
+`pages` a `version_hero_*` na `_pages_v`) a sloupce `pages_id` / `posts_id`
+na `pages_rels` a `_pages_v_rels` (patřily jen odkazům v hero, v datech byly
+NULL). Běžící starý build po ní přestane fungovat jen tam, kde by tyto
+tabulky četl — frontend je nečetl. `down` vrací **jen schéma, ne data**:
+obsah 5 RawHtml widgetů Sidebaru (po `up` ho má jen záloha databáze) pochází
+ze seed dat `scripts/seed/data/codes.json`. Ověřeno `up` → `down` → `up` na
+čisté databázi a `up` na kopii reálných dat (počty `pages`, `posts`,
+`matches` beze změny).
+
+Čerstvá databáze, na které proběhnou **všechny** migrace od nuly, se liší od
+schématu v `push` módu u bloku News (`pages_blocks_landing_news` a verze:
+`count` default 3 místo 5, navíc `fallback_photo_id`, `highlight_tag`,
+`highlight_title`). Starší migrace tedy nesedí na dnešní config; produkci se
+to netýká (schéma má z dumpu a migrace jen dorovnává), ale pro novou
+databázi z migrací je to dluh.
+
 ## Co je zapečené v buildu
 
 `NEXT_PUBLIC_*` jdou do klientského bundlu, takže změna
