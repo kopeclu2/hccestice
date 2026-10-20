@@ -29,11 +29,23 @@ const describeRecipient = (to: unknown): string => {
   return '(neznámý adresát)'
 }
 
+/** Počet adresátů — do produkčního logu se adresy ani tělo nedostanou. */
+const countRecipients = (to: unknown): number => {
+  if (Array.isArray(to)) return to.reduce<number>((sum, item) => sum + countRecipients(item), 0)
+  if (typeof to === 'string') return to.split(/[,;]/).filter((part) => part.trim()).length
+  return to && typeof to === 'object' && 'address' in to ? 1 : 0
+}
+
 /**
  * Adapter, který e-mail neodešle a vypíše ho do logu.
  *
  * V devu je to feature (žádný účet u providera, nic neodejde skutečnému
  * adresátovi), v produkci chyba — proto se úroveň logu podle prostředí liší.
+ *
+ * V produkci se loguje **jen předmět a počet adresátů**: tělo reset-password
+ * mailu nese platný token (převzetí účtu administrátora) a tělo formuláře
+ * osobní údaje, a logy jdou do Coolify i do Sentry. V devu zůstává celé
+ * tělo, protože odkaz z mailu je jediný způsob, jak si ho vyzkoušet.
  */
 const logAdapter =
   (): EmailAdapter =>
@@ -42,17 +54,21 @@ const logAdapter =
     defaultFromAddress: fromAddress(),
     defaultFromName: fromName(),
     sendEmail: async (message) => {
-      const detail = {
-        to: describeRecipient(message.to),
-        subject: message.subject,
-        text: message.text,
-      }
       const msg = 'E-mail se NEODESLAL — chybí RESEND_API_KEY i SMTP_HOST (viz .env.example)'
 
       if (process.env.NODE_ENV === 'production') {
-        payload.logger.error({ ...detail, msg })
+        payload.logger.error({
+          subject: message.subject,
+          recipientCount: countRecipients(message.to),
+          msg,
+        })
       } else {
-        payload.logger.warn({ ...detail, msg })
+        payload.logger.warn({
+          to: describeRecipient(message.to),
+          subject: message.subject,
+          text: message.text,
+          msg,
+        })
       }
       return message
     },

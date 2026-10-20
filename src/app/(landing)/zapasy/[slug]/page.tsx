@@ -21,6 +21,7 @@ import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
 import { SITE_NAME } from '@/lib/club'
 import { formatFullDate } from '@/lib/datetime'
+import { decodeSlug } from '@/lib/decodeSlug'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { mergeOpenGraph, OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
@@ -49,11 +50,7 @@ type Args = { params: Promise<{ slug: string }> }
  */
 const readSlug = async ({ params }: Args): Promise<string | null> => {
   const { slug } = await params
-  try {
-    return decodeURIComponent(slug)
-  } catch {
-    return null
-  }
+  return decodeSlug(slug)
 }
 
 /**

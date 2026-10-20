@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 
+import { decodeSegments } from '@/lib/decodeSlug'
 import { getCachedRedirects } from '@/server/getRedirects'
 
 /**
@@ -14,7 +15,10 @@ type Args = {
 
 export default async function LegacyFotoalbumRedirect({ params }: Args) {
   const { rest } = await params
-  const url = `/fotoalbum/${rest.map(decodeURIComponent).join('/')}`
+  // Neplatné procentové kódování (`%zz`) je 404, ne 500.
+  const segments = decodeSegments(rest)
+  if (!segments) notFound()
+  const url = `/fotoalbum/${segments.join('/')}`
 
   const redirects = await getCachedRedirects()()
 

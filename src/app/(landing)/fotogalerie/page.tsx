@@ -7,7 +7,7 @@ import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
 import { fetchGalleriesPage } from '@/landing/features/galleries/data'
 import { fetchGallerySeasons, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { buildListUrl } from '@/landing/lib/listUrl'
+import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
@@ -24,7 +24,7 @@ type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
  */
 export default async function FotogaleriePage({ searchParams }: Args) {
   const { page: rawPage, sezona } = await searchParams
-  const requestedPage = Math.max(1, Number.parseInt(rawPage ?? '1', 10) || 1)
+  const requestedPage = parsePageParam(rawPage)
 
   const seasons = await fetchGallerySeasons()
   const activeSeason = sezona ? (seasons.find((season) => season.slug === sezona) ?? null) : null
@@ -89,7 +89,7 @@ const DESCRIPTION =
  */
 export async function generateMetadata({ searchParams }: Args): Promise<Metadata> {
   const { page: rawPage, sezona } = await searchParams
-  const page = Math.max(1, Number.parseInt(rawPage ?? '1', 10) || 1)
+  const page = parsePageParam(rawPage)
 
   return {
     title: TITLE,

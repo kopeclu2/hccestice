@@ -1,6 +1,7 @@
 import React from 'react'
 
 import RichTextServer from '@/components/RichText/Server'
+import { sanitizeHtml } from '@/hooks/sanitizeHtml'
 import type { Post } from '@/payload-types'
 
 /**
@@ -17,7 +18,7 @@ export function ArticleBody({ post }: { post: Post }) {
       {isLegacy ? (
         <div
           className="legacy-html"
-          dangerouslySetInnerHTML={{ __html: post.legacyHtml as string }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.legacyHtml as string) }}
         />
       ) : post.content ? (
         <RichTextServer data={post.content} enableGutter={false} enableProse={false} />

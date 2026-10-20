@@ -1934,7 +1934,7 @@ export interface Form {
  */
 export interface RawHtmlBlock {
   /**
-   * Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky.
+   * Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky. Při uložení se odstraní skripty, události (onclick…), formuláře a cizí iframy.
    */
   html: string;
   id?: string | null;

@@ -8,6 +8,7 @@ import {
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
+import { sanitizeHtmlFieldHook } from '@/hooks/sanitizeHtml'
 import { generatePreviewPath } from '@/lib/generatePreviewPath'
 
 import { authenticated } from '../../access/authenticated'
@@ -113,6 +114,8 @@ export const Posts: CollectionConfig<'posts'> = {
             {
               name: 'legacyHtml',
               type: 'code',
+              // Stored XSS: čistí se při uložení, na renderu ještě jednou (viz hooks/sanitizeHtml).
+              hooks: { beforeChange: [sanitizeHtmlFieldHook] },
               admin: {
                 language: 'html',
                 description:

@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { linkUrlValidator } from '@/lib/linkUrl'
+
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { revalidateLanding } from '../../hooks/revalidateLanding'
@@ -75,8 +77,8 @@ export const SiteConfig: GlobalConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'facebook', type: 'text', label: 'Facebook URL' },
-        { name: 'instagram', type: 'text', label: 'Instagram URL' },
+        { name: 'facebook', type: 'text', label: 'Facebook URL', validate: linkUrlValidator() },
+        { name: 'instagram', type: 'text', label: 'Instagram URL', validate: linkUrlValidator() },
       ],
     },
     {
@@ -98,7 +100,12 @@ export const SiteConfig: GlobalConfig = {
           type: 'row',
           fields: [
             { name: 'label', type: 'text', label: 'Text tlačítka' },
-            { name: 'href', type: 'text', label: 'Cíl (#kotva nebo /cesta)' },
+            {
+              name: 'href',
+              type: 'text',
+              label: 'Cíl (#kotva nebo /cesta)',
+              validate: linkUrlValidator(),
+            },
           ],
         },
       ],
@@ -134,6 +141,7 @@ export const SiteConfig: GlobalConfig = {
                       type: 'text',
                       label: 'Cíl (#kotva nebo /cesta)',
                       required: true,
+                      validate: linkUrlValidator({ required: true }),
                     },
                   ],
                 },

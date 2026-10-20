@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { decodeSegments } from '@/lib/decodeSlug'
 
 type Args = {
   params: Promise<{ rest: string[] }>
@@ -20,7 +22,10 @@ type Args = {
  */
 export default async function LegacyClankyRedirect({ params }: Args) {
   const { rest } = await params
-  const url = `/clanky/${rest.map(decodeURIComponent).join('/')}`
+  // Neplatné procentové kódování (`%zz`) je 404, ne 500.
+  const segments = decodeSegments(rest)
+  if (!segments) notFound()
+  const url = `/clanky/${segments.join('/')}`
 
   return <PayloadRedirects url={url} />
 }

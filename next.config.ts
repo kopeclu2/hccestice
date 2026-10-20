@@ -9,6 +9,8 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 import { redirects } from './redirects'
 import { sentryCspReportUri } from './src/lib/csp'
+import { EMBED_FRAME_SOURCES } from './src/lib/embedHosts'
+import { MEDIA_CONTENT_SECURITY_POLICY, MEDIA_DOWNLOAD_EXTENSIONS } from './src/lib/mediaTypes'
 
 // Pořadí je záměrné: na Coolify je zdroj pravdy `NEXT_PUBLIC_SERVER_URL`
 // (build variable). Kdyby se čtla až za Vercelem, `remotePatterns` níž by
@@ -41,8 +43,9 @@ const ENFORCED_CSP = [
 ].join('; ')
 
 /**
- * Plná politika jen k hlášení. Hosty v `frame-src` jsou vložená videa
- * a mapy ze starých článků a z bloku RawHtml.
+ * Plná politika jen k hlášení. Hosty v `frame-src` jsou vložená videa,
+ * mapy a tabulky ze starých článků a z bloků — ze stejného seznamu, podle
+ * kterého je propouští sanitizér (`src/lib/embedHosts.ts`).
  */
 const REPORT_ONLY_CSP = [
   "default-src 'self'",
@@ -52,15 +55,10 @@ const REPORT_ONLY_CSP = [
   "font-src 'self' data:",
   [
     "frame-src 'self'",
+    // reCAPTCHA a Tag Manager, pak vložená videa, mapy a tabulky.
     'https://www.google.com',
-    'https://maps.google.com',
     'https://www.googletagmanager.com',
-    'https://www.youtube.com',
-    'https://www.youtube-nocookie.com',
-    'https://player.vimeo.com',
-    'https://www.facebook.com',
-    'https://mapy.cz',
-    'https://frame.mapy.cz',
+    ...EMBED_FRAME_SOURCES,
   ].join(' '),
   "connect-src 'self' https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com",
   "object-src 'none'",
@@ -206,6 +204,26 @@ const nextConfig: NextConfig = {
           { key: 'Content-Security-Policy-Report-Only', value: REPORT_ONLY_CSP },
         ],
       },
+      /**
+       * Statické soubory z `public/media` (Next je servíruje přímo, mimo
+       * Payload, a `Content-Type` bere z přípony). Soubor otevřený jako
+       * dokument tak nesmí spustit skript ani načíst cizí zdroje — viz
+       * `lib/mediaTypes`. Stejnou logiku nese `modifyResponseHeaders`
+       * kolekce `media` pro `/api/media/file/*`.
+       */
+      {
+        source: '/media/:path*',
+        headers: [{ key: 'Content-Security-Policy', value: MEDIA_CONTENT_SECURITY_POLICY }],
+      },
+      /**
+       * PDF a Office se stahují: `sandbox` v CSP vestavěný prohlížeč PDF
+       * v Chrome nenačte, takže by se PDF z odkazu v článku neotevřelo.
+       * Jedno pravidlo na příponu — `(?:…)` path-to-regexp v `source` nezná.
+       */
+      ...MEDIA_DOWNLOAD_EXTENSIONS.map((extension) => ({
+        source: `/media/:name.${extension}`,
+        headers: [{ key: 'Content-Disposition', value: 'attachment' }],
+      })),
     ]
   },
   turbopack: {

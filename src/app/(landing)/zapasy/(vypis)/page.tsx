@@ -23,7 +23,7 @@ import {
 } from '@/landing/features/matches/data/seasons'
 import type { StandingsContent } from '@/landing/features/matches/types'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { buildListUrl } from '@/landing/lib/listUrl'
+import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { SITE_NAME } from '@/lib/club'
@@ -56,7 +56,7 @@ const listPath = (page: number, seasonSlug: string | null, hash?: string): strin
  */
 export default async function ZapasyPage({ searchParams }: Args) {
   const { sezona, strana } = await searchParams
-  const requestedPage = Math.max(1, Number.parseInt(strana ?? '1', 10) || 1)
+  const requestedPage = parsePageParam(strana)
 
   const [matchSeasons, currentSeason] = await Promise.all([fetchMatchSeasons(), fetchSeason()])
 
@@ -192,7 +192,7 @@ const DESCRIPTION =
  */
 export async function generateMetadata({ searchParams }: Args): Promise<Metadata> {
   const { sezona, strana } = await searchParams
-  const page = Math.max(1, Number.parseInt(strana ?? '1', 10) || 1)
+  const page = parsePageParam(strana)
 
   return {
     title: TITLE,
