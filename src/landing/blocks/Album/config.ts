@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { photoField } from '@/landing/blocks/shared'
+import { linkUrlValidator } from '@/lib/linkUrl'
 
 export const LandingAlbum: Block = {
   slug: 'landingAlbum',
@@ -62,6 +63,7 @@ export const LandingAlbum: Block = {
           name: 'href',
           type: 'text',
           label: 'Odkaz',
+          validate: linkUrlValidator(),
           admin: {
             description: 'Např. /fotogalerie/play-off-2026. Prázdné = dlaždice není klikatelná.',
           },

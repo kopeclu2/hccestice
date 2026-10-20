@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { linkUrlValidator } from '@/lib/linkUrl'
+
 export const SectionHeadingBlock: Block = {
   slug: 'sectionHeading',
   interfaceName: 'SectionHeadingBlockType',
@@ -18,7 +20,12 @@ export const SectionHeadingBlock: Block = {
       type: 'row',
       fields: [
         { name: 'ctaLabel', type: 'text', label: 'Text tlačítka vpravo' },
-        { name: 'ctaHref', type: 'text', label: 'Cíl tlačítka (#kotva nebo /cesta)' },
+        {
+          name: 'ctaHref',
+          type: 'text',
+          label: 'Cíl tlačítka (#kotva nebo /cesta)',
+          validate: linkUrlValidator(),
+        },
       ],
     },
   ],

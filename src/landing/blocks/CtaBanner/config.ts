@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { photoField } from '@/landing/blocks/shared'
+import { linkUrlValidator } from '@/lib/linkUrl'
 
 export const CtaBannerBlock: Block = {
   slug: 'ctaBanner',
@@ -14,7 +15,12 @@ export const CtaBannerBlock: Block = {
       type: 'row',
       fields: [
         { name: 'ctaLabel', type: 'text', label: 'Text tlačítka' },
-        { name: 'ctaHref', type: 'text', label: 'Cíl tlačítka (#kotva nebo /cesta)' },
+        {
+          name: 'ctaHref',
+          type: 'text',
+          label: 'Cíl tlačítka (#kotva nebo /cesta)',
+          validate: linkUrlValidator(),
+        },
       ],
     },
     {

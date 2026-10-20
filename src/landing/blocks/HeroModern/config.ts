@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { photoField } from '@/landing/blocks/shared'
+import { linkUrlValidator } from '@/lib/linkUrl'
 
 /**
  * Varianta 2 hero sekce (handoff `design_header/HC Cestice Modern.dc.html`).
@@ -48,6 +49,7 @@ export const LandingHeroModern: Block = {
               name: 'ctaHref',
               type: 'text',
               label: 'Cíl tlačítka',
+              validate: linkUrlValidator(),
               admin: {
                 description: 'Kotva na této stránce (#sezona) nebo cesta (/zapasy).',
               },

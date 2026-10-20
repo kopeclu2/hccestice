@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { linkUrlValidator } from '@/lib/linkUrl'
+
 export const AnnouncementWidget: Block = {
   slug: 'announcement',
   interfaceName: 'AnnouncementBlock',
@@ -20,7 +22,7 @@ export const AnnouncementWidget: Block = {
       type: 'row',
       fields: [
         { name: 'linkLabel', type: 'text', label: 'Text odkazu' },
-        { name: 'linkHref', type: 'text', label: 'Cíl odkazu' },
+        { name: 'linkHref', type: 'text', label: 'Cíl odkazu', validate: linkUrlValidator() },
         { name: 'dismissible', type: 'checkbox', label: 'Lze zavřít křížkem', defaultValue: true },
       ],
     },

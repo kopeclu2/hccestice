@@ -32,6 +32,7 @@ import { Banner } from '@/landing/blocks/Banner/config'
 import { Code } from '@/landing/blocks/Code/config'
 import { MediaBlock } from '@/landing/blocks/MediaBlock/config'
 import { YouTube } from '@/landing/blocks/YouTube/config'
+import { linkUrlValidator } from '@/lib/linkUrl'
 
 import { CtaBannerBlock } from '../landing/blocks/CtaBanner/config'
 import { DataTableBlock } from '../landing/blocks/DataTable/config'
@@ -102,7 +103,9 @@ export const defaultLexical = lexicalEditor({
               if ((options?.siblingData as LinkFields)?.linkType === 'internal') {
                 return true // no validation needed, as no url should exist for internal links
               }
-              return value ? true : 'URL is required'
+              // Whitelist schémat (`lib/linkUrl`): `javascript:` v odkazu z rich
+              // textu by se spustil kliknutím návštěvníka.
+              return linkUrlValidator({ required: true })(value as string | null | undefined)
             }) as TextFieldSingleValidation,
           },
         ]
