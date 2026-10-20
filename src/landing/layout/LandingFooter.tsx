@@ -56,7 +56,10 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
               aria-hidden
               className="absolute inset-0 size-full object-cover opacity-12"
               fill
-              sizes="100vw"
+              /* Fotka je jen textura: krytí 12 % pod zeleným scrimem. `100vw`
+                 tahalo na telefonu i na desktopu největší variantu pro obraz,
+                 ve kterém se detail stejně nepozná. */
+              sizes="50vw"
               src={getMediaUrl(content.photo.url, content.photo.updatedAt)}
             />
             {/*
