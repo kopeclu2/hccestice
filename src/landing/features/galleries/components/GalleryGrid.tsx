@@ -77,17 +77,13 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
 }
 
 /**
- * Kolik prvních karet se načítá hned. Na desktopu je to celý první řádek
- * (3 sloupce), na mobilu jednosloupcová mřížka a první karta je LCP prvek.
- */
-const EAGER_TILES = 3
-
-/**
  * Karta galerie: titulní fotka v poměru 4:3 (jednotná výška řádku),
  * lime pill sezóny vlevo nahoře, glass badge s počtem fotek vpravo dole.
  *
- * `fetchPriority="high"` má jen první karta (LCP kandidát); karty 2–3
- * jsou `eager` bez priority, aby se nepřetahovaly o šířku pásma.
+ * Jen první karta je `eager` + `fetchPriority="high"` (LCP kandidát).
+ * Next u každého eager obrázku přidá `<link rel="preload">`, takže další
+ * eager karty by se o šířku pásma přetahovaly s LCP fotkou: s třemi bylo
+ * LCP na mobilu v labu o ~0,5 s horší než s jednou.
  */
 function GalleryCardTile({ card, index }: { card: GalleryCard; index: number }) {
   return (
@@ -99,7 +95,7 @@ function GalleryCardTile({ card, index }: { card: GalleryCard; index: number }) 
             className="object-cover"
             fetchPriority={index === 0 ? 'high' : undefined}
             fill
-            loading={index < EAGER_TILES ? 'eager' : 'lazy'}
+            loading={index === 0 ? 'eager' : 'lazy'}
             /* Zlomy kopírují `CardGrid`: 1 sloupec / 2 od `sm` (40rem) /
                3 od `lg` (64rem). Od `lg` je sloupec nejvýš ~30rem
                (`max-w-page` 97,5rem ÷ 3), takže `33vw` na širokém monitoru

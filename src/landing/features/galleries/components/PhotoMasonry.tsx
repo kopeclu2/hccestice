@@ -24,13 +24,6 @@ export type GalleryPhoto = { photo: Photo; caption: string | null }
 const BATCH = 60
 
 /**
- * Kolik prvních dlaždic se načítá hned: dva sloupce na mobilu × dva řádky,
- * na tabletu a výš první řádek ze tří sloupců. První fotka je LCP kandidát
- * (`fetchPriority="high"`), ostatní dlaždice pod ohybem zůstávají lazy.
- */
-const EAGER_PHOTOS = 4
-
-/**
  * Mřížka fotek detailu galerie s lightboxem (yet-another-react-lightbox —
  * virtualizuje slidy, u velkých alb renderuje jen sousední fotky).
  * Galerie mají až stovky fotek, proto se dlaždice zobrazují po dávkách.
@@ -61,7 +54,10 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
             style={{ aspectRatio: String(photo.width / photo.height) }}
             type="button"
           >
-            {/* `sizes` je psané přes `min-width`: na přesně 768px už platí
+            {/* Jen první dlaždice je `eager` + `fetchPriority="high"` (LCP kandidát):
+                Next u každého eager obrázku přidá `<link rel="preload">`, další
+                by se s ní přetahovaly o šířku pásma. Zbytek je lazy.
+                `sizes` je psané přes `min-width`: na přesně 768px už platí
                 `md:columns-3`, ale `max-width: 48rem` tam ještě tvrdilo
                 50vw (384px) do dlaždice o ~230px. */}
             <Image
@@ -69,7 +65,7 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
               className="object-cover transition-transform duration-300 hover:scale-[1.03]"
               fetchPriority={index === 0 ? 'high' : undefined}
               fill
-              loading={index < EAGER_PHOTOS ? 'eager' : 'lazy'}
+              loading={index === 0 ? 'eager' : 'lazy'}
               sizes="(min-width: 48rem) 33vw, 50vw"
               src={getMediaUrl(photo.url, photo.updatedAt)}
             />
