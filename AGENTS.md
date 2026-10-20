@@ -1652,6 +1652,9 @@ Všichni přihlášení uživatelé jsou si rovni (žádné role) — `users` z�
   odpovědi, takže se nic neztrácí (zdroj je `users`). Karta autora článku bez
   přiřazené osoby (`authorPerson`) ukazuje místo e-mailu admina klubový
   (`fetchSite().email`).
+  **Migrace se pouští až PO nasazení nového image** (stejně jako
+  `remove_template_leftovers`): starý build sloupce v definici pole má
+  a Drizzle by je vybíral při každém čtení článku.
 
 # Zabezpečení: vstupy, hlavičky, nasazení
 
