@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -81,6 +82,14 @@ export default async function ZapasyPage({ searchParams }: Args) {
         fetchSeasonForm(activeSeason.id),
       ])
     : [[], { rows: [], page: 1, totalPages: 1, totalDocs: 0 }, null]
+
+  // Strana za poslední stranou výpisu je 404, ne prázdný výpis se statusem 200:
+  // strana nad `totalPages` neexistuje (prázdný výpis má `totalPages` 0 nebo
+  // 1 — první strana je vždy platná).
+  // `notFound()`, ne redirect. Pozor: nad výpisem je `loading.tsx`, takže
+  // status zůstane 200 (streaming už začal) a 404 je jen obsah a `noindex`;
+  // HTTP 404 by vyžadovalo vyndat `loading.tsx` (viz AGENTS.md).
+  if (requestedPage > Math.max(1, results.totalPages)) notFound()
 
   // Prázdné řádky si řeší `StandingsPanel` sám (vlastní `EmptyState`) —
   // tabulka se proto skládá vždy, i pro sezónu bez vyplněné tabulky.

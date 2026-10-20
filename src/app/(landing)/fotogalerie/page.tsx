@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { GalleriesHeader } from '@/landing/features/galleries/components/GalleriesHeader'
@@ -34,6 +35,13 @@ export default async function FotogaleriePage({ searchParams }: Args) {
     page: requestedPage,
     seasonId: activeSeason?.id ?? null,
   })
+
+  // Strana za poslední stranou výpisu je 404, ne prázdný výpis se statusem 200:
+  // strana nad `totalPages` neexistuje (prázdný výpis má `totalPages` 0 nebo
+  // 1 — první strana je vždy platná).
+  // `notFound()`, ne redirect — viz AGENTS.md „`loading.tsx` nesmí být nad
+  // routou, která redirectuje".
+  if (requestedPage > Math.max(1, galleriesPage.totalPages)) notFound()
 
   const hrefFor = (n: number): string =>
     buildListUrl(routes.list.galleries, {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
@@ -43,6 +44,13 @@ export default async function AktualityPage({ searchParams }: Args) {
     fetchPostsPage({ page: requestedPage, type, withPhotos: showPhoto }),
     fetchSite(),
   ])
+
+  // Strana za poslední stranou výpisu je 404, ne prázdný výpis se statusem 200:
+  // strana nad `totalPages` neexistuje (prázdný výpis má `totalPages` 0 nebo
+  // 1 — první strana je vždy platná).
+  // `notFound()`, ne redirect — viz AGENTS.md „`loading.tsx` nesmí být nad
+  // routou, která redirectuje".
+  if (requestedPage > Math.max(1, postsPage.totalPages)) notFound()
 
   const hrefFor = (n: number): string =>
     buildListUrl(routes.list.posts, { filters: { typ: type }, page: n, hash: 'seznam' })
