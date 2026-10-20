@@ -189,4 +189,14 @@ describe('emailAdapter — logAdapter bez konfigurace', () => {
     expect(logger.error).toHaveBeenCalledTimes(1)
     expect(logger.warn).not.toHaveBeenCalled()
   })
+
+  it('v produkci se nelogují adresy ani tělo, jen předmět a počet adresátů', async () => {
+    ;(process.env as Record<string, string>).NODE_ENV = 'production'
+
+    const { logger } = await send()
+
+    const logged = logger.error.mock.calls[0]![0] as Record<string, unknown>
+    expect(logged).toMatchObject({ subject: 'Ahoj', recipientCount: 2 })
+    expect(JSON.stringify(logged)).not.toMatch(/example\.cz|"text"/)
+  })
 })
