@@ -8,7 +8,7 @@ import {
   toResultRow,
   toUpcoming,
 } from '@/landing/features/matches/view/matchRows'
-import { eventDescription, toSportsEvent } from '@/landing/features/matches/view/matchSchema'
+import { eventDescription, toMatchJsonLd } from '@/landing/features/matches/view/matchSchema'
 
 import type { Match } from '../../src/payload-types'
 
@@ -60,6 +60,8 @@ describe('odkaz na detail zápasu ve view-modelech', () => {
   })
 })
 
+const BASE = 'https://example.cz'
+
 describe('SportsEvent', () => {
   const input = {
     title: 'HC Čestice × HC Zdar',
@@ -74,33 +76,33 @@ describe('SportsEvent', () => {
   }
 
   it('startDate nese lokální offset Europe/Prague (léto +02:00, zima +01:00)', () => {
-    expect(toSportsEvent(input).startDate).toBe('2025-10-12T16:00:00+02:00')
-    expect(toSportsEvent({ ...input, startDate: '2026-01-18T15:30:00.000Z' }).startDate).toBe(
+    expect(toMatchJsonLd(input, BASE).startDate).toBe('2025-10-12T16:00:00+02:00')
+    expect(toMatchJsonLd({ ...input, startDate: '2026-01-18T15:30:00.000Z' }, BASE).startDate).toBe(
       '2026-01-18T16:30:00+01:00',
     )
   })
 
   it('nese url detailu a popis s výsledkem', () => {
-    const event = toSportsEvent(input)
+    const event = toMatchJsonLd(input, BASE)
     expect(event.url).toBe(input.url)
     expect(event.description).toBe('18. kolo — HC Čestice 5:3 HC Zdar')
   })
 
   it('doma bez místa doplní domácí led, venku místo vynechá', () => {
-    expect(toSportsEvent(input).location).toMatchObject({
-      '@type': 'Place',
+    expect(toMatchJsonLd(input, BASE).location).toMatchObject({
+      '@type': 'StadiumOrArena',
       name: 'Zimní stadion Rychnov nad Kněžnou',
     })
     expect(
-      toSportsEvent({ ...input, homeName: 'HC Zdar', awayName: 'HC Čestice' }),
+      toMatchJsonLd({ ...input, homeName: 'HC Zdar', awayName: 'HC Čestice' }, BASE),
     ).not.toHaveProperty('location')
   })
 
   it('zrušený zápas je EventCancelled, odehraný zůstává EventScheduled', () => {
-    expect(toSportsEvent({ ...input, status: 'canceled' }).eventStatus).toBe(
+    expect(toMatchJsonLd({ ...input, status: 'canceled' }, BASE).eventStatus).toBe(
       'https://schema.org/EventCancelled',
     )
-    expect(toSportsEvent(input).eventStatus).toBe('https://schema.org/EventScheduled')
+    expect(toMatchJsonLd(input, BASE).eventStatus).toBe('https://schema.org/EventScheduled')
   })
 
   it('nehraný zápas má popis jen s fází', () => {

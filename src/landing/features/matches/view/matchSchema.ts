@@ -1,6 +1,8 @@
-import { ARENA_ADDRESS, ARENA_NAME, CLUB_NAME, MATCH_DURATION_MINUTES } from '@/lib/club'
+import { CLUB_NAME, MATCH_DURATION_MINUTES } from '@/lib/club'
 import { toDate, toPragueIso } from '@/lib/datetime'
 import { fold } from '@/lib/fold'
+import { arenaNode, idRef } from '@/lib/schemaOrg'
+import { slugifyCs } from '@/lib/slugifyCs'
 
 /**
  * Stavba schema.org `SportsEvent` sdílená výpisem `/zapasy`
@@ -72,22 +74,24 @@ export function resolveVenue(venue: string | null, homeIsClub: boolean): VenueRe
   return { kind: 'other', name: raw, locality: looksLikeTown(candidate) ? candidate : null }
 }
 
-const placeNode = (ref: VenueRef) =>
-  ref.kind === 'arena'
-    ? {
-        '@type': 'Place',
-        name: ARENA_NAME,
-        address: { '@type': 'PostalAddress', ...ARENA_ADDRESS },
-      }
-    : {
-        '@type': 'Place',
-        name: ref.name,
-        address: {
-          '@type': 'PostalAddress',
-          ...(ref.locality ? { addressLocality: ref.locality } : {}),
-          addressCountry: 'CZ',
-        },
-      }
+/**
+ * Uzel `Place` s `@id`: domácí hala je sdílená entita (`arenaNode`), cizí hala
+ * má `@id` z názvu (`#venue-choceň` → `…/#venue-chocen`), takže se víc zápasů
+ * na téže hale odkazuje na jedno `Place`.
+ */
+export function venueNode(ref: VenueRef, baseUrl: string) {
+  if (ref.kind === 'arena') return arenaNode(baseUrl)
+  return {
+    '@type': 'Place',
+    '@id': `${baseUrl}/#venue-${slugifyCs(ref.name)}`,
+    name: ref.name,
+    address: {
+      '@type': 'PostalAddress',
+      ...(ref.locality ? { addressLocality: ref.locality } : {}),
+      addressCountry: 'CZ',
+    },
+  }
+}
 
 /** Konec události: začátek + odhad délky zápasu; `null` pro neplatné datum. */
 export function eventEndDate(startDate: string): string | null {
@@ -109,18 +113,19 @@ export type SportsEventInput = {
   image: string
 }
 
-export const toSportsEvent = ({
-  awayName,
-  description,
-  homeName,
-  image,
-  startDate,
-  status,
-  title,
-  url,
-  venue,
-}: SportsEventInput) => {
-  const place = resolveVenue(venue, homeName === CLUB_NAME)
+/** Místo konání zápasu jako uzel `Place` (`null` = místo neznáme). */
+export const venuePlace = ({ homeName, venue }: SportsEventInput, baseUrl: string) => {
+  const ref = resolveVenue(venue, homeName === CLUB_NAME)
+  return ref ? venueNode(ref, baseUrl) : null
+}
+
+/**
+ * Uzel `SportsEvent`. `location` je odkaz na `Place` podle `@id` — samotné
+ * místo dodá `toMatchJsonLd`, aby bylo v dokumentu definované jednou.
+ */
+export const toSportsEvent = (input: SportsEventInput, baseUrl: string) => {
+  const { awayName, description, homeName, image, startDate, status, title, url } = input
+  const place = venuePlace(input, baseUrl)
   const endDate = eventEndDate(startDate)
 
   return {
@@ -141,7 +146,7 @@ export const toSportsEvent = ({
     organizer: ORGANIZER,
     image: [image],
     ...(description ? { description } : {}),
-    ...(place ? { location: placeNode(place) } : {}),
+    ...(place ? { location: idRef(place['@id']) } : {}),
     url,
   }
 }
@@ -156,3 +161,33 @@ export const eventDescription = (
   homeName: string,
   awayName: string,
 ): string => [stage, score && `${homeName} ${score} ${awayName}`].filter(Boolean).join(' — ')
+
+/**
+ * JSON-LD dokument detailu: jeden zápas, místo rovnou uvnitř události
+ * (`location` s `@id`). Je to jediný výskyt, takže se nic nedefinuje dvakrát
+ * a Google najde `address` přímo u události, bez dohledávání odkazu.
+ */
+export function toMatchJsonLd(input: SportsEventInput, baseUrl: string) {
+  const place = venuePlace(input, baseUrl)
+  return {
+    '@context': 'https://schema.org',
+    ...toSportsEvent(input, baseUrl),
+    ...(place ? { location: place } : {}),
+  }
+}
+
+/**
+ * JSON-LD dokument výpisu: `@graph` s každým místem jednou a událostmi, které
+ * se na ně odkazují přes `@id` (Choceň ve třech zápasech = jedno `Place`).
+ */
+export function toMatchesJsonLd(inputs: SportsEventInput[], baseUrl: string) {
+  const places = new Map<string, NonNullable<ReturnType<typeof venuePlace>>>()
+  for (const input of inputs) {
+    const place = venuePlace(input, baseUrl)
+    if (place) places.set(place['@id'], place)
+  }
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [...places.values(), ...inputs.map((input) => toSportsEvent(input, baseUrl))],
+  }
+}

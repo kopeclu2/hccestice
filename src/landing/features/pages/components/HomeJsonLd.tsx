@@ -4,6 +4,7 @@ import type { SiteLinks } from '@/landing/types'
 import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
+import { arenaNode } from '@/lib/schemaOrg'
 
 /**
  * JSON-LD (schema.org SportsTeam + WebSite) pro vyhledávače.
@@ -44,17 +45,8 @@ export function HomeJsonLd({ site }: { site: SiteLinks }) {
       postalCode: '517 41',
       addressCountry: 'CZ',
     },
-    location: {
-      '@type': 'Place',
-      name: 'Zimní stadion Rychnov nad Kněžnou',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Javornická 1648',
-        addressLocality: 'Rychnov nad Kněžnou',
-        postalCode: '516 01',
-        addressCountry: 'CZ',
-      },
-    },
+    // Jediná definice haly (`@id`) — na ni se odkazují i zápasy.
+    location: arenaNode(baseUrl),
     // Spádová oblast pro nábor. Sídlo spolku je v Česticích, ale hraje se
     // v Rychnově — bez `areaServed` nemá vyhledávač jak poznat, že klub
     // obsluhuje celý okres a ne jen obec z poštovní adresy.

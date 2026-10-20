@@ -3,9 +3,12 @@ import { describe, expect, it } from 'vitest'
 import {
   eventEndDate,
   resolveVenue,
-  toSportsEvent,
+  toMatchesJsonLd,
+  toMatchJsonLd,
   type SportsEventInput,
 } from '@/landing/features/matches/view/matchSchema'
+
+const BASE = 'https://example.cz'
 
 const input: SportsEventInput = {
   title: 'HC Čestice × SK Divočáci Žamberk',
@@ -79,13 +82,14 @@ describe('eventEndDate', () => {
 
 describe('toSportsEvent: povinná pole Google Event', () => {
   it('domácí zápas: name, startDate, location.name + plná adresa haly', () => {
-    const event = toSportsEvent(input)
+    const event = toMatchJsonLd(input, BASE)
     expect(event.name).toBe(input.title)
     expect(event.startDate).toBe('2026-10-18T16:30:00+02:00')
     expect(event.endDate).toBe('2026-10-18T19:00:00+02:00')
     expect(event.image).toEqual([input.image])
     expect(event.location).toEqual({
-      '@type': 'Place',
+      '@type': 'StadiumOrArena',
+      '@id': 'https://example.cz/#arena',
       name: 'Zimní stadion Rychnov nad Kněžnou',
       address: {
         '@type': 'PostalAddress',
@@ -98,37 +102,69 @@ describe('toSportsEvent: povinná pole Google Event', () => {
   })
 
   it('venkovní zápas s městem: addressLocality + země', () => {
-    const event = toSportsEvent({
-      ...input,
-      homeName: 'HC Choceň',
-      awayName: 'HC Čestice',
-      venue: 'Choceň',
-    })
+    const event = toMatchJsonLd(
+      { ...input, homeName: 'HC Choceň', awayName: 'HC Čestice', venue: 'Choceň' },
+      BASE,
+    )
     expect(event.location).toEqual({
       '@type': 'Place',
+      '@id': 'https://example.cz/#venue-chocen',
       name: 'Choceň',
       address: { '@type': 'PostalAddress', addressLocality: 'Choceň', addressCountry: 'CZ' },
     })
   })
 
   it('neznámá hala: jen země, bez vymyšleného města', () => {
-    const event = toSportsEvent({ ...input, homeName: 'HC X', venue: 'Aréna Hokej Park' })
+    const event = toMatchJsonLd({ ...input, homeName: 'HC X', venue: 'Aréna Hokej Park' }, BASE)
     expect(event.location).toEqual({
       '@type': 'Place',
+      '@id': 'https://example.cz/#venue-arena-hokej-park',
       name: 'Aréna Hokej Park',
       address: { '@type': 'PostalAddress', addressCountry: 'CZ' },
     })
   })
 
   it('eventStatus zůstává EventScheduled i u odehraného zápasu', () => {
-    expect(toSportsEvent({ ...input, status: 'played' }).eventStatus).toBe(
+    expect(toMatchJsonLd({ ...input, status: 'played' }, BASE).eventStatus).toBe(
       'https://schema.org/EventScheduled',
     )
   })
 
   it('neplatné datum nerozbije událost (endDate se vynechá)', () => {
-    const event = toSportsEvent({ ...input, startDate: 'nic' })
+    const event = toMatchJsonLd({ ...input, startDate: 'nic' }, BASE)
     expect(event).not.toHaveProperty('endDate')
     expect(event.startDate).toBe('nic')
+  })
+})
+
+describe('toMatchesJsonLd: jedna hala = jedno Place', () => {
+  const doma = { ...input, venue: 'ZS Rychnov nad Kněžnou' }
+  const doma2 = { ...input, venue: 'Rychnov n. K.', startDate: '2026-11-01T14:30:00.000Z' }
+  const venku = { ...input, homeName: 'HC Choceň', awayName: 'HC Čestice', venue: 'Choceň' }
+  const venku2 = { ...venku, startDate: '2026-11-08T14:30:00.000Z' }
+  const graph: Array<Record<string, unknown>> = toMatchesJsonLd([doma, venku, doma2, venku2], BASE)[
+    '@graph'
+  ]
+
+  it('hala je v grafu jednou a události na ni ukazují přes @id', () => {
+    const places = graph.filter((node) => node['@type'] !== 'SportsEvent')
+    expect(places.map((place) => place['@id'])).toEqual([
+      'https://example.cz/#arena',
+      'https://example.cz/#venue-chocen',
+    ])
+    const events = graph.filter((node) => node['@type'] === 'SportsEvent')
+    expect(events).toHaveLength(4)
+    expect(events.map((event) => event.location ?? null)).toEqual([
+      { '@id': 'https://example.cz/#arena' },
+      { '@id': 'https://example.cz/#venue-chocen' },
+      { '@id': 'https://example.cz/#arena' },
+      { '@id': 'https://example.cz/#venue-chocen' },
+    ])
+  })
+
+  it('každé místo má address, i když Place není uvnitř události', () => {
+    for (const place of graph.filter((node) => node['@type'] !== 'SportsEvent')) {
+      expect(place).toHaveProperty('address')
+    }
   })
 })
