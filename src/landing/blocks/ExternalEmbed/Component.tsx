@@ -4,10 +4,15 @@ import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { EMBED_SANDBOX, isAllowedEmbedUrl } from '@/lib/embedHosts'
 import type { ExternalEmbedBlock } from '@/payload-types'
 
 /** Externí obsah — iframe (FB feed, tabulka ahl.cz…). */
 export function ExternalEmbedBlockComponent({ block }: { block: ExternalEmbedBlock }) {
+  // Pojistka vedle validace pole: data zapsaná mimo admin (import, přímo do
+  // databáze) nesmí vložit libovolný cizí web. Nepovolený host = nic.
+  if (!isAllowedEmbedUrl(block.url)) return null
+
   return (
     <SectionShell>
       <Reveal>
@@ -20,6 +25,8 @@ export function ExternalEmbedBlockComponent({ block }: { block: ExternalEmbedBlo
           <iframe
             className="w-full rounded-section border-0"
             loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox={EMBED_SANDBOX}
             src={block.url}
             style={{ height: `${(block.height ?? 600) / 16}rem` }}
             title={block.title ?? 'Externí obsah'}

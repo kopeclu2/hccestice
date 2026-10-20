@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { embedUrlValidator } from '@/lib/embedHosts'
+
 export const ExternalEmbedWidget: Block = {
   slug: 'externalEmbed',
   interfaceName: 'ExternalEmbedBlock',
@@ -10,6 +12,7 @@ export const ExternalEmbedWidget: Block = {
       name: 'url',
       type: 'text',
       required: true,
+      validate: embedUrlValidator({ required: true }),
       label: 'URL vkládané stránky',
       admin: { description: 'Např. FB feed plugin, tabulka na ahl.cz…' },
     },

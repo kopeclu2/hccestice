@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { embedUrlValidator } from '@/lib/embedHosts'
+
 export const MapEmbedWidget: Block = {
   slug: 'mapEmbed',
   interfaceName: 'MapEmbedBlock',
@@ -10,6 +12,7 @@ export const MapEmbedWidget: Block = {
       name: 'embedUrl',
       type: 'text',
       required: true,
+      validate: embedUrlValidator({ required: true }),
       label: 'URL mapy pro vložení (iframe)',
       admin: {
         description:

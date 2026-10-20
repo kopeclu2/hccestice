@@ -79,6 +79,22 @@ export function isAllowedEmbedUrl(raw: string | null | undefined): boolean {
   )
 }
 
+/**
+ * Validátor pole s adresou vkládané stránky (`validate` textového pole v
+ * Payloadu): jen hosty ze seznamu, aby editor nemohl do webu vložit
+ * libovolný cizí iframe.
+ */
+export function embedUrlValidator({ required = false }: { required?: boolean } = {}): (
+  value: string | null | undefined,
+) => true | string {
+  return (value) => {
+    if (!value || !value.trim()) return required ? 'Toto pole je povinné.' : true
+    return isAllowedEmbedUrl(value)
+      ? true
+      : 'Tento web nejde vložit. Povolené jsou YouTube, Vimeo, Google Mapy/Tabulky/Formuláře, Mapy.cz, Facebook plugin a ahl.cz; další hosty se přidávají v lib/embedHosts.'
+  }
+}
+
 /** Host adresy pro hlášení (např. „které iframy sanitizér vyhodil"). */
 export function embedHostOf(raw: string | null | undefined): string {
   const url = raw ? parseAbsoluteUrl(raw) : null
