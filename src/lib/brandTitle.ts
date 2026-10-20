@@ -19,6 +19,18 @@ import { SITE_NAME } from './club'
  * zůstala. Vedlejší efekt je žádoucí — zápasové titulky jako
  * „HC Polička B x HC Čestice" už název klubu nesou a druhý ho jen
  * odsune za hranici, kterou SERP zobrazí.
+ *
+ * **Pravidlo délky: žádné.** Značka se přilepí vždy, i k titulku, který
+ * 60 znaků (zhruba šířka, kterou Google zobrazí) přesáhne už sám — SERP pak
+ * ořízne na konci právě značku, což nevadí, ale nezkracuje to samotný
+ * titulek. Vynechávat značku podle délky by dalo nekonzistentní titulky
+ * napříč webem (kratší s ní, delší bez) a mění `<title>` stovek článků
+ * naráz, proto tu pravidlo není. Dlouhé titulky se řeší obsahem
+ * (`meta.title` v adminu), ne tímhle helperem. Hranice hlídá
+ * `tests/int/brand-title.int.spec.ts`.
+ *
+ * Porovnání je **citlivé na velikost písmen**: „hc čestice" malými se
+ * za značku nepovažuje a suffix se přidá.
  */
 export const brandTitle = (title?: string | null): string => {
   const clean = (title ?? '').trim()
