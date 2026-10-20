@@ -1437,6 +1437,30 @@ z ahl.cz a `JSON.stringify` samo `</script>` neescapuje (viz
 `node_modules/next/dist/docs/01-app/02-guides/json-ld.md`). Každé nové
 `<script type="application/ld+json">` v repu musí jít přes něj.
 
+### Struktura strukturovaných dat
+
+Tvar JSON-LD skládají **čisté funkce bez I/O**, komponenty jen předají data
+a serializují přes `serializeJsonLd`: `lib/schemaOrg` (entity klubu `#team`,
+`#org`, `#arena`, `#website`, `toWebPage`, `toImageGallery`),
+`matches/view/matchSchema` (`toMatchJsonLd` detail, `toMatchesJsonLd` výpis,
+`resolveVenue`), `posts/view/articleSchema` (`toNewsArticle`). Konstanty
+(adresa, IČO, `geo`, jména) jsou v `lib/club`.
+
+- Entita je v dokumentu definovaná **jednou**, ostatní výskyty jsou
+  `{ '@id': … }`. Plná definice klubu je jen na home; zápasy a články na
+  `#team` jen odkazují (Google odkaz mimo dokument neověří, proto je
+  `author` bez osoby plný uzel s `name` a `location` události na detailu
+  uvnitř události).
+- Data událostí jdou přes `toPragueIso` (lokální offset), `endDate` je
+  začátek + `MATCH_DURATION_MINUTES`. `eventStatus` zůstává `EventScheduled`
+  i u odehraného zápasu (`EventCompleted` ve schema.org není).
+- Nový blok nebo typ stránky se přidá do `scripts/jsonld-samples.ts`;
+  `bun run check:jsonld` (a unit test `json-ld-check`) kontroluje povinná
+  pole Event / Article / Breadcrumb. S `--url=` projde vyrenderované stránky.
+  Není to náhrada Rich Results Testu.
+- Rozpis tréninků v JSON-LD **není** (volný text z CMS; `Event` bez
+  `startDate` hlásí chybu), hráči a sponzoři se nevypisují jmenovitě.
+
 ## Cache a revalidace
 
 `fetchMatchDetail` je `unstable_cache` s tagy `matches-list` **i**

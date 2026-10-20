@@ -7,6 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "check": "bun run check:tokens && bun run check:types",
+    "check:jsonld": "bun scripts/check-jsonld.ts",
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:types": "tsc --noEmit --incremental false",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
