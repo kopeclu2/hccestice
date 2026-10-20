@@ -21,6 +21,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { searchFields } from '@/search/fieldOverrides'
 
 import { auditor } from './auditor'
+import { limitPublicQueries } from './limitPublicQueries'
 import { navigationOverrides } from './navigationOverrides'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
@@ -167,6 +168,12 @@ export const plugins: Plugin[] = [
       throw new APIError('Nepodařilo se ověřit, že nejste robot. Zkuste to prosím znovu.', 403)
     },
   }),
+  /**
+   * Stropy `limit` a `depth` pro anonymní REST / GraphQL. Hook věší na kolekce,
+   * které v configu už jsou, takže musí být až za všemi pluginy, co je
+   * přidávají (redirects, form-builder, search, navigace).
+   */
+  limitPublicQueries(),
   /**
    * Auditní log. Musí být POSLEDNÍ — plugin navěšuje hooky na kolekce,
    * které v `config.collections` už existují, takže by jinak minul

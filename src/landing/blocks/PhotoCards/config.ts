@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { photoField } from '@/landing/blocks/shared'
+import { linkUrlValidator } from '@/lib/linkUrl'
 
 export const PhotoCardsBlock: Block = {
   slug: 'photoCards',
@@ -23,7 +24,7 @@ export const PhotoCardsBlock: Block = {
           ],
         },
         { name: 'caption', type: 'text', label: 'Popisek dole' },
-        { name: 'href', type: 'text', label: 'Odkaz (volitelné)' },
+        { name: 'href', type: 'text', label: 'Odkaz (volitelné)', validate: linkUrlValidator() },
       ],
     },
     {

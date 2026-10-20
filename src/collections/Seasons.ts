@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
+import { linkUrlValidator } from '@/lib/linkUrl'
+
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
@@ -74,7 +76,12 @@ export const Seasons: CollectionConfig = {
           type: 'row',
           fields: [
             { name: 'label', type: 'text', label: 'Popisek (např. základní část 2025/26)' },
-            { name: 'fullTableUrl', type: 'text', label: 'Odkaz na celou tabulku (ahl.cz)' },
+            {
+              name: 'fullTableUrl',
+              type: 'text',
+              label: 'Odkaz na celou tabulku (ahl.cz)',
+              validate: linkUrlValidator(),
+            },
           ],
         },
         {

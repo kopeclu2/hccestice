@@ -3,6 +3,7 @@ import 'server-only'
 import type { Where } from 'payload'
 import { cache } from 'react'
 
+import { fetchDraftUser } from '@/landing/data/draft'
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { CACHE_TAGS } from '@/landing/data/tags'
@@ -163,10 +164,26 @@ export const fetchPostsPage = cachedQuery(
   { key: 'posts-page', tags: [CACHE_TAGS.posts] },
 )
 
-/** Článek pro vypíchnutou kartu (s heroImage). */
+/**
+ * Článek pro vypíchnutou kartu (s heroImage). Nepublikovaný článek se
+ * veřejně nevrací: bez `overrideAccess: false` by `findByID` vrátil i koncept
+ * (Local API přístup běžně obchází). Redaktor v ověřeném draft módu ho vidí.
+ */
 export const fetchPost = cache(async (postId: number): Promise<Post | null> => {
+  const user = await fetchDraftUser()
   const payload = await getPayloadClient()
-  return payload.findByID({ collection: 'posts', id: postId, depth: 1, disableErrors: true })
+  const post = await payload.findByID({
+    collection: 'posts',
+    id: postId,
+    depth: 1,
+    disableErrors: true,
+    draft: Boolean(user),
+    overrideAccess: false,
+    user,
+  })
+  // Pojistka nad přístupovým pravidlem: koncept nikdy neodejde bez správce.
+  if (post && !user && post._status !== 'published') return null
+  return post
 })
 
 /* ── Detail článku (/aktuality/[slug]) ───────────────────────────────────── */
@@ -185,13 +202,20 @@ export const fetchPostSlugs = cache(async (): Promise<string[]> => {
   return docs.map((doc) => doc.slug).filter((slug): slug is string => Boolean(slug))
 })
 
-/** Článek podle slugu; `draft` pro live preview v adminu. */
+/**
+ * Článek podle slugu. `draft` říká, že stránka běží v draft módu (live
+ * preview v adminu); koncept se vrátí jen, když je navíc ověřená session
+ * (`fetchDraftUser`) — zapomenutá cookie draft módu po odhlášení nestačí.
+ * S `draft: false` se nevolá ani `headers()`.
+ */
 export const fetchPostBySlug = cache(async (slug: string, draft: boolean): Promise<Post | null> => {
+  const user = draft ? await fetchDraftUser() : null
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'posts',
-    draft,
-    overrideAccess: draft,
+    draft: Boolean(user),
+    overrideAccess: false,
+    user,
     where: { slug: { equals: slug } },
     limit: 1,
     depth: 2,

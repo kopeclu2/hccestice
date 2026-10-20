@@ -8,7 +8,7 @@ import { SocialCta } from '@/landing/features/posts/components/SocialCta'
 import { fetchPostsPage } from '@/landing/features/posts/data/posts'
 import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { buildListUrl } from '@/landing/lib/listUrl'
+import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
@@ -18,8 +18,10 @@ type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
 
 /** Normalizace URL parametrů — sdílí ji stránka i `generateMetadata`. */
 const readParams = (raw: { page?: string; typ?: string }) => ({
-  page: Math.max(1, Number.parseInt(raw.page ?? '1', 10) || 1),
-  type: raw.typ && raw.typ in POST_TYPE_LABEL ? raw.typ : null,
+  page: parsePageParam(raw.page),
+  // `Object.hasOwn`, ne `in`: `?typ=constructor` / `toString` by jinak prošlo
+  // přes prototyp objektu a skončilo jako neexistující typ ve filtru.
+  type: raw.typ && Object.hasOwn(POST_TYPE_LABEL, raw.typ) ? raw.typ : null,
 })
 
 /**

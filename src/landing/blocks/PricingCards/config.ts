@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { linkUrlValidator } from '@/lib/linkUrl'
+
 export const PricingCardsWidget: Block = {
   slug: 'pricingCards',
   interfaceName: 'PricingCardsBlock',
@@ -36,7 +38,7 @@ export const PricingCardsWidget: Block = {
           fields: [
             { name: 'highlighted', type: 'checkbox', label: 'Zvýraznit (zelená karta)' },
             { name: 'ctaLabel', type: 'text', label: 'Text tlačítka' },
-            { name: 'ctaHref', type: 'text', label: 'Cíl tlačítka' },
+            { name: 'ctaHref', type: 'text', label: 'Cíl tlačítka', validate: linkUrlValidator() },
           ],
         },
       ],

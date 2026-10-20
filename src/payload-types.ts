@@ -546,8 +546,6 @@ export interface Post {
         id?: string | null;
         name?: string | null;
         role?: string | null;
-        email?: string | null;
-        phone?: string | null;
         photo?: (number | null) | Media;
       }[]
     | null;
@@ -919,6 +917,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -1935,7 +1934,7 @@ export interface Form {
  */
 export interface RawHtmlBlock {
   /**
-   * Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky.
+   * Původní HTML obsah importovaný z eStránky. Postupně převádět na strukturované bloky. Při uložení se odstraní skripty, události (onclick…), formuláře a cizí iframy.
    */
   html: string;
   id?: string | null;
@@ -3227,8 +3226,6 @@ export interface PostsSelect<T extends boolean = true> {
         id?: T;
         name?: T;
         role?: T;
-        email?: T;
-        phone?: T;
         photo?: T;
       };
   generateSlug?: T;
@@ -3376,6 +3373,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -4324,7 +4322,10 @@ export interface TaskSchedulePublish {
           value: number | Post;
         } | null);
     global?: string | null;
-    user?: (number | null) | User;
+    user?: {
+      relationTo: 'users';
+      value: number | User;
+    } | null;
   };
   output?: unknown;
 }

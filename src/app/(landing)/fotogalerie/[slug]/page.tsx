@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
@@ -15,6 +16,7 @@ import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import { brandTitle } from '@/lib/brandTitle'
 import { CLUB_NAME } from '@/lib/club'
 import { formatLongDate } from '@/lib/datetime'
+import { decodeSlug } from '@/lib/decodeSlug'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { routes } from '@/lib/routes'
@@ -37,7 +39,9 @@ type Args = { params: Promise<{ slug: string }> }
  */
 export default async function GalleryDetailPage({ params }: Args) {
   const { slug: rawSlug } = await params
-  const slug = decodeURIComponent(rawSlug)
+  const slug = decodeSlug(rawSlug)
+  // Neplatné procentové kódování (`%zz`) je 404, ne 500.
+  if (slug === null) notFound()
 
   const gallery = await fetchGalleryBySlug(slug)
   if (!gallery) return <PayloadRedirects url={routes.gallery(slug)} />
@@ -70,7 +74,8 @@ export default async function GalleryDetailPage({ params }: Args) {
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug: rawSlug } = await params
-  const slug = decodeURIComponent(rawSlug)
+  const slug = decodeSlug(rawSlug)
+  if (slug === null) return { title: brandTitle('Galerie nenalezena') }
   const gallery = await fetchGalleryBySlug(slug)
   if (!gallery) return { title: brandTitle('Galerie nenalezena') }
 

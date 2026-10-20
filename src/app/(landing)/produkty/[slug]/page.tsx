@@ -11,6 +11,7 @@ import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { brandTitle } from '@/lib/brandTitle'
 import { CLUB_NAME } from '@/lib/club'
+import { decodeSlug } from '@/lib/decodeSlug'
 import { routes } from '@/lib/routes'
 
 export const revalidate = 600
@@ -35,11 +36,11 @@ type Args = { params: Promise<{ slug: string }> }
  * než odkud se na produkt dalo prokliknout.
  */
 export default async function ProductDetailPage({ params }: Args) {
-  const { slug } = await params
-  const [product, site] = await Promise.all([
-    fetchProductBySlug(decodeURIComponent(slug)),
-    fetchSite(),
-  ])
+  const { slug: rawSlug } = await params
+  // Neplatné procentové kódování (`%zz`) je 404, ne 500.
+  const slug = decodeSlug(rawSlug)
+  if (slug === null) notFound()
+  const [product, site] = await Promise.all([fetchProductBySlug(slug), fetchSite()])
   if (!product) notFound()
 
   const photos = collectPhotos(product)
@@ -56,8 +57,9 @@ export default async function ProductDetailPage({ params }: Args) {
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
-  const { slug } = await params
-  const product = await fetchProductBySlug(decodeURIComponent(slug))
+  const { slug: rawSlug } = await params
+  const slug = decodeSlug(rawSlug)
+  const product = slug === null ? null : await fetchProductBySlug(slug)
   if (!product) return { title: brandTitle('Produkt nenalezen') }
   return {
     alternates: { canonical: routes.product(product.slug) },

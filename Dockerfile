@@ -1,11 +1,23 @@
+# syntax=docker/dockerfile:1.10
+# Frontend ≥ 1.10 kvůli `env=` u `RUN --mount=type=secret` (build secrets níž).
+
 # Standalone výstup zapíná `output: 'standalone'` v next.config.ts.
 # Odvozeno z https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
+# Verze bunu: stejná jako `bun-version` u `oven-sh/setup-bun` v CI.
+# ARG před prvním FROM je vidět jen v něm, stage si ho proto deklaruje znovu.
+ARG BUN_VERSION=1.3.11
+
 # Node 24+ vyžaduje `payload-auditor` (engines.node: ">=24").
-FROM node:24-alpine AS base
+# Pinováno digestem (index multi-arch image), ať se base image nemění pod
+# rukama; tag níž je jen čitelný popisek. Aktualizace: nový digest z
+# `docker buildx imagetools inspect node:24-alpine`.
+# node:24-alpine
+FROM node@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS base
 
 # Install dependencies only when needed
 FROM base AS deps
+ARG BUN_VERSION
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -13,45 +25,50 @@ WORKDIR /app
 # `bun.lock` je v repu jediný lockfile — bez něj by build spadl na
 # "Lockfile not found".
 COPY package.json bun.lock ./
-RUN npm i -g bun && bun install --frozen-lockfile
+RUN npm i -g bun@${BUN_VERSION} && bun install --frozen-lockfile
 
 
 # Rebuild the source code only when needed
 FROM base AS builder
+ARG BUN_VERSION
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # `next build` prerenderuje ~380 stránek přes Payload, takže build
 # potřebuje živý Postgres a stejné veřejné klíče, jaké poběží v produkci —
-# `NEXT_PUBLIC_*` se zapékají do klientského bundlu.
-ARG DATABASE_URL
-ARG PAYLOAD_SECRET
+# `NEXT_PUBLIC_*` se zapékají do klientského bundlu, takže jsou veřejné
+# a smějí být build args.
 ARG NEXT_PUBLIC_SERVER_URL
 ARG NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 ARG NEXT_PUBLIC_SENTRY_DSN
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
-# Jen pro upload source map (Sentry Next.js plugin) — do runtime image
-# se nekopírují, `next build` je potřebuje jen v tomhle stage.
+# Org a projekt Sentry nejsou tajné; slouží jen k uploadu source map.
 ARG SENTRY_ORG
 ARG SENTRY_PROJECT
-ARG SENTRY_AUTH_TOKEN
-ENV DATABASE_URL=$DATABASE_URL \
-    PAYLOAD_SECRET=$PAYLOAD_SECRET \
-    NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL \
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL \
     NEXT_PUBLIC_RECAPTCHA_SITE_KEY=$NEXT_PUBLIC_RECAPTCHA_SITE_KEY \
     NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN \
     NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID \
     SENTRY_ORG=$SENTRY_ORG \
     SENTRY_PROJECT=$SENTRY_PROJECT \
-    SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN \
     NEXT_TELEMETRY_DISABLED=1
 
+# Tajemství jdou přes BuildKit secrets, ne přes ARG/ENV: build arg i ENV
+# zůstávají v metadatech image (`docker history`, `docker inspect`) a image
+# leží v GHCR. Secret je připojený jen k tomuhle jednomu `RUN` jako proměnná
+# prostředí a do žádné vrstvy se nezapíše. `SENTRY_AUTH_TOKEN` je volitelný
+# (bez něj plugin přeskočí upload source map).
+#
 # Fail fast: bez DATABASE_URL doběhne build až k prerenderu a spadne
 # na nesrozumitelné chybě z pg poolu.
-RUN test -n "$DATABASE_URL" || (echo "DATABASE_URL build arg chybí — prerender ho potřebuje." && exit 1)
-
-RUN npm i -g bun && bun run build
+RUN --mount=type=secret,id=database_url,env=DATABASE_URL \
+    --mount=type=secret,id=payload_secret,env=PAYLOAD_SECRET \
+    --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN,required=false \
+    test -n "$DATABASE_URL" \
+      || (echo "Secret database_url chybí — prerender ho potřebuje." && exit 1) \
+    && npm i -g bun@${BUN_VERSION} \
+    && bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner

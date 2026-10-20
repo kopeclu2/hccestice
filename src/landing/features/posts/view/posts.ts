@@ -72,9 +72,10 @@ export const toPostCard = (post: Post, defaultPhoto: Photo | null = null): PostC
     defaultPhoto,
 })
 
-const toArticleAuthor = (post: Post): ArticleAuthor => {
+const toArticleAuthor = (post: Post, fallbackEmail: string | null): ArticleAuthor => {
   const person = typeof post.authorPerson === 'object' ? post.authorPerson : null
-  // Fallback na uživatele z pole Autoři (jméno, portrét, e-mail z kolekce users)
+  // Fallback na uživatele z pole Autoři (jméno, role, portrét). Jeho e-mail je
+  // přihlašovací adresa do adminu, takže se nevystavuje — místo něj klubový.
   const user = post.populatedAuthors?.[0] ?? null
   const name = person?.name ?? user?.name ?? CLUB_NAME
   return {
@@ -82,7 +83,7 @@ const toArticleAuthor = (post: Post): ArticleAuthor => {
     initials: initials(name) || 'HC',
     role: person?.role ?? user?.role ?? null,
     note: person?.note ?? null,
-    email: person?.email ?? user?.email ?? null,
+    email: person ? (person.email ?? null) : fallbackEmail,
     photo: person ? uploadToPhoto(person.photo) : uploadToPhoto(user?.photo),
   }
 }
@@ -93,6 +94,8 @@ export const toArticleDetail = (
   defaultPhoto: Photo | null = null,
   /** Slug zápasu z druhé strany vazby (`matches.report`) — viz `fetchMatchSlugForPost`. */
   matchSlug: string | null = null,
+  /** Kontakt na kartě autora u článku bez přiřazené osoby — klubový e-mail. */
+  fallbackEmail: string | null = null,
 ): ArticleDetail => {
   const photo =
     (typeof post.heroImage === 'object' && post.heroImage ? toPhoto(post.heroImage) : null) ??
@@ -125,7 +128,7 @@ export const toArticleDetail = (
     photoCaption: post.photoCaption ?? null,
     dateLabel: post.publishedAt ? formatLongDate(post.publishedAt) : '',
     readingLabel: readingLabel(words),
-    author: toArticleAuthor(post),
+    author: toArticleAuthor(post, fallbackEmail),
     scoreboard: variant === 'zapas' ? scoreboard : null,
     matchHref: linkOrNull(routes.match, match?.slug ?? matchSlug),
     tags: (post.categories ?? [])

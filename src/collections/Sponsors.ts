@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { linkUrlValidator } from '@/lib/linkUrl'
+
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
@@ -36,6 +38,7 @@ export const Sponsors: CollectionConfig = {
     {
       name: 'url',
       type: 'text',
+      validate: linkUrlValidator(),
       admin: { description: 'Web sponzora (volitelné)' },
     },
     // Kontakty pro výpis na /sponzori — prázdné údaje se nevykreslují.

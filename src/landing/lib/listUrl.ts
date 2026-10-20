@@ -29,3 +29,25 @@ export function buildListUrl(
   const query = params.toString()
   return `${base}${query ? `?${query}` : ''}${hash ? `#${hash}` : ''}`
 }
+
+/** Nejvyšší strana výpisu, kterou web vůbec zkusí načíst. */
+export const MAX_LIST_PAGE = 500
+
+/**
+ * Číslo strany z query parametru (`?page=`, `?strana=`). Neplatná hodnota je
+ * strana 1; horní mez je tu proto, že strana jde do klíče tagované cache
+ * (`cachedQuery`) — bez ní by `?page=1`…`?page=99999999` zakládal entry
+ * na každé číslo, které si skener vymyslí. Strana nad skutečným počtem
+ * stran vrací prázdný výpis, takže mez nic neukrývá.
+ *
+ * `searchParams` mohou nést pole (`?page=2&page=3`); bere se první hodnota.
+ */
+export function parsePageParam(
+  raw: string | readonly string[] | undefined,
+  max: number = MAX_LIST_PAGE,
+): number {
+  const value = typeof raw === 'string' ? raw : raw?.[0]
+  const page = Number.parseInt(value ?? '1', 10)
+  if (!Number.isFinite(page) || page < 1) return 1
+  return Math.min(page, max)
+}

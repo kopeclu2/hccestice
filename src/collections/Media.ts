@@ -8,9 +8,12 @@ import {
 } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
+import { mediaSecurityHeaders } from '@/lib/mediaTypes'
+
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
+import { validateMediaUpload } from '../hooks/validateMediaUpload'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -141,8 +144,19 @@ export const Media: CollectionConfig = {
      * někde vznikl odkaz bez ní, výměna souboru pod stejným názvem by se
      * návštěvníkům rok neprojevila.
      */
+    /**
+     * Totéž co statické `/media/*` v `next.config.ts`: CSP se `sandbox`
+     * a u souborů, které nejsou obrázek ani zvuk, `attachment`
+     * (viz `mediaSecurityHeaders`). Typ bere z `Content-Type`, který
+     * `getFile` zjistil z obsahu souboru, ne z názvu.
+     */
     modifyResponseHeaders: ({ headers }) => {
       headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+      for (const [name, value] of Object.entries(
+        mediaSecurityHeaders(headers.get('Content-Type')),
+      )) {
+        headers.set(name, value)
+      }
       return headers
     },
     imageSizes: [
@@ -189,6 +203,7 @@ export const Media: CollectionConfig = {
    * Importní skripty to vypínají přes `context.disableRevalidate`.
    */
   hooks: {
+    beforeValidate: [validateMediaUpload],
     afterChange: [revalidateLanding],
     afterDelete: [revalidateLandingDelete],
   },

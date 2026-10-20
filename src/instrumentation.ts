@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/nextjs'
 
+import { scrubBreadcrumb, scrubEvent, scrubTransaction } from '@/lib/sentryScrub'
+
 /**
  * `register` běží jednou při startu Next serveru — proto tu a ne v samostatných
  * `sentry.server.config.ts` / `sentry.edge.config.ts` souborech, které `@sentry/nextjs`
@@ -16,6 +18,10 @@ export async function register() {
       dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
       tracesSampleRate: 1,
       debug: false,
+      // Bez `previewSecret`, tokenu z `/admin/reset/…`, `Authorization` a `Cookie`.
+      beforeSend: scrubEvent,
+      beforeSendTransaction: scrubTransaction,
+      beforeBreadcrumb: scrubBreadcrumb,
     })
 
     // Crony Payloadu se samy nespustí, dokud někdo neotevře admin — viz
@@ -33,6 +39,10 @@ export async function register() {
       dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
       tracesSampleRate: 1,
       debug: false,
+      // Bez `previewSecret`, tokenu z `/admin/reset/…`, `Authorization` a `Cookie`.
+      beforeSend: scrubEvent,
+      beforeSendTransaction: scrubTransaction,
+      beforeBreadcrumb: scrubBreadcrumb,
     })
   }
 }

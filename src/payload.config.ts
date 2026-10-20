@@ -8,6 +8,7 @@ import { buildConfig, PayloadRequest } from 'payload'
 import sharp from 'sharp'
 
 import { defaultLexical } from '@/fields/defaultLexical'
+import { hasBearerSecret } from '@/lib/bearer'
 import { getServerSideURL } from '@/lib/getURL'
 
 import { Categories } from './collections/Categories'
@@ -35,6 +36,29 @@ import { plugins } from './plugins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+/**
+ * Původy, ze kterých smí přijít request s cookie přihlášení (`payload-token`).
+ * Bez `csrf` Payload bere cookie z libovolného původu, takže cizí stránka by
+ * mohla cookie přihlášeného správce zneužít (CSRF). Request s `Origin` mimo
+ * seznam se tváří jako nepřihlášený; bez `Origin` (GET z prohlížeče) rozhoduje
+ * `Sec-Fetch-Site`, takže same-origin navigace v adminu a v draft módu fungují.
+ *
+ * Lokálně se přidává `localhost:3000`, jinak by `getServerSideURL()` s
+ * nastaveným `NEXT_PUBLIC_SERVER_URL` na ostrou doménu vyřadil přihlášení v devu.
+ * V produkci musí `NEXT_PUBLIC_SERVER_URL` odpovídat doméně, ze které se do
+ * adminu chodí (zapéká se při buildu).
+ *
+ * `serverURL` záměrně nenastavujeme: změnil by URL adminu a API na absolutní,
+ * takže by admin přestal fungovat na jiném hostu než tom z env (localhost vs.
+ * 127.0.0.1, preview domény). Pro `csrf` stačí seznam výš.
+ */
+const csrfOrigins = [
+  getServerSideURL(),
+  ...(process.env.NODE_ENV === 'production'
+    ? []
+    : ['http://localhost:3000', 'http://127.0.0.1:3000']),
+].filter((origin, index, all) => Boolean(origin) && all.indexOf(origin) === index)
 
 export default buildConfig({
   admin: {
@@ -110,6 +134,14 @@ export default buildConfig({
     VchlSyncRuns,
   ],
   cors: [getServerSideURL()].filter(Boolean),
+  csrf: csrfOrigins,
+  /**
+   * Strop `depth` pro všechny dotazy (Payload ho uplatňuje v `afterRead`
+   * i pro Local API; výchozích 10 je pro veřejné REST zbytečně hodně).
+   * Nejhlubší dotaz ve fetcherech webu je `depth: 2` (`grep 'depth:' src`),
+   * takže 2 nic nerozbije. Při přidání hlubšího fetcheru tohle zvednout.
+   */
+  maxDepth: 2,
   /**
    * Globální limit velikosti nahrávaného souboru — bez něj šlo nahrát cokoli
    * libovolně velkého a zaplnit disk produkčního boxu (`AGENTS.md`: 3,7 GB
@@ -143,14 +175,9 @@ export default buildConfig({
         // Allow logged in users to execute this endpoint (default)
         if (req.user) return true
 
-        const secret = process.env.CRON_SECRET
-        if (!secret) return false
-
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
-        const authHeader = req.headers.get('authorization')
-        return authHeader === `Bearer ${secret}`
+        // Bez přihlášení musí sedět `Authorization: Bearer <CRON_SECRET>`;
+        // porovnání v konstantním čase, prázdný secret neprojde nikdy.
+        return hasBearerSecret(req.headers.get('authorization'), process.env.CRON_SECRET)
       },
     },
     tasks: [vchlSyncTask],
