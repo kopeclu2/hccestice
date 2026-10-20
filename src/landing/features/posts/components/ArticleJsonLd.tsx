@@ -2,7 +2,7 @@ import React from 'react'
 
 import type { ArticleDetail } from '@/landing/features/posts/types'
 import { articleImages, toNewsArticle } from '@/landing/features/posts/view/articleSchema'
-import { CLUB_LOGO } from '@/lib/club'
+import { CLUB_LOGO_LARGE } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
 import type { Post } from '@/payload-types'
@@ -35,8 +35,8 @@ export function ArticleJsonLd({
       baseUrl,
       media,
       // Bez fotky v článku je `article.photo` výchozí obrázek z nastavení webu,
-      // bez něj logo — stejně jako `og:image` (`generateMeta`).
-      fallback: article.photo ?? { url: CLUB_LOGO },
+      // bez něj velké logo klubu (`og:image` má menší, tady Google chce ≥ 50 000 px).
+      fallback: article.photo ?? { url: CLUB_LOGO_LARGE },
     }),
     publishedAt: post.publishedAt ?? post.createdAt,
     modifiedAt: post.updatedAt,

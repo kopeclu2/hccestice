@@ -6,9 +6,9 @@ import {
   toMatchesJsonLd,
   type SportsEventInput,
 } from '@/landing/features/matches/view/matchSchema'
+import { CLUB_LOGO_LARGE } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
-import { OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
 
 /**
  * JSON-LD (schema.org `SportsEvent`) pro rozlosování i odehrané zápasy.
@@ -33,7 +33,7 @@ export function MatchesJsonLd({
   const base = getServerSideURL()
   // Zápas bez slugu detail nemá — event ukazuje na výpis, kde je k vidění.
   // Výpis fotky reportáží nenese, takže všechny události dostanou logo klubu.
-  const image = `${base}${OG_FALLBACK_IMAGE}`
+  const image = `${base}${CLUB_LOGO_LARGE}`
   const urlOf = (href: string | null) => `${base}${href ?? '/zapasy'}`
 
   const events: SportsEventInput[] = [

@@ -3,10 +3,10 @@ import React from 'react'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { matchDescription } from '@/landing/features/matches/view/matchDetailView'
 import { toMatchJsonLd } from '@/landing/features/matches/view/matchSchema'
+import { CLUB_LOGO_LARGE } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
-import { OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
 import { linkOrNull, routes } from '@/lib/routes'
 
 /**
@@ -15,10 +15,10 @@ import { linkOrNull, routes } from '@/lib/routes'
  */
 export function MatchJsonLd({ match }: { match: MatchDetail }) {
   const baseUrl = getServerSideURL()
-  // Stejný obrázek jako `og:image` (`generateMetadata`): fotka reportáže,
-  // bez ní logo klubu.
+  // Fotka reportáže jako `og:image` (`generateMetadata`); bez ní velké logo
+  // (200px logo z `og:image` nesplňuje 50 000 px, které Google u Event chce).
   const photo = match.report?.photo
-  const image = `${baseUrl}${photo ? getMediaUrl(photo.url, photo.updatedAt) : OG_FALLBACK_IMAGE}`
+  const image = `${baseUrl}${photo ? getMediaUrl(photo.url, photo.updatedAt) : CLUB_LOGO_LARGE}`
 
   const jsonLd = toMatchJsonLd(
     {

@@ -65,6 +65,15 @@ export const SITE_NAME = CLUB_NAME
 export const CLUB_LOGO = '/logo-cestice.png'
 
 /**
+ * Velké logo (512 × 512 px, tentýž znak jako `CLUB_LOGO`) pro strukturovaná
+ * data: Google u obrázků chce aspoň 50 000 px a logo organizace s rezervou
+ * nad minimem 112 px; 200 × 200 (40 000 px) to nesplňuje. Soubor je
+ * i favicon sada (`public/icon-512.png`).
+ */
+export const CLUB_LOGO_LARGE = '/icon-512.png'
+export const CLUB_LOGO_LARGE_SIZE = 512
+
+/**
  * Předpony názvů klubů, které o týmu nic neříkají („HC Zdar", „SK Žamberk").
  * Velkými písmeny; porovnává se bez ohledu na velikost (`teamName.ts`).
  *

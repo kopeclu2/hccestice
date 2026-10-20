@@ -73,6 +73,12 @@ describe('toHomeGraph', () => {
     for (const node of home['@graph']) expect(node).not.toHaveProperty('telephone')
   })
 
+  it('logo je velký čtverec 512 px, ne 200px znak', () => {
+    expect(byId(`${BASE}/#team`)).toMatchObject({
+      logo: { '@type': 'ImageObject', url: `${BASE}/icon-512.png`, width: 512, height: 512 },
+    })
+  })
+
   it('adresa spolku je jedna a stejná jako ve zdroji pravdy', () => {
     expect(byId(`${BASE}/#team`)).toMatchObject({
       address: { streetAddress: 'Čestice 112', postalCode: '517 41', addressCountry: 'CZ' },
