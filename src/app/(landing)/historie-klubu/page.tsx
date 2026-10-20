@@ -6,11 +6,15 @@ import { EraSection } from '@/landing/features/history/components/EraSection'
 import { HistoryHeader } from '@/landing/features/history/components/HistoryHeader'
 import { StoryPanel } from '@/landing/features/history/components/StoryPanel'
 import { fetchHistoryEras } from '@/landing/features/history/data'
+import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
 
 export const revalidate = 600
+
+const DESCRIPTION =
+  'Sedmdesát let hokeje v Česticích — od kluziště za Machačovými a dresů na dluh po historický bronz ve Východočeské hokejové lize.'
 
 /**
  * Historie klubu v landing designu — handoff „HC Cestice Historie".
@@ -24,6 +28,13 @@ export default async function HistorieKlubuPage() {
 
   return (
     <SubpageShell pattern={{ variant: 'cross', tone: 'club', fade: 'center' }}>
+      <PageJsonLd
+        aboutClub
+        description={DESCRIPTION}
+        kind="AboutPage"
+        name="Historie klubu HC Čestice"
+        path="/historie-klubu"
+      />
       <HistoryHeader />
 
       {/* Šířku timeline drží vnitřní obal, ne `SectionShell`. Override
@@ -47,7 +58,6 @@ export default async function HistorieKlubuPage() {
 
 export const metadata: Metadata = {
   title: brandTitle('Historie klubu'),
-  description:
-    'Sedmdesát let hokeje v Česticích — od kluziště za Machačovými a dresů na dluh po historický bronz ve Východočeské hokejové lize.',
+  description: DESCRIPTION,
   alternates: { canonical: '/historie-klubu' },
 }

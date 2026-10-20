@@ -4,6 +4,7 @@ import React from 'react'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { GalleryDetailHeader } from '@/landing/features/galleries/components/GalleryDetailHeader'
+import { GalleryJsonLd } from '@/landing/features/galleries/components/GalleryJsonLd'
 import {
   PhotoMasonry,
   type GalleryPhoto,
@@ -56,6 +57,12 @@ export default async function GalleryDetailPage({ params }: Args) {
 
   return (
     <SubpageShell>
+      <GalleryJsonLd
+        date={gallery.date ?? null}
+        photos={photos}
+        slug={slug}
+        title={gallery.title}
+      />
       <GalleryDetailHeader
         dateLabel={gallery.date ? formatLongDate(gallery.date) : null}
         photoCount={photos.length}

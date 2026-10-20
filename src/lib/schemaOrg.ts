@@ -124,3 +124,83 @@ export const toHomeGraph = (input: HomeGraphInput) => ({
     websiteNode(input.baseUrl),
   ],
 })
+
+export type WebPageKind = 'CollectionPage' | 'AboutPage' | 'ContactPage'
+
+export type WebPageInput = {
+  baseUrl: string
+  kind: WebPageKind
+  /** Cesta stránky bez filtrů a stránkování (`/sponzori`) — shodná s canonical. */
+  path: string
+  name: string
+  description: string
+  /** Stránka je o klubu (`about` / u kontaktu `mainEntity`) — ne u čistých výpisů. */
+  aboutClub?: boolean
+}
+
+/**
+ * Typ stránky podstránky: `AboutPage` (historie), `ContactPage` (kontakt),
+ * `CollectionPage` (výpisy a přehledy). Jen z toho, co stránka sama říká
+ * (název, popis, cesta) — žádné vymyšlené položky. `ContactPage` ukazuje na
+ * klub jako `mainEntity` (kontakt je jeho), ostatní přes `about`.
+ */
+export function toWebPage({ aboutClub, baseUrl, description, kind, name, path }: WebPageInput) {
+  const ids = schemaIds(baseUrl)
+  return {
+    '@context': 'https://schema.org',
+    '@type': kind,
+    name,
+    description,
+    url: `${baseUrl}${path}`,
+    inLanguage: 'cs-CZ',
+    isPartOf: idRef(ids.website),
+    ...(aboutClub
+      ? kind === 'ContactPage'
+        ? { mainEntity: idRef(ids.team) }
+        : { about: idRef(ids.team) }
+      : {}),
+  }
+}
+
+/** Nejvíc fotek, které `ImageGallery` vypíše; galerie mívají desítky snímků. */
+export const GALLERY_IMAGE_LIMIT = 12
+
+export type ImageGalleryInput = {
+  baseUrl: string
+  /** Cesta detailu (`/fotogalerie/<slug>`). */
+  path: string
+  name: string
+  /** Den akce (`YYYY-MM-DD`), pokud ho galerie zná. */
+  dateCreated: string | null
+  /** Všechny fotky galerie (absolutní URL) — vypíše se prvních `GALLERY_IMAGE_LIMIT`. */
+  photos: Array<{ url: string; caption: string | null }>
+}
+
+/**
+ * Detail fotogalerie. `numberOfItems` je skutečný počet fotek, `image`
+ * jen prvních několik (JSON-LD s padesáti snímky by byl zbytečně dlouhý).
+ * Datum galerie je den akce, proto `dateCreated`, ne `datePublished`.
+ */
+export function toImageGallery({ baseUrl, dateCreated, name, path, photos }: ImageGalleryInput) {
+  const ids = schemaIds(baseUrl)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name,
+    url: `${baseUrl}${path}`,
+    inLanguage: 'cs-CZ',
+    ...(dateCreated ? { dateCreated } : {}),
+    numberOfItems: photos.length,
+    publisher: idRef(ids.team),
+    isPartOf: idRef(ids.website),
+    ...(photos.length
+      ? {
+          image: photos.slice(0, GALLERY_IMAGE_LIMIT).map((photo) => ({
+            '@type': 'ImageObject',
+            contentUrl: photo.url,
+            ...(photo.caption ? { caption: photo.caption } : {}),
+          })),
+        }
+      : {}),
+  }
+}

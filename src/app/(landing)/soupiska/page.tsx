@@ -12,12 +12,16 @@ import {
   fetchRosterSections,
   POSITION_LABEL,
 } from '@/landing/features/roster/data'
+import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
 import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
+
+const DESCRIPTION =
+  'A-tým mužů HC Čestice ve Východočeské hokejové lize — brankáři, obránci, útočníci a realizační tým.'
 
 const PLAYER_FORMS: [string, string, string] = ['hráč', 'hráči', 'hráčů']
 const PEOPLE_FORMS: [string, string, string] = ['člověk', 'lidé', 'lidí']
@@ -65,6 +69,15 @@ export default async function SoupiskaPage() {
 
   return (
     <SubpageShell>
+      {/* Hráči ani trenéři se do JSON-LD nevypisují: soupiska zahrnuje i mladistvé
+          a o zveřejnění jmen ve strojových datech nikdo nerozhodl. */}
+      <PageJsonLd
+        aboutClub
+        description={DESCRIPTION}
+        kind="CollectionPage"
+        name="Soupiska HC Čestice"
+        path="/soupiska"
+      />
       <RosterHeader
         pills={pills}
         seasonLabel={season ? seasonShortLabel(season) : null}
@@ -119,7 +132,6 @@ export default async function SoupiskaPage() {
 
 export const metadata: Metadata = {
   title: brandTitle('Soupiska'),
-  description:
-    'A-tým mužů HC Čestice ve Východočeské hokejové lize — brankáři, obránci, útočníci a realizační tým.',
+  description: DESCRIPTION,
   alternates: { canonical: '/soupiska' },
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { toMatchJsonLd, type SportsEventInput } from '@/landing/features/matches/view/matchSchema'
-import { toHomeGraph } from '@/lib/schemaOrg'
+import { toHomeGraph, toImageGallery, toWebPage } from '@/lib/schemaOrg'
 
 const BASE = 'https://example.cz'
 
@@ -94,5 +94,100 @@ describe('odkazy na náš klub', () => {
   it('venku je náš odkaz na straně hostů', () => {
     const event = toMatchJsonLd({ ...input, homeName: 'HC Zdar', awayName: 'HC Čestice' }, BASE)
     expect(event.awayTeam).toEqual({ '@id': `${BASE}/#team` })
+  })
+})
+
+describe('toWebPage', () => {
+  const base = { baseUrl: BASE, name: 'Partneři HC Čestice', description: 'Popis' }
+
+  it('CollectionPage s názvem, popisem, url a odkazem na web i klub', () => {
+    expect(
+      toWebPage({ ...base, kind: 'CollectionPage', path: '/sponzori', aboutClub: true }),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Partneři HC Čestice',
+      description: 'Popis',
+      url: `${BASE}/sponzori`,
+      inLanguage: 'cs-CZ',
+      isPartOf: { '@id': `${BASE}/#website` },
+      about: { '@id': `${BASE}/#team` },
+    })
+  })
+
+  it('AboutPage je o klubu, ContactPage má klub jako mainEntity', () => {
+    expect(
+      toWebPage({ ...base, kind: 'AboutPage', path: '/historie-klubu', aboutClub: true }),
+    ).toMatchObject({
+      '@type': 'AboutPage',
+      about: { '@id': `${BASE}/#team` },
+    })
+    const contact = toWebPage({ ...base, kind: 'ContactPage', path: '/kontakt', aboutClub: true })
+    expect(contact).toMatchObject({
+      '@type': 'ContactPage',
+      mainEntity: { '@id': `${BASE}/#team` },
+    })
+    expect(contact).not.toHaveProperty('about')
+  })
+
+  it('čistý výpis (aktuality) bez about', () => {
+    expect(toWebPage({ ...base, kind: 'CollectionPage', path: '/aktuality' })).not.toHaveProperty(
+      'about',
+    )
+  })
+
+  it('nevymýšlí osoby ani sponzory (jen pole, která stránka sama ví)', () => {
+    const page = toWebPage({ ...base, kind: 'CollectionPage', path: '/soupiska', aboutClub: true })
+    for (const key of ['athlete', 'coach', 'mainEntity', 'itemListElement', 'sponsor']) {
+      expect(page).not.toHaveProperty(key)
+    }
+  })
+})
+
+describe('toImageGallery', () => {
+  const photos = Array.from({ length: 46 }, (_, index) => ({
+    url: `${BASE}/api/media/file/f${index}.jpg`,
+    caption: index === 0 ? 'Úvodní buly' : null,
+  }))
+  const gallery = toImageGallery({
+    baseUrl: BASE,
+    path: '/fotogalerie/hc-cestice-x-zh-pardubice',
+    name: 'HC Čestice x ZH Pardubice',
+    dateCreated: '2025-01-19',
+    photos,
+  })
+
+  it('nese název, url, den akce a skutečný počet fotek', () => {
+    expect(gallery).toMatchObject({
+      '@type': 'ImageGallery',
+      name: 'HC Čestice x ZH Pardubice',
+      url: `${BASE}/fotogalerie/hc-cestice-x-zh-pardubice`,
+      dateCreated: '2025-01-19',
+      numberOfItems: 46,
+      publisher: { '@id': `${BASE}/#team` },
+    })
+  })
+
+  it('vypíše jen prvních 12 snímků jako ImageObject', () => {
+    expect(gallery.image).toHaveLength(12)
+    expect(gallery.image?.[0]).toEqual({
+      '@type': 'ImageObject',
+      contentUrl: `${BASE}/api/media/file/f0.jpg`,
+      caption: 'Úvodní buly',
+    })
+    expect(gallery.image?.[1]).not.toHaveProperty('caption')
+  })
+
+  it('prázdná galerie a neznámé datum nemají image ani dateCreated', () => {
+    const empty = toImageGallery({
+      baseUrl: BASE,
+      path: '/fotogalerie/x',
+      name: 'X',
+      dateCreated: null,
+      photos: [],
+    })
+    expect(empty).not.toHaveProperty('image')
+    expect(empty).not.toHaveProperty('dateCreated')
+    expect(empty.numberOfItems).toBe(0)
   })
 })

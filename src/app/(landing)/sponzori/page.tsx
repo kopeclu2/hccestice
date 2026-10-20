@@ -6,6 +6,7 @@ import { PartnerCard } from '@/landing/features/sponsors/components/PartnerCard'
 import { PartnerSlotCta } from '@/landing/features/sponsors/components/PartnerSlotCta'
 import { SponsorsHeader } from '@/landing/features/sponsors/components/SponsorsHeader'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
+import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Reveal } from '@/landing/ui/Reveal'
@@ -14,6 +15,9 @@ import { brandTitle } from '@/lib/brandTitle'
 import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
+
+const DESCRIPTION =
+  'Firmy a lidé z okolí, kteří drží vesnický hokej v Česticích nad vodou — partneři a sponzoři HC Čestice.'
 
 const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partnerů']
 
@@ -32,6 +36,13 @@ export default async function SponzoriPage() {
 
   return (
     <SubpageShell>
+      <PageJsonLd
+        aboutClub
+        description={DESCRIPTION}
+        kind="CollectionPage"
+        name="Partneři HC Čestice"
+        path="/sponzori"
+      />
       <SponsorsHeader
         count={seasonLabel ? `${count} v sezóně ${seasonLabel}` : count}
         seasonLabel={seasonLabel}
@@ -60,7 +71,6 @@ export default async function SponzoriPage() {
 
 export const metadata: Metadata = {
   title: brandTitle('Partneři'),
-  description:
-    'Firmy a lidé z okolí, kteří drží vesnický hokej v Česticích nad vodou — partneři a sponzoři HC Čestice.',
+  description: DESCRIPTION,
   alternates: { canonical: '/sponzori' },
 }

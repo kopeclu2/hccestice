@@ -7,12 +7,16 @@ import { PostsListGrid } from '@/landing/features/posts/components/PostsListGrid
 import { SocialCta } from '@/landing/features/posts/components/SocialCta'
 import { fetchPostsPage } from '@/landing/features/posts/data/posts'
 import { POST_TYPE_LABEL } from '@/landing/features/posts/view/posts'
+import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { brandTitle } from '@/lib/brandTitle'
 import { routes } from '@/lib/routes'
+
+const DESCRIPTION =
+  'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.'
 
 type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
 
@@ -49,6 +53,12 @@ export default async function AktualityPage({ searchParams }: Args) {
 
   return (
     <SubpageShell>
+      <PageJsonLd
+        description={DESCRIPTION}
+        kind="CollectionPage"
+        name="Aktuality HC Čestice"
+        path={routes.list.posts}
+      />
       <PostsHeader activeType={type} totalDocs={postsPage.totalDocs} />
 
       <SectionShell spacing="content">
@@ -85,8 +95,7 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
 
   return {
     title: brandTitle('Aktuality'),
-    description:
-      'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.',
+    description: DESCRIPTION,
     alternates: {
       canonical:
         page > 1
