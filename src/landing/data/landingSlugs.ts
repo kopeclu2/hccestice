@@ -19,4 +19,5 @@ export const LANDING_SLUGS = new Set([
   'historie-klubu',
   'zapasy',
   'treninky',
+  'kontakt',
 ])

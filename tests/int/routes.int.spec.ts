@@ -18,6 +18,7 @@ describe('routes', () => {
 
   it('výpisy a domů', () => {
     expect(routes.home).toBe('/')
+    expect(routes.contact).toBe('/kontakt')
     expect(routes.list).toEqual({
       posts: '/aktuality',
       matches: '/zapasy',
