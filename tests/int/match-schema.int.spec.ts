@@ -98,6 +98,7 @@ describe('toSportsEvent: povinná pole Google Event', () => {
         postalCode: '516 01',
         addressCountry: 'CZ',
       },
+      geo: { '@type': 'GeoCoordinates', latitude: 50.16507, longitude: 16.28106 },
     })
   })
 

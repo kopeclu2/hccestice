@@ -30,6 +30,12 @@ export const CLUB_ADDRESS = {
   addressCountry: 'CZ',
 } as const
 
+/** Úplný název spolku podle rejstříku — `legalName` v JSON-LD (HC je oddíl spolku). */
+export const CLUB_LEGAL_NAME = 'TJ Sokol Čestice, z.s.'
+
+/** IČO spolku (veřejný údaj z rejstříku), `identifier` v JSON-LD. */
+export const CLUB_ICO = '48616061'
+
 /** Soutěž, ve které klub hraje (pořadatel zápasů, `memberOf`). */
 export const LEAGUE_NAME = 'Východočeská hokejová liga'
 
@@ -64,6 +70,12 @@ export const ARENA_ADDRESS = {
   postalCode: '516 01',
   addressCountry: 'CZ',
 } as const
+
+/**
+ * Souřadnice haly (WGS 84). Ověřeno proti OpenStreetMap: bod s adresou
+ * „Javornická 1648, Rychnov nad Kněžnou" leží na 50.16507, 16.28105.
+ */
+export const ARENA_GEO = { latitude: 50.16507, longitude: 16.28106 } as const
 
 /**
  * Průměrná délka zápasu pro `endDate` události. AHL konec zápasu nezná;

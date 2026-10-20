@@ -17,6 +17,7 @@ describe('toHomeGraph', () => {
     expect(home['@context']).toBe('https://schema.org')
     expect(home['@graph'].map((node) => node['@id'])).toEqual([
       `${BASE}/#team`,
+      `${BASE}/#org`,
       `${BASE}/#arena`,
       `${BASE}/#website`,
     ])
@@ -41,6 +42,26 @@ describe('toHomeGraph', () => {
     })
     const bare = toHomeGraph({ baseUrl: BASE, email: 'a@b.cz', sameAs: [null, undefined] })
     expect(bare['@graph'][0]).not.toHaveProperty('sameAs')
+  })
+
+  it('hala má geo souřadnice shodné s adresou', () => {
+    expect(byId(`${BASE}/#arena`)).toMatchObject({
+      geo: { '@type': 'GeoCoordinates', latitude: 50.16507, longitude: 16.28106 },
+      address: { streetAddress: 'Javornická 1648', postalCode: '516 01' },
+    })
+  })
+
+  it('spolek nese legalName a IČO, HC je jeho oddíl', () => {
+    expect(byId(`${BASE}/#org`)).toMatchObject({
+      '@type': 'SportsOrganization',
+      legalName: 'TJ Sokol Čestice, z.s.',
+      identifier: { '@type': 'PropertyValue', propertyID: 'IČO', value: '48616061' },
+    })
+    expect(byId(`${BASE}/#team`)).toMatchObject({ parentOrganization: { '@id': `${BASE}/#org` } })
+  })
+
+  it('bez telefonu (do rozhodnutí klubu o veřejném kontaktu)', () => {
+    for (const node of home['@graph']) expect(node).not.toHaveProperty('telephone')
   })
 
   it('adresa spolku je jedna a stejná jako ve zdroji pravdy', () => {

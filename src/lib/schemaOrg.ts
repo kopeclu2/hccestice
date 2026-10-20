@@ -1,9 +1,12 @@
 import {
   ARENA_ADDRESS,
+  ARENA_GEO,
   ARENA_NAME,
   CLUB_ADDRESS,
   CLUB_ALTERNATE_NAME,
   CLUB_FOUNDING_YEAR,
+  CLUB_ICO,
+  CLUB_LEGAL_NAME,
   CLUB_LOGO,
   CLUB_NAME,
   LEAGUE_NAME,
@@ -25,6 +28,7 @@ import {
 
 export const schemaIds = (baseUrl: string) => ({
   team: `${baseUrl}/#team`,
+  org: `${baseUrl}/#org`,
   arena: `${baseUrl}/#arena`,
   website: `${baseUrl}/#website`,
 })
@@ -41,6 +45,7 @@ export const arenaNode = (baseUrl: string) => ({
   '@id': schemaIds(baseUrl).arena,
   name: ARENA_NAME,
   address: { '@type': 'PostalAddress', ...ARENA_ADDRESS },
+  geo: { '@type': 'GeoCoordinates', ...ARENA_GEO },
 })
 
 export type HomeGraphInput = {
@@ -70,6 +75,8 @@ export const teamNode = ({ baseUrl, email, sameAs }: HomeGraphInput) => {
     ...(links.length ? { sameAs: links } : {}),
     address: { '@type': 'PostalAddress', ...CLUB_ADDRESS },
     location: idRef(schemaIds(baseUrl).arena),
+    // HC je oddíl spolku TJ Sokol Čestice; právní osobu popisuje `orgNode`.
+    parentOrganization: idRef(schemaIds(baseUrl).org),
     // Spádová oblast pro nábor. Sídlo spolku je v Česticích, ale hraje se
     // v Rychnově — bez `areaServed` nemá vyhledávač jak poznat, že klub
     // obsluhuje celý okres a ne jen obec z poštovní adresy.
@@ -77,6 +84,21 @@ export const teamNode = ({ baseUrl, email, sameAs }: HomeGraphInput) => {
     memberOf: { '@type': 'SportsOrganization', name: LEAGUE_NAME },
   }
 }
+
+/**
+ * Spolek TJ Sokol Čestice, z.s. (`#org`) — právní osoba, jejímž oddílem je HC.
+ * `identifier` je IČO (schema.org pro české IČO vlastní vlastnost nemá,
+ * `PropertyValue` je doporučený způsob). Telefon se záměrně neuvádí.
+ */
+export const orgNode = (baseUrl: string) => ({
+  '@type': 'SportsOrganization',
+  '@id': schemaIds(baseUrl).org,
+  name: CLUB_ALTERNATE_NAME,
+  legalName: CLUB_LEGAL_NAME,
+  identifier: { '@type': 'PropertyValue', propertyID: 'IČO', value: CLUB_ICO },
+  address: { '@type': 'PostalAddress', ...CLUB_ADDRESS },
+  subOrganization: idRef(schemaIds(baseUrl).team),
+})
 
 /**
  * `WebSite` je bez `potentialAction`/`SearchAction` **záměrně**: web nemá
@@ -95,5 +117,10 @@ export const websiteNode = (baseUrl: string) => ({
 /** Home: jeden `@graph` s entitami klubu, na které se odkazují ostatní stránky. */
 export const toHomeGraph = (input: HomeGraphInput) => ({
   '@context': 'https://schema.org',
-  '@graph': [teamNode(input), arenaNode(input.baseUrl), websiteNode(input.baseUrl)],
+  '@graph': [
+    teamNode(input),
+    orgNode(input.baseUrl),
+    arenaNode(input.baseUrl),
+    websiteNode(input.baseUrl),
+  ],
 })
