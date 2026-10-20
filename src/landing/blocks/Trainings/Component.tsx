@@ -9,12 +9,8 @@ import { Numeral } from '@/landing/ui/Numeral'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
-import { CLUB_NAME } from '@/lib/club'
-import { serializeJsonLd } from '@/lib/jsonLd'
 import { cn } from '@/lib/utils'
 import type { LandingTrainingsBlock } from '@/payload-types'
-
-import { parseTrainingSchedule } from './openingHours'
 
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
@@ -67,6 +63,11 @@ export function TrainingsBlockComponent({
  * scrollovaný pás: šířku si berou z obsahu (minimum 240px), takže rozpis může
  * růst podle přidělených hodin a přebytek se přelije na další řádek.
  *
+ * Rozpis **není** ve strukturovaných datech (JSON-LD) — dřív tu byl
+ * `openingHoursSpecification`, který tvrdil „hala je otevřená", ne „klub
+ * trénuje". Správný `Event` s `eventSchedule` by pro Google bez `startDate`
+ * hlásil chybu a hodiny jsou v CMS volný text s poznámkami („Od 1. 11.").
+ *
  * Sekce má jen to, co kreslí handoff: štítek, nadpis a karty. Volitelný perex
  * stojí **pod** nadpisem, ne vedle něj — vedle nadpisu se lámal do úzkého
  * sloupce a rozvaloval hlavičku sekce.
@@ -85,7 +86,6 @@ function TrainingsView({
 
   return (
     <SectionShell id="treninky" spacing={spacing}>
-      <TrainingsJsonLd rows={content.rows} />
       {!standalonePage && (
         <Watermark className="bottom-0 left-40 text-watermark-lg tracking-display text-club/8">
           LED
@@ -138,48 +138,6 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
       </CardTitle>
       <p className="mt-2 text-xs leading-relaxed text-dim">{children}</p>
     </article>
-  )
-}
-
-/**
- * `OpeningHoursSpecification` seskupené podle místa — jeden `SportsActivityLocation`
- * na venue s rozpoznanými hodinami. Řádky, které se nepodařilo naparsovat
- * (viz `parseTrainingSchedule`), do JSON-LD nejdou; když nezbyde nic
- * rozpoznaného, nic se nevykreslí.
- */
-function TrainingsJsonLd({ rows }: { rows: TrainingSlot[] }) {
-  const parsed = parseTrainingSchedule(rows)
-  if (parsed.length === 0) return null
-
-  const byVenue = new Map<string, typeof parsed>()
-  for (const slot of parsed) {
-    const key = slot.venue ?? CLUB_NAME
-    byVenue.set(key, [...(byVenue.get(key) ?? []), slot])
-  }
-
-  const jsonLd = Array.from(byVenue.entries()).map(([venue, slots]) => ({
-    '@context': 'https://schema.org',
-    '@type': 'SportsActivityLocation',
-    name: venue,
-    openingHoursSpecification: slots.map((slot) => ({
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: slot.dayOfWeek,
-      opens: slot.opens,
-      closes: slot.closes,
-      ...(slot.group ? { description: slot.group } : {}),
-    })),
-  }))
-
-  return (
-    <>
-      {jsonLd.map((entry, index) => (
-        <script
-          dangerouslySetInnerHTML={{ __html: serializeJsonLd(entry) }}
-          key={index}
-          type="application/ld+json"
-        />
-      ))}
-    </>
   )
 }
 
