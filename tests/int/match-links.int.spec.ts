@@ -70,6 +70,7 @@ describe('SportsEvent', () => {
     status: 'played' as const,
     description: eventDescription('18. kolo', '5:3', 'HC Čestice', 'HC Zdar'),
     url: 'https://example.cz/zapasy/2025-10-12-hc-zdar',
+    image: 'https://example.cz/logo-cestice.png',
   }
 
   it('startDate nese lokální offset Europe/Prague (léto +02:00, zima +01:00)', () => {
@@ -86,7 +87,7 @@ describe('SportsEvent', () => {
   })
 
   it('doma bez místa doplní domácí led, venku místo vynechá', () => {
-    expect(toSportsEvent(input).location).toEqual({
+    expect(toSportsEvent(input).location).toMatchObject({
       '@type': 'Place',
       name: 'Zimní stadion Rychnov nad Kněžnou',
     })

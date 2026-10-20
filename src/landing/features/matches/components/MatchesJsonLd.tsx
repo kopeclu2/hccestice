@@ -4,6 +4,7 @@ import type { FixtureCard, ResultRow } from '@/landing/features/matches/types'
 import { eventDescription, toSportsEvent } from '@/landing/features/matches/view/matchSchema'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
+import { OG_FALLBACK_IMAGE } from '@/lib/mergeOpenGraph'
 
 /**
  * JSON-LD (schema.org `SportsEvent`) pro rozlosování i odehrané zápasy.
@@ -27,6 +28,8 @@ export function MatchesJsonLd({
 }) {
   const base = getServerSideURL()
   // Zápas bez slugu detail nemá — event ukazuje na výpis, kde je k vidění.
+  // Výpis fotky reportáží nenese, takže všechny události dostanou logo klubu.
+  const image = `${base}${OG_FALLBACK_IMAGE}`
   const urlOf = (href: string | null) => `${base}${href ?? '/zapasy'}`
 
   const events = [
@@ -36,6 +39,7 @@ export function MatchesJsonLd({
         status: 'scheduled',
         description: eventDescription(fixture.stage, null, fixture.homeName, fixture.awayName),
         url: urlOf(fixture.href),
+        image,
       }),
     ),
     ...results.map((row) =>
@@ -44,6 +48,7 @@ export function MatchesJsonLd({
         status: 'played',
         description: eventDescription(row.stage, row.score, row.homeName, row.awayName),
         url: urlOf(row.href),
+        image,
       }),
     ),
   ]

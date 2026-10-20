@@ -22,3 +22,27 @@ export const CLUB_LOGO = '/logo-cestice.png'
  * hlavičky detailu osm a párování soupeřů v synchronizaci pět předpon.
  */
 export const CLUB_PREFIXES = ['HC', 'HK', 'SK', 'TJ', 'HHK', 'ZH', 'HCM', 'SKP'] as const
+
+/**
+ * Domácí hala — jediný zdroj jména a adresy pro strukturovaná data (JSON-LD).
+ *
+ * V CMS i v textech se tatáž hala píše třikrát jinak („Zimní stadion Rychnov
+ * nad Kněžnou", „ZS Rychnov nad Kněžnou", „Rychnov n. K."), ve schema.org je
+ * ale jedna entita — zbylé podoby jen rozpoznává `resolveVenue`
+ * (`matches/view/matchSchema.ts`).
+ */
+export const ARENA_NAME = 'Zimní stadion Rychnov nad Kněžnou'
+
+export const ARENA_ADDRESS = {
+  streetAddress: 'Javornická 1648',
+  addressLocality: 'Rychnov nad Kněžnou',
+  postalCode: '516 01',
+  addressCountry: 'CZ',
+} as const
+
+/**
+ * Průměrná délka zápasu pro `endDate` události. AHL konec zápasu nezná;
+ * 3 × 20 min čistého času + přestávky a rozbruslení vychází na ~2,5 h.
+ * Je to odhad — vždy se počítá od začátku, nikdy od „teď".
+ */
+export const MATCH_DURATION_MINUTES = 150
