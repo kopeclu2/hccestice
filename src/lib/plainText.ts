@@ -1,3 +1,5 @@
+import type { Page, Post } from '@/payload-types'
+
 /**
  * Převod legacy HTML z eStránky na prostý text.
  *
@@ -194,4 +196,92 @@ export const snippet = (text: string, maxChars = 180): string => {
   const cut = clean.slice(0, maxChars)
   const lastSpace = cut.lastIndexOf(' ')
   return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim()}…`
+}
+
+/**
+ * Emoji pryč. Do meta popisku nepatří: Google je ve snippetu stejně
+ * zahazuje a na kartách sítí rozbíjejí zalomení. Zachovává se ©, ® a ™
+ * (jsou to `Extended_Pictographic`, ale běžná typografie), šipky a
+ * interpunkce. Vynechané mezery po emoji se slijí.
+ */
+export const stripEmoji = (text: string): string =>
+  text
+    .replace(
+      /(?![©®™])\p{Extended_Pictographic}|[\p{Regional_Indicator}\u200D\uFE0F\u20E3\u{1F3FB}-\u{1F3FF}]/gu,
+      '',
+    )
+    .replace(/\s+/g, ' ')
+    .trim()
+
+type LexicalNode = { type?: unknown; text?: unknown; children?: unknown }
+
+/** Inline uzly lexicalu — za nimi se mezera nevkládá, text pokračuje větou. */
+const INLINE_NODES = new Set(['text', 'link', 'autolink'])
+
+const lexicalNodeText = (node: LexicalNode): string => {
+  if (typeof node.text === 'string') return node.text
+  if (node.type === 'linebreak') return ' '
+  if (!Array.isArray(node.children)) return ''
+  const inner = node.children.map((child) => lexicalNodeText(child as LexicalNode)).join('')
+  // Odstavec, nadpis a položka seznamu se oddělují mezerou, jinak by věty
+  // sousedních odstavců splynuly („…zápas.Další…") a `snippet` by je nerozdělil.
+  return INLINE_NODES.has(String(node.type)) ? inner : `${inner} `
+}
+
+/**
+ * Prostý text z lexical stromu bez závislosti na Payloadu (`lib/` je
+ * izomorfní). Bloky bez textu (upload, relace) nic nepřidají.
+ */
+export const lexicalRootText = (content: { root: unknown } | null | undefined): string =>
+  content?.root ? lexicalNodeText(content.root as LexicalNode).trim() : ''
+
+/** Zdroj těla dokumentu pro `descriptionFromBody` — `Post` nebo `Page`. */
+export type BodySource = {
+  title?: string | null
+  /** `Post`: lexical tělo. */
+  content?: Post['content']
+  /** `Post`: původní HTML z eStránky (import). */
+  legacyHtml?: string | null
+  contentType?: Post['contentType']
+  /** `Page`: bloky. */
+  layout?: Page['layout'] | null
+}
+
+/**
+ * Text těla dokumentu ve čtecím pořadí. Post: dle `contentType` buď
+ * `legacyHtml`, nebo lexical; když zvolený zdroj nic nedá, zkusí druhý
+ * (import občas nechal `contentType` nevyplněný). Page: jen bloky, které
+ * nesou souvislý text (`textSection`, `rawHtml`) — landing bloky mají
+ * krátké popisky a štítky, ne úvodní odstavec.
+ */
+const bodyText = (doc: BodySource): string => {
+  if (doc.layout) {
+    const parts: string[] = []
+    for (const block of doc.layout) {
+      if (block.blockType === 'textSection') parts.push(lexicalRootText(block.content))
+      else if (block.blockType === 'rawHtml') parts.push(htmlPlainText(block.html))
+      if (parts.join(' ').length > 1200) break
+    }
+    return parts.join(' ')
+  }
+
+  const lexical = lexicalRootText(doc.content)
+  const html = doc.legacyHtml ? htmlPlainText(doc.legacyHtml) : ''
+  const [first, second] = doc.contentType === 'html' ? [html, lexical] : [lexical, html]
+  return first.trim() ? first : second
+}
+
+/**
+ * Záložní `meta description` z těla dokumentu, když redaktor SEO záložku
+ * nevyplnil (naimportované články). Čistý text bez emoji, úvodní věty,
+ * které jen opakují titulek (hlavička zápasu), se přeskočí a výsledek
+ * se ořízne na hranici věty (`snippet`). Prázdný řetězec = tělo nic
+ * použitelného nenese (tabulka, rozpis, jen obrázky) — to je lepší než
+ * popisek „9:00 10:00 11:00 Po", Google si pak vezme úryvek sám.
+ */
+export const descriptionFromBody = (doc: BodySource, maxChars = 160): string => {
+  const text = stripEmoji(htmlPlainText(bodyText(doc)))
+  const body = doc.title ? dropTitleEcho(text, htmlPlainText(doc.title)) : text
+  const out = snippet(body, maxChars)
+  return looksLikeProse(out) ? out : ''
 }
