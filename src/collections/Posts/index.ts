@@ -6,8 +6,8 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import type { CollectionConfig } from 'payload'
-import { slugField } from 'payload'
 
+import { slugFieldCs } from '@/fields/slugCs'
 import { sanitizeHtmlFieldHook } from '@/hooks/sanitizeHtml'
 import { generatePreviewPath } from '@/lib/generatePreviewPath'
 
@@ -341,7 +341,8 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    // České písmena s diakritikou se převádějí, ne zahazují (`trenér` → `trener`).
+    slugFieldCs(),
   ],
   hooks: {
     // revalidateLanding: homepage zobrazuje nejnovější články (blok Aktuality)
