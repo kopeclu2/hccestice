@@ -1,7 +1,7 @@
-import { CLUB_NAME, MATCH_DURATION_MINUTES } from '@/lib/club'
+import { CLUB_NAME, LEAGUE_NAME, MATCH_DURATION_MINUTES } from '@/lib/club'
 import { toDate, toPragueIso } from '@/lib/datetime'
 import { fold } from '@/lib/fold'
-import { arenaNode, idRef } from '@/lib/schemaOrg'
+import { arenaNode, idRef, schemaIds } from '@/lib/schemaOrg'
 import { slugifyCs } from '@/lib/slugifyCs'
 
 /**
@@ -21,9 +21,14 @@ import { slugifyCs } from '@/lib/slugifyCs'
  * vůbec (venkovní zápas bez `venue`), se vynechá — vymýšlet ho by byla lež.
  */
 
-const ORGANIZER = { '@type': 'SportsOrganization', name: 'Východočeská hokejová liga' }
+const ORGANIZER = { '@type': 'SportsOrganization', name: LEAGUE_NAME }
 
-const team = (name: string) => ({ '@type': 'SportsTeam', name })
+/**
+ * Náš klub je odkaz na `#team` z home (jedna entita napříč webem), soupeř
+ * anonymní `SportsTeam` jen se jménem — o soupeřích nic dalšího nevíme.
+ */
+const team = (name: string, baseUrl: string) =>
+  name === CLUB_NAME ? idRef(schemaIds(baseUrl).team) : { '@type': 'SportsTeam', name }
 
 /**
  * Hala rozpoznaná z textu v CMS. `arena` je naše domácí hala, `other` cizí
@@ -140,9 +145,9 @@ export const toSportsEvent = (input: SportsEventInput, baseUrl: string) => {
         ? 'https://schema.org/EventCancelled'
         : 'https://schema.org/EventScheduled',
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    homeTeam: team(homeName),
-    awayTeam: team(awayName),
-    competitor: [team(homeName), team(awayName)],
+    homeTeam: team(homeName, baseUrl),
+    awayTeam: team(awayName, baseUrl),
+    competitor: [team(homeName, baseUrl), team(awayName, baseUrl)],
     organizer: ORGANIZER,
     image: [image],
     ...(description ? { description } : {}),

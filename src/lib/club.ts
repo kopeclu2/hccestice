@@ -8,6 +8,31 @@
 /** Název klubu, jak se píše v titulcích, e-mailech a v zápasech. */
 export const CLUB_NAME = 'HC Čestice'
 
+/**
+ * Druhé jméno klubu — název spolku bez právní formy („TJ Sokol Čestice").
+ * V patičce, titulcích a v JSON-LD (`alternateName`) se píše vždy takhle.
+ */
+export const CLUB_ALTERNATE_NAME = 'TJ Sokol Čestice'
+
+/** Rok založení oddílu ledního hokeje při TJ Sokol (první milník `/historie-klubu`). */
+export const CLUB_FOUNDING_YEAR = '1954'
+
+/**
+ * Poštovní adresa spolku — jediný zdroj pro JSON-LD. Hodnotu (zvlášť
+ * `addressLocality`) měnit jen po potvrzení klubem, na webu i v rejstříku
+ * musí být tatáž.
+ */
+export const CLUB_ADDRESS = {
+  streetAddress: 'Čestice 112',
+  addressLocality: 'Kostelec nad Orlicí',
+  addressRegion: 'Královéhradecký kraj',
+  postalCode: '517 41',
+  addressCountry: 'CZ',
+} as const
+
+/** Soutěž, ve které klub hraje (pořadatel zápasů, `memberOf`). */
+export const LEAGUE_NAME = 'Východočeská hokejová liga'
+
 /** Název webu — v titulku stránky za svislítkem (`brandTitle`). Dnes shodný s klubem. */
 export const SITE_NAME = CLUB_NAME
 

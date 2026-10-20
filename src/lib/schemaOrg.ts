@@ -1,4 +1,13 @@
-import { ARENA_ADDRESS, ARENA_NAME } from './club'
+import {
+  ARENA_ADDRESS,
+  ARENA_NAME,
+  CLUB_ADDRESS,
+  CLUB_ALTERNATE_NAME,
+  CLUB_FOUNDING_YEAR,
+  CLUB_LOGO,
+  CLUB_NAME,
+  LEAGUE_NAME,
+} from './club'
 
 /**
  * Společné díly strukturovaných dat (schema.org JSON-LD) — identifikátory
@@ -10,12 +19,14 @@ import { ARENA_ADDRESS, ARENA_NAME } from './club'
  *
  * Pravidlo `@id`: entita je v rámci **jednoho** dokumentu definovaná jednou
  * a ostatní výskyty jsou odkazy `{ '@id': … }`. Entity klubu mají stabilní
- * `@id` na domovské adrese (`<origin>/#arena`), takže se spojí i napříč
- * stránkami, i když je plná definice jen na některých.
+ * `@id` na domovské adrese (`<origin>/#team`), takže se spojí i napříč
+ * stránkami, i když je plná definice jen na home.
  */
 
 export const schemaIds = (baseUrl: string) => ({
+  team: `${baseUrl}/#team`,
   arena: `${baseUrl}/#arena`,
+  website: `${baseUrl}/#website`,
 })
 
 /** Odkaz na entitu podle `@id`. */
@@ -30,4 +41,59 @@ export const arenaNode = (baseUrl: string) => ({
   '@id': schemaIds(baseUrl).arena,
   name: ARENA_NAME,
   address: { '@type': 'PostalAddress', ...ARENA_ADDRESS },
+})
+
+export type HomeGraphInput = {
+  baseUrl: string
+  email: string
+  /** Profily klubu na sítích — prázdné/`null` se vynechají. */
+  sameAs: Array<string | null | undefined>
+}
+
+/**
+ * Tým HC Čestice (`#team`). `sameAs` jde z administrace (ne natvrdo), aby
+ * změna profilu na sítích byla otázkou správce. `address` nese plnou
+ * poštovní adresu spolku. `location` je odkaz na halu, ne její kopie.
+ */
+export const teamNode = ({ baseUrl, email, sameAs }: HomeGraphInput) => {
+  const links = sameAs.filter((link): link is string => Boolean(link))
+  return {
+    '@type': 'SportsTeam',
+    '@id': schemaIds(baseUrl).team,
+    name: CLUB_NAME,
+    alternateName: CLUB_ALTERNATE_NAME,
+    sport: 'Ice Hockey',
+    foundingDate: CLUB_FOUNDING_YEAR,
+    url: baseUrl,
+    logo: `${baseUrl}${CLUB_LOGO}`,
+    email,
+    ...(links.length ? { sameAs: links } : {}),
+    address: { '@type': 'PostalAddress', ...CLUB_ADDRESS },
+    location: idRef(schemaIds(baseUrl).arena),
+    // Spádová oblast pro nábor. Sídlo spolku je v Česticích, ale hraje se
+    // v Rychnově — bez `areaServed` nemá vyhledávač jak poznat, že klub
+    // obsluhuje celý okres a ne jen obec z poštovní adresy.
+    areaServed: { '@type': 'AdministrativeArea', name: 'okres Rychnov nad Kněžnou' },
+    memberOf: { '@type': 'SportsOrganization', name: LEAGUE_NAME },
+  }
+}
+
+/**
+ * `WebSite` je bez `potentialAction`/`SearchAction` **záměrně**: web nemá
+ * veřejné vyhledávací pole (kolekce `search` je interní index pro
+ * `/llms.txt`), takže by šlo o nepravdivá strukturovaná data.
+ */
+export const websiteNode = (baseUrl: string) => ({
+  '@type': 'WebSite',
+  '@id': schemaIds(baseUrl).website,
+  name: CLUB_NAME,
+  url: baseUrl,
+  inLanguage: 'cs-CZ',
+  publisher: idRef(schemaIds(baseUrl).team),
+})
+
+/** Home: jeden `@graph` s entitami klubu, na které se odkazují ostatní stránky. */
+export const toHomeGraph = (input: HomeGraphInput) => ({
+  '@context': 'https://schema.org',
+  '@graph': [teamNode(input), arenaNode(input.baseUrl), websiteNode(input.baseUrl)],
 })
