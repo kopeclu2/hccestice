@@ -26,7 +26,7 @@ export function HeroTypo({ article }: { article: ArticleDetail }) {
         HC ČESTICE
       </Watermark>
 
-      <Breadcrumbs className="mb-5.5" tone="light" trail={articleTrail(article.badge)} />
+      <Breadcrumbs className="mb-5.5" tone="light" trail={articleTrail(article)} />
 
       <div className="flex flex-wrap items-center gap-x-4.5 gap-y-3">
         <CategoryBadge>{article.badge}</CategoryBadge>

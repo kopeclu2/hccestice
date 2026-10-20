@@ -30,7 +30,7 @@ export function HeroPanel({ article }: { article: ArticleDetail }) {
 
         <div className="relative grid items-end gap-hero-gap lg:grid-cols-[1.15fr_.85fr]">
           <div>
-            <Breadcrumbs className="mb-5.5" tone="panel" trail={articleTrail(article.badge)} />
+            <Breadcrumbs className="mb-5.5" tone="panel" trail={articleTrail(article)} />
             <CategoryBadge>{article.badge}</CategoryBadge>
             <PageTitle balance="pretty" className="mt-4.5 text-on-contrast" size="sm">
               {article.title}

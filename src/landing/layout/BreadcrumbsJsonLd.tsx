@@ -7,6 +7,12 @@ export type Crumb = {
   label: string
   /** Bez `href` je položka poslední (aktuální stránka) — vykreslí se jako text. */
   href?: string
+  /**
+   * Jméno položky ve strukturovaných datech, když se má lišit od viditelného
+   * popisku — poslední drobek článku ukazuje kategorii („Novinky"), ale
+   * `BreadcrumbList` má končit titulkem stránky.
+   */
+  schemaName?: string
 }
 
 /**
@@ -33,7 +39,7 @@ export function BreadcrumbsJsonLd({ trail }: { trail: Crumb[] }) {
     itemListElement: items.map((crumb, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      name: crumb.label,
+      name: crumb.schemaName ?? crumb.label,
       ...(crumb.href && index < items.length - 1 ? { item: `${baseUrl}${crumb.href}` } : {}),
     })),
   }

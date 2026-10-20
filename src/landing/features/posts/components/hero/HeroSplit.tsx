@@ -24,7 +24,7 @@ export function HeroSplit({ article }: { article: ArticleDetail }) {
   return (
     <div className="relative z-1 mx-auto mt-6 grid max-w-page items-center gap-hero-gap px-gutter md:mt-13 lg:mt-16 lg:grid-cols-[1.05fr_.95fr]">
       <div>
-        <Breadcrumbs className="mb-5" tone="light" trail={articleTrail(article.badge)} />
+        <Breadcrumbs className="mb-5" tone="light" trail={articleTrail(article)} />
         <Kicker>{article.badge}</Kicker>
         <PageTitle balance="pretty" className="mt-4.5" size="sm">
           <TitleParts accent="lime-box" highlight={article.titleHighlight} title={article.title} />
