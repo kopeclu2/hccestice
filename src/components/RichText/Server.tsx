@@ -17,7 +17,16 @@ import type {
   GalleryLinkBlock as GalleryLinkBlockProps,
 } from '@/payload-types'
 
-import { baseJSXConverters, richTextClassName, type BaseNodeTypes, type Props } from './index'
+import { findLeadMediaBlockId } from './leadMedia'
+
+import {
+  baseJSXConverters,
+  mediaBlockConverter,
+  richTextClassName,
+  type BaseNodeTypes,
+  type MediaOptions,
+  type Props,
+} from './index'
 
 /**
  * Serverový render rich textu — základní konvertory + landing bloky,
@@ -69,36 +78,39 @@ async function RelationshipConverter({ node }: { node: { relationTo: string; val
   )
 }
 
-const serverJSXConverters: JSXConvertersFunction<ServerNodeTypes> = (args) => {
-  const base = baseJSXConverters(args)
-  return {
-    ...base,
-    relationship: RelationshipConverter,
-    blocks: {
-      ...base.blocks,
-      ctaBanner: ({ node }) => (
-        <EmbeddedSection>
-          <CtaBannerBlockComponent block={node.fields} />
-        </EmbeddedSection>
-      ),
-      galleryEmbed: ({ node }) => (
-        <EmbeddedSection>
-          <GalleryEmbedBlockComponent block={node.fields} />
-        </EmbeddedSection>
-      ),
-      galleryLink: ({ node }) => (
-        <EmbeddedSection>
-          <GalleryLinkBlockComponent block={node.fields} />
-        </EmbeddedSection>
-      ),
-      downloads: ({ node }) => (
-        <EmbeddedSection>
-          <DownloadsBlockComponent block={node.fields} />
-        </EmbeddedSection>
-      ),
-    },
+const createServerJSXConverters =
+  (media: MediaOptions): JSXConvertersFunction<ServerNodeTypes> =>
+  (args) => {
+    const base = baseJSXConverters(args)
+    return {
+      ...base,
+      relationship: RelationshipConverter,
+      blocks: {
+        ...base.blocks,
+        mediaBlock: mediaBlockConverter(media),
+        ctaBanner: ({ node }) => (
+          <EmbeddedSection>
+            <CtaBannerBlockComponent block={node.fields} />
+          </EmbeddedSection>
+        ),
+        galleryEmbed: ({ node }) => (
+          <EmbeddedSection>
+            <GalleryEmbedBlockComponent block={node.fields} />
+          </EmbeddedSection>
+        ),
+        galleryLink: ({ node }) => (
+          <EmbeddedSection>
+            <GalleryLinkBlockComponent block={node.fields} />
+          </EmbeddedSection>
+        ),
+        downloads: ({ node }) => (
+          <EmbeddedSection>
+            <DownloadsBlockComponent block={node.fields} />
+          </EmbeddedSection>
+        ),
+      },
+    }
   }
-}
 
 /**
  * Obal pro landing bloky uvnitř textu — ruší velké sekční odsazení.
@@ -119,10 +131,21 @@ function EmbeddedSection({ children }: { children: React.ReactNode }) {
 }
 
 export default function RichTextServer(props: Props) {
-  const { className, enableProse = true, enableGutter = true, ...rest } = props
+  const {
+    className,
+    enableProse = true,
+    enableGutter = true,
+    eagerLeadMedia = false,
+    mediaSizes,
+    ...rest
+  } = props
+  const converters = createServerJSXConverters({
+    mediaSizes,
+    priorityMediaId: eagerLeadMedia ? findLeadMediaBlockId(rest.data) : undefined,
+  })
   return (
     <ConvertRichText
-      converters={serverJSXConverters}
+      converters={converters}
       className={richTextClassName({ enableGutter, enableProse }, className)}
       {...rest}
     />
