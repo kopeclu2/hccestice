@@ -8,7 +8,7 @@ import { StoryPanel } from '@/landing/features/history/components/StoryPanel'
 import { fetchHistoryEras } from '@/landing/features/history/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 
 export const revalidate = 600
 
@@ -45,9 +45,9 @@ export default async function HistorieKlubuPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Historie klubu'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Historie klubu',
   description:
     'Sedmdesát let hokeje v Česticích — od kluziště za Machačovými a dresů na dluh po historický bronz ve Východočeské hokejové lize.',
-  alternates: { canonical: '/historie-klubu' },
-}
+  path: '/historie-klubu',
+})

@@ -26,7 +26,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { SITE_NAME } from '@/lib/club'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
@@ -174,7 +174,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   )
 }
 
-const TITLE = `Zápasy a tabulka | ${SITE_NAME}`
+const TITLE = 'Zápasy a tabulka'
 const DESCRIPTION =
   'Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou.'
 
@@ -194,10 +194,10 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   const { sezona, strana } = await searchParams
   const page = parsePageParam(strana)
 
-  return {
+  return buildPageMetadata({
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : routes.list.matches },
-    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
-  }
+    path: page > 1 ? listPath(page, sezona ?? null) : routes.list.matches,
+    robots: page > 1 ? { follow: true, index: false } : undefined,
+  })
 }

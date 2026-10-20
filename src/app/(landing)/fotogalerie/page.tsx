@@ -10,7 +10,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
 
 type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
@@ -72,7 +72,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
   )
 }
 
-const TITLE = brandTitle('Fotoalbum')
+const TITLE = 'Fotoalbum'
 const DESCRIPTION =
   'Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase.'
 
@@ -91,15 +91,13 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   const { page: rawPage, sezona } = await searchParams
   const page = parsePageParam(rawPage)
 
-  return {
+  return buildPageMetadata({
     title: TITLE,
     description: DESCRIPTION,
-    alternates: {
-      canonical:
-        page > 1
-          ? buildListUrl(routes.list.galleries, { filters: { sezona }, page })
-          : routes.list.galleries,
-    },
-    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
-  }
+    path:
+      page > 1
+        ? buildListUrl(routes.list.galleries, { filters: { sezona }, page })
+        : routes.list.galleries,
+    robots: page > 1 ? { follow: true, index: false } : undefined,
+  })
 }

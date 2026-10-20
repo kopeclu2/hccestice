@@ -5,7 +5,7 @@ import { TrainingsBlockComponent } from '@/landing/blocks/Trainings/Component'
 import { TrainingsHeader } from '@/landing/features/trainings/components/TrainingsHeader'
 import { fetchTrainingsBlock } from '@/landing/features/trainings/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 
 export const revalidate = 600
 
@@ -29,9 +29,9 @@ export default async function TreninkyPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Tréninky'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Tréninky',
   description:
     'Rozpis ledových hodin HC Čestice — kdy a kde trénují muži a mládež na zimním stadionu.',
-  alternates: { canonical: '/treninky' },
-}
+  path: '/treninky',
+})

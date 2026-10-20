@@ -14,7 +14,7 @@ import {
 } from '@/landing/features/roster/data'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
@@ -117,9 +117,9 @@ export default async function SoupiskaPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Soupiska'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Soupiska',
   description:
     'A-tým mužů HC Čestice ve Východočeské hokejové lize — brankáři, obránci, útočníci a realizační tým.',
-  alternates: { canonical: '/soupiska' },
-}
+  path: '/soupiska',
+})

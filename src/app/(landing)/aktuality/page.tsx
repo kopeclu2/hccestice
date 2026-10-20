@@ -11,7 +11,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
 
 type Args = { searchParams: Promise<{ page?: string; typ?: string }> }
@@ -83,16 +83,14 @@ export default async function AktualityPage({ searchParams }: Args) {
 export async function generateMetadata({ searchParams }: Args): Promise<Metadata> {
   const { page, type } = readParams(await searchParams)
 
-  return {
-    title: brandTitle('Aktuality'),
+  return buildPageMetadata({
+    title: 'Aktuality',
     description:
       'Zápasové reporty, dění v klubu a mládež. Všechno, co se za sezónu semele na zimáku i mimo něj.',
-    alternates: {
-      canonical:
-        page > 1
-          ? buildListUrl(routes.list.posts, { filters: { typ: type }, page })
-          : routes.list.posts,
-    },
-    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
-  }
+    path:
+      page > 1
+        ? buildListUrl(routes.list.posts, { filters: { typ: type }, page })
+        : routes.list.posts,
+    robots: page > 1 ? { follow: true, index: false } : undefined,
+  })
 }
