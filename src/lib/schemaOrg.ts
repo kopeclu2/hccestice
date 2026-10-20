@@ -9,6 +9,7 @@ import {
   CLUB_LEGAL_NAME,
   CLUB_LOGO,
   CLUB_NAME,
+  CLUB_SAME_AS,
   LEAGUE_NAME,
 } from './club'
 
@@ -56,12 +57,12 @@ export type HomeGraphInput = {
 }
 
 /**
- * Tým HC Čestice (`#team`). `sameAs` jde z administrace (ne natvrdo), aby
- * změna profilu na sítích byla otázkou správce. `address` nese plnou
+ * Tým HC Čestice (`#team`). `sameAs`: profily na sítích z administrace (aby
+ * jejich změna byla otázkou správce) a ověřené trvalé odkazy z `CLUB_SAME_AS`. `address` nese plnou
  * poštovní adresu spolku. `location` je odkaz na halu, ne její kopie.
  */
 export const teamNode = ({ baseUrl, email, sameAs }: HomeGraphInput) => {
-  const links = sameAs.filter((link): link is string => Boolean(link))
+  const links = [...sameAs, ...CLUB_SAME_AS].filter((link): link is string => Boolean(link))
   return {
     '@type': 'SportsTeam',
     '@id': schemaIds(baseUrl).team,

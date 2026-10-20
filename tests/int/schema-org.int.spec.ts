@@ -36,12 +36,21 @@ describe('toHomeGraph', () => {
     expect(byId(`${BASE}/#website`)).toMatchObject({ publisher: { '@id': `${BASE}/#team` } })
   })
 
-  it('sameAs vynechá prázdné profily', () => {
+  it('sameAs vynechá prázdné profily a přidá Wikidata', () => {
     expect(byId(`${BASE}/#team`)).toMatchObject({
-      sameAs: ['https://www.facebook.com/klub', 'https://www.instagram.com/klub/'],
+      sameAs: [
+        'https://www.facebook.com/klub',
+        'https://www.instagram.com/klub/',
+        'https://www.wikidata.org/wiki/Q15980493',
+      ],
     })
+  })
+
+  it('bez profilů v administraci zůstane aspoň ověřená Wikidata', () => {
     const bare = toHomeGraph({ baseUrl: BASE, email: 'a@b.cz', sameAs: [null, undefined] })
-    expect(bare['@graph'][0]).not.toHaveProperty('sameAs')
+    expect(bare['@graph'][0]).toMatchObject({
+      sameAs: ['https://www.wikidata.org/wiki/Q15980493'],
+    })
   })
 
   it('hala má geo souřadnice shodné s adresou', () => {

@@ -9,6 +9,15 @@
 export const CLUB_NAME = 'HC Čestice'
 
 /**
+ * Pravidlo jednotného jména entity (web, titulky, JSON-LD, e-maily):
+ * - `CLUB_NAME` „HC Čestice" — hokejový oddíl, značka a `name` týmu;
+ * - `CLUB_ALTERNATE_NAME` „TJ Sokol Čestice" — spolek, pod který oddíl patří
+ *   (patička, `alternateName`, `name` spolku);
+ * - `CLUB_LEGAL_NAME` „TJ Sokol Čestice, z.s." — jen právní údaje (`legalName`).
+ * Jiné podoby („Hokejový klub Čestice", „HC Čestice z.s.") se nepoužívají.
+ */
+
+/**
  * Druhé jméno klubu — název spolku bez právní formy („TJ Sokol Čestice").
  * V patičce, titulcích a v JSON-LD (`alternateName`) se píše vždy takhle.
  */
@@ -29,6 +38,16 @@ export const CLUB_ADDRESS = {
   postalCode: '517 41',
   addressCountry: 'CZ',
 } as const
+
+/**
+ * Profily klubu mimo vlastní web pro `sameAs` — jen ověřené odkazy.
+ * Wikidata: položka Q15980493 je „HC Čestice, český hokejový klub" (sport:
+ * lední hokej, oficiální web hccestice.cz), ověřeno přes Special:EntityData.
+ * Facebook a Instagram jdou z administrace (`siteConfig`), ne odsud.
+ * Odkaz na tým na ahl.cz tu není záměrně: jeho adresa nese ID ročníku a týmu,
+ * které se mění každou sezónu (viz `seasons.ahl`), takže by přestal platit.
+ */
+export const CLUB_SAME_AS = ['https://www.wikidata.org/wiki/Q15980493'] as const
 
 /** Úplný název spolku podle rejstříku — `legalName` v JSON-LD (HC je oddíl spolku). */
 export const CLUB_LEGAL_NAME = 'TJ Sokol Čestice, z.s.'
