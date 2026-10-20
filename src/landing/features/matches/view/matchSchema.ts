@@ -1,4 +1,5 @@
 import { CLUB_NAME } from '@/lib/club'
+import { toPragueIso } from '@/lib/datetime'
 
 /**
  * Stavba schema.org `SportsEvent` sdílená výpisem `/zapasy`
@@ -50,7 +51,8 @@ export const toSportsEvent = ({
     '@type': 'SportsEvent',
     name: title,
     sport: 'Ice Hockey',
-    startDate,
+    // Lokální offset (+01:00/+02:00), ne `…Z` — viz `toPragueIso`.
+    startDate: toPragueIso(startDate) ?? startDate,
     eventStatus:
       status === 'canceled'
         ? 'https://schema.org/EventCancelled'

@@ -72,6 +72,13 @@ describe('SportsEvent', () => {
     url: 'https://example.cz/zapasy/2025-10-12-hc-zdar',
   }
 
+  it('startDate nese lokální offset Europe/Prague (léto +02:00, zima +01:00)', () => {
+    expect(toSportsEvent(input).startDate).toBe('2025-10-12T16:00:00+02:00')
+    expect(toSportsEvent({ ...input, startDate: '2026-01-18T15:30:00.000Z' }).startDate).toBe(
+      '2026-01-18T16:30:00+01:00',
+    )
+  })
+
   it('nese url detailu a popis s výsledkem', () => {
     const event = toSportsEvent(input)
     expect(event.url).toBe(input.url)
