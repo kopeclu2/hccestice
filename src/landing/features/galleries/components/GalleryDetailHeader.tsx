@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { PHOTO_FORMS } from '@/landing/features/galleries/view/galleryMeta'
 import { Badge } from '@/landing/ui/Badge'
 import { PageHeader } from '@/landing/ui/PageHeader'
 import { countLabel } from '@/lib/plural'
@@ -40,7 +41,7 @@ export function GalleryDetailHeader({
             </span>
           )}
           <span className="text-xs font-semibold text-faint">
-            {countLabel(photoCount, ['fotka', 'fotky', 'fotek'])}
+            {countLabel(photoCount, PHOTO_FORMS)}
           </span>
         </>
       }

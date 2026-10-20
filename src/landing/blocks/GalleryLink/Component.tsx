@@ -5,6 +5,7 @@ import React from 'react'
 
 import { fetchGallery, toGalleryCard } from '@/landing/features/galleries/data'
 import type { GalleryCard } from '@/landing/features/galleries/types'
+import { PHOTO_FORMS } from '@/landing/features/galleries/view/galleryMeta'
 import { relId } from '@/landing/lib/payload'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Reveal } from '@/landing/ui/Reveal'
@@ -72,7 +73,7 @@ function GalleryLinkView({ card, label }: { card: GalleryCard; label?: string | 
             </CardTitle>
             <div className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-faint">
               <ImageIcon size={13} strokeWidth={2.4} />
-              {countLabel(card.photoCount, ['fotka', 'fotky', 'fotek'])}
+              {countLabel(card.photoCount, PHOTO_FORMS)}
             </div>
           </div>
 
