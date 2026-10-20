@@ -1648,6 +1648,10 @@ Všichni přihlášení uživatelé jsou si rovni (žádné role) — `users` z�
   endpointy `/api/navigation*`; `navigationOverrides` je maže.
 - `posts.populatedAuthors` nenese `email` ani `phone` (veřejné `GET /api/posts`);
   migrace `20261016_085646_drop_author_contacts` dropuje jen tyhle dva sloupce.
+  Sloupce byly prázdné — hook je `afterRead` a hodnoty jen přikopíroval do
+  odpovědi, takže se nic neztrácí (zdroj je `users`). Karta autora článku bez
+  přiřazené osoby (`authorPerson`) ukazuje místo e-mailu admina klubový
+  (`fetchSite().email`).
 
 # Zabezpečení: vstupy, hlavičky, nasazení
 

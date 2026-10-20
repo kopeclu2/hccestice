@@ -7,7 +7,7 @@ import React from 'react'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { Button } from '@/components/ui/button'
-import { fetchSiteConfig } from '@/landing/data/site'
+import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
 import { fetchMatchSlugForPost } from '@/landing/features/matches/data/matchDetail'
 import { ArticleBody } from '@/landing/features/posts/components/ArticleBody'
 import { ArticleJsonLd } from '@/landing/features/posts/components/ArticleJsonLd'
@@ -60,6 +60,7 @@ export default async function ArticlePage({ params }: Args) {
     post,
     await fetchDefaultPostPhoto(),
     await fetchMatchSlugForPost(post),
+    (await fetchSite()).email,
   )
   const related = article.showRelated ? await fetchRelatedPostCards(post) : []
   // Karty doporučených článků jsou tytéž jako na výpisu, takže i fotky na nich
