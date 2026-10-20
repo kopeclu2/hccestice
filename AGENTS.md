@@ -1647,4 +1647,91 @@ Všichni přihlášení uživatelé jsou si rovni (žádné role) — `users` z�
 - Plugin `payload-cms-navigation-plugin` si registruje vlastní nechráněné
   endpointy `/api/navigation*`; `navigationOverrides` je maže.
 - `posts.populatedAuthors` nenese `email` ani `phone` (veřejné `GET /api/posts`);
-  migrace `20261016_084515_drop_author_contacts` dropuje jen tyhle dva sloupce.
+  migrace `20261016_085646_drop_author_contacts` dropuje jen tyhle dva sloupce.
+
+# Zabezpečení: vstupy, hlavičky, nasazení
+
+Audit z 16. 10. 2026. Rozhodnutí uživatele: role se nezavádějí, surové HTML
+se sanitizuje, repo a image zatím zůstávají veřejné, server se jen
+zdokumentoval (checklist níž), nic se na něm neměnilo.
+
+## Závislosti
+
+Payload 3.88 měl kritické díry (RCE ve form-builderu na anonymně zapisovatelné
+`form-submissions`, obejití access control), Next 16.3.0 SSRF/RCE v image
+optimizeru. Minimum je **Payload 3.91.0** a **Next 16.4.2**; `overrides`
+v `package.json` dotahují tranzitivní balíčky. Payload 3.90 přidal sloupec
+`users.reset_password_requested_at` — migrace
+`20261016_084321_security_deps_upgrade`, **před buildem**. Zbylé nálezy
+`bun audit` jsou jen v build/lint nástrojích. `payload-cms-navigation-plugin`
+deklaruje `express`, `openai`, `fastmcp`… v `dependencies`, jeho `dist` je ale
+neimportuje a standalone build je nebalí.
+
+## Surové HTML
+
+`posts.legacyHtml` (import z eStránek) a blok RawHtml (pole `html`) jdou přes
+`hooks/sanitizeHtml.ts` (DOMPurify + jsdom) **dvakrát**: `beforeChange` při
+uložení a znovu při vykreslení (`ArticleBody`, `RawHtml/Component`). Druhé
+kolo kryje data uložená před zavedením hooku i obejití hooku.
+
+- Iframy jen z `src/lib/embedHosts.ts` — jediný seznam pro sanitizér, blok
+  Externí obsah (validace i render) a `frame-src` v CSP. Nový host jen tam.
+  Iframe dostane `sandbox` (`EMBED_SANDBOX`) bez `allow-top-navigation`.
+- Inline `style` zůstává (legacy tabulky na něm stojí), zahazují se vlastnosti
+  mimo allowlist (`position`, `top`, `transition`…). `class` a `id` pryč —
+  `class="fixed inset-0"` by s Tailwindem překryl stránku.
+- `scripts/seed/sanitize-html.ts` (`--dry-run` výchozí, `--apply`) přepíše
+  uložená data přímým SQL, aby nevznikly nové verze ani změna `lastmod`.
+  Spouštět **přes Node** (`node --env-file=.env node_modules/.bin/tsx …`):
+  pod bunem jsdom nafoukne paměť přes 12 GB a zasekne se.
+
+## Ostatní vstupy
+
+| co | kde |
+|---|---|
+| přípona uploadu musí odpovídat detekovanému MIME (Payload bere příponu od klienta, `x.html` s hlavičkou MP3 by Next servíroval jako `text/html`) | `hooks/validateMediaUpload.ts`, `lib/mediaTypes.ts` |
+| `/media/*` a `/api/media/file/*` mají CSP `sandbox`, PDF/Office `Content-Disposition: attachment` | `next.config.ts`, `Media.modifyResponseHeaders` |
+| odkazy z adminu jen `http(s):`, `mailto:`, `tel:`, `/`, `#` | `lib/linkUrl.ts` (Lexical, SiteConfig, Sponsors, Seasons, bloky) |
+| číslo strany výpisu ≤ 500 **před** cachovanou funkcí (jinak každá `?page=N` = nová entry v `fetch-cache`) | `parsePageParam` v `landing/lib/listUrl.ts` |
+| neplatné `%`-kódování ve slugu → 404, ne 500 | `lib/decodeSlug.ts` |
+| autoresponder jen na **jednu** platnou adresu (přes REST šlo `a@x, b@y`) | `parseSubmitterEmail` v `email/templates/formSubmission.ts` |
+| fallback e-mailový adapter v produkci loguje jen předmět a počet adresátů | `email/adapter.ts` |
+| Sentry bez `previewSecret`, tokenů, `/admin/reset/<token>`, `Cookie`/`Authorization` | `lib/sentryScrub.ts` ve všech třech `Sentry.init` |
+
+Nevyřešené: surové `/%zz` (neplatné kódování už v cestě) vrací 500 dřív, než
+dojde na routu — chyba je v Nextu nebo `proxy.ts`, neprověřeno.
+
+## Hlavičky
+
+- `Strict-Transport-Security: max-age=31536000`, bez `includeSubDomains`
+  a `preload` (sslip.io subdomény nejsou naše).
+- **Vynucená** CSP jen s direktivami, které nic nerozbijí: `frame-ancestors`,
+  `object-src`, `base-uri`, `form-action`. Plná politika je
+  `Content-Security-Policy-Report-Only` s `report-uri` na Sentry
+  (`lib/csp.ts`). Nonce CSP **ne**: v Nextu vyžaduje dynamický render každé
+  stránky, tedy konec SSG/ISR. Před přepnutím plné politiky na vynucenou
+  projít hlášení v Sentry.
+- `robots.txt` zakazuje `/api/` a `/next/`, ale povoluje `/api/media/file/`
+  (og:image a JSON-LD obrázky).
+
+## CI a Docker
+
+- Akce pinované na SHA, `permissions: contents: read` na úrovni workflow.
+- Host key serveru je ve workflow natvrdo (veřejný klíč, ověřený proti
+  `/etc/ssh/ssh_host_ed25519_key.pub`) a `StrictHostKeyChecking yes`.
+  **Výměna klíče na serveru = úprava `deploy.yml`.**
+- `DATABASE_URL`, `PAYLOAD_SECRET`, `SENTRY_AUTH_TOKEN` jdou do buildu jako
+  BuildKit secrets (`RUN --mount=type=secret,…,env=…`, frontend
+  `dockerfile:1.10`), ne `ARG`/`ENV` — ty zůstávají v metadatech image, který
+  leží ve veřejném GHCR. `NEXT_PUBLIC_*` jsou veřejné a zůstávají build args.
+- Bun (`1.3.11`) a `node:24-alpine` (digest) jsou pinované; aktualizace ručně.
+- Ze `scripts/seed/data/articles.json` jsou odstraněné soukromé e-maily
+  a telefony. **Git historie je dál obsahuje** a repo je veřejné.
+
+## Server
+
+Nálezy na serveru (firewall, zálohy, domény, přístup buildu k DB) se do repa
+**nepíšou** — repo je veřejné. Checklist drží správce mimo repo. Pro kód platí:
+Traefik `X-Forwarded-For` od klienta nepřebírá (bez `forwardedHeaders`), takže
+`getClientIp` dostává skutečnou IP; kdyby se před web postavila CDN nebo
+`forwardedHeaders.trustedIPs`, je potřeba `getClientIp` znovu promyslet.
