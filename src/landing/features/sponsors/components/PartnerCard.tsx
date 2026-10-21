@@ -2,11 +2,12 @@ import { Globe, Mail, Phone } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-import { telHref, webLabel } from '@/landing/features/sponsors/format'
+import { webLabel } from '@/landing/features/sponsors/format'
 import type { Sponsor } from '@/landing/features/sponsors/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Numeral } from '@/landing/ui/Numeral'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { telHref } from '@/lib/phone'
 import { initials } from '@/lib/teamName'
 
 type ContactLink = {

@@ -5,6 +5,7 @@ import { cache } from 'react'
 import { getPayloadClient } from '@/landing/data/query'
 import type { Sponsor } from '@/landing/features/sponsors/types'
 import { uploadToPhoto } from '@/landing/lib/media'
+import { cleanPhone } from '@/lib/phone'
 import type { Sponsor as SponsorDoc } from '@/payload-types'
 
 /** Sponzoři — marquee pás, spotlight karta a stránka partnerů. */
@@ -27,7 +28,7 @@ export const fetchSponsors = cache(async (): Promise<Sponsor[]> => {
     logo: uploadToPhoto(sponsor.logo),
     person: sponsor.person ?? null,
     address: sponsor.address ?? null,
-    phone: sponsor.phone ?? null,
+    phone: cleanPhone(sponsor.phone),
     email: sponsor.email ?? null,
   }))
 })
