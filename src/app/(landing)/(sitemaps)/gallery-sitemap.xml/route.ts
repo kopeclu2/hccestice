@@ -21,4 +21,6 @@ export const GET = sitemapRoute({
   tag: CACHE_TAGS.gallerySitemap,
   path: routes.gallery,
   limit: 1000,
+  // `updatedAt` je u importovaných alb čas importu — viz `resolveLastmod`.
+  lastmodFallback: 'date',
 })

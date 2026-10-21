@@ -7,6 +7,7 @@ import { getServerSideURL } from '@/lib/getURL'
 import {
   buildSitemapEntries,
   redirectSourceSet,
+  type LastmodFallback,
   type SitemapDoc,
   type SitemapEntry,
 } from '@/lib/sitemapEntries'
@@ -39,6 +40,11 @@ type SitemapRouteOptions = {
   skipDoc?: (doc: SitemapDoc) => boolean
   /** Do `select` přidat `date` — jen kolekce, která pole má (`matches`). */
   selectDate?: boolean
+  /**
+   * Odkud vzít `lastmod`, když je `updatedAt` jen čas importu (`resolveLastmod`):
+   * `publishedAt` u článků, `date` u galerií. Pole se přidá do `select`.
+   */
+  lastmodFallback?: LastmodFallback
 }
 
 const HEADERS = {
@@ -63,6 +69,7 @@ export function sitemapRoute({
   staticPaths = [],
   skipDoc,
   selectDate = false,
+  lastmodFallback,
 }: SitemapRouteOptions): () => Promise<Response> {
   const getSitemap = cachedQuery(
     async (): Promise<SitemapEntry[]> => {
@@ -77,7 +84,13 @@ export function sitemapRoute({
         depth: 0,
         limit,
         pagination: false,
-        select: { slug: true, updatedAt: true, ...(selectDate && { date: true }) },
+        select: {
+          slug: true,
+          updatedAt: true,
+          ...((selectDate || lastmodFallback === 'date') && { date: true }),
+          ...(lastmodFallback && { createdAt: true }),
+          ...(lastmodFallback === 'publishedAt' && { publishedAt: true }),
+        },
       })
 
       // Jeden dotaz na všechna přesměrování, ne dotaz na každý dokument.
@@ -95,16 +108,18 @@ export function sitemapRoute({
       return buildSitemapEntries({
         siteUrl,
         staticPaths,
-        // `select` vrací jen `slug`, `updatedAt` a případně `date`; typ kolekce je unie.
+        // `select` vrací jen vybraná pole (`slug`, `updatedAt` a podle kolekce
+        // `createdAt`, `date`, `publishedAt`); typ kolekce je unie.
         docs: docs as SitemapDoc[],
         path,
         excludeSlugs,
         redirectSources: redirectSourceSet(redirects.map(({ from }) => from)),
         skipDoc,
+        lastmodFallback,
       })
     },
     // Tag kolekce redirectů navíc: změna přesměrování mění i sitemapu.
-    { key: tag, version: 'v2', tags: [tag, CACHE_TAGS.redirects], revalidate: 86400 },
+    { key: tag, version: 'v3', tags: [tag, CACHE_TAGS.redirects], revalidate: 86400 },
   )
 
   return async () => getServerSideSitemap(await getSitemap(), HEADERS)
