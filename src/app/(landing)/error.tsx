@@ -1,6 +1,5 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import { RotateCcw } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect } from 'react'
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ErrorCode, ErrorMeta } from '@/landing/ui/ErrorCode'
 import { PageTitle } from '@/landing/ui/Heading'
 import { LogoStamp } from '@/landing/ui/LogoStamp'
+import { captureClientError } from '@/lib/sentryClient'
 
 /**
  * Stránka 500 podle handoffu „HC Cestice Systemove Stranky" — tmavá plocha,
@@ -36,7 +36,7 @@ export default function Error({
     /* `digest` je jediná nitka k serverovému logu — v produkci se `message`
        ze Server Component na klienta nedostane. */
     console.error(error)
-    Sentry.captureException(error)
+    captureClientError(error)
   }, [error])
 
   return (
