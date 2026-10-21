@@ -281,7 +281,7 @@ function AlbumEmpty() {
       title="Fotoalbum se teprve plní"
       titleAs="h3"
     >
-      Máte fotky ze zápasů nebo z akcí klubu? Pošlete nám je, rádi je zveřejníme.
+      Máš fotky ze zápasů nebo z akcí klubu? Pošli nám je, rádi je zveřejníme.
     </EmptyState>
   )
 }

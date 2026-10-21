@@ -27,8 +27,8 @@ export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
 
   return (
     <div>
-      <CardTitle as="h3" className="mb-4" size="xs">
-        Nebo pište či volejte přímo
+      <CardTitle as="h2" className="mb-4" size="xs">
+        Nebo napiš či zavolej přímo
       </CardTitle>
 
       {/* `18rem` drží nejvýš dva sloupce v šířce `max-w-170` (`ContactPanel`) —
@@ -53,17 +53,17 @@ function PersonContactTile({ person }: { person: PersonCard }) {
       />
       <div className="min-w-0">
         <Eyebrow tone="club">{person.role}</Eyebrow>
-        <CardTitle as="h4" className="mt-0.5" size="xs">
+        <CardTitle as="h3" className="mt-0.5" size="xs">
           {person.name}
         </CardTitle>
         {/* Bez pilulek: dlouhé e-maily (`michal.javurek@centrum.cz`) přesahovaly
             přes obrys pill štítku, který na ně nebyl navržený. Prostý text
             s ikonou se místo toho zalomí (`break-all`), ne přeteče. */}
         {(person.phone || person.mail) && (
-          <div className="mt-2 flex flex-col gap-1">
+          <div className="mt-2 flex flex-col gap-1 max-md:-my-1">
             {person.phone && (
               <a
-                className="flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-club"
+                className="flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-club max-md:py-3.5"
                 href={telHref(person.phone)}
               >
                 <Phone className="size-3.5 flex-none" /> {person.phone}
@@ -71,7 +71,7 @@ function PersonContactTile({ person }: { person: PersonCard }) {
             )}
             {person.mail && (
               <a
-                className="flex items-center gap-1.5 text-xs font-medium break-all text-ink-soft transition-colors hover:text-club"
+                className="flex items-center gap-1.5 text-xs font-medium break-all text-ink-soft transition-colors hover:text-club max-md:py-3.5"
                 href={`mailto:${person.mail}`}
               >
                 <Mail className="size-3.5 flex-none" /> {person.mail}

@@ -279,7 +279,7 @@ export const CLUB_EMAIL = 'hccestice@seznam.cz'
 
 export const CONTACT = {
   kicker: 'Kontakt',
-  perex: 'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám.',
+  perex: 'Chceš hrát, přivést dítě na trénink nebo podpořit klub? Napiš nám.',
   pills: ['TJ Sokol Čestice, 517 41', 'ZS Rychnov nad Kněžnou'] as const,
   topics: ['Chci hrát', 'Mládež', 'Sponzoring', 'Jiné'] as const,
 } as const

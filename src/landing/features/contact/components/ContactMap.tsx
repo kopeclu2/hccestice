@@ -41,7 +41,7 @@ export function ContactMap() {
         <Eyebrow className="relative mb-2 block" tone="club">
           {CONTACT_MAP.title}
         </Eyebrow>
-        <CardTitle className="relative mb-4.5" id="kontakt-mapa-nadpis" size="xs">
+        <CardTitle as="h2" className="relative mb-4.5" id="kontakt-mapa-nadpis" size="xs">
           {CONTACT_MAP.venue}
         </CardTitle>
 

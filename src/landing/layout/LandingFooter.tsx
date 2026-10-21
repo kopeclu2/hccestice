@@ -118,12 +118,12 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           </div>
 
           {/*
-           * Sloupce odkazů: `gap-1` + `py-1.5` na odkazu, ne `gap-2` bez
+           * Sloupce odkazů: `gap-1` + `py-3` na odkazu, ne `gap-2` bez
            * paddingu. Řádek `text-sm` je vysoký 20px, takže tap target
-           * byl proti zbytku webu (44px, viz `components/ui/button`) poloviční. Padding
-           * plochu zvětší na ~32px, aniž by se řádkování rozjelo — mezera
-           * mezi odkazy zůstává 8px jako dřív. Na desktopu, kde se klika
-           * myší, se padding ruší a rozestupy jsou přesně jako v handoffu.
+           * byl proti zbytku webu (44px, viz `components/ui/button`) poloviční.
+           * `py-3` (12px nahoře i dole) ho na mobilu zvedne na 44px. Na desktopu,
+           * kde se klika myší, se padding ruší a rozestupy jsou přesně jako
+           * v handoffu.
            *
            * Minimum sloupce je `6.5rem` (104px), ne `9.375rem` (150px):
            * dva sloupce (Klub/Hokej) se s 150px minimem na mobilu (~256–306px
@@ -143,7 +143,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
-                    className="py-1.5 text-on-contrast transition-colors hover:text-lime md:py-0.5"
+                    className="py-3 text-on-contrast transition-colors hover:text-lime md:py-0.5"
                     href={link.href}
                     key={link.href}
                   >
@@ -199,15 +199,15 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * neměly odkazy kam uhnout a zalamoval se text uvnitř nich
            * („Zásady" a „cookies" na dva řádky), místo aby se „Nastavení
            * cookies" a „Východočeská hokejová liga" přesunuly jako celek na
-           * další řádek. `py-1` na položkách drží tap target blízko 44px
-           * jako u sloupců odkazů výš.
+           * další řádek. `py-1` na položkách drží tap target na 44px
+           * jako u sloupců odkazů výš (`py-3`, od `sm` zpět na `py-1`).
            */}
           <span className="flex flex-wrap items-center gap-x-5 gap-y-1 sm:gap-x-6">
-            <Link className="py-1 transition-colors hover:text-lime" href="/cookies">
+            <Link className="py-3.5 transition-colors hover:text-lime sm:py-1" href="/cookies">
               Zásady cookies
             </Link>
             <button
-              className="cursor-pointer py-1 transition-colors hover:text-lime"
+              className="cursor-pointer py-3.5 transition-colors hover:text-lime sm:py-1"
               data-cc="show-preferencesModal"
               type="button"
             >
@@ -223,7 +223,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
       <p className="mt-4 text-center text-xs text-faint">
         <Link
-          className="inline-block py-1.5 transition-colors hover:text-club-dark"
+          className="inline-block py-3.5 transition-colors hover:text-club-dark md:py-1.5"
           href="https://lukaskopecky.cz"
           rel="noreferrer"
           target="_blank"

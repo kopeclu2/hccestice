@@ -817,6 +817,13 @@ Vodorovné zarovnání stránky drží tokeny `px-gutter` (odsazení od okraje,
 14–40 px) a `max-w-page` (šířka celého webu, 1560 px) místo
 `px-[clamp(…)]` a `max-w-[97.5rem]`; viz „Design tokeny".
 
+**Tap targety na mobilu mají 44 px** (`max-md:`, na desktopu se ruší).
+Zvětšuje se klikací plocha paddingem, ne písmo: odkaz v patičce `py-3`, drobečky
+`-my-3.5 py-3.5` (padding a záporný margin se vyruší, lišta zabírá stejně místa),
+ikony partnerů `size-11`, e-mail a telefony na kontaktu `py-2` / `py-3.5`. Odkaz
+s „natažením" přes celou kartu (`StretchedLink`, titulky zápasů ve widgetu) měřák
+hlásí jako malý, ale kliká se na celou kartu — není to chyba.
+
 Tři opakující se pasti:
 
 - **Vestavěné `.container` Tailwindu.** Generuje `max-width` pro **každý**

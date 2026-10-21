@@ -72,6 +72,8 @@ export default async function FotogaleriePage({ searchParams }: Args) {
       />
 
       <SectionShell spacing="content">
+        {/* Osnova: bez H2 by karty alb (H3) skákaly rovnou pod H1. */}
+        <h2 className="sr-only">Fotoalba</h2>
         <GalleryGrid
           activeSeasonLabel={activeSeason ? seasonShortLabel(activeSeason) : null}
           cards={galleriesPage.cards}

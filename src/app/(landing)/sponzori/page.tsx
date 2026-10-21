@@ -50,6 +50,8 @@ export default async function SponzoriPage() {
 
       <SectionShell spacing="content">
         <GlowCircle className="top-25 -left-50 size-140" tone="lime" />
+        {/* Osnova: bez H2 by karty partnerů (H3) skákaly rovnou pod H1. */}
+        <h2 className="sr-only">Partneři klubu</h2>
 
         <Reveal>
           <div className="mx-auto flex max-w-[67.5rem] flex-col gap-3">

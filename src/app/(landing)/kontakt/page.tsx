@@ -12,7 +12,7 @@ import { buildPageMetadata } from '@/lib/buildPageMetadata'
 export const revalidate = 600
 
 const DESCRIPTION =
-  'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám na hccestice@seznam.cz nebo přes formulář.'
+  'Chceš hrát, přivést dítě na trénink nebo podpořit klub? Napiš nám na hccestice@seznam.cz nebo přes formulář.'
 
 /**
  * Kontakt jako samostatná stránka — dřív žil kontaktní formulář jen jako

@@ -36,7 +36,7 @@ export function PartnerSlotCta() {
         <Eyebrow tone="lime" wide>
           Volné místo
         </Eyebrow>
-        <CardTitle as="h4" className="mt-1.25" size="sm">
+        <CardTitle as="h3" className="mt-1.25" size="sm">
           Tady může být vaše firma
         </CardTitle>
       </div>

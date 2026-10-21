@@ -42,7 +42,7 @@ export function ContactInfoPanel({ site }: { site: SiteLinks }) {
            hranice clampu 20px a `break-words` místo `overflow-wrap:anywhere`
            (to by shrink-to-fit `inline-flex` zkrátilo o znak a adresa by se
            lámala i tam, kde se vejde). */
-        className="relative mt-3 inline-flex items-center gap-2.5 text-contact-md font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club"
+        className="relative mt-3 inline-flex items-center gap-2.5 text-contact-md font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club max-md:py-2"
         href={`mailto:${site.email}`}
       >
         {site.email}
@@ -52,7 +52,7 @@ export function ContactInfoPanel({ site }: { site: SiteLinks }) {
       </a>
 
       <p className="mt-4 text-sm leading-relaxed text-pretty text-dim">
-        Obvykle odpovídáme do pár dní. Když to spěchá, zavolejte přímo někomu z realizačního týmu.
+        Obvykle odpovídáme do pár dní. Když to spěchá, zavolej přímo někomu z realizačního týmu.
       </p>
 
       {/* Sídlo a stadion zvlášť, v pilulkách jako dřív (a jako sociální sítě pod

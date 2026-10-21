@@ -65,11 +65,11 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
       {activeSeasonLabel ? (
         <>
           Fotogalerie ze sezóny <strong className="font-semibold">{activeSeasonLabel}</strong> se
-          teprve plní. Máte fotky ze zápasů? Pošlete nám je, rádi je zveřejníme.
+          teprve plní. Máš fotky ze zápasů? Pošli nám je, rádi je zveřejníme.
         </>
       ) : (
         <>
-          Fotoalbum se teprve plní. Máte fotky ze zápasů nebo z akcí klubu? Pošlete nám je, rádi je
+          Fotoalbum se teprve plní. Máš fotky ze zápasů nebo z akcí klubu? Pošli nám je, rádi je
           zveřejníme.
         </>
       )}

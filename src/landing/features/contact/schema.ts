@@ -14,7 +14,7 @@ export const contactSchema = z.object({
   message: z
     .string()
     .trim()
-    .min(10, 'Napište nám prosím pár slov (alespoň 10 znaků).')
+    .min(10, 'Napiš nám prosím pár slov (alespoň 10 znaků).')
     .max(5000, 'Zpráva je příliš dlouhá.'),
 })
 

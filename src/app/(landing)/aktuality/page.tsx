@@ -70,6 +70,8 @@ export default async function AktualityPage({ searchParams }: Args) {
       <PostsHeader activeType={type} totalDocs={postsPage.totalDocs} />
 
       <SectionShell spacing="content">
+        {/* Osnova: bez H2 by karty článků (H3) skákaly rovnou pod H1. */}
+        <h2 className="sr-only">Seznam článků</h2>
         <PostsListGrid activeType={type} cards={postsPage.cards} featured={postsPage.featured} />
         {/* Jedna strana = žádné stránkování. Bez podmínky zůstalo pod výpisem
             (a přímo pod prázdným stavem) mrtvé „Strana 1 z 1" se dvěma

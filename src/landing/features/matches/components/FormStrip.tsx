@@ -49,7 +49,7 @@ export function FormStrip({ form }: { form: TeamForm }) {
           {form.squares.map((square, index) => {
             const alignRight = index >= form.squares.length - 2
             const squareClass = cn(
-              'grid size-10 place-items-center rounded-field text-lg font-bold md:size-11',
+              'grid size-11 place-items-center rounded-field text-lg font-bold',
               SQUARE_CLASS[square.outcome],
             )
             return (

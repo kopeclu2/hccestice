@@ -104,7 +104,13 @@ export function ClickToLoadEmbed({
       )}
       <span className={EMBED_TITLE_CLASS}>{title}</span>
       <span className={EMBED_NOTE_CLASS}>{embedNotice(service)}</span>
-      <Button onClick={() => setLoaded(true)} size="sm" type="button" variant="dark">
+      <Button
+        className="max-md:min-h-11"
+        onClick={() => setLoaded(true)}
+        size="sm"
+        type="button"
+        variant="dark"
+      >
         {embedLoadLabel(service)}
       </Button>
       <a

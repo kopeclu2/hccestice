@@ -95,13 +95,26 @@ const sectionTitleVariants = cva('', {
 })
 
 export type SectionTitleProps = React.ComponentProps<'h2'> &
-  VariantProps<typeof sectionTitleVariants>
+  VariantProps<typeof sectionTitleVariants> & {
+    /**
+     * `p` pro velké číslo nebo údaj, který vypadá jako nadpis, ale nadpisem
+     * není (statistiky „1954", „70+"): čtečka a vyhledávač by jinak dostaly
+     * osnovu z čísel.
+     */
+    as?: 'h2' | 'p'
+  }
 
-export function SectionTitle({ children, className, size, ...props }: SectionTitleProps) {
+export function SectionTitle({
+  as: Tag = 'h2',
+  children,
+  className,
+  size,
+  ...props
+}: SectionTitleProps) {
   return (
-    <h2 className={cn(sectionTitleVariants({ size }), className)} {...props}>
+    <Tag className={cn(sectionTitleVariants({ size }), className)} {...props}>
       {children}
-    </h2>
+    </Tag>
   )
 }
 
