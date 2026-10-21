@@ -13,7 +13,7 @@ import { routes } from '@/lib/routes'
 export function ContactCta() {
   return (
     <CtaStrip
-      headline="Chcete nás vidět v akci?"
+      headline="Chceš nás vidět v akci?"
       perex="Rozpis a výsledky zápasů aktuální sezóny najdete na jednom místě."
       tone="club"
       watermark="HCČ"

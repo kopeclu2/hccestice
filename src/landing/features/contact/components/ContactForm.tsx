@@ -152,7 +152,7 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
             Díky za zprávu!
           </CardTitle>
           <p className={cardNote({ tone })}>
-            Ozveme se co nejdřív — obvykle do pár dní. Když to spěchá, zavolejte komukoli ze sekce
+            Ozveme se co nejdřív — obvykle do pár dní. Když to spěchá, zavolej komukoli ze sekce
             Lidé v klubu.
           </p>
         </div>

@@ -125,7 +125,7 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
             {links.map(({ external, href, Icon, key, label }) => (
               <a
                 aria-label={label}
-                className="grid size-10 flex-none place-items-center rounded-full border border-line-soft text-club-dark transition-colors hover:border-club hover:bg-club hover:text-on-contrast md:size-9"
+                className="grid size-11 flex-none place-items-center rounded-full border border-line-soft text-club-dark transition-colors hover:border-club hover:bg-club hover:text-on-contrast md:size-9"
                 href={href}
                 key={key}
                 rel={external ? 'noreferrer' : undefined}

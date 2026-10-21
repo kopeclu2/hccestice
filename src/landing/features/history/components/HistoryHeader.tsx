@@ -44,6 +44,7 @@ export function HistoryHeader() {
             key={stat.label}
           >
             <SectionTitle
+              as="p"
               className={cn(
                 'leading-none',
                 stat.tone === 'club' && 'text-club',

@@ -21,6 +21,13 @@ export type { Crumb }
  */
 export type BreadcrumbTone = 'page' | 'photo' | 'panel' | 'light'
 
+/**
+ * Klikací plocha drobečku 44 px na mobilu (řádek `text-xs` je vysoký 16 px):
+ * padding plochu zvětší a stejně velký záporný margin ji vrátí zpět, takže
+ * drobečková lišta vypadá a zabírá místo přesně jako dřív. Od `md` (myš) se ruší.
+ */
+const TAP_AREA = 'max-md:-mx-2 max-md:-my-3.5 max-md:inline-block max-md:px-2 max-md:py-3.5'
+
 const linkClass: Record<BreadcrumbTone, string> = {
   page: 'text-club-dark hover:text-club',
   light: 'text-club-dark hover:text-club',
@@ -80,7 +87,7 @@ export function Breadcrumbs({
         )}
       >
         <BreadcrumbItem className="flex gap-2">
-          <BreadcrumbLink asChild className={cn('transition-colors', linkClass[tone])}>
+          <BreadcrumbLink asChild className={cn('transition-colors', TAP_AREA, linkClass[tone])}>
             <Link href="/">Domů</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -89,7 +96,10 @@ export function Breadcrumbs({
             <BreadcrumbSeparator className={separatorClass[tone]}>/</BreadcrumbSeparator>
             <BreadcrumbItem className="flex gap-2">
               {crumb.href ? (
-                <BreadcrumbLink asChild className={cn('transition-colors', linkClass[tone])}>
+                <BreadcrumbLink
+                  asChild
+                  className={cn('transition-colors', TAP_AREA, linkClass[tone])}
+                >
                   <Link href={crumb.href}>{crumb.label}</Link>
                 </BreadcrumbLink>
               ) : (

@@ -64,7 +64,7 @@ export async function sendContactMessage(
 
   if (!form) {
     payload.logger.error(`Kontaktní formulář „${CONTACT_FORM_TITLE}" v CMS neexistuje`)
-    return { ok: false, error: 'Formulář je dočasně nedostupný. Napište nám prosím e-mail.' }
+    return { ok: false, error: 'Formulář je dočasně nedostupný. Napiš nám prosím e-mail.' }
   }
 
   try {

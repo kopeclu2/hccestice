@@ -80,7 +80,7 @@ function ContactView({ content, site }: { content: ContactContent; site: SiteLin
                boxu, takže shrink-to-fit `inline-flex` vyšel o jeden znak kratší
                a adresa se lámala („hccestice@seznam.c / z") i tam, kde se
                vejde. Záchranná brzda pro dlouhou adresu z CMS zůstává. */
-            className="relative inline-flex items-center gap-2.5 text-contact-lg font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club md:gap-4.5"
+            className="relative inline-flex items-center gap-2.5 text-contact-lg font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club max-md:py-2 md:gap-4.5"
             href={`mailto:${site.email}`}
           >
             {site.email}

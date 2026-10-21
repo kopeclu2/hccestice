@@ -9,4 +9,4 @@ export const EMBED_BOX_CLASS =
 export const EMBED_TITLE_CLASS = 'block max-w-110 text-sm font-bold text-ink md:text-base'
 export const EMBED_NOTE_CLASS = 'block max-w-110 text-xs leading-copy text-ink-soft'
 export const EMBED_LINK_CLASS =
-  'text-sm font-semibold text-club underline underline-offset-4 hover:text-club-dark'
+  'inline-block py-3 text-sm font-semibold text-club underline underline-offset-4 hover:text-club-dark md:py-0'

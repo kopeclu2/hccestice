@@ -142,7 +142,7 @@ export function embedOpenUrl(raw: string | null | undefined): string | null {
 
 /** Text pod názvem v zástupném rámečku — stejný pro React i legacy HTML. */
 export function embedNotice(service: string): string {
-  return `Po kliknutí se načte obsah třetí strany (${service}) a odešle se jí vaše IP adresa.`
+  return `Po kliknutí se načte obsah třetí strany (${service}) a odešle se jí tvoje IP adresa.`
 }
 
 export function embedLoadLabel(service: string): string {
