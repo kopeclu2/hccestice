@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react'
 import { createElement } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { YouTubeBlock } from '@/landing/blocks/YouTube/Component'
 import { ClickToLoadEmbed, EmbedLoader } from '@/landing/ui/ClickToLoadEmbed'
 
 afterEach(cleanup)
@@ -83,6 +84,24 @@ describe('EmbedLoader', () => {
     })
     expect(document.querySelector('iframe')?.getAttribute('src')).toBe(
       'https://www.youtube-nocookie.com/embed/abcdef1',
+    )
+  })
+})
+
+describe('blok YouTube', () => {
+  it('běžný odkaz na video vykreslí zástupný rámeček a po kliknutí nocookie iframe', () => {
+    const { container, getByRole } = render(
+      createElement(YouTubeBlock, {
+        url: 'https://www.youtube.com/watch?v=SY-B0FvrnZE',
+        blockType: 'youtube',
+      }),
+    )
+    expect(container.querySelector('iframe')).toBeNull()
+    act(() => {
+      fireEvent.click(getByRole('button', { name: 'Načíst YouTube' }))
+    })
+    expect(container.querySelector('iframe')?.getAttribute('src')).toBe(
+      'https://www.youtube-nocookie.com/embed/SY-B0FvrnZE',
     )
   })
 })
