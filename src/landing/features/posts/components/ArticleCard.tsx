@@ -38,6 +38,7 @@ export function ArticleCard({
   className,
   featured = false,
   withPhoto = true,
+  eager = false,
   /* Zlomy kopírují `CardGrid`: 1 sloupec / 2 od `sm` / 3 od `lg`. Bez
      prostředního kroku si karta na tabletu tahala fotku na dvojnásobek
      své šířky. */
@@ -50,6 +51,13 @@ export function ArticleCard({
   featured?: boolean
   /** Náhled nad textem; `false` = textová varianta bez media plochy. */
   withPhoto?: boolean
+  /**
+   * Fotka je LCP kandidát (první karta výpisu nad ohybem): `loading="eager"`
+   * a `fetchPriority="high"`, ať ji prohlížeč nenačítá líně až po hydrataci.
+   * Jen jedna karta na stránku — každý eager obrázek dostane `<link rel="preload">`
+   * a další by se o šířku pásma s LCP fotkou přetahovaly.
+   */
+  eager?: boolean
   /** `sizes` pro next/image podle šířky karty v mřížce. */
   sizes?: string
 }) {
@@ -80,7 +88,9 @@ export function ArticleCard({
             <Image
               alt={photo.alt}
               className="object-cover"
+              fetchPriority={eager ? 'high' : undefined}
               fill
+              loading={eager ? 'eager' : 'lazy'}
               sizes={sizes}
               src={getMediaUrl(photo.url, photo.updatedAt)}
             />

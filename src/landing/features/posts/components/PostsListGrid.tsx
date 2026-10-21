@@ -35,6 +35,10 @@ export function PostsListGrid({
    */
   featured?: boolean
 }) {
+  // První karta *s fotkou* je LCP kandidát: karty bez fotky (přepínač
+  // `postsListShowPhoto` vypnutý a článek bez vlastního obrázku) `<img>` nemají.
+  const eagerIndex = cards.findIndex((card) => card.photo)
+
   return (
     <CardGrid empty={<PostsListEmpty activeType={activeType ?? null} />} items={cards}>
       {(card, index) => {
@@ -45,6 +49,7 @@ export function PostsListGrid({
           <ArticleCard
             card={card}
             className={featured ? 'sm:col-span-2 lg:col-span-2' : undefined}
+            eager={index === eagerIndex}
             featured={featured}
             key={card.id}
             /* `sizes` kopíruje zlomy `CardGrid` (1 sloupec / 2 od `sm` = 40rem /
