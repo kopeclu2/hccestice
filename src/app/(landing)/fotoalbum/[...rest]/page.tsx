@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 
 import { decodeSegments } from '@/lib/decodeSlug'
+import { legacyFotoalbumFallback } from '@/lib/legacyUrl'
 import { getCachedRedirects } from '@/server/getRedirects'
 
 /**
@@ -36,6 +37,11 @@ export default async function LegacyFotoalbumRedirect({ params }: Args) {
   // natrvalo; u 307 by je crawler držel v indexu a prohlížeč by si redirect
   // necachoval, takže každý příchod ze starého odkazu platí render routy.
   if (match?.to?.url) permanentRedirect(match.to.url)
+
+  // Index sezóny nebo kategorie (`/fotoalbum/2006---2007/`) nemá protějšek
+  // ve vlastním dokumentu — jeho nástupcem je výpis fotogalerií.
+  const fallback = legacyFotoalbumFallback(segments)
+  if (fallback) permanentRedirect(fallback)
 
   notFound()
 }
