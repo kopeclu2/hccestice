@@ -110,9 +110,24 @@ const ARENA_LOCALITY_SHORT = 'Rychnov n. K.'
  * text na webu a strukturovaná data nemohou rozejít; jediný rozdíl je
  * zkrácení názvu haly a obce.
  */
-export const CLUB_SEAT_TEXT = `${CLUB_LEGAL_NAME}, ${CLUB_ADDRESS.streetAddress}, ${CLUB_ADDRESS.postalCode} ${CLUB_ADDRESS.addressLocality} (sídlo)`
+/**
+ * Pevné mezery ve viditelné adrese: PSČ („517 41"), číslo domu („Čestice 112")
+ * a zkratka „n. K." se na úzkém displeji nesmějí lámat uprostřed. Jen pro
+ * zobrazený text; JSON-LD bere pole adresy beze změny.
+ */
+const keepTogether = (text: string): string =>
+  text
+    .replace(/(\d{3}) (\d{2})/g, '$1\u00a0$2')
+    .replace(/(Čestice|Javornická) (\d+)/g, '$1\u00a0$2')
+    .replace(/n\. K\./g, 'n.\u00a0K.')
 
-export const ARENA_HOME_TEXT = `Domácí stadion: ${ARENA_SHORT_NAME}, ${ARENA_ADDRESS.streetAddress}, ${ARENA_ADDRESS.postalCode} ${ARENA_LOCALITY_SHORT}`
+export const CLUB_SEAT_TEXT = keepTogether(
+  `${CLUB_LEGAL_NAME}, ${CLUB_ADDRESS.streetAddress}, ${CLUB_ADDRESS.postalCode} ${CLUB_ADDRESS.addressLocality} (sídlo)`,
+)
+
+export const ARENA_HOME_TEXT = keepTogether(
+  `Domácí stadion: ${ARENA_SHORT_NAME}, ${ARENA_ADDRESS.streetAddress}, ${ARENA_ADDRESS.postalCode} ${ARENA_LOCALITY_SHORT}`,
+)
 
 /**
  * Souřadnice haly (WGS 84). Ověřeno proti OpenStreetMap: bod s adresou
