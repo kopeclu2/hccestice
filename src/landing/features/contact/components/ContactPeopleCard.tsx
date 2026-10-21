@@ -15,13 +15,15 @@ import { telHref } from '@/lib/phone'
  * sloupec stránky je omezený na `max-w-170` (`ContactPanel`), takže se
  * vejdou dvě karty vedle sebe i tak.
  *
- * Renderuje se, jen když aspoň jeden člověk z kolekce `people` má
- * vyplněný telefon nebo e-mail — bez toho by karta byla jen jméno,
- * role a fotka bez jakékoli kontaktní hodnoty.
+ * Zobrazí se každý člověk z kolekce `people`, i bez telefonu a e-mailu:
+ * trenér, který ještě nemá veřejný kontakt, má na stránce být (jméno, role,
+ * fotka) a kontakt se doplní v adminu. Dřív se karta filtrovala na
+ * `phone || mail` — osoba, jejíž telefon se vymazal (prázdná předvolba
+ * „+420"), tak ze stránky tiše zmizela. Bez jediného člověka se nevykreslí
+ * nic (ani nadpis).
  */
 export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
-  const contacts = people.filter((person) => person.phone || person.mail)
-  if (contacts.length === 0) return null
+  if (people.length === 0) return null
 
   return (
     <div>
@@ -33,7 +35,7 @@ export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
           při užším minimu se vešly tři a role i dlouhé e-maily se lámaly
           na tři řádky. */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(18rem,100%),1fr))] gap-4">
-        {contacts.map((person, index) => (
+        {people.map((person, index) => (
           <PersonContactTile key={`${index}-${person.name}`} person={person} />
         ))}
       </div>
@@ -57,24 +59,26 @@ function PersonContactTile({ person }: { person: PersonCard }) {
         {/* Bez pilulek: dlouhé e-maily (`michal.javurek@centrum.cz`) přesahovaly
             přes obrys pill štítku, který na ně nebyl navržený. Prostý text
             s ikonou se místo toho zalomí (`break-all`), ne přeteče. */}
-        <div className="mt-2 flex flex-col gap-1">
-          {person.phone && (
-            <a
-              className="flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-club"
-              href={telHref(person.phone)}
-            >
-              <Phone className="size-3.5 flex-none" /> {person.phone}
-            </a>
-          )}
-          {person.mail && (
-            <a
-              className="flex items-center gap-1.5 text-xs font-medium break-all text-ink-soft transition-colors hover:text-club"
-              href={`mailto:${person.mail}`}
-            >
-              <Mail className="size-3.5 flex-none" /> {person.mail}
-            </a>
-          )}
-        </div>
+        {(person.phone || person.mail) && (
+          <div className="mt-2 flex flex-col gap-1">
+            {person.phone && (
+              <a
+                className="flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-club"
+                href={telHref(person.phone)}
+              >
+                <Phone className="size-3.5 flex-none" /> {person.phone}
+              </a>
+            )}
+            {person.mail && (
+              <a
+                className="flex items-center gap-1.5 text-xs font-medium break-all text-ink-soft transition-colors hover:text-club"
+                href={`mailto:${person.mail}`}
+              >
+                <Mail className="size-3.5 flex-none" /> {person.mail}
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

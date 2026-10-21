@@ -4,6 +4,7 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import type { SiteLinks } from '@/landing/types'
+import { Badge } from '@/landing/ui/Badge'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { ARENA_HOME_TEXT, CLUB_SEAT_TEXT } from '@/lib/club'
@@ -54,11 +55,20 @@ export function ContactInfoPanel({ site }: { site: SiteLinks }) {
         Obvykle odpovídáme do pár dní. Když to spěchá, zavolejte přímo někomu z realizačního týmu.
       </p>
 
-      {/* Sídlo a stadion zvlášť (dřív dvě pilulky, které je míchaly do jedné
-          adresy). Text z `lib/club` — táž data jako JSON-LD. */}
-      <address className="mt-7 flex flex-col gap-1 text-sm text-ink-soft not-italic">
-        <span>{CLUB_SEAT_TEXT}</span>
-        <span>{ARENA_HOME_TEXT}</span>
+      {/* Sídlo a stadion zvlášť, v pilulkách jako dřív (a jako sociální sítě pod
+          nimi). Text z `lib/club` — táž data jako JSON-LD. Dlouhé řetězce se na
+          úzkém displeji zalamují (`whitespace-normal`), jinak by pilulka přetekla. */}
+      <address className="mt-7 flex flex-wrap gap-2 not-italic">
+        {[CLUB_SEAT_TEXT, ARENA_HOME_TEXT].map((line) => (
+          <Badge
+            className="text-left text-xs leading-snug font-medium whitespace-normal sm:text-sm"
+            key={line}
+            size="lg"
+            variant="outline"
+          >
+            {line}
+          </Badge>
+        ))}
       </address>
 
       {(site.facebook || site.instagram) && (
