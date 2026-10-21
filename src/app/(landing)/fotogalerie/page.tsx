@@ -7,12 +7,17 @@ import { GalleryGrid } from '@/landing/features/galleries/components/GalleryGrid
 import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
 import { fetchGalleriesPage } from '@/landing/features/galleries/data'
 import { fetchGallerySeasons, seasonShortLabel } from '@/landing/features/matches/data/seasons'
+import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
+
+const TITLE = 'Fotoalbum'
+const DESCRIPTION =
+  'Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase.'
 
 type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
 
@@ -52,6 +57,12 @@ export default async function FotogaleriePage({ searchParams }: Args) {
 
   return (
     <SubpageShell pattern={{ variant: 'glow-duo', tone: 'club', fade: 'top' }}>
+      <PageJsonLd
+        description={DESCRIPTION}
+        kind="CollectionPage"
+        name="Fotoalbum HC Čestice"
+        path={routes.list.galleries}
+      />
       <GalleriesHeader
         activeSlug={activeSlug}
         seasons={seasons
@@ -79,10 +90,6 @@ export default async function FotogaleriePage({ searchParams }: Args) {
     </SubpageShell>
   )
 }
-
-const TITLE = 'Fotoalbum'
-const DESCRIPTION =
-  'Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase.'
 
 /**
  * Metadata musí být `generateMetadata`, ne statický export — stejný důvod

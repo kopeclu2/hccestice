@@ -37,7 +37,7 @@ export function HeroPhoto({ article }: { article: ArticleDetail }) {
         <Breadcrumbs
           className="absolute top-6 left-[clamp(1.125rem,3vw,2.75rem)] z-2"
           tone="photo"
-          trail={articleTrail(article.badge)}
+          trail={articleTrail(article)}
         />
 
         <div className="absolute inset-x-hero-inset bottom-10 z-2">

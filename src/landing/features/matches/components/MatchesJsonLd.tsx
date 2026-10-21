@@ -1,7 +1,12 @@
 import React from 'react'
 
 import type { FixtureCard, ResultRow } from '@/landing/features/matches/types'
-import { eventDescription, toSportsEvent } from '@/landing/features/matches/view/matchSchema'
+import {
+  eventDescription,
+  toMatchesJsonLd,
+  type SportsEventInput,
+} from '@/landing/features/matches/view/matchSchema'
+import { CLUB_LOGO_LARGE } from '@/lib/club'
 import { getServerSideURL } from '@/lib/getURL'
 import { serializeJsonLd } from '@/lib/jsonLd'
 
@@ -27,25 +32,25 @@ export function MatchesJsonLd({
 }) {
   const base = getServerSideURL()
   // Zápas bez slugu detail nemá — event ukazuje na výpis, kde je k vidění.
+  // Výpis fotky reportáží nenese, takže všechny události dostanou logo klubu.
+  const image = `${base}${CLUB_LOGO_LARGE}`
   const urlOf = (href: string | null) => `${base}${href ?? '/zapasy'}`
 
-  const events = [
-    ...fixtures.map((fixture) =>
-      toSportsEvent({
-        ...fixture,
-        status: 'scheduled',
-        description: eventDescription(fixture.stage, null, fixture.homeName, fixture.awayName),
-        url: urlOf(fixture.href),
-      }),
-    ),
-    ...results.map((row) =>
-      toSportsEvent({
-        ...row,
-        status: 'played',
-        description: eventDescription(row.stage, row.score, row.homeName, row.awayName),
-        url: urlOf(row.href),
-      }),
-    ),
+  const events: SportsEventInput[] = [
+    ...fixtures.map((fixture) => ({
+      ...fixture,
+      status: 'scheduled' as const,
+      description: eventDescription(fixture.stage, null, fixture.homeName, fixture.awayName),
+      url: urlOf(fixture.href),
+      image,
+    })),
+    ...results.map((row) => ({
+      ...row,
+      status: 'played' as const,
+      description: eventDescription(row.stage, row.score, row.homeName, row.awayName),
+      url: urlOf(row.href),
+      image,
+    })),
   ]
 
   if (!events.length) return null
@@ -53,7 +58,7 @@ export function MatchesJsonLd({
   return (
     <script
       dangerouslySetInnerHTML={{
-        __html: serializeJsonLd({ '@context': 'https://schema.org', '@graph': events }),
+        __html: serializeJsonLd(toMatchesJsonLd(events, base)),
       }}
       type="application/ld+json"
     />

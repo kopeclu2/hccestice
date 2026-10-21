@@ -173,3 +173,27 @@ export function utcToPragueLocal(date: Date | string): { day: string; time: stri
   const p = partsOf(new Date(date).getTime())
   return { day: `${p.y}-${pad(p.mo)}-${pad(p.d)}`, time: `${pad(p.h)}:${pad(p.mi)}` }
 }
+
+/**
+ * Okamžik jako ISO 8601 s **lokálním** offsetem Europe/Prague
+ * (`2026-10-18T16:30:00+02:00`), `null` pro neplatné datum.
+ *
+ * Strukturovaná data (schema.org `startDate`) mají nést čas, jak ho vidí
+ * návštěvník, i s posunem — Google u událostí doporučuje čas s offsetem
+ * a `…Z` se musí přepočítávat. Offset se bere z `Intl` pro tentýž okamžik
+ * (`offsetMs`), takže sedí i v týdnu přechodu na letní/zimní čas
+ * (`+01:00` ↔ `+02:00`), ne podle zóny stroje.
+ */
+export function toPragueIso(input: DateInput): string | null {
+  const date = toDate(input)
+  if (!date) return null
+  const ms = date.getTime()
+  const p = partsOf(ms)
+  const offsetMin = Math.round(offsetMs(ms) / 60_000)
+  const sign = offsetMin < 0 ? '-' : '+'
+  const abs = Math.abs(offsetMin)
+  return (
+    `${p.y}-${pad(p.mo)}-${pad(p.d)}T${pad(p.h)}:${pad(p.mi)}:${pad(p.s)}` +
+    `${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`
+  )
+}

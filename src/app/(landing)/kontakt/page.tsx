@@ -6,10 +6,14 @@ import { ContactCta } from '@/landing/features/contact/components/ContactCta'
 import { ContactHeader } from '@/landing/features/contact/components/ContactHeader'
 import { ContactMap } from '@/landing/features/contact/components/ContactMap'
 import { ContactPanel } from '@/landing/features/contact/components/ContactPanel'
+import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildPageMetadata } from '@/lib/buildPageMetadata'
 
 export const revalidate = 600
+
+const DESCRIPTION =
+  'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám na hccestice@seznam.cz nebo přes formulář.'
 
 /**
  * Kontakt jako samostatná stránka — dřív žil kontaktní formulář jen jako
@@ -24,6 +28,13 @@ export default async function KontaktPage() {
 
   return (
     <SubpageShell>
+      <PageJsonLd
+        aboutClub
+        description={DESCRIPTION}
+        kind="ContactPage"
+        name="Kontakt HC Čestice"
+        path="/kontakt"
+      />
       <ContactHeader />
       <ContactPanel people={people} site={site} />
       <ContactMap />
@@ -34,7 +45,6 @@ export default async function KontaktPage() {
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Kontakt',
-  description:
-    'Chcete hrát, přivést dítě na trénink nebo podpořit klub? Napište nám na hccestice@seznam.cz nebo přes formulář.',
+  description: DESCRIPTION,
   path: '/kontakt',
 })

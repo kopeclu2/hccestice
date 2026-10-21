@@ -14,6 +14,7 @@ import {
   formatWeekdayDay,
   LOCALE,
   pragueLocalToUtc,
+  toPragueIso,
   TZ,
   utcToPragueLocal,
   weekdayLong,
@@ -191,5 +192,34 @@ describe('pragueLocalToUtc / utcToPragueLocal', () => {
 
   it('neplatný lokální formát hází', () => {
     expect(() => pragueLocalToUtc('4. 10. 2026')).toThrow()
+  })
+})
+
+describe('toPragueIso', () => {
+  it('v zimě dává +01:00, v létě +02:00', () => {
+    expect(toPragueIso('2026-01-18T15:30:00.000Z')).toBe('2026-01-18T16:30:00+01:00')
+    expect(toPragueIso('2026-10-18T14:30:00.000Z')).toBe('2026-10-18T16:30:00+02:00')
+  })
+
+  it('jarní přechod na letní čas (29. 3. 2026 v 1:00 UTC)', () => {
+    expect(toPragueIso('2026-03-29T00:59:59.000Z')).toBe('2026-03-29T01:59:59+01:00')
+    expect(toPragueIso('2026-03-29T01:00:00.000Z')).toBe('2026-03-29T03:00:00+02:00')
+  })
+
+  it('podzimní přechod na zimní čas (25. 10. 2026 v 1:00 UTC)', () => {
+    expect(toPragueIso('2026-10-25T00:59:59.000Z')).toBe('2026-10-25T02:59:59+02:00')
+    expect(toPragueIso('2026-10-25T01:00:00.000Z')).toBe('2026-10-25T02:00:00+01:00')
+  })
+
+  it('půlnoc se přelije na další den a je shodná s pragueLocalToUtc', () => {
+    expect(toPragueIso('2026-12-31T23:00:00.000Z')).toBe('2027-01-01T00:00:00+01:00')
+    const iso = toPragueIso(pragueLocalToUtc('2026-10-18T16:30:00'))
+    expect(iso).toBe('2026-10-18T16:30:00+02:00')
+  })
+
+  it('přijme Date i epoch a neplatný vstup dá null', () => {
+    expect(toPragueIso(new Date('2026-07-01T10:00:00Z'))).toBe('2026-07-01T12:00:00+02:00')
+    expect(toPragueIso(Date.UTC(2026, 6, 1, 10))).toBe('2026-07-01T12:00:00+02:00')
+    expect(toPragueIso('není datum')).toBeNull()
   })
 })

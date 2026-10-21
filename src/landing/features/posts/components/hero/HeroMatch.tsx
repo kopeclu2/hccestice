@@ -39,7 +39,7 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
         archivu. Emitor se proto volá napřímo: schema bez viditelné
         obdoby je pořád lepší než 58 % článků bez drobečkových dat.
       */}
-      <BreadcrumbsJsonLd trail={articleTrail(article.badge)} />
+      <BreadcrumbsJsonLd trail={articleTrail(article)} />
       <div className="relative overflow-hidden rounded-section bg-contrast px-panel py-panel-y text-on-contrast max-md:px-4.5 max-md:py-6">
         {article.photo && (
           <div className="absolute inset-0 opacity-16">
