@@ -93,7 +93,7 @@ export function PlayerTile({ card }: { card: RosterCard }) {
             „Jaroslav Macháček" (198px) i „Ing. Lukáš Beránek" (193px) se
             sekaly, zatímco na 1024px a víc se obojí vejde. */}
         <CardTitle
-          as="h4"
+          as="h3"
           className="mt-1 max-lg:line-clamp-2 max-md:text-xs lg:truncate"
           size="sm"
         >

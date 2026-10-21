@@ -7,6 +7,9 @@ export type CountdownUnit = { label: string; value: string }
 /** Věta, která po uplynutí cíle nahradí řadu nul. */
 export const COUNTDOWN_LIVE_TEXT = 'Zápas právě probíhá nebo čeká na výsledek'
 
+/** Hodnota odpočtu, dokud se čas nespočítal (server, první render klienta). */
+export const COUNTDOWN_PENDING = '--'
+
 const pad = (value: number): string => String(value).padStart(2, '0')
 
 /**
@@ -17,10 +20,10 @@ const pad = (value: number): string => String(value).padStart(2, '0')
 export const toCountdownUnits = (remainingMs: number | null): CountdownUnit[] =>
   remainingMs === null
     ? [
-        { label: 'dní', value: '--' },
-        { label: 'hod', value: '--' },
-        { label: 'min', value: '--' },
-        { label: 'sek', value: '--' },
+        { label: 'dní', value: COUNTDOWN_PENDING },
+        { label: 'hod', value: COUNTDOWN_PENDING },
+        { label: 'min', value: COUNTDOWN_PENDING },
+        { label: 'sek', value: COUNTDOWN_PENDING },
       ]
     : [
         { label: 'dní', value: pad(Math.floor(remainingMs / 86_400_000)) },

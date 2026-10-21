@@ -5,7 +5,6 @@ import { isOurTeam } from '@/ahl/ourTeam'
 import { Button } from '@/components/ui/button'
 import type { StandingsContent, StandingsRow } from '@/landing/features/matches/types'
 import { EmptyState } from '@/landing/ui/EmptyState'
-import { Eyebrow } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
 import { cn } from '@/lib/utils'
 
@@ -116,92 +115,153 @@ export function StandingsPanel({
           Tabulka VČHL se naplní, jakmile odehrajeme první zápasy sezóny.
         </EmptyState>
       ) : (
-        <div className="mt-5 rounded-tile border border-line-soft bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5">
-          <Eyebrow as="div" tone="dark">
-            <div className={cn('grid px-2.5 py-2.5 md:py-2.75 lg:py-3', gridCols)}>
-              <span>P</span>
-              <span>Tým</span>
-              <span className="text-center">Z</span>
+        /* Sémantická tabulka (`<caption>`, `scope`), ale vzhled drží `display: grid`
+           na řádcích. Safari a starší prohlížeče při změně `display` zahodí
+           sémantiku tabulky, proto jsou role zapsané výslovně. */
+        <table
+          className="mt-5 block rounded-tile border border-line-soft bg-surface px-1.5 py-2.5 md:px-2 md:py-3 lg:px-2.5 lg:py-3.5"
+          role="table"
+        >
+          <caption className="sr-only">{`Tabulka soutěže: ${standings.seasonLabel}`}</caption>
+          <thead className="block" role="rowgroup">
+            <tr
+              className={cn(
+                'grid px-2.5 py-2.5 text-eyebrow font-bold tracking-caps-lg text-faint-dark uppercase md:py-2.75 lg:py-3',
+                gridCols,
+              )}
+              role="row"
+            >
+              <th className="text-left font-bold" role="columnheader" scope="col">
+                <abbr className="no-underline" title="Pořadí">
+                  P
+                </abbr>
+              </th>
+              <th className="text-left font-bold" role="columnheader" scope="col">
+                Tým
+              </th>
+              <th className="text-center font-bold" role="columnheader" scope="col">
+                <abbr className="no-underline" title="Zápasy">
+                  Z
+                </abbr>
+              </th>
               {extended && (
                 <>
-                  <span className={EXTRA} title="Výhry">
-                    V
-                  </span>
-                  <span className={EXTRA} title="Výhry v prodloužení / na nájezdy">
-                    VP
-                  </span>
-                  <span className={EXTRA} title="Prohry v prodloužení / na nájezdy">
-                    PP
-                  </span>
-                  <span className={EXTRA} title="Prohry">
-                    P
-                  </span>
-                  <span className={EXTRA} title="Skóre">
+                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                    <abbr className="no-underline" title="Výhry">
+                      V
+                    </abbr>
+                  </th>
+                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                    <abbr className="no-underline" title="Výhry v prodloužení / na nájezdy">
+                      VP
+                    </abbr>
+                  </th>
+                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                    <abbr className="no-underline" title="Prohry v prodloužení / na nájezdy">
+                      PP
+                    </abbr>
+                  </th>
+                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                    <abbr className="no-underline" title="Prohry">
+                      P
+                    </abbr>
+                  </th>
+                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
                     Skóre
-                  </span>
+                  </th>
                 </>
               )}
-              <span className="text-right">B</span>
-            </div>
-          </Eyebrow>
+              <th className="text-right font-bold" role="columnheader" scope="col">
+                <abbr className="no-underline" title="Body">
+                  B
+                </abbr>
+              </th>
+            </tr>
+          </thead>
 
-          {rows.map((row) => {
-            const ours = isUs(row.team)
-            return (
-              <div
-                className={cn(
-                  'grid items-center rounded-field px-2.5 py-2.75 md:py-3 lg:py-3.25',
-                  gridCols,
-                  ours && 'bg-tint',
-                )}
-                key={`${row.pos}-${row.team}`}
-              >
-                <span
+          <tbody className="block" role="rowgroup">
+            {rows.map((row) => {
+              const ours = isUs(row.team)
+              return (
+                <tr
                   className={cn(
-                    'text-sm font-bold tabular-nums',
-                    ours ? 'text-club' : 'text-faint-dark',
+                    'grid items-center rounded-field px-2.5 py-2.75 md:py-3 lg:py-3.25',
+                    gridCols,
+                    ours && 'bg-tint',
                   )}
+                  key={`${row.pos}-${row.team}`}
+                  role="row"
                 >
-                  {row.pos}.
-                </span>
-                <span
-                  className={cn(
-                    // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
-                    // neříkalo, kdo to je. Delší název udělá řádek o kus
-                    // vyšší, čísla zůstanou na středu (`items-center`).
-                    'min-w-0 text-sm leading-snug tracking-snug text-pretty break-words',
-                    ours ? 'font-bold' : 'font-medium',
+                  <td
+                    className={cn(
+                      'text-sm font-bold tabular-nums',
+                      ours ? 'text-club' : 'text-faint-dark',
+                    )}
+                    role="cell"
+                  >
+                    {row.pos}.
+                  </td>
+                  <th
+                    className={cn(
+                      // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
+                      // neříkalo, kdo to je. Delší název udělá řádek o kus
+                      // vyšší, čísla zůstanou na středu (`items-center`).
+                      'min-w-0 text-left text-sm leading-snug tracking-snug text-pretty break-words',
+                      ours ? 'font-bold' : 'font-medium',
+                    )}
+                    role="rowheader"
+                    scope="row"
+                  >
+                    {row.team}
+                  </th>
+                  <td
+                    className="text-center text-sm font-medium text-faint tabular-nums"
+                    role="cell"
+                  >
+                    {row.games}
+                  </td>
+                  {extended && (
+                    <>
+                      <td
+                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                        role="cell"
+                      >
+                        {row.wins ?? 0}
+                      </td>
+                      <td
+                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                        role="cell"
+                      >
+                        {row.otWins ?? 0}
+                      </td>
+                      <td
+                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                        role="cell"
+                      >
+                        {row.otLosses ?? 0}
+                      </td>
+                      <td
+                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                        role="cell"
+                      >
+                        {row.losses ?? 0}
+                      </td>
+                      <td
+                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                        role="cell"
+                      >
+                        {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
+                      </td>
+                    </>
                   )}
-                >
-                  {row.team}
-                </span>
-                <span className="text-center text-sm font-medium text-faint tabular-nums">
-                  {row.games}
-                </span>
-                {extended && (
-                  <>
-                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
-                      {row.wins ?? 0}
-                    </span>
-                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
-                      {row.otWins ?? 0}
-                    </span>
-                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
-                      {row.otLosses ?? 0}
-                    </span>
-                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
-                      {row.losses ?? 0}
-                    </span>
-                    <span className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}>
-                      {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
-                    </span>
-                  </>
-                )}
-                <span className="text-right text-sm font-bold tabular-nums">{row.points}</span>
-              </div>
-            )
-          })}
-        </div>
+                  <td className="text-right text-sm font-bold tabular-nums" role="cell">
+                    {row.points}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       )}
     </div>
   )

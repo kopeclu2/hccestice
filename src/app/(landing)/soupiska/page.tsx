@@ -119,7 +119,7 @@ export default async function SoupiskaPage() {
               photo: person.photo,
             }))}
             count={countLabel(people.length, PEOPLE_FORMS)}
-            kicker="Staff"
+            kicker="Vedení"
             title="Realizační tým"
           />
         )}

@@ -1,7 +1,9 @@
 'use client'
 
+import { CountdownText } from '@/landing/features/matches/components/CountdownText'
 import {
   COUNTDOWN_LIVE_TEXT,
+  COUNTDOWN_PENDING,
   useCountdown,
 } from '@/landing/features/matches/components/useCountdown'
 import { cn } from '@/lib/utils'
@@ -43,12 +45,19 @@ export function VariantCountdown({
 
   if (look === 'inline') {
     const [days, ...clock] = units
+    const pending = days?.value === COUNTDOWN_PENDING
     return (
       <p className={cn('font-mono text-sm font-medium tabular-nums', className)}>
-        <span className="sr-only">Do začátku zbývá </span>
-        {days?.value}
-        <span className="text-faint"> d </span>
-        {clock.map((unit) => unit.value).join(':')}
+        {pending ? (
+          <CountdownText pending text="-- d --:--:--" />
+        ) : (
+          <>
+            <span className="sr-only">Do začátku zbývá </span>
+            {days?.value}
+            <span className="text-faint"> d </span>
+            {clock.map((unit) => unit.value).join(':')}
+          </>
+        )}
       </p>
     )
   }
@@ -61,9 +70,11 @@ export function VariantCountdown({
             className="flex min-w-0 flex-1 flex-col px-2.5 first:pl-0 last:pr-0 md:px-5"
             key={unit.label}
           >
-            <dt className="order-2 text-xs font-medium text-faint">{unit.label}</dt>
+            <dt className="order-2 text-xs font-medium text-faint">
+              <CountdownText pending={unit.value === COUNTDOWN_PENDING} text={unit.label} />
+            </dt>
             <dd className="text-3xl leading-none font-extrabold tracking-heading text-ink md:text-5xl">
-              {unit.value}
+              <CountdownText pending={unit.value === COUNTDOWN_PENDING} text={unit.value} />
             </dd>
           </div>
         ))}
@@ -79,7 +90,7 @@ export function VariantCountdown({
           key={unit.label}
         >
           <dt className="order-2 mt-1 text-eyebrow font-semibold tracking-caps-md text-on-contrast-faint uppercase">
-            {unit.label}
+            <CountdownText pending={unit.value === COUNTDOWN_PENDING} text={unit.label} />
           </dt>
           <dd
             className={cn(
@@ -87,7 +98,7 @@ export function VariantCountdown({
               index === units.length - 1 ? 'text-lime' : 'text-on-contrast',
             )}
           >
-            {unit.value}
+            <CountdownText pending={unit.value === COUNTDOWN_PENDING} text={unit.value} />
           </dd>
         </div>
       ))}

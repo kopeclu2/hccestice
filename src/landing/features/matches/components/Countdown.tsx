@@ -1,6 +1,7 @@
 'use client'
 
-import { COUNTDOWN_LIVE_TEXT, useCountdown } from './useCountdown'
+import { CountdownText } from './CountdownText'
+import { COUNTDOWN_LIVE_TEXT, COUNTDOWN_PENDING, useCountdown } from './useCountdown'
 
 /** Číslice odpočtu; pod 360 px o stupeň menší (viz komentář u řádku). */
 const DIGITS = 'text-countdown font-extrabold tracking-tight max-3xs:text-2xl'
@@ -36,9 +37,11 @@ export function Countdown({ targetISO }: { targetISO: string }) {
       {units.map((unit, index) => (
         <span className="flex items-baseline gap-1.5 max-3xs:gap-1" key={unit.label}>
           <span className={index === units.length - 1 ? `text-lime ${DIGITS}` : DIGITS}>
-            {unit.value}
+            <CountdownText pending={unit.value === COUNTDOWN_PENDING} text={unit.value} />
           </span>
-          <span className="text-xs font-medium text-on-contrast-subtle">{unit.label}</span>
+          <span className="text-xs font-medium text-on-contrast-subtle">
+            <CountdownText pending={unit.value === COUNTDOWN_PENDING} text={unit.label} />
+          </span>
         </span>
       ))}
     </div>
