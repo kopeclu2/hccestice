@@ -793,3 +793,24 @@ html[data-theme='light'] {
   --cc-toggle-off-bg: var(--color-line-mid);
   --cc-toggle-readonly-bg: var(--color-line-soft);
 }
+
+/**
+ * Pruh souhlasu na mobilu: knihovna pod 640 px řadí tlačítka pod sebe
+ * (`!important`), takže tři tlačítka zabrala přes čtvrtinu obrazovky.
+ * „Přijmout vše" a „Odmítnout" jdou vedle sebe, „Předvolby" pod nimi.
+ */
+@media screen and (max-width: 640px) {
+  #cc-main .cm--bar .cm__btn-group {
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: minmax(0, 1fr) !important;
+    column-gap: 0.375rem !important;
+  }
+
+  #cc-main .cm--bar .cm__btn-group .cm__btn {
+    margin: 0 !important;
+    min-width: 0 !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
