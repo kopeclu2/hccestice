@@ -31,7 +31,7 @@ export function GalleryGrid({
 }) {
   return (
     <CardGrid empty={<GalleryEmpty activeSeasonLabel={activeSeasonLabel ?? null} />} items={cards}>
-      {(card) => <GalleryCardTile card={card} key={card.id} />}
+      {(card, index) => <GalleryCardTile card={card} index={index} key={card.id} />}
     </CardGrid>
   )
 }
@@ -80,8 +80,13 @@ function GalleryEmpty({ activeSeasonLabel }: { activeSeasonLabel: string | null 
 /**
  * Karta galerie: titulní fotka v poměru 4:3 (jednotná výška řádku),
  * lime pill sezóny vlevo nahoře, glass badge s počtem fotek vpravo dole.
+ *
+ * Jen první karta je `eager` + `fetchPriority="high"` (LCP kandidát).
+ * Next u každého eager obrázku přidá `<link rel="preload">`, takže další
+ * eager karty by se o šířku pásma přetahovaly s LCP fotkou: s třemi bylo
+ * LCP na mobilu v labu o ~0,5 s horší než s jednou.
  */
-function GalleryCardTile({ card }: { card: GalleryCard }) {
+function GalleryCardTile({ card, index }: { card: GalleryCard; index: number }) {
   return (
     <CardShell href={card.href} pad="media">
       <div className="relative aspect-4/3 overflow-hidden rounded-badge bg-pine">
@@ -89,10 +94,14 @@ function GalleryCardTile({ card }: { card: GalleryCard }) {
           <Image
             alt={card.cover.alt}
             className="object-cover"
+            fetchPriority={index === 0 ? 'high' : undefined}
             fill
+            loading={index === 0 ? 'eager' : 'lazy'}
             /* Zlomy kopírují `CardGrid`: 1 sloupec / 2 od `sm` (40rem) /
-               3 od `lg` (64rem). */
-            sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+               3 od `lg` (64rem). Od `lg` je sloupec nejvýš ~30rem
+               (`max-w-page` 97,5rem ÷ 3), takže `33vw` na širokém monitoru
+               přeceňovalo. */
+            sizes="(min-width: 64rem) min(33vw, 30rem), (min-width: 40rem) 50vw, 100vw"
             src={getMediaUrl(card.cover.url, card.cover.updatedAt)}
           />
         )}

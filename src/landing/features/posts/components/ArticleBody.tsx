@@ -5,6 +5,13 @@ import { sanitizeHtml } from '@/hooks/sanitizeHtml'
 import type { Post } from '@/payload-types'
 
 /**
+ * Šířka obrázku v těle: `max-w-article` (820 px) bez bočního `px-gutter`
+ * (`clamp(14px, 3vw, 40px)`). Do 820 px je to ~94 vw, výš nejvýš 770 px.
+ * Výchozí `100vw` posílalo na telefonu 750px variantu místo ~360px.
+ */
+const ARTICLE_IMAGE_SIZES = '(min-width: 51.25rem) 48rem, 94vw'
+
+/**
  * Tělo článku — lexical rich text, nebo legacy HTML z importu.
  * Typografii obou variant sjednocuje utility `article-prose`
  * (globals.css): lead odstavec, nadpisy s lime akcentem, citace,
@@ -21,7 +28,13 @@ export function ArticleBody({ post }: { post: Post }) {
           dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.legacyHtml as string) }}
         />
       ) : post.content ? (
-        <RichTextServer data={post.content} enableGutter={false} enableProse={false} />
+        <RichTextServer
+          data={post.content}
+          eagerLeadMedia
+          enableGutter={false}
+          enableProse={false}
+          mediaSizes={ARTICLE_IMAGE_SIZES}
+        />
       ) : null}
     </div>
   )

@@ -64,6 +64,35 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   return collectionDocPath(relationTo, String(value.slug))
 }
 
+/** Nastavení obrázků v bloku `mediaBlock`; nastavuje je volající podle šířky sloupce. */
+export type MediaOptions = {
+  /** `sizes` obrázků — šířka sloupce, ne výchozí `100vw`. */
+  mediaSizes?: string
+  /** `id` bloku, jehož obrázek je kandidát na LCP (`eager` + `fetchPriority="high"`). */
+  priorityMediaId?: string
+}
+
+/**
+ * Konvertor bloku `mediaBlock`. Bez `options` se chová jako dřív (`100vw`,
+ * lazy); článek mu předá šířku sloupce a `id` úvodního obrázku.
+ */
+export function mediaBlockConverter({ mediaSizes, priorityMediaId }: MediaOptions = {}) {
+  return function renderMediaBlock({ node }: { node: SerializedBlockNode<MediaBlockProps> }) {
+    return (
+      <MediaBlock
+        className="col-span-3 col-start-1"
+        imgClassName="m-0"
+        {...node.fields}
+        captionClassName="mx-auto max-w-3xl"
+        disableInnerContainer={true}
+        enableGutter={false}
+        imageSizes={mediaSizes}
+        priority={priorityMediaId !== undefined && node.fields.id === priorityMediaId}
+      />
+    )
+  }
+}
+
 /** Klient-safe konvertory — sdílí je i serverová varianta. */
 export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
@@ -86,16 +115,7 @@ export const baseJSXConverters: JSXConvertersFunction<BaseNodeTypes> = ({ defaul
   },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-    mediaBlock: ({ node }) => (
-      <MediaBlock
-        className="col-span-3 col-start-1"
-        imgClassName="m-0"
-        {...node.fields}
-        captionClassName="mx-auto max-w-3xl"
-        enableGutter={false}
-        disableInnerContainer={true}
-      />
-    ),
+    mediaBlock: mediaBlockConverter(),
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
     youtube: ({ node }) => (
       <div className="not-prose my-6 [&_.container]:px-0">
@@ -121,6 +141,10 @@ export type Props = {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
+  /** Úvodní obrázek těla (do prvních uzlů) je LCP kandidát — `eager` + `fetchPriority="high"`. */
+  eagerLeadMedia?: boolean
+  /** `sizes` obrázků v bloku `mediaBlock`; bez něj `100vw`. */
+  mediaSizes?: string
 } & React.HTMLAttributes<HTMLDivElement>
 
 /** Třídy obalu rich textu (sdílené se serverovou variantou). */
@@ -139,7 +163,16 @@ export const richTextClassName = (
   )
 
 export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, ...rest } = props
+  // `eagerLeadMedia` a `mediaSizes` řeší jen serverová varianta (článek);
+  // tady se odřežou, aby neprosákly do DOM jako neznámé atributy.
+  const {
+    className,
+    enableProse = true,
+    enableGutter = true,
+    eagerLeadMedia: _eagerLeadMedia,
+    mediaSizes: _mediaSizes,
+    ...rest
+  } = props
   return (
     <ConvertRichText
       converters={baseJSXConverters}

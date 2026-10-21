@@ -12,6 +12,10 @@ type Props = MediaBlockProps & {
   className?: string
   enableGutter?: boolean
   imgClassName?: string
+  /** `sizes` obrázku podle šířky sloupce; bez něj `100vw`. */
+  imageSizes?: string
+  /** LCP kandidát: `loading="eager"` + `fetchPriority="high"`. */
+  priority?: boolean
   staticImage?: StaticImageData
   disableInnerContainer?: boolean
 }
@@ -21,8 +25,10 @@ export const MediaBlock: React.FC<Props> = (props) => {
     captionClassName,
     className,
     enableGutter = true,
+    imageSizes,
     imgClassName,
     media,
+    priority,
     staticImage,
     disableInnerContainer,
   } = props
@@ -43,7 +49,9 @@ export const MediaBlock: React.FC<Props> = (props) => {
       {(media || staticImage) && (
         <Media
           imgClassName={cn('rounded-field border border-border', imgClassName)}
+          priority={priority}
           resource={media}
+          size={imageSizes}
           src={staticImage}
         />
       )}

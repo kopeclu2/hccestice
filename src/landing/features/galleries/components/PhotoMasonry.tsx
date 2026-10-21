@@ -54,13 +54,18 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
             style={{ aspectRatio: String(photo.width / photo.height) }}
             type="button"
           >
-            {/* `sizes` je psané přes `min-width`: na přesně 768px už platí
+            {/* Jen první dlaždice je `eager` + `fetchPriority="high"` (LCP kandidát):
+                Next u každého eager obrázku přidá `<link rel="preload">`, další
+                by se s ní přetahovaly o šířku pásma. Zbytek je lazy.
+                `sizes` je psané přes `min-width`: na přesně 768px už platí
                 `md:columns-3`, ale `max-width: 48rem` tam ještě tvrdilo
                 50vw (384px) do dlaždice o ~230px. */}
             <Image
               alt={photo.alt}
               className="object-cover transition-transform duration-300 hover:scale-[1.03]"
+              fetchPriority={index === 0 ? 'high' : undefined}
               fill
+              loading={index === 0 ? 'eager' : 'lazy'}
               sizes="(min-width: 48rem) 33vw, 50vw"
               src={getMediaUrl(photo.url, photo.updatedAt)}
             />
