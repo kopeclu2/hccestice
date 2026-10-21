@@ -89,7 +89,7 @@ describe('sanitizeHtml — iframe', () => {
     const clean = sanitizeHtml(
       '<iframe src="https://www.youtube.com/embed/abc123" width="560" height="315" frameborder="0" allowfullscreen></iframe>',
     )
-    expect(clean).toContain('src="https://www.youtube.com/embed/abc123"')
+    expect(clean).toContain('src="https://www.youtube-nocookie.com/embed/abc123"')
     expect(clean).toContain('sandbox="allow-scripts allow-same-origin')
     expect(clean).not.toContain('allow-top-navigation')
   })
@@ -99,8 +99,16 @@ describe('sanitizeHtml — iframe', () => {
       sanitizeHtml('<iframe src="https://docs.google.com/spreadsheets/d/abc/pubhtml"></iframe>'),
     ).toContain('docs.google.com')
     expect(sanitizeHtml('<iframe src="http://online-puk.eu/prehledzapasu/87"></iframe>')).toContain(
-      'online-puk.eu',
+      'src="https://online-puk.eu/prehledzapasu/87"',
     )
+  })
+
+  it('legacy http a běžný YouTube přepíše na https a youtube-nocookie', () => {
+    const clean = sanitizeHtml(
+      '<iframe src="http://www.youtube.com/embed/SY-B0FvrnZE" width="480" height="390"></iframe>',
+    )
+    expect(clean).toContain('src="https://www.youtube-nocookie.com/embed/SY-B0FvrnZE"')
+    expect(clean).not.toContain('http://')
   })
 
   it('zahodí iframe z cizího hosta, špatné cesty i triky s hostem', () => {
