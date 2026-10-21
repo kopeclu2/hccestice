@@ -4,7 +4,6 @@ import React from 'react'
 import { fetchAllPeople, fetchSite } from '@/landing/data/site'
 import { ContactCta } from '@/landing/features/contact/components/ContactCta'
 import { ContactHeader } from '@/landing/features/contact/components/ContactHeader'
-import { ContactMap } from '@/landing/features/contact/components/ContactMap'
 import { ContactPanel } from '@/landing/features/contact/components/ContactPanel'
 import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
@@ -20,7 +19,7 @@ const DESCRIPTION =
  * sekce homepage (`#kontakt`), na kterou míří CTA napříč webem. Ta zůstává
  * beze změny; tahle stránka dává kontaktu vlastní URL, drobečky a SEO popisek
  * a vlastní kompozici (vizitka a přímé kontakty na lidi v klubu vlevo,
- * formulář vpravo, mapa zimního stadionu a uzavírací CTA pás na konci),
+ * formulář a mapa zimního stadionu vedle sebe, uzavírací CTA pás na konci),
  * ne zvětšenou kopii homepage karty.
  */
 export default async function KontaktPage() {
@@ -37,7 +36,6 @@ export default async function KontaktPage() {
       />
       <ContactHeader />
       <ContactPanel people={people} site={site} />
-      <ContactMap />
       <ContactCta />
     </SubpageShell>
   )

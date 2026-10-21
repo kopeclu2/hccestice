@@ -27,6 +27,8 @@ export type ClickToLoadEmbedProps = {
   /** Rozměry a zaoblení — platí pro zástupný rámeček i pro iframe, takže se nic neposune. */
   frameClassName?: string
   frameStyle?: React.CSSProperties
+  /** Ikona nad titulkem zástupného rámečku (např. špendlík u mapy); po načtení zmizí spolu s ním. */
+  icon?: React.ReactNode
   referrerPolicy?: React.HTMLAttributeReferrerPolicy
   /** Bez hodnoty se iframe vloží bez `sandbox` (jako dřív mapa a YouTube blok). */
   sandbox?: string
@@ -50,6 +52,7 @@ export function ClickToLoadEmbed({
   allowFullScreen,
   frameClassName,
   frameStyle,
+  icon,
   referrerPolicy = 'strict-origin-when-cross-origin',
   sandbox,
   src,
@@ -91,6 +94,14 @@ export function ClickToLoadEmbed({
       role="group"
       style={frameStyle}
     >
+      {icon && (
+        <span
+          aria-hidden
+          className="grid size-11 place-items-center rounded-full bg-lime text-ink [&_svg]:size-5"
+        >
+          {icon}
+        </span>
+      )}
       <span className={EMBED_TITLE_CLASS}>{title}</span>
       <span className={EMBED_NOTE_CLASS}>{embedNotice(service)}</span>
       <Button onClick={() => setLoaded(true)} size="sm" type="button" variant="dark">
