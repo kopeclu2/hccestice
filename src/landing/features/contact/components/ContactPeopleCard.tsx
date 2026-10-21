@@ -5,6 +5,7 @@ import type { PersonCard } from '@/landing/types'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
+import { telHref } from '@/lib/phone'
 
 /**
  * „Nebo pište/volejte přímo" — kontaktní osoby s fotkou, telefonem
@@ -60,7 +61,7 @@ function PersonContactTile({ person }: { person: PersonCard }) {
           {person.phone && (
             <a
               className="flex items-center gap-1.5 text-xs font-medium text-ink-soft transition-colors hover:text-club"
-              href={`tel:${person.phone.replace(/\s/g, '')}`}
+              href={telHref(person.phone)}
             >
               <Phone className="size-3.5 flex-none" /> {person.phone}
             </a>

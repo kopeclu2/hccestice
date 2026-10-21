@@ -1,5 +1,6 @@
 import type { Photo, PersonCard } from '@/landing/types'
 import { CLUB_NAME } from '@/lib/club'
+import { cleanPhone } from '@/lib/phone'
 import type { Media, Person } from '@/payload-types'
 
 /** Payload `media` / upload pole → `Photo` view-model pro `next/image`. */
@@ -25,7 +26,8 @@ export const toPersonCard = (person: number | Person): PersonCard | null => {
     role: person.role,
     note: person.note ?? null,
     mail: person.email ?? null,
-    phone: person.phone ?? null,
+    // Jen předvolba (+420) by jinak dala odkaz tel:+420 bez čísla.
+    phone: cleanPhone(person.phone),
     photo: uploadToPhoto(person.photo),
   }
 }

@@ -3,11 +3,10 @@ import Link from 'next/link'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
-import { CONTACT } from '@/landing/content'
 import type { SiteLinks } from '@/landing/types'
-import { Badge } from '@/landing/ui/Badge'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Eyebrow } from '@/landing/ui/Kicker'
+import { ARENA_HOME_TEXT, CLUB_SEAT_TEXT } from '@/lib/club'
 
 /**
  * Levý panel stránky `/kontakt`: rychlé údaje vedle tmavé karty s formulářem
@@ -55,13 +54,12 @@ export function ContactInfoPanel({ site }: { site: SiteLinks }) {
         Obvykle odpovídáme do pár dní. Když to spěchá, zavolejte přímo někomu z realizačního týmu.
       </p>
 
-      <div className="mt-7 flex flex-wrap gap-2">
-        {CONTACT.pills.map((pill) => (
-          <Badge className="font-medium" key={pill} size="lg" variant="outline">
-            {pill}
-          </Badge>
-        ))}
-      </div>
+      {/* Sídlo a stadion zvlášť (dřív dvě pilulky, které je míchaly do jedné
+          adresy). Text z `lib/club` — táž data jako JSON-LD. */}
+      <address className="mt-7 flex flex-col gap-1 text-sm text-ink-soft not-italic">
+        <span>{CLUB_SEAT_TEXT}</span>
+        <span>{ARENA_HOME_TEXT}</span>
+      </address>
 
       {(site.facebook || site.instagram) && (
         <div className="mt-2 flex flex-wrap gap-2">

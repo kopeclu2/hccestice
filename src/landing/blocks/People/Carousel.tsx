@@ -12,6 +12,7 @@ import { SectionShell } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
 import { CLUB_LOGO } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
+import { telHref } from '@/lib/phone'
 
 /**
  * Lidé v klubu — horizontální carousel karet se šipkami ← →.
@@ -81,7 +82,7 @@ function PersonTile({ person }: { person: PersonCard }) {
   const contactHref = person.mail
     ? `mailto:${person.mail}`
     : person.phone
-      ? `tel:${person.phone.replace(/\s/g, '')}`
+      ? telHref(person.phone)
       : undefined
 
   return (

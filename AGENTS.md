@@ -1492,7 +1492,10 @@ naplánovaných a zrušených — detail mají všechny. Výjimka: zápas bez č
 výkopu (`00:00` v Europe/Prague, placeholder) se vynechává
 (`isUntimedMatch`, `lib/sitemapEntries.ts`). Všechny sitemapy kolekcí
 navíc vynechávají cesty z kolekce `redirects` (jeden dotaz na sitemapu;
-tag `redirects` invaliduje i je). `lastmod` je `updatedAt`. Cache jako u `gallery-sitemap.xml`: tag `matches-sitemap`
+tag `redirects` invaliduje i je). `lastmod` je `updatedAt`, jen u článků a
+galerií, kde je `updatedAt` od `createdAt` vzdálený méně než den (čas importu),
+se bere `publishedAt` resp. `date` a bez nich se `lastmod` vynechá
+(`resolveLastmod`). Cache jako u `gallery-sitemap.xml`: tag `matches-sitemap`
 + `revalidate: 86400`. Tag invaliduje `'max'` (crawlerský feed):
 
 - `hooks/revalidateMatchFeeds.ts` na `afterChange` i `afterDelete` kolekce

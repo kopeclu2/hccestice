@@ -9,4 +9,6 @@ export const GET = sitemapRoute({
   path: routes.post,
   published: true,
   limit: 1000,
+  // `updatedAt` je u importovaných článků čas importu — viz `resolveLastmod`.
+  lastmodFallback: 'publishedAt',
 })

@@ -12,6 +12,7 @@ import { Eyebrow } from '@/landing/ui/Kicker'
 import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
+import { telHref } from '@/lib/phone'
 import type { PersonCardBlock } from '@/payload-types'
 
 /** Kontaktní karta osoby — portrét, role, telefon a e-mail. */
@@ -44,7 +45,7 @@ function PersonCardView({ person }: { person: PersonCard }) {
             <div className="mt-3 flex flex-wrap gap-2">
               {person.phone && (
                 <Button asChild size="xs" variant="outline">
-                  <Link href={`tel:${person.phone.replace(/\s/g, '')}`}>
+                  <Link href={telHref(person.phone)}>
                     <Phone /> {person.phone}
                   </Link>
                 </Button>

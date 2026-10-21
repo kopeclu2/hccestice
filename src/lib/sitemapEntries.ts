@@ -9,9 +9,18 @@ import { toDate, utcToPragueLocal } from './datetime'
 export type SitemapDoc = {
   slug?: string | null
   updatedAt?: string | null
-  /** Jen zápasy (`matches.date`) — ostatní kolekce pole nemají. */
+  createdAt?: string | null
+  /** `matches.date` (výkop) a `galleries.date` (datum události) — ostatní kolekce pole nemají. */
   date?: string | null
+  /** Jen `posts.publishedAt`. */
+  publishedAt?: string | null
 }
+
+/** Pole, ze kterého se bere `lastmod`, když `updatedAt` je jen čas importu. */
+export type LastmodFallback = 'publishedAt' | 'date'
+
+/** Rozdíl `updatedAt − createdAt` pod touto hranicí = dokument se od založení nezměnil (import). */
+const IMPORT_WINDOW_MS = 24 * 60 * 60 * 1000
 
 export type SitemapEntry = { loc: string; lastmod?: string }
 
@@ -50,6 +59,28 @@ export const hasKickoffTime = (date: string | null | undefined): boolean => {
  */
 export const isUntimedMatch = (doc: SitemapDoc): boolean => !hasKickoffTime(doc.date)
 
+/**
+ * `lastmod` dokumentu. Import z eStránek založil i uložil dokumenty naráz,
+ * takže `updatedAt` je tam čas importu, ne změny obsahu (254 z 300 článků
+ * a 98 ze 101 galerií). Když je `updatedAt` od `createdAt` vzdálený méně než
+ * den, bere se `fallback` (`publishedAt` článku, `date` galerie) a bez něj se
+ * `lastmod` vynechá — vyhledávač pak nedostane lživý údaj. Bez `fallback`
+ * (stránky, zápasy) se vrací `updatedAt` beze změny.
+ */
+export function resolveLastmod(doc: SitemapDoc, fallback?: LastmodFallback): string | undefined {
+  const { updatedAt, createdAt } = doc
+  if (!updatedAt) return undefined
+  if (!fallback || !createdAt) return updatedAt
+
+  const updated = Date.parse(updatedAt)
+  const created = Date.parse(createdAt)
+  if (Number.isNaN(updated) || Number.isNaN(created)) return updatedAt
+  if (updated - created >= IMPORT_WINDOW_MS) return updatedAt
+
+  const value = doc[fallback]
+  return value && !Number.isNaN(Date.parse(value)) ? value : undefined
+}
+
 type BuildOptions = {
   siteUrl: string
   /** Cesty bez dokumentu v CMS, vypsané před dokumenty (bez `lastmod`). */
@@ -63,6 +94,8 @@ type BuildOptions = {
   redirectSources?: ReadonlySet<string>
   /** Další vyřazení dokumentu (zápas bez času). */
   skipDoc?: (doc: SitemapDoc) => boolean
+  /** Náhradní zdroj `lastmod` pro dokumenty s `updatedAt` = čas importu (`resolveLastmod`). */
+  lastmodFallback?: LastmodFallback
 }
 
 /**
@@ -78,6 +111,7 @@ export function buildSitemapEntries({
   excludeSlugs,
   redirectSources,
   skipDoc,
+  lastmodFallback,
 }: BuildOptions): SitemapEntry[] {
   const entries: SitemapEntry[] = staticPaths.map((staticPath) => ({
     loc: `${siteUrl}${staticPath}`,
@@ -88,10 +122,8 @@ export function buildSitemapEntries({
     if (!slug || excludeSlugs?.has(slug) || skipDoc?.(doc)) continue
     const docPath = path(slug)
     if (redirectSources?.has(normalizeRedirectPath(docPath))) continue
-    entries.push({
-      loc: `${siteUrl}${docPath}`,
-      ...(doc.updatedAt ? { lastmod: doc.updatedAt } : {}),
-    })
+    const lastmod = resolveLastmod(doc, lastmodFallback)
+    entries.push({ loc: `${siteUrl}${docPath}`, ...(lastmod ? { lastmod } : {}) })
   }
 
   const seen = new Set<string>()
