@@ -3,7 +3,7 @@ import type { DOMPurify, WindowLike } from 'dompurify'
 import { JSDOM } from 'jsdom'
 import type { FieldHook } from 'payload'
 
-import { EMBED_SANDBOX, embedHostOf, isAllowedEmbedUrl } from '@/lib/embedHosts'
+import { EMBED_SANDBOX, embedHostOf, normalizeEmbedUrl } from '@/lib/embedHosts'
 
 /**
  * Sanitizace surového HTML (legacy články `posts.legacyHtml` a blok RawHtml).
@@ -28,7 +28,9 @@ import { EMBED_SANDBOX, embedHostOf, isAllowedEmbedUrl } from '@/lib/embedHosts'
  *   `script`, `style`, `form`, `input`, `textarea`, `object`, `embed`,
  *   `param`, `svg` (jen vložené ikony Material UI), `base`, `meta`, `link` pryč;
  * - `iframe` jen z hostů v `lib/embedHosts` (YouTube, Google Tabulky,
- *   výsledkové servery…) a vždy se `sandbox`;
+ *   výsledkové servery…), vždy se `sandbox`, `src` přepsaný na `https`
+ *   (YouTube na `youtube-nocookie.com`); před kliknutím ho z legacy HTML
+ *   dělá zástupný rámeček `landing/lib/legacyEmbeds`;
  * - schémata odkazů jen `http(s)`, `mailto`, `tel` a relativní; `data:` se
  *   nepoužívá nikde, takže pryč i u obrázků;
  * - `on*` (17× `onclick`/`onmouseover` z vložené tabulky lidovky.cz) pryč,
@@ -257,11 +259,15 @@ function getPurifier(): DOMPurify {
 
     if (node.nodeName === 'IFRAME') {
       const src = node.getAttribute('src')
-      if (!isAllowedEmbedUrl(src)) {
+      // `https` a `youtube-nocookie.com` se dopisuje už tady, takže i uložená
+      // data jsou čistá a výstup zůstává pevný bod.
+      const normalized = normalizeEmbedUrl(src)
+      if (!normalized) {
         if (activeReport) bump(activeReport.iframeHosts, embedHostOf(src))
         node.remove()
         return
       }
+      node.setAttribute('src', normalized)
       // Záložní text „Your browser does not support inline frames" je
       // u iframe surový text a nemá v tokenu co dělat.
       node.textContent = ''

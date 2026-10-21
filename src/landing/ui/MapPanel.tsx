@@ -4,6 +4,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 
 import { Badge } from './Badge'
+import { ClickToLoadEmbed } from './ClickToLoadEmbed'
 import { SectionTitle } from './Heading'
 import { Highlight } from './Kicker'
 import { Reveal } from './Reveal'
@@ -66,13 +67,12 @@ export function MapPanel({
           {/*
             Výška má tři stupně, ne dva: na mobilu 300px (mapa nevytlačí
             obsah pod sebou), na tabletu 400px, desktopová hodnota z handoffu
-            (480px) až od `lg`.
+            (480px) až od `lg`. Stejnou výšku má zástupný rámeček před
+            kliknutím, takže se stránka po načtení mapy neposune.
           */}
-          <iframe
+          <ClickToLoadEmbed
             allowFullScreen
-            aria-label={label}
-            className="h-75 w-full rounded-section border-0 md:h-100 lg:h-120"
-            loading="lazy"
+            frameClassName="h-75 w-full rounded-section md:h-100 lg:h-120"
             referrerPolicy="no-referrer-when-downgrade"
             src={embedUrl}
             title={label}

@@ -139,6 +139,17 @@ cva, napojené na značku přes proměnné v `globals.css`).
   First Load JS). `/kontaky` je **CMS stránka** renderovaná přes `[slug]`
   (`.next/server/app/kontaky.html`); `/kontakt` je jiná, ručně psaná route
   a tahle řada se na ní neměřila.
+- **Cizí iframe (mapa, YouTube, tabulky) jen po kliknutí.** Nový `<iframe>`
+  na cizí host se nepíše přímo: `landing/ui/ClickToLoadEmbed` vykreslí
+  zástupný rámeček a iframe vloží až po kliknutí (do té doby se třetí strana
+  nekontaktuje, neodchází jí IP; volba je jen ve stavu stránky, bez cookies).
+  Legacy HTML (`legacyHtml`, `RawHtml`) jde přes `landing/lib/legacyEmbeds`
+  (`renderLegacyHtml`), který po sanitizaci nahradí iframy zástupnými
+  rámečky, a `EmbedLoader` (jeden posluchač na dokumentu, nevykresluje nic)
+  je po kliknutí vymění zpět (`lib/embedActivate`). Adresu normalizuje
+  `normalizeEmbedUrl` v `lib/embedHosts`: `https`, `youtube-nocookie.com`,
+  jen hosty ze seznamu. Hotlinkované obrázky z cizích domén to neřeší.
+  Naměřeno: First Load JS +0…+2 kB gzip.
 - **Formuláře** se skládají z `Field` / `FieldLabel` / `FieldError` a
   `Controller` z react-hook-form (doporučený vzor shadcn, komponenta `form` se
   dál nevyvíjí). Vzor je `ContactField` v `ContactForm.tsx`; `ui/field.tsx` je

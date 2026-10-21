@@ -1,7 +1,8 @@
 import React from 'react'
 
 import RichTextServer from '@/components/RichText/Server'
-import { sanitizeHtml } from '@/hooks/sanitizeHtml'
+import { renderLegacyHtml } from '@/landing/lib/legacyEmbeds'
+import { EmbedLoader } from '@/landing/ui/ClickToLoadEmbed'
 import type { Post } from '@/payload-types'
 
 /**
@@ -23,10 +24,13 @@ export function ArticleBody({ post }: { post: Post }) {
   return (
     <div className="relative z-1 article-prose mx-auto mt-11 max-w-article px-gutter md:mt-14 lg:mt-18">
       {isLegacy ? (
-        <div
-          className="legacy-html"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.legacyHtml as string) }}
-        />
+        <>
+          <div
+            className="legacy-html"
+            dangerouslySetInnerHTML={{ __html: renderLegacyHtml(post.legacyHtml as string) }}
+          />
+          <EmbedLoader />
+        </>
       ) : post.content ? (
         <RichTextServer
           data={post.content}

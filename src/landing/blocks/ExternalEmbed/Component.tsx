@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { ClickToLoadEmbed } from '@/landing/ui/ClickToLoadEmbed'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
@@ -22,13 +23,11 @@ export function ExternalEmbedBlockComponent({ block }: { block: ExternalEmbedBlo
           </SectionTitle>
         )}
         <div className="overflow-hidden rounded-card bg-surface p-2">
-          <iframe
-            className="w-full rounded-section border-0"
-            loading="lazy"
-            referrerPolicy="strict-origin-when-cross-origin"
+          <ClickToLoadEmbed
+            frameClassName="w-full rounded-section"
+            frameStyle={{ height: `${(block.height ?? 600) / 16}rem` }}
             sandbox={EMBED_SANDBOX}
             src={block.url}
-            style={{ height: `${(block.height ?? 600) / 16}rem` }}
             title={block.title ?? 'Externí obsah'}
           />
         </div>

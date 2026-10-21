@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { ClickToLoadEmbed } from '@/landing/ui/ClickToLoadEmbed'
 import type { YouTubeBlock as YouTubeBlockProps } from '@/payload-types'
 
 function extractVideoId(url: string): string | null {
@@ -16,13 +17,13 @@ export const YouTubeBlock: React.FC<YouTubeBlockProps & { id?: string }> = ({ id
   return (
     <div className="container" id={`block-${id}`}>
       <div className="relative aspect-video w-full overflow-hidden rounded-chip">
-        <iframe
-          className="absolute inset-0 h-full w-full"
-          src={`https://www.youtube-nocookie.com/embed/${videoId}`}
-          title="YouTube video"
+        <ClickToLoadEmbed
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          loading="lazy"
+          // Na mobilu je 16:9 jen ~190 px, takže zástupný rámeček má menší svislé odsazení.
+          frameClassName="absolute inset-0 h-full w-full gap-2 py-3 md:gap-3 md:py-8"
+          src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+          title="YouTube video"
         />
       </div>
     </div>
