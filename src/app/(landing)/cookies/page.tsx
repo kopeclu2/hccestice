@@ -5,7 +5,7 @@ import { fetchSite } from '@/landing/data/site'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { PageTitle } from '@/landing/ui/Heading'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 
 export const revalidate = 600
 
@@ -171,9 +171,9 @@ export default async function CookiesPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Ochrana osobních údajů a cookies'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Ochrana osobních údajů a cookies',
   description:
     'Jaké cookies HC Čestice používá, k čemu slouží a jak můžete svůj souhlas kdykoli změnit.',
-  alternates: { canonical: '/cookies' },
-}
+  path: '/cookies',
+})

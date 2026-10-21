@@ -5,6 +5,7 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import type { GalleryCard } from '@/landing/features/galleries/types'
+import { PHOTO_FORMS } from '@/landing/features/galleries/view/galleryMeta'
 import { Badge } from '@/landing/ui/Badge'
 import { CardCta, CardGrid, CardShell } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
@@ -102,7 +103,7 @@ function GalleryCardTile({ card }: { card: GalleryCard }) {
         )}
         <Badge className="absolute right-3 bottom-3 gap-1.75" size="xs" variant="glass">
           <ImageIcon size={13} strokeWidth={2.4} />
-          {countLabel(card.photoCount, ['fotka', 'fotky', 'fotek'])}
+          {countLabel(card.photoCount, PHOTO_FORMS)}
         </Badge>
       </div>
       {/* flex-1 + mt-auto v CardCta: odkaz drží u spodní hrany i u kratších titulků */}

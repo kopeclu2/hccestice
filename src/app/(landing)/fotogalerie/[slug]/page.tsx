@@ -10,15 +10,16 @@ import {
 } from '@/landing/features/galleries/components/PhotoMasonry'
 import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
 import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/features/galleries/data'
+import { galleryDescription, galleryTitle } from '@/landing/features/galleries/view/galleryMeta'
 import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { CLUB_NAME } from '@/lib/club'
 import { formatLongDate } from '@/lib/datetime'
 import { decodeSlug } from '@/lib/decodeSlug'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-import { getServerSideURL } from '@/lib/getURL'
 import { routes } from '@/lib/routes'
 
 /** ISR pojistka — galerie nemají revalidační hook, obnoví se samy. */
@@ -80,12 +81,17 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   if (!gallery) return { title: brandTitle('Galerie nenalezena') }
 
   const cover = uploadToPhoto(gallery.cover)
-  return {
-    title: `${gallery.title} | Fotoalbum ${CLUB_NAME}`,
-    description: `Fotogalerie ${gallery.title} — ${gallery.photos?.length ?? 0} fotek.`,
-    alternates: { canonical: routes.gallery(slug) },
-    openGraph: cover
-      ? { images: [{ url: `${getServerSideURL()}${getMediaUrl(cover.url, cover.updatedAt)}` }] }
-      : undefined,
-  }
+  // Titulek ze slugu je jen záloha pro galerii, které import nechal slug
+  // místo názvu; vlastní název má vždy přednost.
+  const title = galleryTitle(gallery.title, slug)
+  return buildPageMetadata({
+    title: `${title} | Fotoalbum ${CLUB_NAME}`,
+    description: galleryDescription({
+      title,
+      photoCount: gallery.photos?.length ?? 0,
+      date: gallery.date,
+    }),
+    path: routes.gallery(slug),
+    image: cover ? getMediaUrl(cover.url, cover.updatedAt) : undefined,
+  })
 }

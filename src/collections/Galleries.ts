@@ -1,8 +1,8 @@
 import type { CollectionConfig } from 'payload'
-import { slugField } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { slugFieldCs } from '../fields/slugCs'
 import {
   revalidateGalleryFeeds,
   revalidateGalleryFeedsDelete,
@@ -103,7 +103,7 @@ export const Galleries: CollectionConfig = {
         readOnly: true,
       },
     },
-    slugField(),
+    slugFieldCs(),
   ],
   hooks: {
     // /fotogalerie ani home blok Fotoalbum nemají ISR — viz Matches.

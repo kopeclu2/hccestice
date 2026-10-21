@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -26,7 +27,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { SITE_NAME } from '@/lib/club'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
@@ -81,6 +82,14 @@ export default async function ZapasyPage({ searchParams }: Args) {
         fetchSeasonForm(activeSeason.id),
       ])
     : [[], { rows: [], page: 1, totalPages: 1, totalDocs: 0 }, null]
+
+  // Strana za poslední stranou výpisu je 404, ne prázdný výpis se statusem 200:
+  // strana nad `totalPages` neexistuje (prázdný výpis má `totalPages` 0 nebo
+  // 1 — první strana je vždy platná).
+  // `notFound()`, ne redirect. Pozor: nad výpisem je `loading.tsx`, takže
+  // status zůstane 200 (streaming už začal) a 404 je jen obsah a `noindex`;
+  // HTTP 404 by vyžadovalo vyndat `loading.tsx` (viz AGENTS.md).
+  if (requestedPage > Math.max(1, results.totalPages)) notFound()
 
   // Prázdné řádky si řeší `StandingsPanel` sám (vlastní `EmptyState`) —
   // tabulka se proto skládá vždy, i pro sezónu bez vyplněné tabulky.
@@ -174,7 +183,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
   )
 }
 
-const TITLE = `Zápasy a tabulka | ${SITE_NAME}`
+const TITLE = 'Zápasy a tabulka'
 const DESCRIPTION =
   'Rozlosování, výsledky a průběžná tabulka Východočeské hokejové ligy. Domácí zápasy hrajeme na zimním stadionu v Rychnově nad Kněžnou.'
 
@@ -194,10 +203,10 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   const { sezona, strana } = await searchParams
   const page = parsePageParam(strana)
 
-  return {
+  return buildPageMetadata({
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: page > 1 ? listPath(page, sezona ?? null) : routes.list.matches },
-    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
-  }
+    path: page > 1 ? listPath(page, sezona ?? null) : routes.list.matches,
+    robots: page > 1 ? { follow: true, index: false } : undefined,
+  })
 }

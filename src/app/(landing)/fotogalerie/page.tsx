@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { GalleriesHeader } from '@/landing/features/galleries/components/GalleriesHeader'
@@ -10,7 +11,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
 
 type Args = { searchParams: Promise<{ page?: string; sezona?: string }> }
@@ -34,6 +35,13 @@ export default async function FotogaleriePage({ searchParams }: Args) {
     page: requestedPage,
     seasonId: activeSeason?.id ?? null,
   })
+
+  // Strana za poslední stranou výpisu je 404, ne prázdný výpis se statusem 200:
+  // strana nad `totalPages` neexistuje (prázdný výpis má `totalPages` 0 nebo
+  // 1 — první strana je vždy platná).
+  // `notFound()`, ne redirect — viz AGENTS.md „`loading.tsx` nesmí být nad
+  // routou, která redirectuje".
+  if (requestedPage > Math.max(1, galleriesPage.totalPages)) notFound()
 
   const hrefFor = (n: number): string =>
     buildListUrl(routes.list.galleries, {
@@ -72,7 +80,7 @@ export default async function FotogaleriePage({ searchParams }: Args) {
   )
 }
 
-const TITLE = brandTitle('Fotoalbum')
+const TITLE = 'Fotoalbum'
 const DESCRIPTION =
   'Galerie ze zápasů, tréninků i akcí mimo led. Fotky přidáváme hned po každém zápase.'
 
@@ -91,15 +99,13 @@ export async function generateMetadata({ searchParams }: Args): Promise<Metadata
   const { page: rawPage, sezona } = await searchParams
   const page = parsePageParam(rawPage)
 
-  return {
+  return buildPageMetadata({
     title: TITLE,
     description: DESCRIPTION,
-    alternates: {
-      canonical:
-        page > 1
-          ? buildListUrl(routes.list.galleries, { filters: { sezona }, page })
-          : routes.list.galleries,
-    },
-    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
-  }
+    path:
+      page > 1
+        ? buildListUrl(routes.list.galleries, { filters: { sezona }, page })
+        : routes.list.galleries,
+    robots: page > 1 ? { follow: true, index: false } : undefined,
+  })
 }

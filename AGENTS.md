@@ -1463,9 +1463,12 @@ je výchozí `true`, takže se vyrenderuje při první návštěvě a dál drž�
 
 ## Sitemapa
 
-`/matches-sitemap.xml` obsahuje `/zapasy/<slug>` **všech** zápasů se slugem,
-i naplánovaných a zrušených — detail mají všechny. `lastmod` je
-`updatedAt`. Cache jako u `gallery-sitemap.xml`: tag `matches-sitemap`
+`/matches-sitemap.xml` obsahuje `/zapasy/<slug>` zápasů se slugem, i
+naplánovaných a zrušených — detail mají všechny. Výjimka: zápas bez času
+výkopu (`00:00` v Europe/Prague, placeholder) se vynechává
+(`isUntimedMatch`, `lib/sitemapEntries.ts`). Všechny sitemapy kolekcí
+navíc vynechávají cesty z kolekce `redirects` (jeden dotaz na sitemapu;
+tag `redirects` invaliduje i je). `lastmod` je `updatedAt`. Cache jako u `gallery-sitemap.xml`: tag `matches-sitemap`
 + `revalidate: 86400`. Tag invaliduje `'max'` (crawlerský feed):
 
 - `hooks/revalidateMatchFeeds.ts` na `afterChange` i `afterDelete` kolekce
