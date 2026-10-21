@@ -44,7 +44,9 @@ export function buildCookieConsentConfig({
       // vše" a „Odmítnout" opticky stejně důležité — jinak by odmítnutí
       // vypadalo jako druhořadá volba, což řada DPA (včetně ÚOOÚ) považuje
       // za tzv. dark pattern.
-      consentModal: { layout: 'box', position: 'bottom right' },
+      // Úzký pruh dole, ne karta: menší plocha lišty = menší šance, že ji Lighthouse
+      // vezme za LCP prvek, a méně zakrývá obsah na mobilu.
+      consentModal: { layout: 'bar inline', position: 'bottom' },
       preferencesModal: { layout: 'box', position: 'right' },
     },
     categories: {
@@ -78,13 +80,15 @@ export function buildCookieConsentConfig({
       translations: {
         cs: {
           consentModal: {
-            title: 'Používáme cookies',
-            description:
-              'Nezbytné cookies používáme vždy, aby web fungoval a formuláře byly chráněné proti spamu. Se souhlasem navíc měříme anonymizovanou návštěvnost (Google Analytics). Volbu můžete kdykoli změnit — odkaz „Nastavení cookies" je v patičce webu.',
+            title: 'Cookies',
+            // Zmínka o Google Analytics jen tehdy, když je služba opravdu zapnutá —
+            // bez `gaMeasurementId` se žádná analytika nespouští a text by lhal.
+            description: gaMeasurementId
+              ? 'Nezbytné cookies používáme vždy, aby web fungoval. Se souhlasem navíc měříme anonymizovanou návštěvnost (Google Analytics). Volbu změníte kdykoli v patičce. <a href="/cookies">Více o cookies</a>'
+              : 'Web používá jen nezbytné cookies: pamatují si vaši volbu a chrání formuláře před spamem. Volbu změníte kdykoli v patičce. <a href="/cookies">Více o cookies</a>',
             acceptAllBtn: 'Přijmout vše',
             acceptNecessaryBtn: 'Odmítnout',
-            showPreferencesBtn: 'Nastavit předvolby',
-            footer: '<a href="/cookies">Zásady používání cookies</a>',
+            showPreferencesBtn: 'Předvolby',
           },
           preferencesModal: {
             title: 'Předvolby souhlasu s cookies',
