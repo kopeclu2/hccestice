@@ -62,7 +62,15 @@ export default function NotFound() {
   )
 }
 
+/**
+ * `robots` tu záměrně **není**: u odpovědi 404 Next sám vloží
+ * `<meta name="robots" content="noindex">` (viz `not-found.md`), takže vlastní
+ * `robots: { index: false, follow: true }` dávalo druhý tag `noindex, follow`.
+ * Dva robots meta tagy crawler vyhodnotí jako nejpřísnější kombinaci a
+ * v auditu to byl nález; odkazy z 404 se sledují i bez `follow`, je to výchozí.
+ */
 export const metadata: Metadata = {
   title: brandTitle('Stránka nenalezena'),
-  robots: { index: false, follow: true },
+  description:
+    'Stránka, kterou hledáte, neexistuje nebo byla přesunuta. Pokračujte na hlavní stránku HC Čestice, do aktualit nebo na rozlosování.',
 }

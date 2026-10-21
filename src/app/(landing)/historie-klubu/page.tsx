@@ -9,7 +9,7 @@ import { fetchHistoryEras } from '@/landing/features/history/data'
 import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 
 export const revalidate = 600
 
@@ -56,8 +56,8 @@ export default async function HistorieKlubuPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Historie klubu'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Historie klubu',
   description: DESCRIPTION,
-  alternates: { canonical: '/historie-klubu' },
-}
+  path: '/historie-klubu',
+})

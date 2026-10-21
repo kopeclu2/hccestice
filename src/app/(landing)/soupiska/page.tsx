@@ -15,7 +15,7 @@ import {
 import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
@@ -130,8 +130,8 @@ export default async function SoupiskaPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Soupiska'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Soupiska',
   description: DESCRIPTION,
-  alternates: { canonical: '/soupiska' },
-}
+  path: '/soupiska',
+})

@@ -107,7 +107,6 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const meta = await generateMeta({ collection: 'posts', doc: post })
   return {
     ...meta,
-    description: meta.description ?? post.excerpt ?? undefined,
     alternates: { canonical: routes.post(slug) },
   }
 }

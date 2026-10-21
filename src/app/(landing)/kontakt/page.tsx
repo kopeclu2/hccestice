@@ -8,7 +8,7 @@ import { ContactMap } from '@/landing/features/contact/components/ContactMap'
 import { ContactPanel } from '@/landing/features/contact/components/ContactPanel'
 import { PageJsonLd } from '@/landing/layout/PageJsonLd'
 import { SubpageShell } from '@/landing/layout/SubpageShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 
 export const revalidate = 600
 
@@ -43,8 +43,8 @@ export default async function KontaktPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Kontakt'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Kontakt',
   description: DESCRIPTION,
-  alternates: { canonical: '/kontakt' },
-}
+  path: '/kontakt',
+})

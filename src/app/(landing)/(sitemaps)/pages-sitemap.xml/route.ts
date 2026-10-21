@@ -15,7 +15,7 @@ import { sitemapRoute } from '../sitemapRoute'
  *
  * `/vzory` a `/widgety` sem nepatří — to jsou interní katalogy (noindex).
  *
- * `lastmod` u nich záměrně **není** (viz `sitemapRoute`): všech sedm URL by
+ * `lastmod` u nich záměrně **není** (viz `sitemapRoute`): všech osm URL by
  * jinak hlásilo změnu při každém requestu, s identickým timestampem.
  */
 const STATIC_PATHS = [
@@ -26,6 +26,9 @@ const STATIC_PATHS = [
   '/sponzori',
   '/historie-klubu',
   '/treninky',
+  // Ručně psaná kontaktní stránka. `/kontakty` (dokument z CMS) tu zůstává
+  // v kolekci, dokud klub nerozhodne, která z nich je jediná kontaktní.
+  routes.contact,
 ] as const
 
 export const GET = sitemapRoute({

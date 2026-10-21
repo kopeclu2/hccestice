@@ -11,7 +11,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { countLabel } from '@/lib/plural'
 
 export const revalidate = 600
@@ -69,8 +69,8 @@ export default async function SponzoriPage() {
   )
 }
 
-export const metadata: Metadata = {
-  title: brandTitle('Partneři'),
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Partneři',
   description: DESCRIPTION,
-  alternates: { canonical: '/sponzori' },
-}
+  path: '/sponzori',
+})

@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { slugField } from 'payload'
 
-import { slugifyCs } from '@/lib/slugifyCs'
+import { slugFieldCs } from '@/fields/slugCs'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
@@ -53,11 +52,7 @@ export const Opponents: CollectionConfig = {
     },
     // Výchozí slugify Payloadu zahazuje písmena s diakritikou (`HC Žďár` →
     // `hc-r`), proto vlastní. Slug soupeře je součástí adresy zápasu.
-    slugField({
-      useAsSlug: 'name',
-      slugify: ({ valueToSlugify }) =>
-        typeof valueToSlugify === 'string' ? slugifyCs(valueToSlugify) : undefined,
-    }),
+    slugFieldCs({ useAsSlug: 'name' }),
   ],
   hooks: {
     // Název a logo soupeře jsou na detailu zápasu i ve výpisech. Synchronizace

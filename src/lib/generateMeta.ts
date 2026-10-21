@@ -5,7 +5,7 @@ import type { Media, Page, Post, Config } from '@/payload-types'
 import { brandTitle } from './brandTitle'
 import { getServerSideURL } from './getURL'
 import { mergeOpenGraph, OG_FALLBACK_IMAGE } from './mergeOpenGraph'
-import { htmlPlainText, snippet } from './plainText'
+import { descriptionFromBody, htmlPlainText, snippet, stripEmoji } from './plainText'
 import { routes } from './routes'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
@@ -41,8 +41,17 @@ export const generateMeta = async (args: {
   const title = brandTitle(rawTitle ? htmlPlainText(rawTitle) : null)
 
   // Popisy naimportované z eStránky bývají celý HTML odstavec — do meta tagu
-  // patří prostý text, jinak se do stránky propíšou `&lt;p&gt;…`
-  const description = snippet(htmlPlainText(doc?.meta?.description || ''), 160) || undefined
+  // patří prostý text, jinak se do stránky propíšou `&lt;p&gt;…`. Pořadí zdrojů:
+  // SEO záložka → perex článku → začátek těla (naimportované dokumenty mají
+  // SEO záložku většinou prázdnou, takže bez posledního kroku zůstávají bez
+  // popisku). Emoji se z popisků odstraňují.
+  const plain = (value?: string | null) => snippet(stripEmoji(htmlPlainText(value || '')), 160)
+  const excerpt = doc && 'excerpt' in doc ? doc.excerpt : null
+  const description =
+    plain(doc?.meta?.description) ||
+    plain(excerpt) ||
+    (doc ? descriptionFromBody(doc) : '') ||
+    undefined
 
   /**
    * `og:url` byl dřív `Array.isArray(doc?.slug) ? doc.slug.join('/') : '/'`.

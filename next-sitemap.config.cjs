@@ -3,6 +3,14 @@ const SITE_URL =
   process.env.VERCEL_PROJECT_PRODUCTION_URL ||
   'https://example.com'
 
+/**
+ * `Host:` je nestandardní direktiva (jen Yandex, a ten ji v roce 2018
+ * zrušil) — Google ani Bing ji nečtou a validátory ji berou jako neznámý
+ * příkaz. `next-sitemap` ji vkládá natvrdo bez možnosti vypnutí (viz
+ * `robots-txt-builder.js`), proto se blok `# Host` vyřízne z hotového textu.
+ */
+const stripHostDirective = (text) => text.replace(/# Host\nHost:[^\n]*\n\n?/, '')
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: SITE_URL,
@@ -16,6 +24,7 @@ module.exports = {
     '/posts/*',
   ],
   robotsTxtOptions: {
+    transformRobotsTxt: async (_config, text) => stripHostDirective(text),
     policies: [
       {
         userAgent: '*',

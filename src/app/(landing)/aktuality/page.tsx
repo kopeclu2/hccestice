@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { fetchSite, fetchSiteConfig } from '@/landing/data/site'
@@ -12,7 +13,7 @@ import { SubpageShell } from '@/landing/layout/SubpageShell'
 import { buildListUrl, parsePageParam } from '@/landing/lib/listUrl'
 import { Pagination } from '@/landing/ui/Pagination'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { brandTitle } from '@/lib/brandTitle'
+import { buildPageMetadata } from '@/lib/buildPageMetadata'
 import { routes } from '@/lib/routes'
 
 const DESCRIPTION =
@@ -47,6 +48,13 @@ export default async function AktualityPage({ searchParams }: Args) {
     fetchPostsPage({ page: requestedPage, type, withPhotos: showPhoto }),
     fetchSite(),
   ])
+
+  // Strana za poslední stranou výpisu je 404, ne prázdný výpis se statusem 200:
+  // strana nad `totalPages` neexistuje (prázdný výpis má `totalPages` 0 nebo
+  // 1 — první strana je vždy platná).
+  // `notFound()`, ne redirect — viz AGENTS.md „`loading.tsx` nesmí být nad
+  // routou, která redirectuje".
+  if (requestedPage > Math.max(1, postsPage.totalPages)) notFound()
 
   const hrefFor = (n: number): string =>
     buildListUrl(routes.list.posts, { filters: { typ: type }, page: n, hash: 'seznam' })
@@ -93,15 +101,13 @@ export default async function AktualityPage({ searchParams }: Args) {
 export async function generateMetadata({ searchParams }: Args): Promise<Metadata> {
   const { page, type } = readParams(await searchParams)
 
-  return {
-    title: brandTitle('Aktuality'),
+  return buildPageMetadata({
+    title: 'Aktuality',
     description: DESCRIPTION,
-    alternates: {
-      canonical:
-        page > 1
-          ? buildListUrl(routes.list.posts, { filters: { typ: type }, page })
-          : routes.list.posts,
-    },
-    ...(page > 1 ? { robots: { follow: true, index: false } } : {}),
-  }
+    path:
+      page > 1
+        ? buildListUrl(routes.list.posts, { filters: { typ: type }, page })
+        : routes.list.posts,
+    robots: page > 1 ? { follow: true, index: false } : undefined,
+  })
 }

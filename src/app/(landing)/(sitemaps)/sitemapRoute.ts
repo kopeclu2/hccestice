@@ -2,10 +2,14 @@ import { getServerSideSitemap } from 'next-sitemap'
 import type { Where } from 'payload'
 
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
-import type { CacheTag } from '@/landing/data/tags'
+import { CACHE_TAGS, type CacheTag } from '@/landing/data/tags'
 import { getServerSideURL } from '@/lib/getURL'
-
-type SitemapEntry = { loc: string; lastmod?: string }
+import {
+  buildSitemapEntries,
+  redirectSourceSet,
+  type SitemapDoc,
+  type SitemapEntry,
+} from '@/lib/sitemapEntries'
 
 type SitemapRouteOptions = {
   collection: 'posts' | 'pages' | 'galleries' | 'matches'
@@ -28,6 +32,13 @@ type SitemapRouteOptions = {
    * každém requestu.
    */
   staticPaths?: readonly string[]
+  /**
+   * Dokument, který se do sitemapy nepíše (např. zápas bez času výkopu).
+   * Pole `date` v dokumentu je jen s `selectDate`.
+   */
+  skipDoc?: (doc: SitemapDoc) => boolean
+  /** Do `select` přidat `date` — jen kolekce, která pole má (`matches`). */
+  selectDate?: boolean
 }
 
 const HEADERS = {
@@ -50,6 +61,8 @@ export function sitemapRoute({
   limit,
   excludeSlugs,
   staticPaths = [],
+  skipDoc,
+  selectDate = false,
 }: SitemapRouteOptions): () => Promise<Response> {
   const getSitemap = cachedQuery(
     async (): Promise<SitemapEntry[]> => {
@@ -64,17 +77,34 @@ export function sitemapRoute({
         depth: 0,
         limit,
         pagination: false,
-        select: { slug: true, updatedAt: true },
+        select: { slug: true, updatedAt: true, ...(selectDate && { date: true }) },
       })
 
-      return [
-        ...staticPaths.map((staticPath) => ({ loc: `${siteUrl}${staticPath}` })),
-        ...docs
-          .filter((doc) => doc.slug && !excludeSlugs?.has(doc.slug))
-          .map((doc) => ({ loc: `${siteUrl}${path(doc.slug as string)}`, lastmod: doc.updatedAt })),
-      ]
+      // Jeden dotaz na všechna přesměrování, ne dotaz na každý dokument.
+      // Dokument, jehož cesta je v `redirects.from`, se přesměruje (3xx),
+      // takže do sitemapy nepatří. Čte se bez `overrideAccess: false`
+      // stejně jako `getRedirects` — kolekci plní import, ne návštěvník.
+      const { docs: redirects } = await payload.find({
+        collection: 'redirects',
+        depth: 0,
+        limit: 0,
+        pagination: false,
+        select: { from: true },
+      })
+
+      return buildSitemapEntries({
+        siteUrl,
+        staticPaths,
+        // `select` vrací jen `slug`, `updatedAt` a případně `date`; typ kolekce je unie.
+        docs: docs as SitemapDoc[],
+        path,
+        excludeSlugs,
+        redirectSources: redirectSourceSet(redirects.map(({ from }) => from)),
+        skipDoc,
+      })
     },
-    { key: tag, tags: [tag], revalidate: 86400 },
+    // Tag kolekce redirectů navíc: změna přesměrování mění i sitemapu.
+    { key: tag, version: 'v2', tags: [tag, CACHE_TAGS.redirects], revalidate: 86400 },
   )
 
   return async () => getServerSideSitemap(await getSitemap(), HEADERS)

@@ -17,6 +17,8 @@ import type { CollectionSlug } from 'payload'
 export const routes = {
   /** Domovská stránka — dokument `pages` se slugem `home` žije na `/`. */
   home: '/',
+  /** Kontaktní stránka — ručně psaná routa, ne dokument `pages` (ten je `/kontakty`). */
+  contact: '/kontakt',
   /** Detail článku. */
   post: (slug: string): string => `/aktuality/${slug}`,
   /** Detail zápasu. */
