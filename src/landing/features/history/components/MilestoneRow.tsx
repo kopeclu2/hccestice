@@ -37,7 +37,12 @@ export function MilestoneRow({ milestone, index }: { milestone: Milestone; index
           {milestone.year}
         </div>
         <Badge className="md:hidden" size="sm" variant="lime">
-          {milestone.year}
+          {/* Strojově čitelný letopočet jen u čtyřmístného roku; „2009/10" apod. zůstane textem. */}
+          {/^\d{4}$/.test(milestone.year) ? (
+            <time dateTime={milestone.year}>{milestone.year}</time>
+          ) : (
+            milestone.year
+          )}
         </Badge>
       </div>
 

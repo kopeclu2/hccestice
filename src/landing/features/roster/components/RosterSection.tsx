@@ -40,11 +40,13 @@ export function RosterSection({
             {kicker}
           </Eyebrow>
         </div>
-        <div className="mt-5 grid grid-cols-2 gap-x-3 gap-y-8.5 md:[grid-template-columns:repeat(auto-fill,minmax(13rem,1fr))] md:gap-x-5.5 md:gap-y-10 lg:[grid-template-columns:repeat(auto-fill,minmax(16.125rem,1fr))]">
+        <ul className="mt-5 grid grid-cols-2 gap-x-3 gap-y-8.5 md:[grid-template-columns:repeat(auto-fill,minmax(13rem,1fr))] md:gap-x-5.5 md:gap-y-10 lg:[grid-template-columns:repeat(auto-fill,minmax(16.125rem,1fr))]">
           {cards.map((card) => (
-            <PlayerTile card={card} key={card.key} />
+            <li key={card.key}>
+              <PlayerTile card={card} />
+            </li>
           ))}
-        </div>
+        </ul>
       </Reveal>
     </section>
   )

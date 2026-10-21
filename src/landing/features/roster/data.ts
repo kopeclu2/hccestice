@@ -21,7 +21,7 @@ export const POSITION_LABEL: Record<string, string> = {
 export type RosterSection = {
   anchor: string
   title: string
-  /** Anglický kicker vpravo u nadpisu sekce (podpis designu). */
+  /** Krátký český podpis vpravo u nadpisu sekce (handoff má anglický, ten se do HTML nehodí). */
   kicker: string
   players: RosterPlayer[]
 }
@@ -66,13 +66,13 @@ const bySectionOrder = (a: RosterPlayer, b: RosterPlayer): number => {
 export const fetchRosterSections = cache(async (): Promise<RosterSection[]> => {
   const roster = await fetchRoster()
   const groups: Array<Omit<RosterSection, 'players'> & { match: (p: RosterPlayer) => boolean }> = [
-    { anchor: 'brankari', title: 'Brankáři', kicker: 'Goalies', match: (p) => p.position === 'G' },
-    { anchor: 'obranci', title: 'Obránci', kicker: 'Defense', match: (p) => p.position === 'D' },
-    { anchor: 'utocnici', title: 'Útočníci', kicker: 'Forwards', match: (p) => p.position === 'F' },
+    { anchor: 'brankari', title: 'Brankáři', kicker: 'Gólmani', match: (p) => p.position === 'G' },
+    { anchor: 'obranci', title: 'Obránci', kicker: 'Obrana', match: (p) => p.position === 'D' },
+    { anchor: 'utocnici', title: 'Útočníci', kicker: 'Útok', match: (p) => p.position === 'F' },
     {
       anchor: 'hraci',
       title: 'Hráči',
-      kicker: 'Players',
+      kicker: 'Ostatní',
       match: (p) => !p.position || !(p.position in POSITION_LABEL),
     },
   ]

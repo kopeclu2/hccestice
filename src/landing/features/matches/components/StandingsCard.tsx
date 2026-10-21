@@ -38,30 +38,68 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
         </EmptyState>
       ) : (
         <>
-          {standings.rows.map((row) => {
-            const isOurs = isOurTeam(row.team)
-            return (
-              <div
-                className={cn(
-                  /* Na mobilu užší pevné sloupce a menší mezera: s desktopovými
-                     hodnotami (32+40+40 px a gap-3) zbylo na název týmu tak málo,
-                     že se „HC Spartak Choceň B" lámalo na čtyři řádky. */
-                  'grid grid-cols-[1.5rem_1fr_1.75rem_2rem] items-center gap-2 border-b border-line-soft py-2.75 md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3',
-                  isOurs && 'bg-tint',
-                )}
-                key={row.pos}
-              >
-                <div className={cn('text-sm font-bold', isOurs ? 'text-club-dark' : 'text-faint')}>
-                  {row.pos}.
-                </div>
-                <div className={cn('text-sm md:text-base', isOurs ? 'font-bold' : 'font-medium')}>
-                  {row.team}
-                </div>
-                <div className="text-right text-sm text-faint">{row.games}</div>
-                <div className="text-right text-sm font-bold md:text-base">{row.points}</div>
-              </div>
-            )
-          })}
+          {/* Sémantická tabulka, vzhled drží `display: grid` na řádcích; role jsou
+              zapsané výslovně, protože Safari při změně `display` sémantiku zahodí. */}
+          <table className="block w-full" role="table">
+            <caption className="sr-only">{`Tabulka soutěže: ${standings.seasonLabel}`}</caption>
+            <thead className="sr-only" role="rowgroup">
+              <tr role="row">
+                <th role="columnheader" scope="col">
+                  Pořadí
+                </th>
+                <th role="columnheader" scope="col">
+                  Tým
+                </th>
+                <th role="columnheader" scope="col">
+                  Zápasy
+                </th>
+                <th role="columnheader" scope="col">
+                  Body
+                </th>
+              </tr>
+            </thead>
+            <tbody className="block" role="rowgroup">
+              {standings.rows.map((row) => {
+                const isOurs = isOurTeam(row.team)
+                return (
+                  <tr
+                    className={cn(
+                      /* Na mobilu užší pevné sloupce a menší mezera: s desktopovými
+                         hodnotami (32+40+40 px a gap-3) zbylo na název týmu tak málo,
+                         že se „HC Spartak Choceň B" lámalo na čtyři řádky. */
+                      'grid grid-cols-[1.5rem_1fr_1.75rem_2rem] items-center gap-2 border-b border-line-soft py-2.75 md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3',
+                      isOurs && 'bg-tint',
+                    )}
+                    key={row.pos}
+                    role="row"
+                  >
+                    <td
+                      className={cn('text-sm font-bold', isOurs ? 'text-club-dark' : 'text-faint')}
+                      role="cell"
+                    >
+                      {row.pos}.
+                    </td>
+                    <th
+                      className={cn(
+                        'text-left text-sm md:text-base',
+                        isOurs ? 'font-bold' : 'font-medium',
+                      )}
+                      role="rowheader"
+                      scope="row"
+                    >
+                      {row.team}
+                    </th>
+                    <td className="text-right text-sm text-faint" role="cell">
+                      {row.games}
+                    </td>
+                    <td className="text-right text-sm font-bold md:text-base" role="cell">
+                      {row.points}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
 
           <a
             className="mt-3.5 inline-block text-sm font-semibold text-club-dark hover:text-club"

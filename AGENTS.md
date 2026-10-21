@@ -355,8 +355,17 @@ Cachuje se tagem `llms-txt`, ne časem, stejně jako sitemapy vedle.
 optimalizace, ale podmínka funkčnosti.
 
 Ručně psané Next stránky (`/zapasy`, `/soupiska`, …) nejsou dokumenty v CMS,
-takže je žádný dotaz na kolekce nevrátí — jsou v routě vyjmenované ručně
-v sekci „Sekce webu".
+takže je žádný dotaz na kolekce nevrátí — jsou vyjmenované ručně v sekci
+„Sekce webu" (`lib/llmsTxt.ts`).
+
+Text skládá čistá funkce `buildLlmsTxt` v `src/lib/llmsTxt.ts` (testovaná, bez
+I/O), route jen načte data. Začíná shrnutím klubu (fakta z `lib/club.ts`,
+kontakt ze `siteConfig`), pak sekce webu, nejbližší zápasy (5), poslední
+výsledky (5), další stránky, 30 článků **s popisem** a 10 nejnovějších alb.
+Vyřazuje cesty z kolekce `redirects` (stejný filtr jako sitemapy) a zápasy
+bez času výkopu. Zápasy mění tag `matches-list` a „od teď" počítá
+`scheduleFrom()` mimo cache a vstupuje do klíče argumentem; pojistné
+`revalidate` je proto 3600 s, ne 86400 s.
 
 # Cache a renderovací režimy
 
@@ -1480,8 +1489,8 @@ a `revalidate: 3600` jako záchranná síť. Platí tři pravidla z „Cache
 a renderovací režimy": tag i `revalidate`, `{ expire: 0 }` u redakčního
 obsahu a žádné `new Date()` uvnitř cache (naplánovaný zápas řeší odpočet
 na klientu (`useCountdown`): `Countdown` po uplynutí času buly místo nul ukáže „Zápas právě
-probíhá nebo čeká na výsledek", server vždy kreslí „--", takže bez hydration
-mismatch; platí i v hero a ve widgetu Nejbližší zápas). Tag se propaguje do prerenderované stránky, takže
+probíhá nebo čeká na výsledek", server vždy kreslí „--" (přes CSS `content` v `CountdownText`, takže není
+v extrahovaném textu SSR HTML), bez hydration mismatch; platí i v hero a ve widgetu Nejbližší zápas). Tag se propaguje do prerenderované stránky, takže
 `revalidatePath` na detail není potřeba.
 
 Cesty, kterými se tagy expirují:

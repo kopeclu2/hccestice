@@ -1,16 +1,26 @@
 import type { Where } from 'payload'
 
+import { CLUB_EMAIL } from '@/landing/content'
 import { LANDING_SLUGS } from '@/landing/data/landingSlugs'
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
+import { fetchSiteConfig } from '@/landing/data/site'
 import { CACHE_TAGS } from '@/landing/data/tags'
-import { CLUB_NAME } from '@/lib/club'
+import { formatFullDate, formatFullDateTime } from '@/lib/datetime'
 import { getServerSideURL } from '@/lib/getURL'
+import { buildLlmsTxt, type LlmsLink } from '@/lib/llmsTxt'
 import { htmlPlainText, snippet } from '@/lib/plainText'
 import { routes } from '@/lib/routes'
+import {
+  isUntimedMatch,
+  normalizeRedirectPath,
+  redirectSourceSet,
+  type SitemapDoc,
+} from '@/lib/sitemapEntries'
 
 /**
  * `llms.txt` podle konvence llmstxt.org — strukturovaný rozcestník obsahu
- * pro AI asistenty a crawlery.
+ * pro AI asistenty a crawlery. Skládání textu je v `lib/llmsTxt.ts`, tady
+ * jsou jen dotazy.
  *
  * Záměrně vlastní route handler, ne `payload-plugin-llms-txt`: ten neumí
  * flattenovat blokové layouty do Markdownu, a `pages` jsou v tomhle projektu
@@ -18,22 +28,35 @@ import { routes } from '@/lib/routes'
  * export by potřeboval vlastní blok→Markdown serializér.
  *
  * Cachuje se **tagem**, ne časem, stejně jako sitemapy vedle
- * (`src/app/(frontend)/(sitemaps)/*`). `unstable_cache` bez
+ * (`src/app/(landing)/(sitemaps)/*`). `unstable_cache` bez
  * `options.revalidate` má TTL jeden rok, takže invalidace v
  * `revalidatePage` / `revalidatePost` není optimalizace, ale podmínka
- * funkčnosti.
+ * funkčnosti. Zápasy mění tag `matches-list`, který ho obnovuje taky;
+ * `new Date()` do cachované funkce nesmí, proto hranici „od teď" počítá
+ * `scheduleFrom()` mimo ni a vstupuje do klíče argumentem.
  */
 
+/** Strop počtu položek v sekcích — rozcestník, ne export databáze. */
+const RECENT_POSTS = 30
+const RECENT_GALLERIES = 10
+const RECENT_RESULTS = 5
+const NEXT_FIXTURES = 5
+
 /** Popis položky — jedna řádka, bez markupu z legacy importu. */
-const describe = (raw?: string | null): string => {
-  const text = snippet(htmlPlainText(raw ?? ''), 160)
-  return text ? `: ${text}` : ''
+const describe = (raw?: string | null): string | null =>
+  snippet(htmlPlainText(raw ?? ''), 160) || null
+
+/** Začátek aktuální hodiny: hranice „od teď" pro rozlosování (viz komentář výš). */
+const scheduleFrom = (): string => {
+  const boundary = new Date()
+  boundary.setMinutes(0, 0, 0)
+  return boundary.toISOString()
 }
 
 const getLlmsTxt = cachedQuery(
-  async (): Promise<string> => {
+  async (from: string): Promise<string> => {
     const payload = await getPayloadClient()
-    const SITE_URL = getServerSideURL()
+    const siteUrl = getServerSideURL()
 
     const published: Where = { _status: { equals: 'published' } }
     const query = {
@@ -45,7 +68,7 @@ const getLlmsTxt = cachedQuery(
       where: published,
     } as const
 
-    const [pages, posts, galleries] = await Promise.all([
+    const [pages, posts, galleries, played, scheduled, redirects, site] = await Promise.all([
       payload.find({
         ...query,
         collection: 'pages',
@@ -66,100 +89,131 @@ const getLlmsTxt = cachedQuery(
         limit: 1000,
         pagination: false,
         sort: '-date',
-        select: { slug: true, title: true },
+        select: { slug: true, title: true, date: true },
       }),
+      // `matches` verzování nemá (viz galerie výš).
+      payload.find({
+        collection: 'matches',
+        overrideAccess: false,
+        depth: 0,
+        limit: RECENT_RESULTS * 2,
+        pagination: false,
+        sort: '-date',
+        where: { status: { equals: 'played' } },
+        select: { slug: true, displayTitle: true, date: true, scoreOurs: true, scoreOpp: true },
+      }),
+      payload.find({
+        collection: 'matches',
+        overrideAccess: false,
+        depth: 0,
+        limit: NEXT_FIXTURES * 3,
+        pagination: false,
+        sort: 'date',
+        where: {
+          and: [{ status: { equals: 'scheduled' } }, { date: { greater_than_equal: from } }],
+        },
+        select: { slug: true, displayTitle: true, date: true },
+      }),
+      // Dokument, jehož cesta je v `redirects.from`, se přesměruje (3xx) —
+      // v rozcestníku by to byl odkaz na přesměrování, stejně jako v sitemapě.
+      payload.find({
+        collection: 'redirects',
+        depth: 0,
+        limit: 0,
+        pagination: false,
+        select: { from: true },
+      }),
+      fetchSiteConfig(),
     ])
 
-    const lines = [
-      `# ${CLUB_NAME}`,
-      '',
-      `> Hokejový klub ${CLUB_NAME} — aktuality, zápasy, soupiska, fotogalerie a historie klubu.`,
-      '',
-    ]
+    const redirected = redirectSourceSet(redirects.docs.map(({ from: source }) => source))
+    const live = (path: string): boolean => !redirected.has(normalizeRedirectPath(path))
 
-    const pageLinks = pages.docs
+    // Titulek zápasu se v adminu odděluje malým „x", web píše „×".
+    const matchTitle = (title?: string | null): string => (title ?? 'Zápas').replace(/ x /, ' × ')
+
+    const pageLinks: LlmsLink[] = pages.docs
       .filter((page) => Boolean(page.slug))
       // `home` je na `/` a je to zároveň landing page — v rozcestníku
       // by jen duplikovala kořen webu.
       .filter((page) => page.slug !== 'home')
-      // Legacy dokumenty přebité ručně psanou routou. Bez tohohle filtru
-      // byly `/sponzori` a `/historie-klubu` v souboru dvakrát — jednou
-      // tady a jednou v ručním výčtu „Sekce webu" dole.
+      // Legacy dokumenty přebité ručně psanou routou (`/sponzori`,
+      // `/historie-klubu`…) jsou v sekci „Sekce webu".
       .filter((page) => !LANDING_SLUGS.has(page.slug as string))
-      .map(
-        (page) =>
-          `- [${page.title ?? page.slug}](${SITE_URL}${routes.page(page.slug)})${describe(page.meta?.description)}`,
-      )
+      .filter((page) => live(routes.page(page.slug)))
+      .map((page) => ({
+        path: routes.page(page.slug),
+        title: page.title ?? (page.slug as string),
+        note: describe(page.meta?.description),
+      }))
 
-    if (pageLinks.length) {
-      lines.push('## Stránky', '', ...pageLinks, '')
-    }
-
-    /**
-     * Jen posledních `RECENT_POSTS` článků.
-     *
-     * Nefiltrovaný výpis znamenal 301 položek a soubor o 67 kB — kompletní
-     * archiv od sezóny 2017/18, kde se klíčová fakta o klubu utopila mezi
-     * stovkami zápasových zpráviček. `llms.txt` je rozcestník, ne export
-     * databáze; zbytek archivu je objevitelný přes `/aktuality` a
-     * `posts-sitemap.xml`.
-     */
-    const RECENT_POSTS = 30
-
-    const postLinks = posts.docs
-      .filter((post) => Boolean(post.slug))
+    // Článek bez popisku do rozcestníku nepatří: odkaz bez řádku, o čem je,
+    // modelu nic neřekne a vytlačil by užitečnější.
+    const postLinks: LlmsLink[] = posts.docs
+      .filter((post) => Boolean(post.slug) && live(routes.post(post.slug)))
+      .map((post) => ({
+        path: routes.post(post.slug),
+        title: post.title ?? post.slug,
+        note: describe(post.excerpt || post.meta?.description),
+      }))
+      .filter((post) => post.note)
       .slice(0, RECENT_POSTS)
-      .map(
-        (post) =>
-          `- [${post.title ?? post.slug}](${SITE_URL}${routes.post(post.slug)})${describe(
-            post.excerpt || post.meta?.description,
-          )}`,
-      )
-
-    if (postLinks.length) {
-      lines.push(
-        '## Aktuality',
-        '',
-        `Posledních ${postLinks.length} článků; celý archiv je na ${SITE_URL}${routes.list.posts}.`,
-        '',
-        ...postLinks,
-        '',
-      )
-    }
 
     // Detaily fotoalb jsou veřejné stránky, ale dotazy výš je nevrátí —
     // stejná mezera, jakou měla sitemapa (viz `gallery-sitemap.xml`).
-    const galleryLinks = galleries.docs
-      .filter((gallery) => Boolean(gallery.slug))
-      .map(
-        (gallery) =>
-          `- [${gallery.title ?? gallery.slug}](${SITE_URL}${routes.gallery(gallery.slug)})`,
-      )
+    const galleryLinks: LlmsLink[] = galleries.docs
+      .filter((gallery) => Boolean(gallery.slug) && live(routes.gallery(gallery.slug)))
+      .slice(0, RECENT_GALLERIES)
+      .map((gallery) => ({
+        path: routes.gallery(gallery.slug),
+        title: gallery.title ?? gallery.slug,
+        note: gallery.date ? formatFullDate(gallery.date) : null,
+      }))
 
-    if (galleryLinks.length) {
-      lines.push('## Fotoalba', '', ...galleryLinks, '')
-    }
+    const results: LlmsLink[] = played.docs
+      .filter((match) => Boolean(match.slug) && live(routes.match(match.slug as string)))
+      .slice(0, RECENT_RESULTS)
+      .map((match) => ({
+        path: routes.match(match.slug as string),
+        title: matchTitle(match.displayTitle),
+        note: [
+          match.date ? formatFullDate(match.date) : null,
+          match.scoreOurs != null && match.scoreOpp != null
+            ? `skóre ${match.scoreOurs}:${match.scoreOpp}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(', '),
+      }))
 
-    // Ručně psané Next stránky nejsou dokumenty v CMS, takže je žádný
-    // dotaz výš nevrátí — a přitom jsou to nejnavštěvovanější sekce webu.
-    lines.push(
-      '## Sekce webu',
-      '',
-      `- [Zápasy](${SITE_URL}${routes.list.matches}): rozpis a výsledky zápasů aktuální sezóny.`,
-      `- [Soupiska](${SITE_URL}/soupiska): hráči a realizační tým.`,
-      `- [Aktuality](${SITE_URL}${routes.list.posts}): výpis všech článků.`,
-      `- [Fotogalerie](${SITE_URL}${routes.list.galleries}): fotky ze zápasů a akcí klubu.`,
-      `- [Historie klubu](${SITE_URL}/historie-klubu): milníky a lidé klubu.`,
-      `- [Sponzoři](${SITE_URL}/sponzori): partneři klubu.`,
-      `- [Tréninky](${SITE_URL}/treninky): rozpis ledových hodin.`,
-      `- [Kontakt](${SITE_URL}/kontakt): e-mail, adresa a kontaktní formulář.`,
-      '',
-    )
+    const fixtures: LlmsLink[] = scheduled.docs
+      .filter((match) => Boolean(match.slug) && !isUntimedMatch(match as SitemapDoc))
+      .filter((match) => live(routes.match(match.slug as string)))
+      .slice(0, NEXT_FIXTURES)
+      .map((match) => ({
+        path: routes.match(match.slug as string),
+        title: matchTitle(match.displayTitle),
+        note: match.date ? formatFullDateTime(match.date) : null,
+      }))
 
-    return lines.join('\n')
+    return buildLlmsTxt({
+      siteUrl,
+      email: site.contactEmail ?? CLUB_EMAIL,
+      pages: pageLinks,
+      posts: postLinks,
+      galleries: galleryLinks,
+      results,
+      fixtures,
+    })
   },
   // Pojistka pod tagem — bez `revalidate` má `unstable_cache` TTL jeden rok.
-  { key: 'llms-txt', tags: [CACHE_TAGS.llmsTxt], revalidate: 86400 },
+  // Hodina, ne den: „nejbližší zápasy" se s časem posouvají (viz `scheduleFrom`).
+  {
+    key: 'llms-txt',
+    version: 'v2',
+    tags: [CACHE_TAGS.llmsTxt, CACHE_TAGS.matches, CACHE_TAGS.redirects],
+    revalidate: 3600,
+  },
 )
 
 /**
@@ -172,7 +226,7 @@ const getLlmsTxt = cachedQuery(
  * tagu nikoho nezdržel.
  */
 export async function GET() {
-  const body = await getLlmsTxt()
+  const body = await getLlmsTxt(scheduleFrom())
 
   return new Response(body, {
     headers: {
