@@ -8,7 +8,7 @@ import type { FooterContent, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Watermark } from '@/landing/ui/Watermark'
-import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
+import { ARENA_HOME_TEXT, CLUB_LOGO, CLUB_NAME, CLUB_SEAT_TEXT } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 /**
@@ -163,6 +163,13 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * je pod AA pro malé písmo.
          */}
         <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-on-contrast-line pt-5 text-xs text-on-contrast-strong md:mt-10 lg:mt-11">
+          {/* Adresa sídla a stadionu z `lib/club` (táž data jako JSON-LD).
+              `basis-full`: vlastní řádek nad copyrightem, ať se dlouhé řádky
+              nelámou uprostřed vedle loga. */}
+          <address className="flex basis-full flex-wrap gap-x-6 gap-y-1 not-italic">
+            <span>{CLUB_SEAT_TEXT}</span>
+            <span>{ARENA_HOME_TEXT}</span>
+          </address>
           <span className="flex items-center gap-3.5">
             {/* `rounded-full`: logo má neprůhledné bílé pozadí, takže by se
                 na zelené ploše kreslilo jako bílý čtverec kolem kruhového

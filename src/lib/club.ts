@@ -27,13 +27,14 @@ export const CLUB_ALTERNATE_NAME = 'TJ Sokol Čestice'
 export const CLUB_FOUNDING_YEAR = '1954'
 
 /**
- * Poštovní adresa spolku — jediný zdroj pro JSON-LD. Hodnotu (zvlášť
- * `addressLocality`) měnit jen po potvrzení klubem, na webu i v rejstříku
- * musí být tatáž.
+ * Sídlo spolku podle ARES (rozhodnutí D-10): „Čestice 112, 517 41 Čestice".
+ * Kostelec nad Orlicí je jen pošta, v adrese být nemá. Jediný zdroj pro
+ * JSON-LD i viditelný text (`CLUB_SEAT_TEXT`). Hodnotu měnit jen po
+ * potvrzení klubem, na webu i v rejstříku musí být tatáž.
  */
 export const CLUB_ADDRESS = {
   streetAddress: 'Čestice 112',
-  addressLocality: 'Kostelec nad Orlicí',
+  addressLocality: 'Čestice',
   addressRegion: 'Královéhradecký kraj',
   postalCode: '517 41',
   addressCountry: 'CZ',
@@ -98,6 +99,20 @@ export const ARENA_ADDRESS = {
   postalCode: '516 01',
   addressCountry: 'CZ',
 } as const
+
+/** Zkrácený název haly a obce pro viditelný text (v JSON-LD zůstává plný `ARENA_NAME`). */
+const ARENA_SHORT_NAME = 'Zimní stadion'
+const ARENA_LOCALITY_SHORT = 'Rychnov n. K.'
+
+/**
+ * Viditelná adresa sídla a stadionu (patička, `/kontakt`). Skládá se
+ * z týchž konstant jako JSON-LD (`CLUB_ADDRESS`, `ARENA_ADDRESS`), takže se
+ * text na webu a strukturovaná data nemohou rozejít; jediný rozdíl je
+ * zkrácení názvu haly a obce.
+ */
+export const CLUB_SEAT_TEXT = `${CLUB_LEGAL_NAME}, ${CLUB_ADDRESS.streetAddress}, ${CLUB_ADDRESS.postalCode} ${CLUB_ADDRESS.addressLocality} (sídlo)`
+
+export const ARENA_HOME_TEXT = `Domácí stadion: ${ARENA_SHORT_NAME}, ${ARENA_ADDRESS.streetAddress}, ${ARENA_ADDRESS.postalCode} ${ARENA_LOCALITY_SHORT}`
 
 /**
  * Souřadnice haly (WGS 84). Ověřeno proti OpenStreetMap: bod s adresou
