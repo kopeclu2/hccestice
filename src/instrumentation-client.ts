@@ -1,23 +1,35 @@
-import * as Sentry from '@sentry/nextjs'
+import type * as SentryNextjs from '@sentry/nextjs'
 
-import { scrubBreadcrumb, scrubEvent, scrubTransaction } from '@/lib/sentryScrub'
+import { bufferEarlyErrors, loadSentry } from '@/lib/sentryClient'
 
 /**
  * Klientská inicializace. Konvence `instrumentation-client.ts` (Next 15.3+,
  * `node_modules/next/dist/docs/.../instrumentation-client.md`) nahrazuje starší
  * `sentry.client.config.ts` — soubor běží po načtení HTML, ale před hydratací.
  *
- * Bez `NEXT_PUBLIC_SENTRY_DSN` (lokální vývoj) `Sentry.init` jen zaloguje
- * varování a nic neodesílá — netřeba to podmiňovat ručně.
+ * Sentry SDK se tady **nesmí importovat staticky** (jen jako typ): soubor je
+ * v hlavním balíčku každé stránky. Načítá ho `lib/sentryClient` líně — po
+ * události `load` a v nečinnosti prohlížeče (nejpozději za 5 s); do té doby
+ * se chyby jen ukládají.
  */
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  tracesSampleRate: 1,
-  debug: false,
-  // Navigace a fetch breadcrumbs nesou celou URL — i s tokenem z odkazu pro obnovu hesla.
-  beforeSend: scrubEvent,
-  beforeSendTransaction: scrubTransaction,
-  beforeBreadcrumb: scrubBreadcrumb,
-})
+let sentry: typeof SentryNextjs | undefined
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
+if (typeof window !== 'undefined') {
+  bufferEarlyErrors()
+
+  const start = () => {
+    const load = () => void loadSentry().then((loaded) => (sentry = loaded))
+    if ('requestIdleCallback' in window) window.requestIdleCallback(load, { timeout: 5000 })
+    else setTimeout(load, 3000)
+  }
+
+  if (document.readyState === 'complete') start()
+  else window.addEventListener('load', start, { once: true })
+}
+
+/**
+ * Přechod mezi stránkami: dokud SDK není načtené, se přechod nezaznamená.
+ */
+export const onRouterTransitionStart = (
+  ...args: Parameters<typeof SentryNextjs.captureRouterTransitionStart>
+) => sentry?.captureRouterTransitionStart(...args)

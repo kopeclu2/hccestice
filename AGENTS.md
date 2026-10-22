@@ -139,6 +139,17 @@ cva, napojené na značku přes proměnné v `globals.css`).
   First Load JS). `/kontaky` je **CMS stránka** renderovaná přes `[slug]`
   (`.next/server/app/kontaky.html`); `/kontakt` je jiná, ručně psaná route
   a tahle řada se na ní neměřila.
+- **Sentry v prohlížeči je líný** (`lib/sentryClient.ts`). `instrumentation-client.ts`
+  je v hlavním balíčku každé stránky, proto Sentry SDK (~42 kB gzip) **nesmí
+  importovat staticky** — jen `import type`. SDK se načte po události `load`
+  v nečinnosti prohlížeče (nejpozději za 5 s); do té doby `bufferEarlyErrors`
+  ukládá `error` a `unhandledrejection` (max. 10) a po načtení je odešle.
+  Error boundaries volají `captureClientError`, ne `Sentry.captureException`
+  (statický import v `error.tsx` by SDK vrátil do balíčku stránky). Cena:
+  přechod routerem před načtením SDK se nezaznamená a pageload transakce
+  nezachytí úplný začátek. Naměřeno lokálně: initial JS home 312 → 260 kB
+  gzip, mobilní LCP 3,9 → 3,5 s, TBT 22 → 60 ms (inicializace SDK padne do
+  okna měření).
 - **Cizí iframe (mapa, YouTube, tabulky) jen po kliknutí.** Nový `<iframe>`
   na cizí host se nepíše přímo: `landing/ui/ClickToLoadEmbed` vykreslí
   zástupný rámeček a iframe vloží až po kliknutí (do té doby se třetí strana

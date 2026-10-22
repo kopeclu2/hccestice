@@ -1,10 +1,10 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
 import React, { useEffect } from 'react'
 
 import { LANDING_COLORS } from '@/landing/tokens'
 import { CLUB_NAME } from '@/lib/club'
+import { captureClientError } from '@/lib/sentryClient'
 
 /**
  * Poslední záchranná síť: chyba v **root layoutu** samotném. Běžné chyby
@@ -28,7 +28,7 @@ export default function GlobalError({
   retry: () => void
 }) {
   useEffect(() => {
-    Sentry.captureException(error)
+    captureClientError(error)
   }, [error])
 
   return (
