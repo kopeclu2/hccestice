@@ -4,15 +4,11 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { MatchScoreboard } from '@/landing/features/matches/components/MatchScoreboard'
-import type { ArticleGoal } from '@/landing/features/matches/types'
 import type { ArticleDetail } from '@/landing/features/posts/types'
 import { BreadcrumbsJsonLd } from '@/landing/layout/BreadcrumbsJsonLd'
-import { Badge } from '@/landing/ui/Badge'
 import { DotEyebrow } from '@/landing/ui/DotEyebrow'
 import { PageTitle } from '@/landing/ui/Heading'
-import { Eyebrow } from '@/landing/ui/Kicker'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-import { cn } from '@/lib/utils'
 
 import { articleTrail } from './articleTrail'
 import { AuthorMeta } from './AuthorMeta'
@@ -20,7 +16,8 @@ import { TitleParts } from './HeroTitle'
 
 /**
  * Hero E · Zápasový výsledek — tmavý panel s fotkou na pozadí,
- * výsledkovou tabulí (skóre + třetiny) z navázaného zápasu a titulkem.
+ * výsledkovou tabulí (skóre + třetiny + znaky týmů) z navázaného zápasu
+ * a titulkem. Střelci tu záměrně nejsou — dlouhý seznam patří na detail zápasu.
  *
  * Renderuje se jen s hotovým `scoreboard` — fallback řeší `toArticleDetail`.
  */
@@ -67,12 +64,13 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
             </span>
           </div>
 
-          <MatchScoreboard scoreboard={scoreboard} />
+          <MatchScoreboard
+            logos={{ home: scoreboard.logos.homeLogo, away: scoreboard.logos.awayLogo }}
+            scoreboard={scoreboard}
+          />
 
-          {scoreboard.goals.length > 0 && <GoalTimeline goals={scoreboard.goals} />}
-
-          {/* Detail zápasu je jediné místo s tresty a statistikou; timeline
-              tu je jen výřez. Odkaz stojí pod ním, ne v hlavičce panelu —
+          {/* Průběh zápasu (střelci, tresty) je jen na detailu zápasu, hero ho
+              nekopíruje. Odkaz stojí pod tabulí, ne v hlavičce panelu —
               tam by se na mobilu (metaLine je skrytá) ztratil mezi kickerem
               a skóre. */}
           {article.matchHref && (
@@ -102,90 +100,6 @@ export function HeroMatch({ article }: { article: ArticleDetail }) {
           />
         </div>
       </div>
-    </div>
-  )
-}
-
-/** Štítek speciální situace u branky; nájezd je rozhodující branka zápasu. */
-const SPECIAL_LABEL: Record<NonNullable<ArticleGoal['special']>, string> = {
-  pp: 'PP',
-  os: 'OS',
-  sn: 'Rozhodující nájezd',
-}
-const SPECIAL_TITLE: Record<NonNullable<ArticleGoal['special']>, string> = {
-  pp: 'Přesilovka',
-  os: 'Oslabení',
-  sn: 'Rozhodující nájezd',
-}
-
-/**
- * Průběh branek pod výsledkovou tabulí. Je to seznam (`<ol>`), ne tabulka:
- * každá branka je jedna věta „čas, kdo skóroval, s kým, jaký byl stav".
- * Naše branky se od soupeřových liší vedle barvy i slovem pro čtečku
- * (`sr-only`), aby rozdíl nestál jen na odstínu.
- *
- * Stav po brance je v pořadí domácí : hosté, stejně jako skóre nad ním.
- */
-function GoalTimeline({ goals }: { goals: ArticleGoal[] }) {
-  return (
-    <div className="mx-auto mt-[clamp(1.5rem,3vw,2.25rem)] max-w-180">
-      <Eyebrow as="div" tone="lime">
-        Průběh zápasu
-      </Eyebrow>
-      <ol aria-label="Průběh branek" className="mt-3 divide-y divide-on-contrast-wash">
-        {goals.map((goal, index) => (
-          <li
-            className="grid grid-cols-[3rem_1fr_auto] items-baseline gap-x-3 py-2.5 md:grid-cols-[3.5rem_1fr_auto] md:gap-x-4"
-            key={index}
-          >
-            <span className="text-xs font-semibold text-on-contrast-subtle tabular-nums">
-              {goal.time}
-            </span>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span
-                  aria-hidden
-                  className={cn(
-                    'size-2 flex-none rounded-full',
-                    goal.ours ? 'bg-lime' : 'border border-on-contrast-ghost',
-                  )}
-                />
-                <span className="sr-only">{goal.ours ? 'Gól Čestic: ' : 'Gól soupeře: '}</span>
-                <span
-                  className={cn(
-                    'text-sm font-bold',
-                    goal.ours ? 'text-on-contrast' : 'text-on-contrast-muted',
-                  )}
-                >
-                  {goal.scorer}
-                </span>
-                {goal.special && (
-                  <Badge
-                    className="px-2 py-0.5"
-                    size="xs"
-                    title={SPECIAL_TITLE[goal.special]}
-                    variant={goal.special === 'sn' ? 'glassOutline' : 'glass'}
-                  >
-                    {SPECIAL_LABEL[goal.special]}
-                  </Badge>
-                )}
-              </div>
-              {goal.assists.length > 0 && (
-                <div className="mt-0.5 pl-4 text-xs font-medium text-pretty text-on-contrast-subtle">
-                  <span className="sr-only">Asistence: </span>
-                  {goal.assists.join(', ')}
-                </div>
-              )}
-            </div>
-            {goal.score && (
-              <span className="text-sm font-bold text-on-contrast-soft tabular-nums">
-                <span className="sr-only">Stav </span>
-                {goal.score}
-              </span>
-            )}
-          </li>
-        ))}
-      </ol>
     </div>
   )
 }

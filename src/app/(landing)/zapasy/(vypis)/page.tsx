@@ -172,7 +172,6 @@ export default async function ZapasyPage({ searchParams }: Args) {
           hrefFor={hrefFor}
           page={results.page}
           rows={results.rows}
-          showScorers
           totalPages={results.totalPages}
         />
         <StandingsPanel standings={standings} />

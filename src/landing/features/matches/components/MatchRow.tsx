@@ -3,7 +3,7 @@ import React from 'react'
 import type { Photo } from '@/landing/types'
 import { StretchedLink } from '@/landing/ui/StretchedLink'
 
-import { TeamCrest } from './TeamCrest'
+import { TeamCrest, type TeamCrestTone } from './TeamCrest'
 import { TeamPair } from './TeamPair'
 
 /**
@@ -66,17 +66,31 @@ export function MatchWhen({
   )
 }
 
-/** Tým se znakem — znak je dekorace, jméno stojí vedle jako text. */
-function TeamWithCrest({ name, logo }: { name: string; logo: Photo | null }) {
+/**
+ * Tým se znakem — znak je dekorace, jméno stojí vedle jako text. `large` je
+ * pro velký titulek panelu (karta v pásu a výpis mají malý znak).
+ */
+export function TeamWithCrest({
+  name,
+  logo,
+  tone = 'light',
+  large = false,
+}: {
+  name: string
+  logo: Photo | null
+  tone?: TeamCrestTone
+  large?: boolean
+}) {
   return (
-    <span className="inline-flex max-w-full items-center gap-2 align-middle">
+    <span className="inline-flex max-w-full items-center gap-2 align-middle md:gap-3">
       <TeamCrest
-        className="size-6 md:size-7"
+        className={large ? 'size-8 md:size-10 lg:size-12' : 'size-6 md:size-7'}
         logo={logo}
-        monogramClassName="text-xs"
+        monogramClassName={large ? 'text-sm md:text-base' : 'text-xs'}
         name={name}
-        sizes="28px"
-        tone="light"
+        pixels={large ? 96 : 128}
+        sizes={large ? '48px' : '28px'}
+        tone={tone}
       />
       <span className="min-w-0">{name}</span>
     </span>

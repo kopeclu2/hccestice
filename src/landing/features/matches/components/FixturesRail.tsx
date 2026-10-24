@@ -14,7 +14,7 @@ import { StretchedLink, stretchHost } from '@/landing/ui/StretchedLink'
 import { cn } from '@/lib/utils'
 
 import { MatchMeta } from './MatchMeta'
-import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen } from './MatchRow'
+import { MATCH_LIST, MATCH_ROW, MatchRowTitle, MatchWhen, TeamWithCrest } from './MatchRow'
 import { NextMatchPanel } from './NextMatchPanel'
 import { SectionHead, type SectionHeadVariant } from './SectionHead'
 import { TeamPair } from './TeamPair'
@@ -177,7 +177,11 @@ function FixtureTile({ fixture, className }: { fixture: FixtureCard; className?:
 
       <CardTitle className="mt-3.5 text-pretty" size="sm">
         <StretchedLink href={fixture.href}>
-          <TeamPair away={fixture.awayName} home={fixture.homeName} />
+          <TeamPair
+            away={<TeamWithCrest logo={fixture.awayLogo} name={fixture.awayName} />}
+            home={<TeamWithCrest logo={fixture.homeLogo} name={fixture.homeName} />}
+            layout="stack"
+          />
         </StretchedLink>
       </CardTitle>
 
@@ -291,7 +295,13 @@ function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
       radius="section"
       subtitle={subtitle || undefined}
       href={fixture.href}
-      title={fixture.title}
+      title={
+        <TeamPair
+          away={<TeamWithCrest large logo={fixture.awayLogo} name={fixture.awayName} tone="dark" />}
+          home={<TeamWithCrest large logo={fixture.homeLogo} name={fixture.homeName} tone="dark" />}
+          layout="stack"
+        />
+      }
     />
   )
 }

@@ -108,8 +108,6 @@ export type ResultRow = MatchSchemaFields &
     score: string
     suffix: ScoreSuffix
     outcome: Outcome
-    /** Naši střelci bez nájezdů, „Sajdl 2, Vacek"; null = zápis chybí. */
-    scorers: string | null
     /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
     href: string | null
   }
@@ -173,8 +171,8 @@ export type ArticleScoreboard = {
   /** Třetiny v pořadí domácí : hosté; prázdné = nezobrazovat. */
   thirds: ScorePair[]
   suffix: ScoreSuffix
-  /** Průběh branek ze zápisu; prázdné = timeline se nevykreslí. */
-  goals: ArticleGoal[]
+  /** Znaky týmů v pořadí domácí : hosté; soupeř bez loga = null (monogram). */
+  logos: TeamLogos
 }
 
 /** Jedna branka v timeline reportáže. */

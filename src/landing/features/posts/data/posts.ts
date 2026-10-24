@@ -7,6 +7,7 @@ import { fetchDraftUser } from '@/landing/data/draft'
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { fetchSiteConfig } from '@/landing/data/site'
 import { CACHE_TAGS } from '@/landing/data/tags'
+import { withMatchLogo } from '@/landing/features/matches/data/matches'
 import type { PostCard } from '@/landing/features/posts/types'
 import { toPostCard } from '@/landing/features/posts/view/posts'
 import { uploadToPhoto } from '@/landing/lib/media'
@@ -220,7 +221,12 @@ export const fetchPostBySlug = cache(async (slug: string, draft: boolean): Promi
     limit: 1,
     depth: 2,
   })
-  return docs[0] ?? null
+  const post = docs[0] ?? null
+  // Hero reportáže kreslí znaky týmů; logo soupeře je na depth 2 jen id.
+  if (post && typeof post.match === 'object' && post.match) {
+    return { ...post, match: await withMatchLogo(post.match) }
+  }
+  return post
 })
 
 /** Karty souvisejících článků — ruční výběr, dofiltrování dle kategorií. */

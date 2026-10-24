@@ -29,7 +29,6 @@ import {
   orient,
   orientPair,
   phaseLabel,
-  scorersLabel,
   scoreSuffix,
   sideLabel,
 } from './matchFormat'
@@ -122,7 +121,6 @@ export const toResultRow = (match: Match): ResultRow => ({
   score: matchScore(match),
   suffix: scoreSuffix(match),
   outcome: matchOutcome(match),
-  scorers: scorersLabel(match),
   href: hrefOf(match),
 })
 

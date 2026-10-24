@@ -3,6 +3,7 @@ import { formatLongDate } from '@/lib/datetime'
 import type { Match } from '@/payload-types'
 
 import { formatCompetition, orient, orientPair, scoreSuffix } from './matchFormat'
+import { teamLogos } from './matchRows'
 
 /**
  * Mapování událostí zápasu (branky, výsledková tabule) z kolekce `matches`
@@ -78,6 +79,6 @@ export const toScoreboard = (match: Match): ArticleScoreboard | null => {
     weWon: match.scoreOurs > match.scoreOpp,
     thirds,
     suffix: scoreSuffix(match),
-    goals: toGoals(match, weAreHome),
+    logos: teamLogos(match),
   }
 }

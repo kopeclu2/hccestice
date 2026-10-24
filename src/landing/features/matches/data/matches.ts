@@ -189,6 +189,16 @@ const withOpponentLogos = async <T extends Match>(payload: Payload, docs: T[]): 
   )
 }
 
+/**
+ * Zápas s populovaným logem soupeře pro hero reportáže: článek se čte na
+ * `depth: 2`, kde je `post.match.opponent` objekt, ale jeho `logo` jen id.
+ */
+export const withMatchLogo = async (match: Match): Promise<Match> => {
+  const payload = await getPayloadClient()
+  const [withLogo] = await withOpponentLogos(payload, [match])
+  return withLogo ?? match
+}
+
 /** Rozlosování sezóny — celé, od nejbližšího zápasu (pás karet na /zapasy). */
 const loadSeasonFixtures = cachedQuery(
   async (seasonId: number, from: string): Promise<FixtureCard[]> => {
