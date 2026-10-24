@@ -39,3 +39,26 @@ export const limitField = (defaultValue: number, max = 20): Field => ({
   min: 1,
   max,
 })
+
+/**
+ * Povinný výběr zápasu pro widgety zápasu v rich textu. Popisek zápasu
+ * v pickeru nese datum (`matchDisplayTitleAfterRead`), hledá se podle soupeře.
+ */
+export const matchField: Field = {
+  name: 'match',
+  type: 'relationship',
+  relationTo: 'matches',
+  required: true,
+  label: 'Zápas',
+  admin: {
+    description:
+      'U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.',
+  },
+}
+
+/** Volitelný vlastní nadpis widgetu zápasu. */
+export const matchTitleField = (defaultTitle: string): Field => ({
+  name: 'title',
+  type: 'text',
+  label: `Nadpis (prázdné = „${defaultTitle}")`,
+})

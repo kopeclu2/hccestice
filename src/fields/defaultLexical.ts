@@ -39,6 +39,18 @@ import { DataTableBlock } from '../landing/blocks/DataTable/config'
 import { DownloadsWidget } from '../landing/blocks/Downloads/config'
 import { GalleryEmbedWidget } from '../landing/blocks/GalleryEmbed/config'
 import { GalleryLinkWidget } from '../landing/blocks/GalleryLink/config'
+import { MatchCardWidget } from '../landing/blocks/MatchCard/config'
+import { MatchesPickerWidget } from '../landing/blocks/MatchesPicker/config'
+import { MatchesWidget } from '../landing/blocks/MatchesWidget/config'
+import { MatchFormWidget } from '../landing/blocks/MatchForm/config'
+import { MatchLineupWidget } from '../landing/blocks/MatchLineup/config'
+import { MatchPenaltiesWidget } from '../landing/blocks/MatchPenalties/config'
+import { MatchScoreboardWidget } from '../landing/blocks/MatchScoreboard/config'
+import { MatchScorersWidget } from '../landing/blocks/MatchScorers/config'
+import { MatchSummaryWidget } from '../landing/blocks/MatchSummary/config'
+import { MatchTimelineWidget } from '../landing/blocks/MatchTimeline/config'
+import { NextMatchWidget } from '../landing/blocks/NextMatchWidget/config'
+import { StandingsWidget } from '../landing/blocks/StandingsWidget/config'
 import { StatCardsBlock } from '../landing/blocks/StatCards/config'
 
 import { TEXT_STATE } from './textStateColors'
@@ -51,8 +63,10 @@ import { TEXT_STATE } from './textStateColors'
  * - struktura: nadpisy H2–H4, seznamy (číslované, odrážkové, checklisty),
  *   citace, oddělovač, zarovnání, odsazení, tabulky
  * - vkládání: odkazy (interní i externí, včetně galerií), obrázky z médií,
- *   relace na dokumenty a bloky (obrázek, video, banner, kód, CTA banner,
- *   vložená galerie, odkaz na galerii, dokumenty ke stažení)
+ *   relace na dokumenty (včetně zápasů) a bloky (obrázek, video, banner,
+ *   kód, CTA banner, vložená galerie, odkaz na galerii, dokumenty ke
+ *   stažení, widgety zápasů: karta, tabule, střelci, tresty, průběh, souhrn,
+ *   soupiska, forma, nejbližší zápas, tabulka, výběr zápasů)
  * - UI: pevná lišta nahoře + plovoucí lišta nad výběrem textu
  */
 export const defaultLexical = lexicalEditor({
@@ -82,7 +96,7 @@ export const defaultLexical = lexicalEditor({
 
     // vkládání
     LinkFeature({
-      enabledCollections: ['pages', 'posts', 'galleries'],
+      enabledCollections: ['pages', 'posts', 'galleries', 'matches'],
       fields: ({ defaultFields }) => {
         const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
           if ('name' in field && field.name === 'url') return false
@@ -116,10 +130,9 @@ export const defaultLexical = lexicalEditor({
         media: { fields: [] },
       },
     }),
-    /* `matches` záměrně chybí — zápas nemá vlastní detailní stránku,
-       na kterou by relace mohla odkázat (viz `RelationshipConverter`
-       v `components/RichText/Server.tsx`). */
-    RelationshipFeature({ enabledCollections: ['pages', 'posts', 'galleries'] }),
+    /* Zápas má detail `/zapasy/[slug]`, takže jde odkázat i vložit jako
+       relaci (viz `RelationshipConverter` v `components/RichText/Server.tsx`). */
+    RelationshipFeature({ enabledCollections: ['pages', 'posts', 'galleries', 'matches'] }),
     BlocksFeature({
       blocks: [
         MediaBlock,
@@ -132,6 +145,19 @@ export const defaultLexical = lexicalEditor({
         GalleryLinkWidget,
         DownloadsWidget,
         StatCardsBlock,
+        // widgety zápasů (serverové konvertory v `components/RichText/Server.tsx`)
+        MatchCardWidget,
+        MatchScoreboardWidget,
+        MatchScorersWidget,
+        MatchPenaltiesWidget,
+        MatchTimelineWidget,
+        MatchSummaryWidget,
+        MatchLineupWidget,
+        MatchFormWidget,
+        NextMatchWidget,
+        StandingsWidget,
+        MatchesPickerWidget,
+        MatchesWidget,
       ],
     }),
 

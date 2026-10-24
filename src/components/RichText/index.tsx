@@ -17,7 +17,7 @@ import { DataTableBlockComponent } from '@/landing/blocks/DataTable/Component'
 import { MediaBlock } from '@/landing/blocks/MediaBlock/Component'
 import { StatCardsBlockComponent } from '@/landing/blocks/StatCards/Component'
 import { YouTubeBlock } from '@/landing/blocks/YouTube/Component'
-import { collectionDocPath } from '@/lib/routes'
+import { collectionDocPath, routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type {
   BannerBlock as BannerBlockProps,
@@ -61,6 +61,8 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   if (typeof value !== 'object') {
     throw new Error('Expected value to be an object')
   }
+  // Zápas bez slugu (starší dokument) nemá detail: odkaz vede na výpis, ne na `/zapasy/undefined`.
+  if (relationTo === 'matches' && !value.slug) return routes.list.matches
   return collectionDocPath(relationTo, String(value.slug))
 }
 

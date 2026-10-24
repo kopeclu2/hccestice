@@ -19,18 +19,29 @@ const NUM = 'w-8 text-right tabular-nums'
  * Data počítá `buildMatchSummary` z osy, takže souhlasí s tím, co je vidět
  * vlevo. Prázdná sekce se nevykreslí, prázdný souhrn vůbec.
  */
-export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
+export function MatchSummary({
+  id = 'zapas-souhrn',
+  summary,
+  titleAs,
+}: {
+  /** Unikátní `id` nadpisu (víc widgetů na jedné stránce). */
+  id?: string
+  summary: MatchSummaryData
+  /** `h3` ve widgetu uvnitř článku; na detailu zápasu výchozí `h2`. */
+  titleAs?: 'h2' | 'h3'
+}) {
   const { points, penalties, penaltyMinutes, ppGoals, shGoals } = summary
+  const Sub = titleAs === 'h3' ? 'h4' : 'h3'
   if (points.length === 0 && penalties.length === 0) return null
 
   return (
-    <MatchPanel id="zapas-souhrn" title="Souhrn">
+    <MatchPanel id={id} title="Souhrn" titleAs={titleAs}>
       <div className="mt-5 space-y-6">
         {points.length > 0 && (
           <div>
-            <h3>
+            <Sub>
               <Eyebrow tone="club">Kanadské body</Eyebrow>
-            </h3>
+            </Sub>
             <table className="mt-2 w-full text-sm md:text-base">
               <caption className="sr-only">
                 Kanadské body hráčů HC Čestice: góly, asistence a body
@@ -89,14 +100,14 @@ export function MatchSummary({ summary }: { summary: MatchSummaryData }) {
 
         {penalties.length > 0 && (
           <div>
-            <h3 className="flex items-baseline justify-between gap-3">
+            <Sub className="flex items-baseline justify-between gap-3">
               <Eyebrow tone="club">Tresty</Eyebrow>
               <span className="text-sm font-bold tabular-nums">
                 {`${penaltyMinutes} `}
                 <span aria-hidden>TM</span>
                 <span className="sr-only">trestných minut celkem</span>
               </span>
-            </h3>
+            </Sub>
             <ul className="mt-2 divide-y divide-line-soft border-t border-line-soft text-sm md:text-base">
               {penalties.map((row) => (
                 <li className="flex items-baseline justify-between gap-3 py-2" key={row.name}>

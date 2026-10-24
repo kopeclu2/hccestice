@@ -30,6 +30,7 @@ export function MatchPanel({
   className,
   id,
   title,
+  titleAs = 'h2',
 }: {
   /** Doplněk vpravo od nadpisu — zalamuje se pod něj. */
   aside?: React.ReactNode
@@ -37,6 +38,8 @@ export function MatchPanel({
   className?: string
   id: string
   title: React.ReactNode
+  /** Úroveň nadpisu: `h2` na detailu zápasu, `h3` ve widgetu uvnitř článku. */
+  titleAs?: 'h2' | 'h3'
 }) {
   return (
     <section
@@ -48,7 +51,7 @@ export function MatchPanel({
     >
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <CardTitle
-          as="h2"
+          as={titleAs}
           className="text-xl leading-tight font-extrabold tracking-tight md:text-2xl"
           id={id}
         >
