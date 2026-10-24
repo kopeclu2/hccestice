@@ -307,35 +307,44 @@ export const fetchSeasonForm = cachedQuery(
   { key: 'season-form', version: 'v4', tags: [CACHE_TAGS.matches] },
 )
 
-/** Jeden zápas pro velkou kartu — depth 2 kvůli logu soupeře a reportáži. */
-export const fetchMatchCard = cache(async (matchId: number): Promise<MatchCardData | null> => {
-  const payload = await getPayloadClient()
-  const match = await payload.findByID({
-    collection: 'matches',
-    id: matchId,
-    depth: 2,
-    disableErrors: true,
-  })
-  if (!match) return null
+/**
+ * Jeden zápas pro velkou kartu — depth 2 kvůli logu soupeře a reportáži.
+ *
+ * Tagovaná cache (`matches-list` + `posts-list` kvůli reportáži): kartu čtou
+ * i články (rich text), které se regenerují jen ISR, takže bez tagu by uložení
+ * zápasu dorazilo až po vypršení stránky.
+ */
+export const fetchMatchCard = cachedQuery(
+  async (matchId: number): Promise<MatchCardData | null> => {
+    const payload = await getPayloadClient()
+    const match = await payload.findByID({
+      collection: 'matches',
+      id: matchId,
+      depth: 2,
+      disableErrors: true,
+    })
+    if (!match) return null
 
-  const opponent = typeof match.opponent === 'object' ? match.opponent : null
-  // Jen publikovaná reportáž: ruční vazba `matches.report` může mířit na
-  // koncept, jehož URL je 404 (`resolveReport` navíc doplní článek ze sync).
-  const report = await resolveReport(match)
+    const opponent = typeof match.opponent === 'object' ? match.opponent : null
+    // Jen publikovaná reportáž: ruční vazba `matches.report` může mířit na
+    // koncept, jehož URL je 404 (`resolveReport` navíc doplní článek ze sync).
+    const report = await resolveReport(match)
 
-  return {
-    id: match.id,
-    status: match.status,
-    dateLabel: formatDateTime(match.date),
-    competition: formatCompetition(match.competition),
-    venue: match.venue ?? null,
-    home: Boolean(match.home),
-    opponentName: opponent?.name ?? 'Soupeř',
-    opponentLogo: uploadToPhoto(opponent?.logo),
-    score: match.status === 'played' ? matchScore(match) : null,
-    suffix: scoreSuffix(match),
-    won: match.status === 'played' ? (match.scoreOurs ?? 0) > (match.scoreOpp ?? 0) : null,
-    reportHref: linkOrNull(routes.post, report?.slug),
-    href: linkOrNull(routes.match, match.slug),
-  }
-})
+    return {
+      id: match.id,
+      status: match.status,
+      dateLabel: formatDateTime(match.date),
+      competition: formatCompetition(match.competition),
+      venue: match.venue ?? null,
+      home: Boolean(match.home),
+      opponentName: opponent?.name ?? 'Soupeř',
+      opponentLogo: uploadToPhoto(opponent?.logo),
+      score: match.status === 'played' ? matchScore(match) : null,
+      suffix: scoreSuffix(match),
+      won: match.status === 'played' ? (match.scoreOurs ?? 0) > (match.scoreOpp ?? 0) : null,
+      reportHref: linkOrNull(routes.post, report?.slug),
+      href: linkOrNull(routes.match, match.slug),
+    }
+  },
+  { key: 'match-card', version: 'v1', tags: [CACHE_TAGS.matches, CACHE_TAGS.posts] },
+)

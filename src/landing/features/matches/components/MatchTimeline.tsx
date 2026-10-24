@@ -15,7 +15,10 @@ import { MatchMeta } from './MatchMeta'
 import { MatchPanel } from './MatchPanel'
 
 /** Štítek speciální situace u branky; zkratka dostane celé slovo pro čtečku. */
-const SPECIAL: Record<NonNullable<ArticleGoal['special']>, { label: string; title: string }> = {
+export const SPECIAL: Record<
+  NonNullable<ArticleGoal['special']>,
+  { label: string; title: string }
+> = {
   pp: { label: 'PP', title: 'Přesilovka' },
   os: { label: 'OS', title: 'Oslabení' },
   sn: { label: 'SN', title: 'Rozhodující nájezd' },
@@ -62,16 +65,24 @@ const CELL = 'flex h-5 items-center md:h-6'
  */
 export function MatchTimeline({
   goalsOurs,
+  id = 'zapas-prubeh',
   opponentName,
   penaltyMinutes,
   periods,
+  titleAs,
 }: {
   goalsOurs: number
+  /** Unikátní `id` nadpisu; widget v článku ho dostává z `useId`, na stránce může být víc zápasů. */
+  id?: string
   opponentName: string
   penaltyMinutes: number
   periods: MatchTimelinePeriod[]
+  /** `h3` ve widgetu uvnitř článku; na detailu zápasu výchozí `h2`. */
+  titleAs?: 'h2' | 'h3'
 }) {
   if (periods.length === 0) return null
+  // Podnadpisy o úroveň pod nadpisem panelu (h2 na detailu, h3 v článku).
+  const Sub = titleAs === 'h3' ? 'h4' : 'h3'
   const hasPenalties = periods.some((period) =>
     period.events.some((event) => event.type === 'penalty'),
   )
@@ -92,13 +103,14 @@ export function MatchTimeline({
           )}
         </Badge>
       }
-      id="zapas-prubeh"
+      id={id}
       title="Průběh zápasu"
+      titleAs={titleAs}
     >
       <div className="mt-5 space-y-5 md:space-y-6">
         {periods.map((period) => (
           <div key={period.label}>
-            <h3 className="flex items-center justify-between gap-3 rounded-field bg-paper px-3 py-2 md:px-4">
+            <Sub className="flex items-center justify-between gap-3 rounded-field bg-paper px-3 py-2 md:px-4">
               <Eyebrow tone="club">{period.label}</Eyebrow>
               {period.score && (
                 <span className="text-sm font-bold tabular-nums">
@@ -106,7 +118,7 @@ export function MatchTimeline({
                   {`${period.score.home} : ${period.score.away}`}
                 </span>
               )}
-            </h3>
+            </Sub>
             <ol className="divide-y divide-line-soft">
               {period.events.map((event, index) => (
                 <TimelineRow

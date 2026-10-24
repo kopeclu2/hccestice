@@ -517,7 +517,7 @@ export interface Post {
    */
   heroVariant?: ('foto' | 'rozdelene' | 'typograficke' | 'panel' | 'zapas') | null;
   /**
-   * Zdroj skóre pro hero variantu E · Zápasový výsledek.
+   * Zdroj skóre pro hero variantu E · Zápasový výsledek. U každého zápasu je vidět datum; hledat jde podle názvu soupeře.
    */
   match?: (number | null) | Match;
   showRelated?: boolean | null;
@@ -4419,6 +4419,100 @@ export interface StatCardsBlockType {
   id?: string | null;
   blockName?: string | null;
   blockType: 'statCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchScoreboardBlock".
+ */
+export interface MatchScoreboardBlock {
+  /**
+   * U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.
+   */
+  match: number | Match;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchScoreboard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchScorersBlock".
+ */
+export interface MatchScorersBlock {
+  /**
+   * U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.
+   */
+  match: number | Match;
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchScorers';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchPenaltiesBlock".
+ */
+export interface MatchPenaltiesBlock {
+  /**
+   * U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.
+   */
+  match: number | Match;
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchPenalties';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchTimelineBlock".
+ */
+export interface MatchTimelineBlock {
+  /**
+   * U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.
+   */
+  match: number | Match;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchTimeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchSummaryBlock".
+ */
+export interface MatchSummaryBlock {
+  /**
+   * U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.
+   */
+  match: number | Match;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchSummary';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchLineupBlock".
+ */
+export interface MatchLineupBlock {
+  /**
+   * U každého zápasu je vidět datum; hledat jde podle názvu soupeře. Zápas bez adresy (slug) se v článku nezobrazí.
+   */
+  match: number | Match;
+  title?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchLineup';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MatchFormBlock".
+ */
+export interface MatchFormBlock {
+  /**
+   * Prázdné = aktuální sezóna.
+   */
+  season?: (number | null) | Season;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'matchForm';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

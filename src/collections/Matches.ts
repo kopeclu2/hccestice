@@ -3,7 +3,7 @@ import type { CollectionConfig, Field } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { notSyncedFromAhl } from '../access/notSyncedFromAhl'
-import { matchDisplayTitle } from '../hooks/matchDisplayTitle'
+import { matchDisplayTitle, matchDisplayTitleAfterRead } from '../hooks/matchDisplayTitle'
 import { generateMatchSlug } from '../hooks/matchSlug'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
 import { revalidateMatchFeeds, revalidateMatchFeedsDelete } from '../hooks/revalidateMatchFeeds'
@@ -57,6 +57,8 @@ export const Matches: CollectionConfig = {
       },
       hooks: {
         beforeChange: [matchDisplayTitle],
+        // Jen zobrazení v adminu (picker relace, seznam) — uložená hodnota je bez data.
+        afterRead: [matchDisplayTitleAfterRead],
       },
     },
     {

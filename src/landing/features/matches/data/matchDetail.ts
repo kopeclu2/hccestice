@@ -171,6 +171,42 @@ export const fetchMatchDetail = cachedQuery(
 )
 
 /**
+ * Slug zápasu podle id — bloky v rich textu mají relaci na zápas (číslo,
+ * nebo populovaný dokument), kdežto `fetchMatchDetail` se ptá slugem.
+ * Tagovaná cache, ať se při renderu článku nedotazuje na každý blok zvlášť.
+ */
+export const fetchMatchSlugById = cachedQuery(
+  async (matchId: number): Promise<string | null> => {
+    const payload = await getPayloadClient()
+    const match = await findByIdOrNull(payload, 'slug zápasu', () =>
+      payload.findByID({
+        collection: 'matches',
+        id: matchId,
+        depth: 0,
+        select: { slug: true },
+        disableErrors: true,
+      }),
+    )
+    return match?.slug ?? null
+  },
+  { key: 'match-slug-by-id', version: 'v1', tags: [CACHE_TAGS.matches] },
+)
+
+/**
+ * Detail zápasu pro blok v rich textu: relace `match` (id nebo populovaný
+ * dokument) → tentýž view-model jako detail `/zapasy/[slug]`. Stejná cache
+ * entry (`fetchMatchDetail`), takže víc bloků téhož zápasu na stránce nedělá
+ * dotaz navíc. `null` = relace prázdná, zápas smazaný nebo bez slugu.
+ */
+export const fetchMatchDetailByRef = async (ref: unknown): Promise<MatchDetail | null> => {
+  const populatedSlug =
+    typeof ref === 'object' && ref && 'slug' in ref && typeof ref.slug === 'string' ? ref.slug : ''
+  const matchId = relId(ref)
+  const slug = populatedSlug || (matchId ? await fetchMatchSlugById(matchId) : null)
+  return slug ? fetchMatchDetail(slug) : null
+}
+
+/**
  * Slug zápasu, ke kterému reportáž patří — pro odkaz „Detail zápasu".
  * `post.match` (populované, depth 2) má přednost; reportáže bez něj
  * (archiv 2023/24 má vazbu jen z druhé strany, `matches.report`) se
