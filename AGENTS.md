@@ -1545,6 +1545,80 @@ Sitemapa je v `next-sitemap.config.cjs` jak v `exclude`, tak v
 `additionalSitemaps` (jinak by se `sitemap.xml` index a `robots.txt`
 o ní nedozvěděly). Přidávat další sitemapu znamená sáhnout na obě místa.
 
+# Widgety zápasů v článku
+
+Správce vkládá zápasy do těla článku (pole `posts.content`, editor
+`fields/defaultLexical.ts`) nástrojem **Blok** a odkazuje na ně nástrojem
+**Odkaz** / **Relace** — `matches` je v `enabledCollections` obou
+(`LinkFeature`, `RelationshipFeature`). Bloky jsou JSON v poli, takže
+**nevzniká migrace** (`generate:types` přidá jen rozhraní bloků).
+
+| blok (slug) | co ukazuje | data |
+|---|---|---|
+| `matchCard` | velká karta zápasu (loga, skóre, odkazy) | `fetchMatchCard` |
+| `matchScoreboard` | tmavá tabule se skóre a třetinami; jen odehraný zápas | `fetchMatchDetail` |
+| `matchScorers` | naše branky: čas, střelec, asistence, PP/OS/SN | `fetchMatchDetail` |
+| `matchPenalties` | naše tresty a součet minut | `fetchMatchDetail` |
+| `matchTimeline` | celý Průběh zápasu | `fetchMatchDetail` |
+| `matchSummary` | kanadské body, góly PP/OS, tresty po hráčích | `fetchMatchDetail` |
+| `matchLineup` | soupiska (č., jméno, G, A, B, TM; brankáři zvlášť) | `fetchMatchLineup` |
+| `matchForm` | forma posledních 5 zápasů sezóny (prázdná = aktuální) | `fetchSeasonForm` |
+| `nextMatchWidget`, `standingsWidget`, `matchesPicker`, `matchesWidget` | stejné widgety jako v layoutu stránek | jejich fetchery |
+
+- **Kde žijí.** Konfig a komponenta bloku v `landing/blocks/<Název>/`
+  (zápasové bloky sdílejí pole `matchField` z `blocks/shared.ts`), prezentace
+  v `features/matches/components/`, čisté mapování v `features/matches/view/`
+  (`matchScorers`, `matchLineup`, `matchLink`). Render v serverovém
+  konvertoru `components/RichText/Server.tsx` (obal `EmbeddedSection`),
+  **ne** v klientském `RichText/index.tsx`. Nové bloky nejsou v registru
+  `landingBlocks` (layout stránek), jen v editoru rich textu.
+- **Jeden dotaz na zápas.** Bloky mají relaci `match` (id); `fetchMatchDetailByRef`
+  převede id na slug (`fetchMatchSlugById`, tagovaná cache) a čte
+  `fetchMatchDetail` — stejnou cache entry jako `/zapasy/[slug]`, takže víc
+  bloků téhož zápasu nedělá dotaz navíc. Zápas bez slugu nebo smazaný = blok
+  `null`.
+- **Soupiska má vlastní fetcher.** `lineup` je z `fetchMatchDetail` záměrně
+  vynechaná (viz Detail zápasu); `fetchMatchLineup` (klíč `match-lineup`) čte
+  jen to pole, takže se cache detailu nezvětšuje. Jména jsou text, bez odkazu
+  na profil hráče.
+- **Cache.** Všechny nové fetchery jsou `cachedQuery` s tagem `matches-list`
+  a `revalidate` (`fetchMatchCard` i s `posts-list`, přibyl mu tag). Článek je
+  SSG + ISR 600 s a tag zdědí, takže uložení zápasu ho obnoví hned. Starší
+  widgety bez tagu (`nextMatchWidget`, `standingsWidget`, `matchesPicker`,
+  `matchesWidget`, `matchForm` přes `fetchSeason`) se v článku obnoví nejpozději
+  za 600 s.
+- **Pravidla.** Blok vrací `null`, když zápas nebo data chybí. Widget v textu
+  má nadpis `h3` (`MatchPanel titleAs`), podnadpisy `h4`; `id` nadpisu je
+  z `useId`, protože stránka může mít víc widgetů. Blok neimportuje jiný blok
+  — sdílí se přes `features/matches`. `nextMatchWidget` nese `Countdown`
+  (klientský modul), ostatní zápasové bloky jsou čistě serverové; JS článku
+  jsme po přidání bloků neměřili.
+- **Odkaz na zápas** v textu: `internalDocToHref` (`RichText/index.tsx`) skládá
+  `/zapasy/{slug}`, zápas bez slugu vede na `/zapasy`. Relace `matches`
+  (`RelationshipConverter`) vykreslí řádek `MatchLinkRow` s titulkem, datem
+  a skóre z `fetchMatchCard`; titulek skládá `matchLinkTitle`, ne
+  `displayTitle`.
+- **Vynecháno:** `playerCard` a `postFeature` (nejsou o zápasech; velké
+  fotokarty do úzkého sloupce článku nepatří).
+
+## Datum v popisku zápasu v adminu
+
+Soupeř se v sezóně opakuje, takže výběr zápasu (`posts.match`, relace
+v blocích) musí ukazovat datum. `matches.displayTitle` zůstává uložený beze
+změny („HC Čestice x HC Zdar", viz Známé mezery — žádná migrace dat); datum
+přidává jen `afterRead` hook pole (`matchDisplayTitleAfterRead` v
+`hooks/matchDisplayTitle.ts`): „15. 3. 2026 · HC Čestice x HC Zdar",
+Europe/Prague.
+
+- Picker relace dotazuje **jen** pole `useAsTitle` (`select: { displayTitle: true }`),
+  dokument v hooku proto `date` nemá — hook ho dočte jedním dotazem
+  (`findByID` se `select: { date: true }`, jen v adminu). Idempotentní.
+- Hledání v pickeru jde po uložené hodnotě, takže funguje **podle soupeře,
+  ne podle data** (datum je jen v popisku).
+- Web `displayTitle` nečte (titulek skládá `matchTitle`), takže se na
+  frontendu nic nemění; v seznamu zápasů v adminu je datum navíc i ve sloupci
+  `date` (zůstal kvůli řazení).
+
 # Nasazení (Coolify + GitHub Actions)
 
 Produkce běží na Hetzner serveru s Coolify 4.1.2 jako Docker kontejner
