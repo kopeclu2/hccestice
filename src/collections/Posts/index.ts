@@ -210,7 +210,8 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Zápas',
       admin: {
         position: 'sidebar',
-        description: 'Zdroj skóre pro hero variantu E · Zápasový výsledek.',
+        description:
+          'Zdroj skóre pro hero variantu E · Zápasový výsledek. U každého zápasu je vidět datum; hledat jde podle názvu soupeře.',
         condition: (data) => data?.heroVariant === 'zapas' || data?.type === 'report',
       },
     },
