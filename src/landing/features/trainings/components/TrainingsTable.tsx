@@ -28,7 +28,14 @@ import {
 const GRID =
   'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-4.5 py-3.5 md:grid-cols-[6rem_9rem_minmax(0,1fr)_minmax(0,1fr)] md:gap-y-0 md:px-6 md:py-4 lg:px-7'
 
-export function TrainingsTable({ sessions }: { sessions: TrainingSession[] }) {
+export function TrainingsTable({
+  sessions,
+  monthHeadingAs: MonthHeading = 'h3',
+}: {
+  sessions: TrainingSession[]
+  /** Úroveň měsíčních nadpisů: `h2` pod `h1` stránky, `h3` pod nadpisem sekce. */
+  monthHeadingAs?: 'h2' | 'h3'
+}) {
   const months = buildTrainingMonths(sessions)
 
   if (months.length === 0) {
@@ -70,9 +77,9 @@ export function TrainingsTable({ sessions }: { sessions: TrainingSession[] }) {
 
       {months.map((month) => (
         <section key={month.key} aria-label={month.label}>
-          <h3 className="border-b border-line-soft bg-chip/50 px-4.5 py-2 text-xs font-bold tracking-caps-sm text-ink-soft uppercase not-first:border-t md:px-6 lg:px-7">
+          <MonthHeading className="border-b border-line-soft bg-chip/50 px-4.5 py-2 text-xs font-bold tracking-caps-sm text-ink-soft uppercase not-first:border-t md:px-6 lg:px-7">
             {month.label}
-          </h3>
+          </MonthHeading>
           <ul className="divide-y divide-line-soft">
             {month.rows.map((row) => (
               <TrainingRow key={row.id} row={row} />
