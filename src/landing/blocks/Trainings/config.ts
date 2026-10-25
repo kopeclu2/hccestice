@@ -3,10 +3,10 @@ import type { Block } from 'payload'
 /**
  * Tréninky — nadpis a karty ledových hodin.
  *
- * Rozpis je pole `rows`, takže se dny v adminu přidávají, přetahují a mažou
- * bez zásahu do kódu; karty se zalamují na další řádek. Fotka a zelená karta
- * s akcí tady dřív byly jako volitelné doplňky — handoff je nekreslí, takže
- * je blok už nemá vůbec.
+ * Termíny tréninků blok nenese: čte je z kolekce `trainings` (jeden dokument
+ * = jeden termín). Pole `rows` a `defaultVenue` jsou zastaralá a v adminu
+ * skrytá; zůstávají jen kvůli schématu — jejich smazání je destruktivní
+ * migrace, která se smí pustit až po nasazení (AGENTS.md „Sekce Tréninky").
  */
 export const LandingTrainings: Block = {
   slug: 'landingTrainings',
@@ -41,18 +41,20 @@ export const LandingTrainings: Block = {
     {
       name: 'defaultVenue',
       type: 'text',
-      label: 'Výchozí místo',
+      label: 'Výchozí místo (zastaralé)',
       admin: {
-        description: 'Doplní se u karet bez vlastního místa — např. „ZS Rychnov nad Kněžnou".',
+        hidden: true,
+        description: 'Zastaralé — nahradila ho kolekce Tréninky. Web hodnotu nečte.',
       },
     },
     {
       name: 'rows',
       type: 'array',
-      label: 'Rozpis ledových hodin',
+      label: 'Rozpis ledových hodin (zastaralé)',
       labels: { singular: 'Hodina', plural: 'Hodiny' },
       admin: {
-        description: 'Každý řádek je jedna karta v pásu. Pořadí karet se přetahuje myší.',
+        hidden: true,
+        description: 'Zastaralé — termíny se zadávají v kolekci Tréninky. Web řádky nečte.',
         initCollapsed: true,
         components: { RowLabel: '@/landing/blocks/Trainings/RowLabel#TrainingRowLabel' },
       },

@@ -25,6 +25,7 @@ import { Products } from './collections/Products'
 import { Seasons } from './collections/Seasons'
 import { Sponsors } from './collections/Sponsors'
 import { Teams } from './collections/Teams'
+import { Trainings } from './collections/Trainings'
 import { Users } from './collections/Users'
 import { VchlSyncRuns } from './collections/VchlSyncRuns'
 import { emailAdapter } from './email/adapter'
@@ -125,6 +126,7 @@ export default buildConfig({
     Teams,
     Players,
     Matches,
+    Trainings,
     Opponents,
     Galleries,
     Sponsors,

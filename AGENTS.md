@@ -959,49 +959,72 @@ důvod je pořád chyba.
 SVG `data:` URI, `global-error.tsx`, e-maily, `theme-color`); do komponent
 se nikdy neimportuje.
 
-# Sekce Tréninky (blok `landingTrainings`)
+# Sekce Tréninky (kolekce `trainings`)
 
-Rozpis ledových hodin jsou karty zarovnané na pravou hranu pod nadpisem:
-zvýrazněná hodina je tmavá karta s lime štítkem, ostatní bílé. Celý rozpis
-spravuje správce v adminu na home stránce, blok **Landing — Tréninky**.
+Rozpis ledových hodin je tabulka nadcházejících termínů. Jeden dokument
+kolekce `trainings` (admin **Hokej → Tréninky**) je jeden konkrétní termín,
+např. „úterý 3. 11. 2026, 16:00–17:15, Muži + děti". Blok `landingTrainings`
+(home sekce) i stránka `/treninky` jen kreslí nadpis a pod něj
+`TrainingsTable`.
 
 | pole | role |
 |---|---|
-| `kicker` | pilulka nad nadpisem; prázdné = skryje se |
-| `headlineRest` | konec nadpisu **bez tečky** — tečku kreslí design (`text-club`) |
-| `defaultVenue` | místo pro karty, které vlastní `venue` nemají |
-| `rows[]` | jedna karta = jedna ledová hodina (`day`, `time`, `group`, `venue`, `note`, `joint`, `hiddenOnWeb`) |
-| `perex` | volitelný text pod nadpisem; prázdné = jen nadpis a karty |
+| `date` | začátek (datum **a čas**, povinné, index); den v týdnu se z něj počítá, **neukládá se** |
+| `endsAt` | volitelný konec; validace: musí být po začátku |
+| `season` | relace na sezónu; při `create` bez hodnoty ji doplní hook podle data |
+| `group`, `note` | štítek skupiny, drobná poznámka |
+| `venue` | prázdné = web doplní `TRAININGS.defaultVenue` (`landing/content.ts`) |
+| `joint` | „Zvýraznit" — tmavý řádek s lime štítkem |
+| `hiddenOnWeb` | „Skrýt na webu" — zrušený trénink se nemaže |
+| `title` | skrytý, odvozený („út 3. 11. 2026 · Muži + děti"), vždy se přepočítá |
 
-Pravidla, když se toho budete dotýkat:
+| díl | kde |
+|---|---|
+| kolekce | `src/collections/Trainings.ts` (čtení veřejné, zápis přihlášený; sledovaná auditorem) |
+| hook titulku a sezóny | `hooks/trainingHooks.ts` (`beforeValidate`), čisté funkce v `lib/trainings.ts` (`seasonStartYear`, `trainingTitle`, `startOfPragueDayIso`) |
+| fetcher | `features/trainings/data.ts` → `fetchTrainingSessions` |
+| mapování | `features/trainings/view/` (`toTrainingSession`, `buildTrainingMonths`; čisté, bez I/O) |
+| tabulka | `features/trainings/components/TrainingsTable.tsx` (serverová, žádný klientský JS; prázdný stav `EmptyState`) |
+| náhled | `/vzory/treninky` (ukázková data, noindex) |
 
-- Karty jsou **zalamovaný flex řádek** (`flex-wrap justify-end`), ne mřížka ani
-  scrollovaný pás — přesně jak je kreslí handoff. Šířku si berou z obsahu
-  s minimem `min-w-60` (240px), takže rozpis může růst podle přidělených hodin
-  a přebytek se přelije na další řádek. Dřív to byl pás se scroll-snapem
-  a `RailArrows`; obojí bylo proti designu (karty přes půl sekce).
-- Nadpis a karty stojí **pod sebou**, ne ve dvou sloupcích gridu. Perex patří
-  **pod nadpis** (`max-w-130`): v handoffu je vedle nadpisu jen prázdná
-  rozpěrka (`flex: 1 1 0%`) a text v ní se lámal do úzkého sloupce vedle
-  nadpisu, který na jednom řádku sotva vyjde.
-- Typografie karty kopíruje handoff a je o dva stupně nižší, než bývala:
-  den `CardTitle sm` (21px), štítek `Badge xs` (11px), čas `Numeral sm`
-  (22px, ne 36/48px), místo `text-caption`. Radius je `rounded-thumb` (22px)
-  a bílá karta má jen `border-line-soft`, žádný `shadow-tile`.
-- Nadpis je `SectionTitle size="md"` (28 → 34px), ne `xl`. Handoff má 34px;
-  velikost `xl` (claim ve footeru) sekci vizuálně přebíjela.
-- `hiddenOnWeb` se filtruje **až po** rozhodnutí, jestli blok vlastní rozpis
-  má — jinak by se po skrytí všech řádků vrátily ukázkové hodiny z fallbacku
-  v `content.ts`.
-- Fotka tréninku a zelená karta s akcí (`photo*`, `event`) v bloku **už nejsou**
-  — handoff je nekreslí. Odstraněné jsou z komponenty, z configu i ze schématu,
-  takže hodnoty, které v nich měly dokumenty založené před 21. 8. 2026, jsou
-  ztracené; vracet je zpátky znamená revert migrace níž.
-- Schéma rozšiřuje migrace `20260821_093653_trainings_cards` (aditivní:
-  `venue`, `note`, `hidden_on_web`, `kicker`, `default_venue`) a zužuje
-  `20260821_095556_trainings_drop_extras` (**destruktivní** — dropne
-  `photo_id`, `photo_title`, `photo_subtitle` a `event_*` na
-  `pages_blocks_landing_trainings` i na verzovací tabulce).
+- **Sezóna** začíná 1. srpna: měsíc >= 8 patří sezóně `startYear` = rok,
+  jinak rok − 1; měsíc a rok se berou v Europe/Prague. Když sezóna s tímto
+  `startYear` neexistuje, použije se `isCurrent`, jinak zůstane prázdná. Při
+  úpravě se sezóna nepřepisuje.
+- **Časová zóna.** `date` je `date` pole Payloadu jako `matches.date` (v DB
+  UTC, v adminu čas prohlížeče); web formátuje vždy v Europe/Prague.
+- **Cache.** `fetchTrainingSessions` je `cachedQuery` (klíč `trainings`, `v1`)
+  s tagem `trainings-list` (`CACHE_TAGS.trainings`) a `revalidate: 3600`.
+  Hranice „od dneška" (`startOfPragueDayIso`) se počítá **mimo** cache a
+  vstupuje do klíče, takže dnešní trénink je vidět celý den a odehraný zmizí
+  další den. Tag expiruje `revalidateTrainings` (`{ expire: 0 }`, `afterChange`
+  i `afterDelete`, respektuje `disableRevalidate`); do `LANDING_CACHE_TAGS` se
+  záměrně nepřidával. Mapování nese `venue` prázdné, výchozí místo doplňuje
+  blok, aby se kvůli němu nemusela zvedat verze klíče.
+- **Blok** je async Server Component: texty (`kicker`, nadpis, `perex`) čte
+  z dokumentu, termíny z `fetchTrainingSessions`. `/treninky` (`spacing="content"`)
+  přidává dvě informační karty (`InfoCard`) a bez bloku na home použije texty
+  z `content.ts`. Rozpis **není** v JSON-LD (volný text, `Event` bez
+  `startDate` hlásí chybu).
+- **Zastaralá pole.** `rows` a `defaultVenue` v bloku jsou v adminu skrytá
+  (`admin.hidden`), web je nečte; zůstávají jen kvůli schématu. `RowLabel.tsx`
+  patří k `rows` a smaže se spolu s nimi.
+
+## Pořadí nasazení
+
+1. Migrace `20261025_070842_trainings_collection` **před buildem** (prerender
+   `/treninky` a home čte tabulku `trainings`). Je aditivní: tabulka
+   `trainings`, FK na `seasons` (`ON DELETE set null`), indexy a sloupec
+   `trainings_id` v `payload_locked_documents_rels`.
+2. Nasadit nový image, v adminu zadat termíny.
+3. Dropnutí `rows` a `defaultVenue` z bloku je **samostatná destruktivní
+   migrace, až po nasazení** (starý build čte sloupce při každém čtení
+   `pages`; viz „Nasazení → Migrace"). Starý rozpis z `rows` se přitom
+   neztratí dřív, než ho někdo přepíše do kolekce — nejdřív ho přepsat, pak
+   migrovat.
+- Dřívější karty a pás byly pole `rows` v bloku; migrace
+  `20260821_093653_trainings_cards` a `20260821_095556_trainings_drop_extras`
+  patří k nim.
 
 # Synchronizace VČHL (ahl.cz)
 

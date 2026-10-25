@@ -76,6 +76,7 @@ export interface Config {
     teams: Team;
     players: Player;
     matches: Match;
+    trainings: Training;
     opponents: Opponent;
     galleries: Gallery;
     sponsors: Sponsor;
@@ -112,6 +113,7 @@ export interface Config {
     teams: TeamsSelect<false> | TeamsSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
+    trainings: TrainingsSelect<false> | TrainingsSelect<true>;
     opponents: OpponentsSelect<false> | OpponentsSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
@@ -917,7 +919,6 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -994,11 +995,11 @@ export interface LandingTrainingsBlock {
    */
   perex?: string | null;
   /**
-   * Doplní se u karet bez vlastního místa — např. „ZS Rychnov nad Kněžnou".
+   * Zastaralé — nahradila ho kolekce Tréninky. Web hodnotu nečte.
    */
   defaultVenue?: string | null;
   /**
-   * Každý řádek je jedna karta v pásu. Pořadí karet se přetahuje myší.
+   * Zastaralé — termíny se zadávají v kolekci Tréninky. Web řádky nečte.
    */
   rows?:
     | {
@@ -1942,6 +1943,47 @@ export interface RawHtmlBlock {
   blockType: 'rawHtml';
 }
 /**
+ * Rozpis ledových hodin: jeden záznam je jeden termín. Web ukazuje jen budoucí termíny, které nejsou skryté.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainings".
+ */
+export interface Training {
+  id: number;
+  title?: string | null;
+  date: string;
+  /**
+   * Volitelné. Prázdné = web ukáže jen čas začátku.
+   */
+  endsAt?: string | null;
+  /**
+   * Prázdné = při založení se doplní podle data (sezóna začíná 1. srpna).
+   */
+  season?: (number | null) | Season;
+  /**
+   * Štítek termínu, např. „Muži + děti".
+   */
+  group?: string | null;
+  /**
+   * Prázdné = web doplní „ZS Rychnov nad Kněžnou".
+   */
+  venue?: string | null;
+  /**
+   * Drobný řádek v tabulce, např. „Bez brankáře" nebo „Turnaj".
+   */
+  note?: string | null;
+  /**
+   * Tmavý řádek s lime štítkem — společný trénink, turnaj…
+   */
+  joint?: boolean | null;
+  /**
+   * Zrušený trénink se skryje, aniž by se záznam mazal.
+   */
+  hiddenOnWeb?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Timeline na stránce Historie klubu. Milníky bez fotky se vykreslí jen textově, prázdné éry se nezobrazí.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2389,6 +2431,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'matches';
         value: number | Match;
+      } | null)
+    | ({
+        relationTo: 'trainings';
+        value: number | Training;
       } | null)
     | ({
         relationTo: 'opponents';
@@ -3373,7 +3419,6 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
-  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -3539,6 +3584,23 @@ export interface MatchesSelect<T extends boolean = true> {
       };
   report?: T;
   gallery?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainings_select".
+ */
+export interface TrainingsSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  endsAt?: T;
+  season?: T;
+  group?: T;
+  venue?: T;
+  note?: T;
+  joint?: T;
+  hiddenOnWeb?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -4322,10 +4384,7 @@ export interface TaskSchedulePublish {
           value: number | Post;
         } | null);
     global?: string | null;
-    user?: {
-      relationTo: 'users';
-      value: number | User;
-    } | null;
+    user?: (number | null) | User;
   };
   output?: unknown;
 }

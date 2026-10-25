@@ -183,6 +183,7 @@ describe('CACHE_TAGS', () => {
         'posts-list',
         'galleries-list',
         'matches-list',
+        'trainings-list',
         'navigation',
         'maintenance',
         'redirects',
