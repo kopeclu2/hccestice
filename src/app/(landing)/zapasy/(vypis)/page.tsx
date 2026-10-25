@@ -115,7 +115,6 @@ export default async function ZapasyPage({ searchParams }: Args) {
 
       <MatchesHeader
         activeSlug={activeSeason?.slug ?? null}
-        fullTableUrl={standings.fullTableUrl}
         seasons={seasons.flatMap((season) =>
           season.slug ? [{ slug: season.slug, label: seasonShortLabel(season) }] : [],
         )}
@@ -174,7 +173,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           rows={results.rows}
           totalPages={results.totalPages}
         />
-        <StandingsPanel standings={standings} />
+        <StandingsPanel officialHref={standings.fullTableUrl} standings={standings} />
       </SectionShell>
 
       <MatchesCta />

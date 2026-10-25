@@ -54,8 +54,9 @@ function trimRows(rows: StandingsRow[], limit: number): StandingsRow[] {
  * naskakovala na `md`, byl sloupec „Tým" na 1024px užší (~209 px) než na
  * 390px telefonu a názvy se `truncate` ořezávaly.
  *
- * `limit` zkrátí výpis (výřez na home page), `moreHref` přidá proklik
- * a `headVariant` přepne styl nadpisu na landingový.
+ * `limit` zkrátí výpis (výřez na home page), `moreHref` přidá proklik,
+ * `headVariant` přepne styl nadpisu na landingový a `officialHref` přidá pod
+ * tabulku odkaz na oficiální tabulky VČHL.
  */
 export function StandingsPanel({
   standings,
@@ -64,6 +65,7 @@ export function StandingsPanel({
   moreHref,
   moreLabel = 'Celá tabulka',
   headVariant,
+  officialHref,
 }: {
   standings: StandingsContent
   /** Nadpis sekce — na landingu „Tabulka VČHL" kvůli lime zvýraznění ligy. */
@@ -72,6 +74,8 @@ export function StandingsPanel({
   moreHref?: string | null
   moreLabel?: string
   headVariant?: SectionHeadVariant
+  /** Odkaz na oficiální tabulky VČHL pod tabulkou (otevře se v nové záložce). */
+  officialHref?: string | null
 }) {
   const rows = limit ? trimRows(standings.rows, limit) : standings.rows
   // Výřez na home page (`limit`) zůstává ve čtyřech sloupcích; rozšíření
@@ -262,6 +266,13 @@ export function StandingsPanel({
             })}
           </tbody>
         </table>
+      )}
+      {officialHref && (
+        <Button asChild className="mt-4 self-start" size="sm" variant="outline">
+          <Link href={officialHref} rel="noreferrer" target="_blank">
+            Oficiální tabulky VČHL ↗
+          </Link>
+        </Button>
       )}
     </div>
   )
