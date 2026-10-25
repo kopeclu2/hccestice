@@ -1835,13 +1835,23 @@ zdokumentoval (checklist níž), nic se na něm neměnilo.
 
 Payload 3.88 měl kritické díry (RCE ve form-builderu na anonymně zapisovatelné
 `form-submissions`, obejití access control), Next 16.3.0 SSRF/RCE v image
-optimizeru. Minimum je **Payload 3.91.0** a **Next 16.4.2**; `overrides`
-v `package.json` dotahují tranzitivní balíčky. Payload 3.90 přidal sloupec
-`users.reset_password_requested_at` — migrace
-`20261016_084321_security_deps_upgrade`, **před buildem**. Zbylé nálezy
-`bun audit` jsou jen v build/lint nástrojích. `payload-cms-navigation-plugin`
-deklaruje `express`, `openai`, `fastmcp`… v `dependencies`, jeho `dist` je ale
-neimportuje a standalone build je nebalí.
+optimizeru. Minimum je **Payload 3.92.0** a **Next 16.4.3**
+(`@sentry/nextjs` ≥ 10.76.2; 10.75.1 a starší měl kritický nález). Payload 3.90
+přidal sloupec `users.reset_password_requested_at` — migrace
+`20261016_084321_security_deps_upgrade`, **před buildem**; 3.92 schéma
+nemění (`migrate:create` hlásí „No schema changes detected").
+`bun audit` je od 25. 10. 2026 bez nálezů. Drží to i `overrides` v
+`package.json` pro tranzitivní balíčky (`undici`, `qs`, `nodemailer`,
+`fast-uri`, `esbuild`, `file-type`, `zod`, `happy-dom`,
+`postcss-selector-parser`, `body-parser`, `vite`…): override se přepisuje
+globálně, takže u balíčku s víc major řadami (`brace-expansion`: 1.x pro
+`minimatch@3`, 5.x pro `minimatch@10`) nejde — tam se přegeneruje položka
+v `bun.lock` (smazat řádek a `bun install`). Při zvedání verze projít
+`bun audit`, `bun run build` (prerender přes lokální DB) a vytvořenou CSS
+`prose` (typography plugin stojí na `postcss-selector-parser`).
+`payload-cms-navigation-plugin` deklaruje `express`, `openai`, `fastmcp`… v
+`dependencies`, jeho `dist` je ale neimportuje a standalone build je nebalí,
+takže jejich verze (`zod` 3 → 4, `file-type`) přepisují overrides bez rizika.
 
 ## Surové HTML
 
