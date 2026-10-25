@@ -54,11 +54,14 @@ export default async function SponzoriPage() {
         <h2 className="sr-only">Partneři klubu</h2>
 
         <Reveal>
-          <div className="mx-auto flex max-w-[67.5rem] flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {/* Mřížka, ne řádky pod sebou: patnáct plnošířkových řádků dělalo
-                na mobilu stránku přes 7000px vysokou. `min()` v `minmax` drží
-                dlaždici v kontejneru i na 320px displeji (viz AGENTS.md). */}
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(17rem,100%),1fr))] gap-3">
+                na mobilu stránku přes 7000px vysokou. Přes celou šířku obsahu
+                (`max-w-page` bez bočních okrajů), bez dalšího zúžení: dřív
+                byla mřížka v pruhu 1080px a karty vycházely drobné. `min()`
+                v `minmax` drží dlaždici v kontejneru i na 320px displeji
+                (viz AGENTS.md). */}
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(20rem,100%),1fr))] gap-4">
               {sponsors.map((sponsor) => (
                 <PartnerCard key={sponsor.id} sponsor={sponsor} />
               ))}
