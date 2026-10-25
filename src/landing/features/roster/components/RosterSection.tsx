@@ -4,7 +4,8 @@ import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 
-import { PlayerTile, type RosterCard } from './PlayerTile'
+import type { RosterCard } from './PlayerTile'
+import { PlayerTileJersey } from './PlayerTileJersey'
 
 /**
  * Sekce soupisky: nadpis s počtem nad linkou (2px ink), anglický kicker
@@ -43,7 +44,7 @@ export function RosterSection({
         <ul className="mt-5 grid grid-cols-2 gap-x-3 gap-y-8.5 md:[grid-template-columns:repeat(auto-fill,minmax(13rem,1fr))] md:gap-x-5.5 md:gap-y-10 lg:[grid-template-columns:repeat(auto-fill,minmax(16.125rem,1fr))]">
           {cards.map((card) => (
             <li key={card.key}>
-              <PlayerTile card={card} />
+              <PlayerTileJersey card={card} />
             </li>
           ))}
         </ul>
