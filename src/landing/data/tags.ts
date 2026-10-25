@@ -20,6 +20,8 @@ export const CACHE_TAGS = {
   galleries: 'galleries-list',
   /** Rozlosování, výsledky a forma (`/zapasy`). */
   matches: 'matches-list',
+  /** Termíny tréninků (home sekce a `/treninky`). */
+  trainings: 'trainings-list',
   /** Menu na každé stránce (`features/navigation/data.ts`). */
   navigation: 'navigation',
   /** Přepínač režimu údržby (`landing/data/maintenance.ts`). */

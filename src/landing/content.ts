@@ -80,9 +80,8 @@ export const SEASON_STATS = {
 } as const
 
 /**
- * Tréninky — fotka i zelená karta s akcí jsou volitelné doplňky, které
- * v designu sekce nejsou. Fallback pro ně proto **záměrně neexistuje**:
- * vykreslí se jen tehdy, když je správce v CMS vyplní.
+ * Tréninky — texty sekce a výchozí místo pro termíny bez vlastního místa.
+ * Samotné termíny jsou v kolekci `trainings`.
  */
 export const TRAININGS = {
   kicker: 'Tréninky',
@@ -90,10 +89,6 @@ export const TRAININGS = {
   headlineHighlight: 'Mládež',
   headlineRest: 'jezdí s muži',
   defaultVenue: 'ZS Rychnov nad Kněžnou',
-  rows: [
-    { day: 'Út', time: '16:15 – 17:15', group: 'Muži + mládež', accent: true },
-    { day: 'Pá', time: '17:45 – 19:00', group: 'Muži', accent: false },
-  ],
 } as const
 
 /** Hlavička samostatné stránky `/treninky` — obsah rozpisu nese `landingTrainings` blok sám. */

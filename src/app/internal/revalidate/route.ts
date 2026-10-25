@@ -1,5 +1,6 @@
 import { applyRevalidation } from '@/hooks/createRevalidateHooks'
 import { LANDING_REVALIDATION } from '@/hooks/revalidateLanding'
+import { TRAININGS_REVALIDATION } from '@/hooks/revalidateTrainings'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import { hasBearerSecret } from '@/lib/bearer'
 
@@ -23,6 +24,14 @@ function authorized(req: Request): boolean {
 
 export function POST(req: Request) {
   if (!authorized(req)) return new Response('Unauthorized', { status: 401 })
+
+  // `?scope=trainings`: import tréninků (`scripts/seed/seed-trainings.ts`)
+  // zapisuje s `disableRevalidate` a mimo Next runtime revalidovat nejde.
+  if (new URL(req.url).searchParams.get('scope') === 'trainings') {
+    applyRevalidation({ info: (msg) => console.info(`[trainings] ${msg}`) }, TRAININGS_REVALIDATION)
+    return Response.json({ revalidated: true }, { headers: { 'Cache-Control': 'no-store' } })
+  }
+
   applyRevalidation(
     { info: (msg) => console.info(`[vchl-sync] ${msg}`) },
     // Synchronizace zakládá nové zápasy (zápisy jdou s `disableRevalidate`,

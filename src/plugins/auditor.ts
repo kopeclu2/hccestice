@@ -41,6 +41,7 @@ const TRACKED_COLLECTIONS = [
   'teams',
   'players',
   'matches',
+  'trainings',
   'opponents',
   'galleries',
   'sponsors',

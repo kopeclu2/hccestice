@@ -10,10 +10,10 @@ import { buildPageMetadata } from '@/lib/buildPageMetadata'
 export const revalidate = 600
 
 /**
- * Tréninky jako samostatná stránka — stejná data jako sekce „Tréninky" na
- * homepage (blok `landingTrainings`), jen s vlastní hlavičkou a URL pro
- * odkazování a SEO. Bez bloku na homepage (odstraněný/smazaný) se vykreslí
- * fallback obsah z `content.ts` — viz `mapTrainings` v `Trainings/Component.tsx`.
+ * Tréninky jako samostatná stránka — stejná sekce jako na homepage (blok
+ * `landingTrainings` pro texty, termíny z kolekce `trainings`), jen s vlastní
+ * hlavičkou a URL pro odkazování a SEO. Bez bloku na homepage (odstraněný
+ * nebo smazaný) se vykreslí texty z `content.ts` — viz `mapTrainings`.
  */
 export default async function TreninkyPage() {
   const block = await fetchTrainingsBlock()

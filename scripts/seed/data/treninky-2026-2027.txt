@@ -1,0 +1,19 @@
+# Rozpis tréninků sezóna 2026/2027 — přepsáno z
+# https://www.hccestice.cz/clanky/muzi/rozlosovani-zapasu-2026---2027/
+# Spuštění: bun --env-file=.env scripts/seed/seed-trainings.ts scripts/seed/data/treninky-2026-2027.txt --venue "ZS Rychnov nad Kněžnou"
+úterý    20.10.2026    20:00-21:15
+pátek    30.10.2026    17:45-19:00
+úterý    03.11.2026    16:00-17:15    trénink Muži + děti
+pátek    06.11.2026    17:45-19:00
+úterý    10.11.2026    20:00-21:15
+pátek    13.11.2026    17:45-19:00
+úterý    17.11.2026    16:00-17:15    trénink Muži + děti
+pátek    20.11.2026    17:45-19:00
+úterý    24.11.2026    20:00-21:15
+pátek    27.11.2026    17:45-19:00
+úterý    01.12.2026    16:00-17:15    trénink Muži + děti
+pátek    04.12.2026    17:45-19:00
+úterý    08.12.2026    20:00-21:15
+pátek    11.12.2026    17:45-19:00
+úterý    15.12.2026    16:00-17:15    trénink Muži + děti
+pátek    18.12.2026    17:45-19:00
