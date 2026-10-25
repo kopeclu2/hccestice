@@ -36,3 +36,10 @@ export const isNavItemActive = (item: NavItem, pathname: string): boolean =>
 /** Kotva CTA musí být na podstránkách absolutní (`#kontakt` → `/#kontakt`). */
 export const ctaHref = (href: string, context: 'home' | 'subpage'): string =>
   context === 'subpage' && href.startsWith('#') ? `/${href}` : href
+
+/**
+ * Odkaz bez znalosti kontextu (patička je na každé stránce): holá kotva
+ * `#kontakt` by na podstránce nikam nevedla, `/#kontakt` funguje všude —
+ * na home jen doscrolluje, jinde přejde na home a doscrolluje.
+ */
+export const homeAnchorHref = (href: string): string => (href.startsWith('#') ? `/${href}` : href)

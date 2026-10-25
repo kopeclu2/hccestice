@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { ctaHref, isNavItemActive, navHref } from '@/landing/features/navigation/navHref'
+import {
+  ctaHref,
+  homeAnchorHref,
+  isNavItemActive,
+  navHref,
+} from '@/landing/features/navigation/navHref'
 import type { NavItem } from '@/landing/features/navigation/types'
 
 const both: NavItem = { label: 'Aktuality', anchor: 'aktuality', path: '/aktuality' }
@@ -65,5 +70,17 @@ describe('ctaHref', () => {
   it('cesta se nemění v žádném kontextu', () => {
     expect(ctaHref('/zapasy', 'subpage')).toBe('/zapasy')
     expect(ctaHref('/zapasy', 'home')).toBe('/zapasy')
+  })
+})
+
+describe('homeAnchorHref', () => {
+  it('holá kotva míří na homepage, aby fungovala i z podstránky', () => {
+    expect(homeAnchorHref('#kontakt')).toBe('/#kontakt')
+  })
+
+  it('cesta a externí adresa zůstanou beze změny', () => {
+    expect(homeAnchorHref('/zapasy')).toBe('/zapasy')
+    expect(homeAnchorHref('/#kontakt')).toBe('/#kontakt')
+    expect(homeAnchorHref('https://example.com')).toBe('https://example.com')
   })
 })
