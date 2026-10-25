@@ -1002,13 +1002,21 @@ např. „úterý 3. 11. 2026, 16:00–17:15, Muži + děti". Blok `landingTrain
   záměrně nepřidával. Mapování nese `venue` prázdné, výchozí místo doplňuje
   blok, aby se kvůli němu nemusela zvedat verze klíče.
 - **Blok** je async Server Component: texty (`kicker`, nadpis, `perex`) čte
-  z dokumentu, termíny z `fetchTrainingSessions`. `/treninky` (`spacing="content"`)
-  přidává dvě informační karty (`InfoCard`) a bez bloku na home použije texty
+  z dokumentu, termíny z `fetchTrainingSessions`. Homepage ukáže jen
+  `HOME_SESSIONS` (6) nejbližších termínů a pod tabulkou tlačítko
+  „Celý rozpis tréninků" na `/treninky` (`routes.trainings`); tlačítko se
+  bez termínů nezobrazí. `/treninky` (`spacing="content"`) ukazuje rozpis
+  celý a bez velkého nadpisu sekce — `h1` je v hlavičce, věta z nadpisu
+  zůstává jako úvodní řádek —, takže měsíční lišty tabulky jsou tam `h2`
+  (`monthHeadingAs`), na home `h3`. Bez bloku na home se použijí texty
   z `content.ts`. Rozpis **není** v JSON-LD (volný text, `Event` bez
   `startDate` hlásí chybu).
-- **Zastaralá pole.** `rows` a `defaultVenue` v bloku jsou v adminu skrytá
-  (`admin.hidden`), web je nečte; zůstávají jen kvůli schématu. `RowLabel.tsx`
-  patří k `rows` a smaže se spolu s nimi.
+- **Zrušená pole.** Dřívější pole `rows` a `defaultVenue` v bloku zrušila
+  migrace `20261025_074956_trainings_drop_block_rows` (dropnutí tabulek
+  `pages_blocks_landing_trainings_rows`, `_pages_v_…_rows` a sloupců
+  `default_venue`; `down` vrací jen schéma). Patřily k nim i dřívější karty
+  a pás z migrací `20260821_093653_trainings_cards` a
+  `20260821_095556_trainings_drop_extras`.
 
 ## Pořadí nasazení
 
@@ -1016,15 +1024,11 @@ např. „úterý 3. 11. 2026, 16:00–17:15, Muži + děti". Blok `landingTrain
    `/treninky` a home čte tabulku `trainings`). Je aditivní: tabulka
    `trainings`, FK na `seasons` (`ON DELETE set null`), indexy a sloupec
    `trainings_id` v `payload_locked_documents_rels`.
-2. Nasadit nový image, v adminu zadat termíny.
-3. Dropnutí `rows` a `defaultVenue` z bloku je **samostatná destruktivní
-   migrace, až po nasazení** (starý build čte sloupce při každém čtení
-   `pages`; viz „Nasazení → Migrace"). Starý rozpis z `rows` se přitom
-   neztratí dřív, než ho někdo přepíše do kolekce — nejdřív ho přepsat, pak
-   migrovat.
-- Dřívější karty a pás byly pole `rows` v bloku; migrace
-  `20260821_093653_trainings_cards` a `20260821_095556_trainings_drop_extras`
-  patří k nim.
+2. Nasadit nový image, termíny zadat v adminu nebo importem
+   (`scripts/seed/seed-trainings.ts`, pro produkci s `NODE_ENV=production`).
+3. Destruktivní migrace `…_trainings_drop_block_rows` **až po nasazení**
+   (starý build čte sloupce při každém čtení `pages`; viz „Nasazení →
+   Migrace"). Před ní zálohovat obě tabulky `…_trainings_rows`.
 
 # Synchronizace VČHL (ahl.cz)
 

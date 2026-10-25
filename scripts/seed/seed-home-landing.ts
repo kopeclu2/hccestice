@@ -96,7 +96,6 @@ const layout = [
     headlineHighlight: g.trainings?.headlineHighlight,
     headlineRest: g.trainings?.headlineRest,
     perex: g.trainings?.perex,
-    rows: stripIds(g.trainings?.rows as any),
     photo: g.trainings?.photo,
     photoTitle: g.trainings?.photoTitle,
     photoSubtitle: g.trainings?.photoSubtitle,
