@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
+import { homeAnchorHref } from '@/landing/features/navigation/navHref'
 import type { FooterContent, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
@@ -96,7 +97,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
                 okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
             <div className="flex flex-wrap gap-2.5 max-3xs:gap-2">
               <Button asChild className="max-3xs:pl-3.5" variant="light" withArrow>
-                <Link href="#kontakt">Napiš nám</Link>
+                <Link href={homeAnchorHref('#kontakt')}>Napiš nám</Link>
               </Button>
               {site.facebook && (
                 <Button asChild className={SOCIAL_PILL} size="md" variant="inverse">
@@ -144,7 +145,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
                 {column.links.map((link) => (
                   <Link
                     className="py-3 text-on-contrast transition-colors hover:text-lime md:py-0.5"
-                    href={link.href}
+                    href={homeAnchorHref(link.href)}
                     key={link.href}
                   >
                     {link.label}

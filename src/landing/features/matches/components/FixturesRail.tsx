@@ -259,10 +259,7 @@ function FixtureList({ fixtures }: { fixtures: FixtureCard[] }) {
  * Jediný nadcházející zápas — hero panel přes celou šířku sekce.
  *
  * Kolo a místo jdou do ztišeného podtitulku, datum a čas do levého sloupce
- * (`Numeral 2xl`, tedy dvojnásobek proti kartě v pásu). CTA míří na
- * `/kontakt`, kde je adresa zimáku — vlastní stránka „jak se dostat"
- * neexistuje a vyrábět kvůli jednomu tlačítku novou by znamenalo obsah,
- * který nikdo nespravuje.
+ * (`Numeral 2xl`, tedy dvojnásobek proti kartě v pásu).
  */
 function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
   const subtitle = [fixture.stage, fixture.venue].filter(Boolean).join(' · ')
@@ -271,9 +268,6 @@ function SoloFixturePanel({ fixture }: { fixture: FixtureCard }) {
     <NextMatchPanel
       actions={
         <div className="mt-6 flex flex-wrap gap-2.5 lg:justify-end">
-          <Button asChild size="md" variant="lime" withArrow>
-            <Link href="/kontakt">Jak se dostat na zimák</Link>
-          </Button>
           <Button asChild size="md" variant="inverse">
             <Link href="/zapasy#odehrane">Odehrané zápasy</Link>
           </Button>
