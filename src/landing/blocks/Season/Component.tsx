@@ -10,7 +10,6 @@ import { fetchSeason, mapStandingsFromSeason } from '@/landing/features/matches/
 import type { FixtureCard, ResultRow, StandingsContent } from '@/landing/features/matches/types'
 import { relId } from '@/landing/lib/payload'
 import { EmptyState } from '@/landing/ui/EmptyState'
-import { Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
@@ -51,13 +50,10 @@ export async function SeasonBlockComponent({ block }: { block: LandingSeasonBloc
  * dvojice Odehrané zápasy / Tabulka. Každý výřez má proklik na /zapasy.
  * Sekce nese kotvu `#sezona` (odkazuje na ni hlavní navigace i hero).
  *
- * Vlastní Kicker nad výřezy — dřív sekce žádný neměla a rovnou začínala
- * „Rozlosování / Nadcházející zápasy" (mikro-nadpis jednoho ze tří výřezů
- * uvnitř). Na mobilu, kde není žádné vedlejší rozvržení, které by novou
- * sekci naznačilo jinak, tak karty Aktualit přecházely přímo do rozpisu
- * zápasů bez jakéhokoli ohlášení (srovnej `NewsView`, `ClubView`,
- * `HistoryView`…). Velký nadpis tu není: opakoval by hlavičky panelů pod
- * sebou, `h2` je jen pro čtečky.
+ * Bez vlastního štítku a nadpisu nad výřezy: pás zápasů má v hlavičce
+ * štítek „Rozlosování" a nadpis „Nadcházející zápasy", takže další štítek
+ * „Sezóna" nad ním byl jen duplicita (dva štítky pod sebou). Sekci na mobilu
+ * ohlásí hlavička pásu stejně jako ostatním sekcím jejich Kicker.
  */
 function SeasonView({
   fixtures,
@@ -74,47 +70,42 @@ function SeasonView({
 
   return (
     <>
-      <SectionShell id="sezona">
+      {/* Sekce začíná přímo pásem zápasů: jeho hlavička (štítek „Rozlosování"
+          + nadpis) ji ohlásí sama. Kotva `#sezona` (navigace, hero) je na
+          obalu **mimo** `Reveal`: ten při náběhu posouvá obsah o pár pixelů,
+          takže kotva uvnitř něj po animaci skončila o tolik výš a štítek
+          zajel pod fixní lištu (`scroll-mt-20` pak nestačil). */}
+      <div className="scroll-mt-20" id="sezona">
         <Reveal>
-          <Kicker>Sezóna</Kicker>
-          {/* Velký nadpis by jen vyjmenoval hlavičky panelů pod ním
-              (Rozlosování, Odehrané zápasy, Tabulka), proto je jen pro čtečky. */}
-          <h2 className="sr-only">Sezóna: rozlosování, výsledky a tabulka</h2>
+          <FixturesRail
+            emptyState={
+              <EmptyState
+                actions={
+                  <>
+                    <Button asChild size="md" variant="dark" withArrow>
+                      <Link href="/aktuality">Sledovat aktuality</Link>
+                    </Button>
+                    <Button asChild size="md" variant="outline">
+                      <Link href={`${ZAPASY_HREF}#odehrane`}>Odehrané zápasy</Link>
+                    </Button>
+                  </>
+                }
+                icon="schedule"
+                title="Žádný zápas na programu"
+                titleAs="h3"
+                watermark="VČHL"
+              >
+                Rozlosování nové sezóny zveřejní VČHL během léta. Sledujte aktuality — dáme vědět,
+                jakmile bude termínovka venku.
+              </EmptyState>
+            }
+            fixtures={fixtures}
+            headVariant="landing"
+            moreHref={ZAPASY_HREF}
+            spacing="landing"
+          />
         </Reveal>
-      </SectionShell>
-
-      {/* `spacing="content"` — menší odstup než plný sekční rytmus, sekce
-          už má nadpis těsně nad sebou (stejný vzor jako hlavička podstránky
-          → první obsahový blok). */}
-      <Reveal>
-        <FixturesRail
-          emptyState={
-            <EmptyState
-              actions={
-                <>
-                  <Button asChild size="md" variant="dark" withArrow>
-                    <Link href="/aktuality">Sledovat aktuality</Link>
-                  </Button>
-                  <Button asChild size="md" variant="outline">
-                    <Link href={`${ZAPASY_HREF}#odehrane`}>Odehrané zápasy</Link>
-                  </Button>
-                </>
-              }
-              icon="schedule"
-              title="Žádný zápas na programu"
-              titleAs="h3"
-              watermark="VČHL"
-            >
-              Rozlosování nové sezóny zveřejní VČHL během léta. Sledujte aktuality — dáme vědět,
-              jakmile bude termínovka venku.
-            </EmptyState>
-          }
-          fixtures={fixtures}
-          headVariant="landing"
-          moreHref={ZAPASY_HREF}
-          spacing="content"
-        />
-      </Reveal>
+      </div>
 
       {/* Dva sloupce až od `lg`: na tabletu (768px) vyšla tabulka na 296px,
           takže se názvy týmů odřízly do „HC Baroni Op…", a řádek výsledku
