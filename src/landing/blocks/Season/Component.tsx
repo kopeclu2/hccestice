@@ -17,7 +17,7 @@ import type { LandingSeasonBlock } from '@/payload-types'
 
 /** Výřezy sekcí na home page — plný výpis je na /zapasy. */
 const ZAPASY_HREF = '/zapasy'
-const HOME_FIXTURES = 3
+const HOME_FIXTURES = 4
 const HOME_RESULTS = 4
 const HOME_STANDINGS = 6
 
