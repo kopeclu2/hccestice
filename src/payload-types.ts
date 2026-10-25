@@ -994,37 +994,6 @@ export interface LandingTrainingsBlock {
    * Volitelný text pod nadpisem. Prázdné = jen nadpis a karty.
    */
   perex?: string | null;
-  /**
-   * Zastaralé — nahradila ho kolekce Tréninky. Web hodnotu nečte.
-   */
-  defaultVenue?: string | null;
-  /**
-   * Zastaralé — termíny se zadávají v kolekci Tréninky. Web řádky nečte.
-   */
-  rows?:
-    | {
-        day: string;
-        time: string;
-        /**
-         * Štítek na kartě. Prázdné = karta bez štítku.
-         */
-        group?: string | null;
-        /**
-         * Prázdné = výchozí místo sekce.
-         */
-        venue?: string | null;
-        /**
-         * Drobný řádek pod místem — např. „Od 1. 11." nebo „Bez brankáře".
-         */
-        note?: string | null;
-        joint?: boolean | null;
-        /**
-         * Zrušený trénink se skryje, aniž by se řádek mazal.
-         */
-        hiddenOnWeb?: boolean | null;
-        id?: string | null;
-      }[]
-    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'landingTrainings';
@@ -2697,19 +2666,6 @@ export interface LandingTrainingsBlockSelect<T extends boolean = true> {
   headlineHighlight?: T;
   headlineRest?: T;
   perex?: T;
-  defaultVenue?: T;
-  rows?:
-    | T
-    | {
-        day?: T;
-        time?: T;
-        group?: T;
-        venue?: T;
-        note?: T;
-        joint?: T;
-        hiddenOnWeb?: T;
-        id?: T;
-      };
   id?: T;
   blockName?: T;
 }
