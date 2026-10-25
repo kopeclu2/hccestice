@@ -10,8 +10,7 @@ import { fetchSeason, mapStandingsFromSeason } from '@/landing/features/matches/
 import type { FixtureCard, ResultRow, StandingsContent } from '@/landing/features/matches/types'
 import { relId } from '@/landing/lib/payload'
 import { EmptyState } from '@/landing/ui/EmptyState'
-import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { cn } from '@/lib/utils'
@@ -52,12 +51,13 @@ export async function SeasonBlockComponent({ block }: { block: LandingSeasonBloc
  * dvojice Odehrané zápasy / Tabulka. Každý výřez má proklik na /zapasy.
  * Sekce nese kotvu `#sezona` (odkazuje na ni hlavní navigace i hero).
  *
- * Vlastní Kicker + nadpis nad výřezy — dřív sekce žádný neměla a rovnou
- * začínala „Rozlosování / Nadcházející zápasy" (mikro-nadpis jednoho ze tří
- * výřezů uvnitř). Na mobilu, kde není žádné vedlejší rozvržení, které by
- * novou sekci naznačilo jinak, tak karty Aktualit přecházely přímo do
- * rozpisu zápasů bez jakéhokoli ohlášení — jediná hlavní sekce homepage bez
- * vlastního Kickeru (srovnej `NewsView`, `ClubView`, `HistoryView`…).
+ * Vlastní Kicker nad výřezy — dřív sekce žádný neměla a rovnou začínala
+ * „Rozlosování / Nadcházející zápasy" (mikro-nadpis jednoho ze tří výřezů
+ * uvnitř). Na mobilu, kde není žádné vedlejší rozvržení, které by novou
+ * sekci naznačilo jinak, tak karty Aktualit přecházely přímo do rozpisu
+ * zápasů bez jakéhokoli ohlášení (srovnej `NewsView`, `ClubView`,
+ * `HistoryView`…). Velký nadpis tu není: opakoval by hlavičky panelů pod
+ * sebou, `h2` je jen pro čtečky.
  */
 function SeasonView({
   fixtures,
@@ -77,9 +77,9 @@ function SeasonView({
       <SectionShell id="sezona">
         <Reveal>
           <Kicker>Sezóna</Kicker>
-          <SectionTitle className="mt-3.5 text-pretty">
-            Rozlosování, výsledky a <Highlight>tabulka</Highlight>
-          </SectionTitle>
+          {/* Velký nadpis by jen vyjmenoval hlavičky panelů pod ním
+              (Rozlosování, Odehrané zápasy, Tabulka), proto je jen pro čtečky. */}
+          <h2 className="sr-only">Sezóna: rozlosování, výsledky a tabulka</h2>
         </Reveal>
       </SectionShell>
 
