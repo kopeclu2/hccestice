@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { TRAININGS } from '@/landing/content'
 import { TrainingsTable } from '@/landing/features/trainings/components/TrainingsTable'
 import { fetchTrainingSessions } from '@/landing/features/trainings/data'
@@ -10,7 +12,11 @@ import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
 import { Watermark } from '@/landing/ui/Watermark'
+import { routes } from '@/lib/routes'
 import type { LandingTrainingsBlock } from '@/payload-types'
+
+/** Kolik nejbližších termínů ukáže homepage; celý rozpis je na `/treninky`. */
+const HOME_SESSIONS = 6
 
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
@@ -53,6 +59,9 @@ export async function TrainingsBlockComponent({
  *
  * Rozpis **není** ve strukturovaných datech (JSON-LD): `Event` bez
  * `startDate` hlásí chybu a termíny jsou volný text s poznámkami.
+ *
+ * Na homepage jen `HOME_SESSIONS` nejbližších termínů a tlačítko na
+ * `/treninky`, kde je rozpis celý (řazení a hranici od dneška řeší fetcher).
  *
  * Volitelný perex stojí **pod** nadpisem, ne vedle něj — vedle nadpisu se
  * lámal do úzkého sloupce a rozvaloval hlavičku sekce.
@@ -105,8 +114,16 @@ function TrainingsView({
         </Reveal>
       )}
       <Reveal delay={0.1}>
-        <TrainingsTable sessions={sessions} />
+        <TrainingsTable sessions={standalonePage ? sessions : sessions.slice(0, HOME_SESSIONS)} />
       </Reveal>
+
+      {!standalonePage && sessions.length > 0 && (
+        <Reveal className="mt-6 flex justify-center md:justify-end" delay={0.15}>
+          <Button asChild size="md" variant="dark" withArrow>
+            <Link href={routes.trainings}>Celý rozpis tréninků</Link>
+          </Button>
+        </Reveal>
+      )}
     </SectionShell>
   )
 }

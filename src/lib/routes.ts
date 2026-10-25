@@ -19,6 +19,8 @@ export const routes = {
   home: '/',
   /** Kontaktní stránka — ručně psaná routa, ne dokument `pages` (ten je `/kontakty`). */
   contact: '/kontakt',
+  /** Rozpis tréninků — ručně psaná routa. */
+  trainings: '/treninky',
   /** Detail článku. */
   post: (slug: string): string => `/aktuality/${slug}`,
   /** Detail zápasu. */
