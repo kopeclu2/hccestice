@@ -28,7 +28,7 @@ type ContactLink = {
  *
  * Tři věci, na kterých karta stojí:
  *
- * - **Logo má pevný box** (`h-32`, `max-w-60`) s `object-contain` a stejným
+ * - **Logo má pevný box** (`h-40`, od `lg` `h-48`) s `object-contain` a stejným
  *   paddingem bez ohledu na poměr stran originálu. Loga v kolekci jsou od
  *   čtverců po široké pásy; bez boxu by každá karta začínala jinde.
  * - **Kontakty jsou ikony, ne řádky textu.** Telefon i e-mail byly nejdelší
@@ -45,7 +45,8 @@ type ContactLink = {
  * kartě zmizí a rozestupy řídí jediný `gap` rodiče.
  *
  * Karta je záměrně velká (mřížka je přes celou šířku obsahu, ne v pruhu
- * 1080px): logo `h-32`, název `text-xl`, vedlejší údaje `text-sm`.
+ * 1080px): logo `h-40` (`lg:h-48`), název `text-xl` (`lg:text-2xl`), vedlejší údaje
+ * `text-sm` (`lg:text-base`). Mřížka má vždy nejvýš tři sloupce.
  *
  * Odkazy jsou `text-club-dark`, ne `text-club`: klubová zelená má na bílé
  * jen 3,25:1, což na drobné ikony nestačí.
@@ -88,14 +89,14 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
   ]
 
   return (
-    <div className="flex h-full gap-3.5 rounded-tile border border-line-soft bg-surface p-5 transition-colors hover:border-club sm:flex-col sm:gap-4 md:p-6">
-      <div className="grid h-24 w-32 flex-none place-items-center px-2 sm:h-32 sm:w-full">
+    <div className="flex h-full gap-3.5 rounded-tile border border-line-soft bg-surface p-5 transition-colors hover:border-club sm:flex-col sm:gap-5 md:p-6 lg:p-7">
+      <div className="grid h-24 w-32 flex-none place-items-center px-2 sm:h-40 sm:w-full lg:h-48">
         {sponsor.logo ? (
           <Image
             alt={sponsor.name}
-            className="max-h-20 w-auto max-w-full object-contain sm:max-h-28 sm:max-w-60"
+            className="max-h-20 w-auto max-w-full object-contain sm:max-h-36 sm:max-w-[min(100%,20rem)] lg:max-h-44"
             height={sponsor.logo.height}
-            sizes="(min-width: 640px) 15rem, 8rem"
+            sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 8rem"
             src={getMediaUrl(sponsor.logo.url, sponsor.logo.updatedAt)}
             width={sponsor.logo.width}
           />
@@ -110,14 +111,20 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 sm:contents">
         <div className="min-w-0">
-          <CardTitle as="h3" className="leading-[1.2] tracking-snug text-pretty" size="sm">
+          <CardTitle
+            as="h3"
+            className="leading-[1.2] tracking-snug text-pretty lg:text-2xl"
+            size="sm"
+          >
             {sponsor.name}
           </CardTitle>
           {sponsor.person && (
-            <div className="mt-1.5 text-sm font-semibold text-ink-soft">{sponsor.person}</div>
+            <div className="mt-1.5 text-sm font-semibold text-ink-soft lg:text-base">
+              {sponsor.person}
+            </div>
           )}
           {sponsor.address && (
-            <div className="mt-1 text-sm leading-[1.45] font-medium text-pretty text-dim">
+            <div className="mt-1 text-sm leading-[1.45] font-medium text-pretty text-dim lg:text-base">
               {sponsor.address}
             </div>
           )}
@@ -128,14 +135,14 @@ export function PartnerCard({ sponsor }: { sponsor: Sponsor }) {
             {links.map(({ external, href, Icon, key, label }) => (
               <a
                 aria-label={label}
-                className="grid size-11 flex-none place-items-center rounded-full border border-line-soft text-club-dark transition-colors hover:border-club hover:bg-club hover:text-on-contrast md:size-10"
+                className="grid size-11 flex-none place-items-center rounded-full border border-line-soft text-club-dark transition-colors hover:border-club hover:bg-club hover:text-on-contrast md:size-11"
                 href={href}
                 key={key}
                 rel={external ? 'noreferrer' : undefined}
                 target={external ? '_blank' : undefined}
                 title={label}
               >
-                <Icon aria-hidden className="size-4.5" strokeWidth={2.25} />
+                <Icon aria-hidden className="size-5" strokeWidth={2.25} />
               </a>
             ))}
           </div>
