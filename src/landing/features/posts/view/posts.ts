@@ -10,6 +10,7 @@ import { toPhoto, uploadToPhoto } from '@/landing/lib/media'
 import type { Photo } from '@/landing/types'
 import { CLUB_NAME } from '@/lib/club'
 import { formatFullDate, formatLongDate } from '@/lib/datetime'
+import { isMatchHidden } from '@/lib/matchVisibility'
 import { htmlPlainText, snippet, dropTitleEcho, looksLikeProse, echoesTitle } from '@/lib/plainText'
 import { linkOrNull, routes } from '@/lib/routes'
 import { initials } from '@/lib/teamName'
@@ -100,7 +101,9 @@ export const toArticleDetail = (
   const photo =
     (typeof post.heroImage === 'object' && post.heroImage ? toPhoto(post.heroImage) : null) ??
     defaultPhoto
-  const match = typeof post.match === 'object' ? post.match : null
+  // Skrytý zápas (zmizel z AHL) se z reportáže nezobrazí ani neodkazuje.
+  const match =
+    typeof post.match === 'object' && post.match && !isMatchHidden(post.match) ? post.match : null
   const scoreboard = match ? toScoreboard(match) : null
 
   // Fallbacky: varianta se bez potřebných dat bezpečně sníží na typografickou.

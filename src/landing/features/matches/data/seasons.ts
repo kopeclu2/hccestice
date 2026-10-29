@@ -9,6 +9,7 @@ import { CACHE_TAGS } from '@/landing/data/tags'
 import type { StandingsContent } from '@/landing/features/matches/types'
 import { formatCompetition } from '@/landing/features/matches/view/matchFormat'
 import type { StatsContent } from '@/landing/types'
+import { VISIBLE_MATCH } from '@/lib/matchVisibility'
 import { plural } from '@/lib/plural'
 import type { Season } from '@/payload-types'
 
@@ -143,7 +144,7 @@ export const fetchAutoStats = cache(
     const { docs: played } = await payload.find({
       collection: 'matches',
       where: {
-        and: [{ status: { equals: 'played' } }, { season: { equals: season.id } }],
+        and: [VISIBLE_MATCH, { status: { equals: 'played' } }, { season: { equals: season.id } }],
       },
       sort: 'date',
       limit: 0,

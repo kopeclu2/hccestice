@@ -1,6 +1,6 @@
 <!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know
+## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
@@ -1147,7 +1147,25 @@ nelaďila dvě chování.
   (`update: ({ doc }) => !doc?.ahl?.matchId`). Job píše přes Local API
   (`overrideAccess: true`), takže ho to nebrzdí. Podrobnosti, proč to při
   `create` funguje, jsou v komentáři souboru.
-- Zápas, který z AHL zmizel, se **nemaže**, jen se zapíše varování.
+- Zápas, který z AHL zmizel (není v rozpisu ani ve výsledcích), se **nemaže,
+  ale skryje na webu** (`matches.hiddenOnWeb`; příklad: Skuteč)
+  a zapíše se varování `missing-on-ahl`. Jen když jsou stažené oba výpisy
+  a jen do `MAX_HIDDEN_PER_RUN` (3) zápasů na běh — víc zmizelých najednou je
+  skoro jistě chyba zdroje, pak se nic neskrývá (varování `ref: bulk`). Ruční
+  zápasy bez `ahl.matchId` se neskrývají nikdy. Skrytí synchronizací nese
+  příznak `ahl.hiddenBySync`; když se zápas na AHL vrátí, `writeMatch` ho
+  odkryje, ale **ručně skrytý** (bez příznaku) zůstane skrytý. Správce zápas
+  vrací zrušením „Skrýt na webu" v adminu. Pravidla pro skrytý zápas:
+  - každý veřejný dotaz na `matches` přidá `VISIBLE_MATCH`
+    (`lib/matchVisibility`: `hiddenOnWeb not_equals true`, bere i `NULL`); detail
+    `/zapasy/[slug]` dá 404, zápas zmizí z výpisů, widgetů, formy, statistik
+    hráčů, `generateStaticParams` i odkazů z reportáží;
+  - veřejné REST/GraphQL, sitemapy a `llms.txt` (čtou s `overrideAccess: false`)
+    ho nevidí díky `access.read` kolekce (přihlášený správce ano) — Local API
+    ve fetcherech access nepoužívá, proto tam filtr patří výslovně;
+  - nový fetcher zápasů bez `VISIBLE_MATCH` je chyba;
+  - migrace `20261029_055349_hidden_on_web` (aditivní: dva sloupce a index na
+    `matches`) **před buildem**.
   Neznámý hráč se zakládá jako `active: false`; existujícímu se doplní jen
   `ahlPlayerId` a prázdné číslo (jméno a fotka zůstávají ruční).
 

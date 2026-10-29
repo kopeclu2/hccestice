@@ -34,6 +34,7 @@ import {
 } from '@/landing/features/matches/view/matchRows'
 import { uploadToPhoto } from '@/landing/lib/media'
 import { formatDateTime } from '@/lib/datetime'
+import { isMatchHidden, VISIBLE_MATCH } from '@/lib/matchVisibility'
 import { linkOrNull, routes } from '@/lib/routes'
 import type { Match, Media } from '@/payload-types'
 
@@ -72,6 +73,7 @@ export const fetchUpcoming = cache(async (): Promise<{ upcoming: UpcomingMatch |
     collection: 'matches',
     where: {
       and: [
+        VISIBLE_MATCH,
         { status: { equals: 'scheduled' } },
         { date: { greater_than_equal: new Date().toISOString() } },
       ],
@@ -90,7 +92,7 @@ export const fetchPlayed = cache(async (): Promise<{ lastResult: LastResult | nu
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
-    where: { status: { equals: 'played' } },
+    where: { and: [VISIBLE_MATCH, { status: { equals: 'played' } }] },
     sort: '-date',
     limit: 1,
     depth: 1,
@@ -110,6 +112,7 @@ export const fetchMatchRows = cache(
   }): Promise<MatchRow[]> => {
     const payload = await getPayloadClient()
     const and: Where[] = [
+      VISIBLE_MATCH,
       { status: { equals: options.mode === 'results' ? 'played' : 'scheduled' } },
     ]
     if (options.mode === 'schedule') {
@@ -134,7 +137,7 @@ export const fetchPickedMatchRows = cache(async (matchIds: number[]): Promise<Ma
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
-    where: { id: { in: matchIds } },
+    where: { and: [VISIBLE_MATCH, { id: { in: matchIds } }] },
     limit: matchIds.length,
     depth: 1,
   })
@@ -207,6 +210,7 @@ const loadSeasonFixtures = cachedQuery(
       collection: 'matches',
       where: {
         and: [
+          VISIBLE_MATCH,
           { season: { equals: seasonId } },
           { status: { equals: 'scheduled' } },
           { date: { greater_than_equal: from } },
@@ -238,7 +242,11 @@ export const fetchSeasonResults = cachedQuery(
     const result = await payload.find({
       collection: 'matches',
       where: {
-        and: [{ season: { equals: options.seasonId } }, { status: { equals: 'played' } }],
+        and: [
+          VISIBLE_MATCH,
+          { season: { equals: options.seasonId } },
+          { status: { equals: 'played' } },
+        ],
       },
       sort: '-date',
       limit: options.perPage,
@@ -283,7 +291,7 @@ export const fetchSeasonForm = cachedQuery(
     const { docs } = await payload.find({
       collection: 'matches',
       where: {
-        and: [{ season: { equals: seasonId } }, { status: { equals: 'played' } }],
+        and: [VISIBLE_MATCH, { season: { equals: seasonId } }, { status: { equals: 'played' } }],
       },
       sort: '-date',
       limit: 5,
@@ -323,7 +331,7 @@ export const fetchMatchCard = cachedQuery(
       depth: 2,
       disableErrors: true,
     })
-    if (!match) return null
+    if (!match || isMatchHidden(match)) return null
 
     const opponent = typeof match.opponent === 'object' ? match.opponent : null
     // Jen publikovaná reportáž: ruční vazba `matches.report` může mířit na
