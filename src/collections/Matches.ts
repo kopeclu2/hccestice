@@ -1,6 +1,5 @@
 import type { CollectionConfig, Field } from 'payload'
 
-import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { notSyncedFromAhl } from '../access/notSyncedFromAhl'
 import { matchDisplayTitle, matchDisplayTitleAfterRead } from '../hooks/matchDisplayTitle'
@@ -8,6 +7,7 @@ import { generateMatchSlug } from '../hooks/matchSlug'
 import { revalidateLanding, revalidateLandingDelete } from '../hooks/revalidateLanding'
 import { revalidateMatchFeeds, revalidateMatchFeedsDelete } from '../hooks/revalidateMatchFeeds'
 import { CLUB_NAME } from '../lib/club'
+import { VISIBLE_MATCH } from '../lib/matchVisibility'
 
 /**
  * Dvojice polí NAŠE / SOUPEŘ vedle sebe: `<base>Ours` a `<base>Opp`. Názvy
@@ -37,7 +37,10 @@ export const Matches: CollectionConfig = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: anyone,
+    // Veřejnost (REST, GraphQL, sitemapy i `llms.txt` s `overrideAccess: false`)
+    // nevidí skryté zápasy; přihlášený správce ano. Fetchery landingu čtou přes
+    // Local API bez access, takže tam filtr přidávají samy (`VISIBLE_MATCH`).
+    read: ({ req }) => (req.user ? true : VISIBLE_MATCH),
     update: authenticated,
   },
   admin: {
@@ -80,6 +83,23 @@ export const Matches: CollectionConfig = {
         // by slug originálu zůstal a insert by spadl na unikátním indexu.
         // S `null` hook `generateMatchSlug` slug vygeneruje znovu (`-2`).
         beforeDuplicate: [() => null],
+      },
+    },
+    {
+      // Bez `notSyncedFromAhl`: skrývá synchronizace i správce.
+      name: 'hiddenOnWeb',
+      type: 'checkbox',
+      label: 'Skrýt na webu',
+      defaultValue: false,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Zápas se nezobrazí ve výpisech, widgetech, tabulce formy ani v sitemapě a jeho adresa vrací 404. Záznam zůstává. Zápas, který zmizel z AHL.cz, skryje synchronizace sama a po jeho návratu ho zase zobrazí.',
+      },
+      hooks: {
+        // Kopie skrytého zápasu je nový zápas, ne skrytý duplikát.
+        beforeDuplicate: [() => false],
       },
     },
     {
@@ -226,6 +246,14 @@ export const Matches: CollectionConfig = {
           },
         },
         { name: 'hasReport', type: 'checkbox', label: 'Zápis vložen', admin: { readOnly: true } },
+        {
+          // Rozlišuje skrytí od synchronizace (zápas zmizel z AHL) od ručního:
+          // po návratu zápasu na AHL job odkryje jen to, co sám skryl.
+          name: 'hiddenBySync',
+          type: 'checkbox',
+          label: 'Skryt synchronizací (zmizel z AHL)',
+          admin: { readOnly: true },
+        },
         {
           name: 'syncedAt',
           type: 'date',

@@ -6,6 +6,7 @@ import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import type { PlayerSeasonStat, RosterPlayer } from '@/landing/features/roster/types'
 import { uploadToPhoto } from '@/landing/lib/media'
+import { VISIBLE_MATCH } from '@/lib/matchVisibility'
 import type { Player } from '@/payload-types'
 
 /** Hráči — fetchery pro soupisky a hráčské karty. */
@@ -117,7 +118,9 @@ export const fetchPlayerSeasonStats = cachedQuery(
     const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'matches',
-      where: { and: [{ season: { equals: seasonId } }, { status: { equals: 'played' } }] },
+      where: {
+        and: [VISIBLE_MATCH, { season: { equals: seasonId } }, { status: { equals: 'played' } }],
+      },
       limit: 0,
       depth: 0,
       pagination: false,

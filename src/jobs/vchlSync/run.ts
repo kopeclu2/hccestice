@@ -10,6 +10,7 @@ import {
 } from '@/ahl'
 import type { AhlListMatch } from '@/ahl'
 import { errorMessage } from '@/lib/errors'
+import { VISIBLE_MATCH } from '@/lib/matchVisibility'
 
 import { resolveSeasons, resolveTeamId, type SeasonCtx } from './context'
 import { isDue } from './isDue'
@@ -109,6 +110,7 @@ async function checkDue(payload: Payload, settings: VchlSettings, now: Date): Pr
     collection: 'matches',
     where: {
       and: [
+        VISIBLE_MATCH,
         { 'team.slug': { equals: 'muzi' } },
         { date: { less_than_equal: now.toISOString() } },
         { date: { greater_than_equal: new Date(now.getTime() - windowMs).toISOString() } },

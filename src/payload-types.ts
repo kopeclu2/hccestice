@@ -597,6 +597,10 @@ export interface Match {
    * Adresa detailu zápasu: /zapasy/<slug>. Vygeneruje se jednou při založení (datum + soupeř) a při přeložení zápasu se záměrně nemění, aby odkazy zůstaly stabilní. Prázdné pole se při uložení doplní. POZOR: ruční změna adresy rozbije už sdílené odkazy — stará adresa pak vrací 404 (přesměrování se nezakládá).
    */
   slug?: string | null;
+  /**
+   * Zápas se nezobrazí ve výpisech, widgetech, tabulce formy ani v sitemapě a jeho adresa vrací 404. Záznam zůstává. Zápas, který zmizel z AHL.cz, skryje synchronizace sama a po jeho návratu ho zase zobrazí.
+   */
+  hiddenOnWeb?: boolean | null;
   date: string;
   season: number | Season;
   team: number | Team;
@@ -628,6 +632,7 @@ export interface Match {
      */
     matchId?: number | null;
     hasReport?: boolean | null;
+    hiddenBySync?: boolean | null;
     syncedAt?: string | null;
     draftPostCreated?: boolean | null;
     detailVersion?: number | null;
@@ -3462,6 +3467,7 @@ export interface PlayersSelect<T extends boolean = true> {
 export interface MatchesSelect<T extends boolean = true> {
   displayTitle?: T;
   slug?: T;
+  hiddenOnWeb?: T;
   date?: T;
   season?: T;
   team?: T;
@@ -3486,6 +3492,7 @@ export interface MatchesSelect<T extends boolean = true> {
     | {
         matchId?: T;
         hasReport?: T;
+        hiddenBySync?: T;
         syncedAt?: T;
         draftPostCreated?: T;
         detailVersion?: T;

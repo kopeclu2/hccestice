@@ -25,6 +25,11 @@ import { ahlNameKeys, keysIntersect, opponentKeys, type OpponentResolver } from 
 import type { PlayerResolver } from './players'
 
 const DAY_MS = 86_400_000
+/**
+ * Nejvíc zápasů, které jeden běh skryje. Víc zmizených najednou je skoro jistě
+ * chyba (rozbitý výpis, jiný ročník), ne rozhodnutí ligy — pak se nic neskrývá.
+ */
+export const MAX_HIDDEN_PER_RUN = 3
 /** Okno, ve kterém se u odehraného zápasu dál stahuje detail (pozdní opravy zápisu). */
 export const RECENT_DAYS = 7
 
@@ -470,6 +475,8 @@ type MatchAhl = {
   hasReport: boolean
   draftPostCreated: boolean
   detailVersion?: number
+  /** zápas je na AHL, takže ho synchronizace nikdy nemá skrytý */
+  hiddenBySync: false
   syncedAt: string
 }
 
@@ -485,6 +492,8 @@ type WritePlan = {
   after: Record<string, unknown>
   ahl: MatchAhl
   ahlChanged: boolean
+  /** zápas se vrátil na AHL: odkryje se, co sám skryla synchronizace */
+  unhide: boolean
 }
 
 async function updateMatch(
@@ -493,29 +502,41 @@ async function updateMatch(
   plan: WritePlan,
   finalById: Map<number, Match>,
 ): Promise<Match> {
-  const { it, label, patch, fields, before, after, ahl, ahlChanged, opponent } = plan
+  const { it, label, patch, fields, before, after, ahl, ahlChanged, opponent, unhide } = plan
   const full = { ...patch, ahl }
   // Hook `displayTitle` skládá titulek z `opponent` a `home`; bez nich
   // v datech by přepsal titulek zápasu na „soupeř x HC Čestice".
-  if (fields.length > 0) Object.assign(full, { opponent, home: it.weAreHome })
-  const changedFields = ahlChanged ? [...fields, 'ahl'] : fields
+  if (fields.length > 0 || unhide) Object.assign(full, { opponent, home: it.weAreHome })
+  if (unhide) Object.assign(full, { hiddenOnWeb: false })
+  const changedFields = [
+    ...fields,
+    ...(ahlChanged ? ['ahl'] : []),
+    ...(unhide ? ['hiddenOnWeb'] : []),
+  ]
   ctx.recordDiff({
     entity: 'matches',
     key: `ahl:${it.entry.matchId}`,
     label: it.legacy ? `${label} (spárováno podle dne a soupeře)` : label,
     action: 'update',
     fields: changedFields,
-    before: ahlChanged ? { ...before, ahl: existing.ahl ?? null } : before,
-    after: ahlChanged
-      ? {
-          ...after,
-          ahl: {
-            matchId: ahl.matchId,
-            hasReport: ahl.hasReport,
-            detailVersion: ahl.detailVersion ?? null,
-          },
-        }
-      : after,
+    before: {
+      ...before,
+      ...(ahlChanged ? { ahl: existing.ahl ?? null } : {}),
+      ...(unhide ? { hiddenOnWeb: true } : {}),
+    },
+    after: {
+      ...after,
+      ...(ahlChanged
+        ? {
+            ahl: {
+              matchId: ahl.matchId,
+              hasReport: ahl.hasReport,
+              detailVersion: ahl.detailVersion ?? null,
+            },
+          }
+        : {}),
+      ...(unhide ? { hiddenOnWeb: false } : {}),
+    },
   })
   await ctx.update('matches', existing.id, full)
   ctx.changes.matchesUpdated += 1
@@ -609,7 +630,11 @@ async function writeMatch(env: WriteEnv, it: Item): Promise<void> {
   // (nikdy se nepřepisuje na null). Změna verze musí vyvolat zápis `ahl`
   // i tehdy, když se `penalties`/`stats` neliší (zápas bez trestů).
   const detailVersion = nextDetailVersion(existing, detail)
-  const ahlChanged = ahlNeedsWrite(existing, { matchId: entry.matchId, hasReport, detailVersion })
+  // Zápas, který synchronizace skryla, je zase na AHL: skrytí zruší a příznak vyčistí.
+  const clearHidden = Boolean(existing?.ahl?.hiddenBySync)
+  const unhide = clearHidden && Boolean(existing?.hiddenOnWeb)
+  const ahlChanged =
+    clearHidden || ahlNeedsWrite(existing, { matchId: entry.matchId, hasReport, detailVersion })
   const label = `${utcToPragueLocal(date).day} ${it.weAreHome ? 'doma' : 'venku'} ${it.opponentName}`
 
   if (existing && fields.length === 0 && !ahlChanged) return
@@ -621,6 +646,7 @@ async function writeMatch(env: WriteEnv, it: Item): Promise<void> {
     hasReport,
     draftPostCreated: Boolean(existing?.ahl?.draftPostCreated),
     ...(detailVersion != null ? { detailVersion } : {}),
+    hiddenBySync: false,
     syncedAt: ctx.now.toISOString(),
   }
   const plan: WritePlan = {
@@ -634,6 +660,7 @@ async function writeMatch(env: WriteEnv, it: Item): Promise<void> {
     after,
     ahl,
     ahlChanged,
+    unhide,
   }
   const finalDoc = existing
     ? await updateMatch(ctx, existing, plan, finalById)
@@ -641,23 +668,64 @@ async function writeMatch(env: WriteEnv, it: Item): Promise<void> {
   collectDraft(ctx, it, date, finalDoc, ahl, env.drafts)
 }
 
-/** Zápasy, které z AHL zmizely, se nemažou — jen se ohlásí. */
-function warnMissingOnAhl(
+/**
+ * Zápasy, které z AHL zmizely (liga je smazala, vyřadila tým…), se **skryjí na
+ * webu** (`hiddenOnWeb`), nemažou se. Správce je v adminu jedním klikem vrátí,
+ * a když se zápas na AHL objeví znovu, `writeMatch` ho odkryje (jen ten, který
+ * skryla synchronizace — `ahl.hiddenBySync`; ručně skrytý zůstane skrytý).
+ *
+ * Jen když jsou stažené oba výpisy a jen do `MAX_HIDDEN_PER_RUN` zápasů na běh:
+ * hromadné zmizení vypadá jako chyba zdroje, takže se nic neskrývá a zapíše se
+ * varování. Ruční zápasy bez `ahl.matchId` se nikdy neskrývají.
+ */
+export async function hideMissingOnAhl(
   ctx: SyncContext,
   seasonDocs: Match[],
   allListedIds: Set<number>,
   lists: SeasonLists,
-): void {
-  if (!lists.rozpis || !lists.vysledky) return
-  for (const d of seasonDocs) {
+  finalById: Map<number, Match>,
+): Promise<void> {
+  if (!lists.rozpis || !lists.vysledky || allListedIds.size === 0) return
+  const missing = seasonDocs.filter((d) => {
     const id = d.ahl?.matchId
-    if (id != null && !allListedIds.has(id)) {
-      ctx.warn({
-        type: 'missing-on-ahl',
-        ref: String(id),
-        message: `Zápas ${id} (${utcToPragueLocal(d.date).day}) už na AHL není v rozpisu ani ve výsledcích. Nemazáno.`,
-      })
+    return id != null && !allListedIds.has(id) && !d.hiddenOnWeb
+  })
+  if (missing.length === 0) return
+  if (missing.length > MAX_HIDDEN_PER_RUN) {
+    ctx.warn({
+      type: 'missing-on-ahl',
+      ref: 'bulk',
+      message: `Z AHL zmizelo ${missing.length} zápasů najednou (limit ${MAX_HIDDEN_PER_RUN}) — vypadá to na chybu zdroje, proto se nic neskrývá. Zkontrolujte výpis na AHL.cz.`,
+    })
+    return
+  }
+  for (const d of missing) {
+    const id = d.ahl!.matchId!
+    const day = utcToPragueLocal(d.date).day
+    const data = {
+      hiddenOnWeb: true,
+      ahl: { ...d.ahl, hiddenBySync: true },
+      // Hook `displayTitle` potřebuje soupeře a stranu (viz `updateMatch`).
+      opponent: relId(d.opponent),
+      home: d.home,
     }
+    ctx.warn({
+      type: 'missing-on-ahl',
+      ref: String(id),
+      message: `Zápas ${id} (${day}) už na AHL není v rozpisu ani ve výsledcích — skryt na webu. Vrátit ho jde v adminu zrušením „Skrýt na webu“.`,
+    })
+    ctx.recordDiff({
+      entity: 'matches',
+      key: `ahl:${id}`,
+      label: `${day} ${d.displayTitle ?? ''}`.trim(),
+      action: 'update',
+      fields: ['hiddenOnWeb'],
+      before: { hiddenOnWeb: false },
+      after: { hiddenOnWeb: true },
+    })
+    await ctx.update('matches', d.id, data)
+    ctx.changes.matchesUpdated += 1
+    finalById.set(d.id, { ...d, ...data } as unknown as Match)
   }
 }
 
@@ -694,7 +762,7 @@ export async function syncSeasonMatches(
 
   await span('vchl.matches', async () => {
     for (const it of items) await writeMatch(env, it)
-    warnMissingOnAhl(ctx, docs.seasonDocs, allListedIds, lists)
+    await hideMissingOnAhl(ctx, docs.seasonDocs, allListedIds, lists, finalById)
   })
 
   return { docs: [...finalById.values()], details }

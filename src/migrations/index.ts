@@ -16,6 +16,7 @@ import * as migration_20261016_084321_security_deps_upgrade from './20261016_084
 import * as migration_20261016_085646_drop_author_contacts from './20261016_085646_drop_author_contacts'
 import * as migration_20261025_070842_trainings_collection from './20261025_070842_trainings_collection'
 import * as migration_20261025_074956_trainings_drop_block_rows from './20261025_074956_trainings_drop_block_rows'
+import * as migration_20261029_055349_hidden_on_web from './20261029_055349_hidden_on_web'
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20261025_074956_trainings_drop_block_rows.up,
     down: migration_20261025_074956_trainings_drop_block_rows.down,
     name: '20261025_074956_trainings_drop_block_rows',
+  },
+  {
+    up: migration_20261029_055349_hidden_on_web.up,
+    down: migration_20261029_055349_hidden_on_web.down,
+    name: '20261029_055349_hidden_on_web',
   },
 ]

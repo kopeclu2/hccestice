@@ -7,6 +7,7 @@ import { CACHE_TAGS } from '@/landing/data/tags'
 import type { MatchDetail } from '@/landing/features/matches/types'
 import { pickReport, toMatchDetail } from '@/landing/features/matches/view/matchDetailView'
 import { relId } from '@/landing/lib/payload'
+import { isMatchHidden, VISIBLE_MATCH } from '@/lib/matchVisibility'
 import type { Match, Post } from '@/payload-types'
 
 /**
@@ -98,6 +99,7 @@ export const fetchMatchSlugs = cache(async (): Promise<string[]> => {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
     collection: 'matches',
+    where: VISIBLE_MATCH,
     limit: 0,
     depth: 0,
     pagination: false,
@@ -120,7 +122,7 @@ export const fetchMatchDetail = cachedQuery(
     const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'matches',
-      where: { slug: { equals: slug } },
+      where: { and: [VISIBLE_MATCH, { slug: { equals: slug } }] },
       limit: 1,
       // 2: zápas → soupeř → logo, zápas → galerie → cover.
       depth: 2,
@@ -183,11 +185,11 @@ export const fetchMatchSlugById = cachedQuery(
         collection: 'matches',
         id: matchId,
         depth: 0,
-        select: { slug: true },
+        select: { slug: true, hiddenOnWeb: true },
         disableErrors: true,
       }),
     )
-    return match?.slug ?? null
+    return match && !isMatchHidden(match) ? (match.slug ?? null) : null
   },
   { key: 'match-slug-by-id', version: 'v1', tags: [CACHE_TAGS.matches] },
 )
@@ -213,7 +215,9 @@ export const fetchMatchDetailByRef = async (ref: unknown): Promise<MatchDetail |
  * dohledají dotazem na zápas s `report = post.id`.
  */
 export const fetchMatchSlugForPost = cache(async (post: Post): Promise<string | null> => {
-  if (typeof post.match === 'object' && post.match) return post.match.slug ?? null
+  if (typeof post.match === 'object' && post.match) {
+    return isMatchHidden(post.match) ? null : (post.match.slug ?? null)
+  }
 
   const payload = await getPayloadClient()
   const matchId = relId(post.match)
@@ -223,16 +227,16 @@ export const fetchMatchSlugForPost = cache(async (post: Post): Promise<string | 
         collection: 'matches',
         id: matchId,
         depth: 0,
-        select: { slug: true },
+        select: { slug: true, hiddenOnWeb: true },
         disableErrors: true,
       }),
     )
-    return match?.slug ?? null
+    return match && !isMatchHidden(match) ? (match.slug ?? null) : null
   }
 
   const { docs } = await payload.find({
     collection: 'matches',
-    where: { report: { equals: post.id } },
+    where: { and: [VISIBLE_MATCH, { report: { equals: post.id } }] },
     sort: '-date',
     limit: 1,
     depth: 0,

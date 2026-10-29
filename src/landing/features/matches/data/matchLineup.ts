@@ -3,6 +3,7 @@ import 'server-only'
 import { cachedQuery, getPayloadClient } from '@/landing/data/query'
 import { CACHE_TAGS } from '@/landing/data/tags'
 import { buildLineup, type MatchLineup } from '@/landing/features/matches/view/matchLineup'
+import { isMatchHidden } from '@/lib/matchVisibility'
 import type { Match } from '@/payload-types'
 
 /**
@@ -21,11 +22,11 @@ export const fetchMatchLineup = cachedQuery(
       collection: 'matches',
       id: matchId,
       depth: 1,
-      select: { lineup: true },
+      select: { lineup: true, hiddenOnWeb: true },
       populate: { players: { name: true } },
       disableErrors: true,
-    })) as Pick<Match, 'lineup'> | null
-    return buildLineup(match?.lineup)
+    })) as Pick<Match, 'lineup' | 'hiddenOnWeb'> | null
+    return match && !isMatchHidden(match) ? buildLineup(match.lineup) : null
   },
   { key: 'match-lineup', version: 'v1', tags: [CACHE_TAGS.matches] },
 )
