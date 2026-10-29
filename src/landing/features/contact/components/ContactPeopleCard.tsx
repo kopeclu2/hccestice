@@ -28,7 +28,7 @@ export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
   return (
     <div>
       <CardTitle as="h2" className="mb-4" size="xs">
-        Nebo napiš či zavolej přímo
+        Napiš nebo zavolej přímo
       </CardTitle>
 
       {/* `18rem` drží nejvýš dva sloupce v šířce `max-w-170` (`ContactPanel`) —

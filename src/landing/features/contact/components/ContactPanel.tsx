@@ -1,34 +1,39 @@
 import React from 'react'
 
 import { CONTACT } from '@/landing/content'
-import { ContactFormLazy } from '@/landing/features/contact/components/ContactFormLazy'
 import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionShell } from '@/landing/ui/SectionShell'
 
-import { ContactInfoPanel } from './ContactInfoPanel'
-import { ContactMap } from './ContactMap'
+import { ContactCard } from './ContactCard'
 import { ContactPeopleCard } from './ContactPeopleCard'
 
 /**
- * Tělo stránky `/kontakt`: vizitka, kontaktní osoby a pod nimi formulář
- * s mapou. Pod `lg` jde všechno pod sebou (formulář, pak mapa); od `lg` stojí
- * formulář a mapa vedle sebe ve dvou stejně širokých sloupcích — formulář
- * je jinak úzká karta (`max-w-170`) s prázdným místem po stranách a mapa
- * pod ním zabírala celou další obrazovku.
- * Formulář je bílý (`tone="light"`), ne tmavý panel jako na homepage.
+ * Tělo stránky `/kontakt`: kontaktní osoby, tatáž velká karta jako sekce
+ * `#kontakt` na homepage (e-mail, údaje, sítě a formulář) bez rámečku
+ * a bez dekorací. Texty karty jsou z `content.ts`
+ * (stránka není dokument v CMS; homepage je bere z bloku).
  *
- * Vizitka a kontaktní osoby jedou na celou šířku obsahu (`SectionShell`).
+ * Varianta z 29. 10. 2026; původní kompozici (`ContactInfoPanel` vizitka,
+ * bílý formulář `tone="light"` vedle mapy) vrátí git.
  */
 export function ContactPanel({ people, site }: { people: PersonCard[]; site: SiteLinks }) {
   return (
     <SectionShell spacing="content">
       <div className="flex flex-col gap-6">
-        <ContactInfoPanel site={site} />
         <ContactPeopleCard people={people} />
-        <div className="grid items-stretch gap-6 lg:grid-cols-2">
-          <ContactFormLazy tone="light" topics={[...CONTACT.topics]} />
-          <ContactMap />
-        </div>
+        <ContactCard
+          formTone="light"
+          decor={false}
+          framed={false}
+          intro={false}
+          content={{
+            kicker: CONTACT.kicker,
+            perex: CONTACT.perex,
+            pills: [...CONTACT.pills],
+            topics: [...CONTACT.topics],
+          }}
+          site={site}
+        />
       </div>
     </SectionShell>
   )
