@@ -14,16 +14,18 @@ const eyebrowVariants = cva('text-eyebrow font-bold tracking-caps-lg uppercase',
     tone: {
       lime: 'text-lime',
       club: 'text-club',
+      /** `club` na světlé ploše má jen ~3,3:1; `club-dark` ~5,1:1 (AA pro 11px uppercase). */
+      'club-dark': 'text-club-dark',
       faint: 'text-faint',
       /** Ztišený label na tmavém podkladu (hlavičky tabulek v panelech). */
       dark: 'text-faint-dark',
       white: 'text-on-contrast-subtle',
       /**
-       * Nadpis sloupce na klubové zelené (patička). `white` tam nestačí:
-       * `text-on-contrast-subtle` na `bg-club` (#17703a) dává ~3,4:1, což je pod AA
-       * i pro 11px uppercase — a jde o nadpis, ne o ztišený doplněk.
+       * Nadpis sloupce na zelené (patička, `bg-club-dark`). Průhledná bílá tu
+       * nestačí: i 80 % dává ~3,8:1, pod AA pro 11px uppercase; plná bílá
+       * ~4,9:1.
        */
-      'white-strong': 'text-on-contrast-soft',
+      'white-strong': 'text-on-contrast',
     },
     /** Volnější prostrkání pro samostatně stojící label přes fotku. */
     wide: {
@@ -82,17 +84,34 @@ export function Kicker({ children, className }: { children: React.ReactNode; cla
 }
 
 /**
- * Lime zvýraznění části nadpisu (podpis designu).
+ * Zvýraznění části nadpisu. Lime „fix“ je podpis designu jen tehdy, když je
+ * vzácný: výchozí je prostý text a lime značka se zapíná výslovně přes
+ * `marker`. Na homepage ho mají jen dva nadpisy (O klubu, Historie); ostatní
+ * (i texty z CMS) zůstávají čistým textem, aby se akcent neopakoval v každé
+ * sekci.
  *
  * `dot` přilepí tečku za slovo v klubové zelené — je to součást kompozice,
  * ne interpunkce, proto bez mezery. Psát ji zvlášť za `</Highlight>` jako
  * text vedle sebe dřív nechávalo 8px mezeru z paddingu zvýraznění navíc
  * (`bg-lime slovo. ` čtený jako „slovo .").
  */
-export function Highlight({ children, dot = false }: { children: React.ReactNode; dot?: boolean }) {
+export function Highlight({
+  children,
+  dot = false,
+  marker = false,
+}: {
+  children: React.ReactNode
+  dot?: boolean
+  /** Lime značka pod slovem. Bez ní je `Highlight` jen nositel tečky. */
+  marker?: boolean
+}) {
   return (
     <>
-      <span className="bg-lime box-decoration-clone px-2">{children}</span>
+      {marker ? (
+        <span className="bg-lime box-decoration-clone px-2">{children}</span>
+      ) : (
+        <>{children}</>
+      )}
       {dot && <span className="text-club">.</span>}
     </>
   )

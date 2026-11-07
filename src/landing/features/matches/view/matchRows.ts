@@ -90,7 +90,9 @@ export const toLastResult = (match: Match): LastResult => ({
   score: matchScore(match),
   suffix: scoreSuffix(match),
   dateLabel: `${formatDay(match.date)} · ${phaseLabel(match)}`,
-  won: (match.scoreOurs ?? 0) > (match.scoreOpp ?? 0),
+  won: matchOutcome(match) === 'win',
+  outcome: matchOutcome(match),
+  side: sideLabel(Boolean(match.home)),
   href: hrefOf(match),
 })
 

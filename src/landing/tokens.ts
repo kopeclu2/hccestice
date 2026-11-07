@@ -28,7 +28,7 @@ export const LANDING_COLORS = {
   'club-dark': '#497d36',
   lime: '#7bcc5d',
   dim: '#535f58',
-  faint: '#6b736e',
+  faint: '#606863',
   'faint-dark': '#a9b4ad',
   tint: '#e8f2ec',
   paper: '#f4f6f4',

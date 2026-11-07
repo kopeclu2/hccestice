@@ -3,6 +3,8 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { HERO } from '@/landing/content'
+import { MatchStrip } from '@/landing/features/matches/components/MatchStrip'
+import { fetchPlayed, fetchUpcoming } from '@/landing/features/matches/data/matches'
 import { fetchNavCta, fetchNavigation } from '@/landing/features/navigation/data'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
 import { uploadToPhoto } from '@/landing/lib/media'
@@ -36,20 +38,28 @@ function mapHero(block: LandingHeroModernBlock): HeroModernContent {
 /**
  * Hero varianta 2 (handoff `design_header/HC Cestice Modern.dc.html`).
  *
- * Proti variantě 1 (`blocks/Hero`) je to čistý claim bez karty zápasu:
- * nižší fotka, logo zavěšené uprostřed horní hrany a text dole vlevo v
- * pořadí CTA → perex → headline. Karta zápasu tu chybí záměrně — handoff ji
- * v této kompozici nemá a na homepage ji pokryje blok „Zápasy" / „Nejbližší
- * zápas". Proto sekce nesahá na `fetchUpcoming`/`fetchPlayed`.
+ * Proti variantě 1 (`blocks/Hero`) je to čistý claim bez karty zápasu na
+ * fotce: nižší fotka, logo zavěšené uprostřed horní hrany a text dole vlevo
+ * v pořadí headline → perex → CTA (h1 první, aby ho čtenář i čtečka potkali
+ * dřív než tlačítka). Aktuální zápasy nese kompaktní `MatchStrip` pod fotkou
+ * — handoff kartu na fotce nemá, ale informace o příštím zápase a posledním
+ * výsledku musí být na mobilu hned po prvním scrollu.
  */
 export async function HeroModernBlockComponent({ block }: { block: LandingHeroModernBlock }) {
-  const [navItems, navCta] = await Promise.all([
+  const [navItems, navCta, { upcoming }, { lastResult }] = await Promise.all([
     fetchNavigation(),
     // Vypnuté tlačítko v navigaci nemá cenu dohledávat v Nastavení webu.
     block.showNavCta === false ? null : fetchNavCta(block.navCtaLabel),
+    fetchUpcoming(),
+    fetchPlayed(),
   ])
 
-  return <HeroModernView content={mapHero(block)} navCta={navCta} navItems={navItems} />
+  return (
+    <>
+      <HeroModernView content={mapHero(block)} navCta={navCta} navItems={navItems} />
+      <MatchStrip lastResult={lastResult} upcoming={upcoming} />
+    </>
+  )
 }
 
 function HeroModernView({
@@ -75,14 +85,6 @@ function HeroModernView({
 
         <div className="relative z-3 px-4.5 pt-70 pb-5.5 md:absolute md:inset-x-hero-inset md:bottom-9 md:p-0">
           <div className="max-w-160">
-            {content.cta && (
-              <Button asChild size="lg" variant={content.cta.variant} withArrow>
-                <Link href={content.cta.href}>{content.cta.label}</Link>
-              </Button>
-            )}
-            <p className="mt-4.5 mb-4 max-w-110 text-lg leading-snug text-pretty text-on-contrast-strong text-shadow-photo">
-              {content.intro}
-            </p>
             {/* dvouřádkový headline: základ regular (PageTitle weight="normal"),
                 tučný řádek zvýrazněný uvnitř. Interpunkci z CMS zahazujeme —
                 tečku kreslí handoff v lime jako součást kompozice, ne textu.
@@ -99,6 +101,16 @@ function HeroModernView({
                 <span className="text-lime">.</span>
               </span>
             </PageTitle>
+            <p className="mt-4 mb-6 max-w-110 text-lg leading-snug text-pretty text-on-contrast-strong text-shadow-photo">
+              {content.intro}
+            </p>
+            {content.cta && (
+              <div className="flex flex-wrap items-center gap-2.5">
+                <Button asChild size="lg" variant={content.cta.variant} withArrow>
+                  <Link href={content.cta.href}>{content.cta.label}</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </PhotoTile>

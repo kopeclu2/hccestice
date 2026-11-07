@@ -69,3 +69,10 @@ const queryTrainingSessions = cachedQuery(
  */
 export const fetchTrainingSessions = (): Promise<TrainingSession[]> =>
   queryTrainingSessions(startOfPragueDayIso(new Date()))
+
+/**
+ * „Teď“ pro štítek Dnes / Zítra u nejbližšího termínu. Stejně jako hranice
+ * výše se bere mimo cachovanou funkci; stránka je ISR, takže štítek se po
+ * půlnoci srovná nejpozději s další regenerací (≤ 600 s).
+ */
+export const trainingsNow = (): number => Date.now()

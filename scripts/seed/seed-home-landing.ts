@@ -72,18 +72,19 @@ const layout = [
     ctaLabel: g.hero?.ctaLabel,
     navCtaLabel: g.hero?.navCtaLabel,
   },
-  {
-    blockType: 'landingNews',
-    main: g.news?.main,
-    items: stripIds(g.news?.items as any),
-    highlight: g.news?.highlight,
-  },
+  // Zápasy a tabulka hned za hero (fanoušek hledá výsledek), aktuality pod nimi.
   {
     blockType: 'landingSeason',
     reportPhotos: stripIds(g.season?.reportPhotos as any),
     standings: g.season?.standings
       ? { ...g.season.standings, rows: stripIds(g.season.standings.rows as any) }
       : undefined,
+  },
+  {
+    blockType: 'landingNews',
+    main: g.news?.main,
+    items: stripIds(g.news?.items as any),
+    highlight: g.news?.highlight,
   },
   {
     blockType: 'landingStats',

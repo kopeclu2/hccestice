@@ -46,7 +46,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
        * skok z 18px na mobilu bez jakéhokoli mezistupně. Ten je teď
        * 28/32px, desktopová hodnota začíná na `lg`.
        */}
-      <div className="relative overflow-hidden rounded-card bg-club px-4.5 py-6 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
+      <div className="relative overflow-hidden rounded-card bg-club-dark px-4.5 py-6 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
         <Watermark className="-right-10 -bottom-15 text-watermark-3xl tracking-display text-on-contrast-wash">
           HCČ
         </Watermark>
@@ -73,7 +73,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
              */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-linear-to-t from-club/95 via-club/80 to-club/55"
+              className="absolute inset-0 bg-linear-to-t from-club-dark/95 via-club-dark/85 to-club-dark/70"
             />
           </>
         )}
@@ -91,7 +91,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
             <SectionTitle className="text-on-contrast" size="xl">
               {content.headline}
             </SectionTitle>
-            <p className="mt-4 mb-6.5 max-w-115 text-on-contrast-strong">{content.perex}</p>
+            <p className="mt-4 mb-6.5 max-w-115 text-on-contrast">{content.perex}</p>
             {/* Pod 360 px je řádek široký 236 px: „Napiš nám" (141) + dvě ikony
                 (2 × 44) + mezery 2 × 10 se nevejdou, proto užší mezera a levý
                 okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
@@ -138,13 +138,13 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
             {content.columns.map((column) => (
               <div className="flex flex-col gap-1" key={column.title}>
                 {/*
-                 * `white-strong` (80 %), ne `white` (60 %):
-                 * nadpis sloupce na `bg-club` měl ~3,4:1, tedy pod AA.
+                 * `white-strong` (plná bílá), ne `white` (60 %):
+                 * nadpis sloupce na zelené by jinak byl pod AA.
                  */}
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
-                    className="py-3 text-on-contrast transition-colors hover:text-lime md:py-0.5"
+                    className="py-3 text-on-contrast underline-offset-4 transition-colors hover:underline md:py-0.5"
                     href={homeAnchorHref(link.href)}
                     key={link.href}
                   >
@@ -163,10 +163,11 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * udělá totéž zarovnání bez fantomové položky a logo s copyrightem
          * drží pohromadě ve vlastním flexu, takže se od sebe neodtrhnou.
          *
-         * `text-on-contrast-strong` (90 %), ne 70 %: 12px text na `bg-club` měl ~4,1:1, což
-         * je pod AA pro malé písmo.
+         * Plná bílá, ne průhledná: 12px text na `bg-club-dark` (#497d36) má ~4,9:1,
+         * 90 % bílá jen ~4,3:1, což je pod AA pro malé písmo. `bg-club` (#5e9e46)
+         * dává i s plnou bílou jen 3,3:1, proto je panel na `club-dark`.
          */}
-        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-on-contrast-line pt-5 text-xs text-on-contrast-strong md:mt-10 lg:mt-11">
+        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-on-contrast-line pt-5 text-xs text-on-contrast md:mt-10 lg:mt-11">
           {/* Adresa sídla a stadionu z `lib/club` (táž data jako JSON-LD).
               `basis-full`: vlastní řádek nad copyrightem, ať se dlouhé řádky
               nelámou uprostřed vedle loga. */}
@@ -204,11 +205,14 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * jako u sloupců odkazů výš (`py-3`, od `sm` zpět na `py-1`).
            */}
           <span className="flex flex-wrap items-center gap-x-5 gap-y-1 sm:gap-x-6">
-            <Link className="py-3.5 transition-colors hover:text-lime sm:py-1" href="/cookies">
+            <Link
+              className="py-3.5 underline-offset-4 transition-colors hover:underline sm:py-1"
+              href="/cookies"
+            >
               Zásady cookies
             </Link>
             <button
-              className="cursor-pointer py-3.5 transition-colors hover:text-lime sm:py-1"
+              className="cursor-pointer py-3.5 underline-offset-4 transition-colors hover:underline sm:py-1"
               data-cc="show-preferencesModal"
               type="button"
             >

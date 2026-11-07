@@ -5,13 +5,16 @@
  * - `solo` — jediný zápas: samotný tmavý panel přes celou šířku,
  * - `stacked` — nejbližší zápas v panelu a zbytek pod ním, jako řádky jedné
  *   karty (`display: 'list'`) nebo mřížka malých karet (`'tiles'`),
- * - `rail` — dva zápasy v režimu karet: vodorovný pás.
+ * - `rail` — dva zápasy v režimu karet: vodorovný pás,
+ * - `plain` — jen mřížka karet bez panelu nejbližšího zápasu (home page, kde
+ *   nejbližší zápas nese proužek pod hero; skládá ji `FixturesRail`, ne `pickLayout`).
  */
 export type FixturesLayout<T> =
   | { kind: 'empty' }
   | { kind: 'solo'; fixture: T }
   | { kind: 'stacked'; nearest: T; rest: T[]; display: 'list' | 'tiles' }
   | { kind: 'rail'; fixtures: T[] }
+  | { kind: 'plain'; fixtures: T[] }
 
 export function pickLayout<T>(fixtures: readonly T[], layout: 'cards' | 'list'): FixturesLayout<T> {
   const [nearest, ...rest] = fixtures

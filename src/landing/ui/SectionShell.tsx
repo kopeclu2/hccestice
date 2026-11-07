@@ -23,8 +23,8 @@ import { cn } from '@/lib/utils'
 const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-mt-20 px-gutter', {
   variants: {
     spacing: {
-      /** Sekce home page — 72px mobil, 112px tablet, 160px desktop (rytmus handoffu, ztlumeno o ~20 %). */
-      landing: 'mt-18 md:mt-28 lg:mt-40',
+      /** Sekce home page — 56px mobil, 80px tablet, 120px desktop (dřív 72 / 112 / 160: prázdno mezi sekcemi bylo delší než jejich obsah). */
+      landing: 'mt-14 md:mt-20 lg:mt-30',
       /** Lišta hned pod herem (oznámení) — drží se nahoře. */
       bar: 'mt-8 md:mt-10',
       /**
