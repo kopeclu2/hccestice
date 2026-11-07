@@ -2,6 +2,7 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 import React from 'react'
 
+import { RinkDivider } from '@/landing/ui/RinkMarkings'
 import { cn } from '@/lib/utils'
 
 /**
@@ -23,8 +24,8 @@ import { cn } from '@/lib/utils'
 const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-mt-20 px-gutter', {
   variants: {
     spacing: {
-      /** Sekce home page — 72px mobil, 112px tablet, 160px desktop (rytmus handoffu, ztlumeno o ~20 %). */
-      landing: 'mt-18 md:mt-28 lg:mt-40',
+      /** Sekce home page — 56px mobil, 80px tablet, 120px desktop (dřív 72 / 112 / 160: prázdno mezi sekcemi bylo delší než jejich obsah). */
+      landing: 'mt-14 md:mt-20 lg:mt-30',
       /** Lišta hned pod herem (oznámení) — drží se nahoře. */
       bar: 'mt-8 md:mt-10',
       /**
@@ -56,11 +57,21 @@ const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-
 })
 
 export type SectionShellProps = React.ComponentProps<'section'> &
-  VariantProps<typeof sectionShellVariants>
+  VariantProps<typeof sectionShellVariants> & {
+    /**
+     * Středová čára kluziště (`RinkDivider`) uprostřed mezery nad sekcí.
+     * Polohy jsou poloviny `landing` odsazení (28 / 40 / 60 px), proto má
+     * smysl jen s `spacing="landing"`.
+     */
+    rink?: boolean
+  }
 
-export function SectionShell({ children, className, spacing, ...props }: SectionShellProps) {
+export function SectionShell({ children, className, spacing, rink, ...props }: SectionShellProps) {
   return (
     <section className={cn(sectionShellVariants({ spacing }), className)} {...props}>
+      {rink && (
+        <RinkDivider className="absolute inset-x-gutter -top-7 -translate-y-1/2 md:-top-10 lg:-top-15" />
+      )}
       {children}
     </section>
   )

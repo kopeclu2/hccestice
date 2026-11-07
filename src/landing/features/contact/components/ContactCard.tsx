@@ -2,22 +2,20 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
 import type { ContactContent } from '@/landing/features/contact/types'
-import type { SiteLinks } from '@/landing/types'
-import { Badge } from '@/landing/ui/Badge'
+import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
-import { Watermark } from '@/landing/ui/Watermark'
+import { FaceoffCircle } from '@/landing/ui/RinkMarkings'
+import { telHref } from '@/lib/phone'
 import { cn } from '@/lib/utils'
 
 import { ContactFormLazy } from './ContactFormLazy'
 
 /**
  * Kontaktní karta (sdílená): bílá karta s velkým e-mailem, pill údaji a odkazy na sítě,
- * uvnitř tmavá karta s formulářem. Dekorace: šrafování nahoře, rozmazané
- * barevné kruhy, svislé nápisy po stranách, watermark „ZIMÁK".
+ * uvnitř tmavá karta s formulářem. Dekorace: kruh vhazování za nadpisem.
  */
 export function ContactCard({
   content,
@@ -26,29 +24,23 @@ export function ContactCard({
   intro = true,
   decor = true,
   framed = true,
+  youthContacts = [],
 }: {
   content: ContactContent
   site: SiteLinks
   /** `dark` na homepage, `light` na `/kontakt` (bílý formulář s obrysem). */
   formTone?: 'dark' | 'light'
-  /** Štítek, nadpis „Pojďme na led“, perex a svislý nápis; `/kontakt` je nechce. */
+  /** Štítek, nadpis „Pojďme na led“, perex; `/kontakt` je nechce. */
   intro?: boolean
-  /** Záře, kruh s tečkou, svislý nápis „HC ČESTICE · VČHL“ a watermark „ZIMÁK“. */
+  /** Kruh vhazování za nadpisem. */
   decor?: boolean
   /** Bílá zaoblená karta kolem obsahu; bez ní stojí obsah rovnou na pozadí stránky. */
   framed?: boolean
+  /** Osoby pro dotazy rodičů dětí (`pickYouthContacts`); prázdné = blok se nevykreslí. */
+  youthContacts?: PersonCard[]
 }) {
   return (
     <>
-      {decor && (
-        <Watermark
-          className="top-70 -right-10 text-watermark-lg tracking-tighter text-club/6"
-          outlined={false}
-        >
-          ZIMÁK
-        </Watermark>
-      )}
-
       <Reveal>
         <div
           className={cn(
@@ -59,24 +51,9 @@ export function ContactCard({
           )}
         >
           {decor && (
-            <>
-              {/* dekorace pozadí */}
-              <div className="pointer-events-none absolute top-50 -left-22 hidden size-85 rounded-full bg-[radial-gradient(circle,--alpha(var(--color-lime)/45%),transparent_65%)] blur-xl md:block" />
-              <div className="pointer-events-none absolute top-85 -right-22 hidden size-85 rounded-full bg-[radial-gradient(circle,--alpha(var(--color-club)/20%),transparent_65%)] blur-xl md:block" />
-              {/* Kruhy mají pevné pozice od pravé hrany karty. Na tabletu se karta
-                zúží, ale nadpis zůstane vycentrovaný, takže lime tečka nasedla
-                přímo na tečku za „led". Dekorace proto naskakují až od `lg`. */}
-              <div className="pointer-events-none absolute top-17 right-15 hidden size-37.5 rounded-full border-2 border-club/14 lg:block" />
-              <div className="pointer-events-none absolute top-30 right-27 hidden size-13 rounded-full bg-lime opacity-55 lg:block" />
-              <div className="pointer-events-none absolute top-37 left-11 hidden origin-top-left -rotate-90 text-sm font-bold tracking-[0.3em] whitespace-nowrap text-club/22 uppercase md:block md:text-base">
-                HC ČESTICE · VČHL
-              </div>
-            </>
-          )}
-          {intro && (
-            <div className="pointer-events-none absolute right-11 bottom-37 hidden origin-bottom-right rotate-90 text-sm font-bold tracking-[0.3em] whitespace-nowrap text-club/22 uppercase md:block md:text-base">
-              POJĎME NA LED
-            </div>
+            /* Kruh vhazování za nadpisem „Pojďme na led“ — jediná dekorace karty.
+               Středem je nadpis, takže kruh sedí na kartě na každé šířce. */
+            <FaceoffCircle className="absolute top-6 left-1/2 hidden size-60 -translate-x-1/2 text-club/18 md:block lg:top-9 lg:size-72" />
           )}
 
           {intro && (
@@ -91,21 +68,19 @@ export function ContactCard({
             </>
           )}
 
-          <a
-            /* Dvě změny kvůli 320px: spodní hranice clampu je 20px (při 24px
-               se adresa nevešla) a `break-words` místo `overflow-wrap:anywhere`.
-               `anywhere` totiž na rozdíl od `break-word` **snižuje max-content**
-               boxu, takže shrink-to-fit `inline-flex` vyšel o jeden znak kratší
-               a adresa se lámala („hccestice@seznam.c / z") i tam, kde se
-               vejde. Záchranná brzda pro dlouhou adresu z CMS zůstává. */
-            className="relative inline-flex items-center gap-2.5 text-contact-lg font-extrabold tracking-heading break-words text-ink transition-colors hover:text-club max-md:py-2 md:gap-4.5"
-            href={`mailto:${site.email}`}
-          >
-            {site.email}
-            <span className="grid size-[0.9em] flex-none place-items-center rounded-full bg-lime text-ink [&_svg]:size-[0.5em]">
-              <ArrowUpRight strokeWidth={2.5} />
-            </span>
-          </a>
+          {/* Formulář je jediné primární kontaktní místo. E-mail zůstává jako
+              textový odkaz (ne obří display s lime kruhem), aby s formulářem
+              nesoutěžil. `break-words`, ne `overflow-wrap:anywhere`: to by
+              snížilo max-content a adresa by se lámala i tam, kde se vejde. */}
+          <p className="relative text-sm text-dim md:text-base">
+            Nebo napiš rovnou na{' '}
+            <a
+              className="inline-block font-bold break-words text-ink underline decoration-lime decoration-2 underline-offset-4 transition-colors hover:text-club max-md:py-3"
+              href={`mailto:${site.email}`}
+            >
+              {site.email}
+            </a>
+          </p>
 
           {/*
            * Adresa a sítě jsou dvě oddělené skupiny (`flex-col` pod `md`),
@@ -117,21 +92,17 @@ export function ContactCard({
            * dvojice zajistí, že se zalomí nejvýš po párech. Od `md` se obě
            * skupiny slijí do jednoho řádku jako dřív (`md:flex-row`).
            */}
-          <div className="relative mt-9 flex flex-col items-center gap-2.5 md:flex-row md:flex-wrap md:justify-center">
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {content.pills.map((pill) => (
-                <Badge className="font-medium" key={pill} size="lg" variant="outline">
-                  {pill}
-                </Badge>
-              ))}
-            </div>
-            {(site.facebook || site.instagram) && (
-              <div className="flex flex-wrap justify-center gap-2.5">
-                {site.facebook && <SocialPill href={site.facebook} label="Facebook" />}
-                {site.instagram && <SocialPill href={site.instagram} label="Instagram" />}
-              </div>
+          <div className="relative mt-3 flex flex-wrap items-center justify-center gap-x-5">
+            {content.pills.length > 0 && (
+              <p className="w-full text-sm font-medium text-dim md:w-auto">
+                {content.pills.join(' · ')}
+              </p>
             )}
+            {site.facebook && <SocialLink href={site.facebook} label="Facebook" />}
+            {site.instagram && <SocialLink href={site.instagram} label="Instagram" />}
           </div>
+
+          {youthContacts.length > 0 && <YouthContacts people={youthContacts} />}
 
           <ContactFormLazy tone={formTone} topics={content.topics} />
         </div>
@@ -140,18 +111,58 @@ export function ContactCard({
   )
 }
 
-/**
- * Odkaz na sociální síť ve stejném řádku jako pill údaje (`Badge` s obrysem).
- * Varianta `club` do něj přinesla jinou barvu obrysu, jinou váhu i jinou výšku
- * (h-11/md:h-10 proti 36px štítku), takže je sjednocená na `outline` a od
- * neklikatelných štítků ji odlišuje jen šipka v kruhu (`withArrow`), ne barva.
- */
-function SocialPill({ href, label }: { href: string; label: string }) {
+/** Odkaz na sociální síť — textový, s šipkou; tap target 44 px na mobilu. */
+function SocialLink({ href, label }: { href: string; label: string }) {
   return (
-    <Button asChild size="sm" variant="outline" withArrow>
-      <Link href={href} rel="noreferrer" target="_blank">
-        {label}
-      </Link>
-    </Button>
+    <Link
+      className="inline-flex items-center gap-1 text-sm font-bold text-ink-soft underline decoration-line decoration-2 underline-offset-4 transition-colors hover:text-club hover:decoration-lime max-md:py-3"
+      href={href}
+      rel="noreferrer"
+      target="_blank"
+    >
+      {label}
+      <ArrowUpRight className="size-3.5" strokeWidth={2.5} />
+    </Link>
+  )
+}
+
+/**
+ * Kontakt pro mládež (rodiče dětí): jméno, role a telefon / e-mail osob, které
+ * správce v kolekci `people` označí rolí s „mládež“. Bez takové osoby se
+ * nevykreslí nic — žádný vymyšlený kontakt.
+ */
+function YouthContacts({ people }: { people: PersonCard[] }) {
+  return (
+    <div className="relative mt-5 text-sm text-dim">
+      <p className="font-bold text-ink">Máš dítě a chceš na led? Ozvi se přímo:</p>
+      <ul className="mt-1 flex flex-col items-center gap-x-6 gap-y-0 md:flex-row md:flex-wrap md:justify-center">
+        {people.map((person, index) => (
+          <li
+            className="flex flex-wrap items-center justify-center gap-x-3"
+            key={`${index}-${person.name}`}
+          >
+            <span className="font-medium">
+              {person.name} <span className="text-faint">({person.role})</span>
+            </span>
+            {person.phone && (
+              <a
+                className="underline underline-offset-4 hover:text-club max-md:py-3"
+                href={telHref(person.phone)}
+              >
+                {person.phone}
+              </a>
+            )}
+            {person.mail && (
+              <a
+                className="break-all underline underline-offset-4 hover:text-club max-md:py-3"
+                href={`mailto:${person.mail}`}
+              >
+                {person.mail}
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }

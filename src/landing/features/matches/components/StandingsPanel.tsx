@@ -130,7 +130,7 @@ export function StandingsPanel({
           <thead className="block" role="rowgroup">
             <tr
               className={cn(
-                'grid px-2.5 py-2.5 text-eyebrow font-bold tracking-caps-lg text-faint-dark uppercase md:py-2.75 lg:py-3',
+                'grid px-2.5 py-2.5 text-eyebrow font-bold tracking-caps-lg text-faint uppercase md:py-2.75 lg:py-3',
                 gridCols,
               )}
               role="row"
@@ -199,7 +199,7 @@ export function StandingsPanel({
                   <td
                     className={cn(
                       'text-sm font-bold tabular-nums',
-                      ours ? 'text-club' : 'text-faint-dark',
+                      ours ? 'text-ink' : 'text-faint',
                     )}
                     role="cell"
                   >

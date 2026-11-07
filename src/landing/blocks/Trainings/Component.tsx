@@ -11,7 +11,6 @@ import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
-import { Watermark } from '@/landing/ui/Watermark'
 import { routes } from '@/lib/routes'
 import type { LandingTrainingsBlock } from '@/payload-types'
 
@@ -84,18 +83,12 @@ function TrainingsView({
   spacing?: SectionShellProps['spacing']
 }) {
   // `/treninky` posílá `spacing="content"` (viz `TreninkyPage`) — na tý
-  // stránce má hlavičku (`TrainingsHeader`) i vlastní watermark „LED" a
-  // Kicker „Tréninky" nad blokem, takže je blok sám nevykresluje znova.
+  // stránce má hlavičku (`TrainingsHeader`) i Kicker „Tréninky" nad
+  // blokem, takže je blok sám nevykresluje znova.
   const standalonePage = spacing === 'content'
 
   return (
-    <SectionShell id="treninky" spacing={spacing}>
-      {!standalonePage && (
-        <Watermark className="bottom-0 left-40 text-watermark-lg tracking-display text-club/8">
-          LED
-        </Watermark>
-      )}
-
+    <SectionShell id="treninky" rink={!standalonePage} spacing={spacing}>
       <Reveal className={standalonePage ? 'mb-6' : 'mb-10'}>
         {standalonePage ? (
           // `h1` s názvem stránky už stojí v hlavičce, druhý velký titulek by
@@ -121,6 +114,7 @@ function TrainingsView({
 
       <Reveal delay={0.1}>
         <TrainingsTable
+          compact={!standalonePage}
           monthHeadingAs={standalonePage ? 'h2' : 'h3'}
           sessions={standalonePage ? sessions : sessions.slice(0, HOME_SESSIONS)}
         />

@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import type { Sponsor } from '@/landing/features/sponsors/types'
-import { GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
@@ -91,10 +90,7 @@ function SponsorsView({
     sponsors.length >= TWO_ROWS_FROM ? [sponsors.slice(0, half), sponsors.slice(half)] : [sponsors]
 
   return (
-    <SectionShell id="sponzori">
-      <GlowCircle className="-top-40 -left-60 size-180" tone="club" />
-      <GlowCircle className="-right-50 -bottom-50 size-160" tone="lime" />
-
+    <SectionShell id="sponzori" rink>
       <Reveal>
         <div className="max-w-208">
           <Kicker>Partneři</Kicker>
@@ -103,11 +99,20 @@ function SponsorsView({
             <Highlight dot>{titleHighlight}</Highlight>
           </SectionTitle>
           <div className="mt-6.5 flex flex-wrap items-center gap-x-2.5 gap-y-3">
+            {/* Hlavní tlačítko sekce je výpis partnerů; „podpořit klub“ je
+                textový odkaz — formulář na homepage má být jediné primární
+                kontaktní místo. */}
             <Button asChild variant="dark" withArrow>
-              <Link href="#kontakt">{ctaLabel}</Link>
-            </Button>
-            <Button asChild variant="outline" withArrow>
               <Link href="/sponzori">Všichni partneři</Link>
+            </Button>
+            <Button
+              asChild
+              className="h-11 text-ink underline decoration-lime decoration-2 underline-offset-4"
+              size="clear"
+              variant="link"
+              withArrow
+            >
+              <Link href="#kontakt">{ctaLabel}</Link>
             </Button>
             <span className="text-sm font-medium text-faint">{count}</span>
           </div>

@@ -5,13 +5,11 @@ import { Button } from '@/components/ui/button'
 import { CLUB } from '@/landing/content'
 import { uploadToPhoto } from '@/landing/lib/media'
 import type { ClubContent } from '@/landing/types'
-import { DotGrid, PlusMark } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Highlight } from '@/landing/ui/Kicker'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { Watermark } from '@/landing/ui/Watermark'
 import type { LandingClubBlock } from '@/payload-types'
 
 /** Block data → view-model (fallbacky na content.ts). */
@@ -41,8 +39,7 @@ export function ClubBlockComponent({ block }: { block: LandingClubBlock }) {
 }
 
 /**
- * O klubu — intro text s CTA vlevo, vpravo fotokarty stadionu
- * a mládeže s overlay popisky. Watermark „ČESTICE" na pozadí.
+ * O klubu — fotokarty vlevo, vpravo velký nadpis, perex a CTA.
  */
 function ClubView({ content }: { content: ClubContent }) {
   return (
@@ -54,27 +51,25 @@ function ClubView({ content }: { content: ClubContent }) {
       className="grid grid-cols-1 items-start gap-9 md:grid-cols-[repeat(auto-fit,minmax(min(21.25rem,100%),1fr))] md:gap-14"
       id="klub"
     >
-      <Watermark
-        className="bottom-7 -left-10 text-watermark-md tracking-display text-ink/4"
-        outlined={false}
-      >
-        ČESTICE
-      </Watermark>
-      <DotGrid className="top-30 left-0 size-75" maskPosition="20% 30%" />
-      <PlusMark className="top-15 left-82" />
-
-      <Reveal>
-        <Kicker>{content.kicker}</Kicker>
-        <SectionTitle className="mt-5" size="lg">
+      {/* Na `md+` stojí text vpravo a fotky vlevo (jiná kostra než sousední
+          sekce); v DOM i na mobilu zůstává text první. */}
+      <Reveal className="self-center md:order-2">
+        <SectionTitle size="xl">
           {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
         </SectionTitle>
-        <p className="mt-4 mb-6.5 leading-relaxed text-pretty text-dim">{content.perex}</p>
-        <Button asChild variant="dark" withArrow>
+        <p className="mt-5 mb-7 text-lg leading-copy text-pretty text-dim">{content.perex}</p>
+        <Button
+          asChild
+          className="h-11 underline decoration-lime decoration-2 underline-offset-4"
+          size="clear"
+          variant="link"
+          withArrow
+        >
           <Link href="#kontakt">{content.ctaLabel}</Link>
         </Button>
       </Reveal>
 
-      <Reveal delay={0.1}>
+      <Reveal className="md:order-1" delay={0.1}>
         {/* `sizes` kopíruje zlomy mřížky: do 768px je dlaždice na celou šířku,
             mezi 768 a 1024px si auto-fit rozdělí sloupec na polovinu a až na
             desktopu je z ní čtvrtina viewportu. Jediný zlom na 48rem tahal na

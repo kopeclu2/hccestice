@@ -74,7 +74,7 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                     role="row"
                   >
                     <td
-                      className={cn('text-sm font-bold', isOurs ? 'text-club-dark' : 'text-faint')}
+                      className={cn('text-sm font-bold', isOurs ? 'text-ink' : 'text-faint')}
                       role="cell"
                     >
                       {row.pos}.
