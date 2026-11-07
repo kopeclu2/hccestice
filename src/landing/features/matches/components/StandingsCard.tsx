@@ -11,11 +11,11 @@ import { cn } from '@/lib/utils'
 
 const ZAPASY_HREF = '/zapasy'
 
-/** Mřížka řádku; V / PP / P (`STAT`) naskočí od `sm`, na úzkém displeji by sežraly název týmu. */
+/** Mřížka řádku; V / VP / PP / P (`STAT`) naskočí od `sm`, na úzkém displeji by sežraly název týmu. */
 const GRID_BASE =
   'grid-cols-[1.5rem_1fr_1.75rem_2rem] md:grid-cols-[2rem_1fr_2.5rem_2.5rem] md:gap-3'
 const GRID_EXTENDED =
-  'grid-cols-[1.5rem_1fr_1.75rem_2rem] sm:grid-cols-[1.5rem_1fr_1.75rem_1.75rem_1.75rem_1.75rem_2rem] md:grid-cols-[2rem_1fr_2.5rem_2.25rem_2.25rem_2.25rem_2.5rem] md:gap-3'
+  'grid-cols-[1.5rem_1fr_1.75rem_2rem] sm:grid-cols-[1.5rem_1fr_1.75rem_1.75rem_1.75rem_1.75rem_1.75rem_2rem] md:grid-cols-[2rem_1fr_2.5rem_2.25rem_2.25rem_2.25rem_2.25rem_2.5rem] md:gap-3'
 const STAT = 'hidden text-center sm:block'
 
 /** Tabulka VČHL — řádek HC Čestice zvýrazněný zeleně (sdílí ji widget Tabulka). */
@@ -84,6 +84,11 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                       </abbr>
                     </th>
                     <th className={cn(STAT, 'font-bold')} role="columnheader" scope="col">
+                      <abbr className="no-underline" title="Výhry po prodloužení nebo nájezdech">
+                        VP
+                      </abbr>
+                    </th>
+                    <th className={cn(STAT, 'font-bold')} role="columnheader" scope="col">
                       <abbr className="no-underline" title="Prohry po prodloužení nebo nájezdech">
                         PP
                       </abbr>
@@ -143,6 +148,9 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
                           {row.wins}
                         </td>
                         <td className={cn(STAT, 'text-sm text-faint tabular-nums')} role="cell">
+                          {row.otWins ?? 0}
+                        </td>
+                        <td className={cn(STAT, 'text-sm text-faint tabular-nums')} role="cell">
                           {row.otLosses}
                         </td>
                         <td className={cn(STAT, 'text-sm text-faint tabular-nums')} role="cell">
@@ -165,6 +173,8 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
               <span className="max-sm:hidden">
                 {' · '}
                 <b className="font-bold text-ink-soft">V</b> výhry
+                {' · '}
+                <b className="font-bold text-ink-soft">VP</b> výhry po prodloužení nebo nájezdech
                 {' · '}
                 <b className="font-bold text-ink-soft">PP</b> prohry po prodloužení nebo nájezdech
                 {' · '}

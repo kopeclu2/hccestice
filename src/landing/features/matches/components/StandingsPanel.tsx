@@ -18,8 +18,8 @@ const isUs = isOurTeam
  * ručně vedené sezóny. Rozšířená tabulka ze synchronizace má dvě šířky:
  *
  * - **kompaktní** (mobil, `lg`–`xl`, kde se panel zužuje do pravého sloupce):
- *   navíc V / PP / P, tedy bez VP a skóre — jinak by na 320 px nezbylo místo
- *   na název týmu,
+ *   navíc V / VP / PP / P, tedy bez skóre — součet V + VP + PP + P musí dát Z
+ *   a název týmu se na úzkém displeji zalomí,
  * - **plná** (`md` v jedné koloně a od `2xl`): V / VP / PP / P a skóre.
  *
  * Skryté sloupce (`EXTRA`) mají `display: none`, takže se do mřížky
@@ -28,10 +28,10 @@ const isUs = isOurTeam
 const GRID_BASE =
   'grid-cols-[1.75rem_minmax(0,1fr)_2rem_2.25rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_minmax(0,1fr)_3.25rem_3.25rem] lg:px-3.5'
 const GRID_EXTENDED =
-  'grid-cols-[1.5rem_minmax(0,1fr)_1.75rem_1.5rem_1.5rem_1.5rem_2rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2rem_minmax(0,1fr)_2rem_1.75rem_1.75rem_1.75rem_2.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
-/** Extra sloupce VP a skóre: jen v plné šířce (`md` a `2xl`). */
+  'grid-cols-[1.5rem_minmax(0,1fr)_1.5rem_1.375rem_1.375rem_1.375rem_1.375rem_1.75rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2rem_minmax(0,1fr)_2rem_1.75rem_1.75rem_1.75rem_1.75rem_2.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
+/** Extra sloupec skóre: jen v plné šířce (`md` a `2xl`). */
 const EXTRA = 'hidden text-center md:block lg:hidden 2xl:block'
-/** Sloupce V / PP / P: vidět vždy, i v kompaktní šířce. */
+/** Sloupce V / VP / PP / P: vidět vždy, i v kompaktní šířce (jinak by V + PP + P nedalo Z). */
 const STAT = 'text-center'
 
 /** Popisky sloupců — jediný zdroj pro `abbr title` v hlavičce i pro legendu. */
@@ -161,7 +161,7 @@ export function StandingsPanel({
           <thead className="block" role="rowgroup">
             <tr
               className={cn(
-                'grid px-2.5 py-2.5 text-eyebrow font-bold tracking-caps-lg text-faint uppercase md:py-2.75 lg:py-3',
+                'grid px-1 py-2.5 text-eyebrow font-bold tracking-caps-lg text-faint uppercase md:py-2.75 lg:py-3',
                 gridCols,
               )}
               role="row"
@@ -186,7 +186,7 @@ export function StandingsPanel({
                       V
                     </abbr>
                   </th>
-                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                  <th className={cn(STAT, 'font-bold')} role="columnheader" scope="col">
                     <abbr className="no-underline" title="Výhry v prodloužení / na nájezdy">
                       VP
                     </abbr>
@@ -236,7 +236,7 @@ export function StandingsPanel({
                   )}
                   <tr
                     className={cn(
-                      'grid items-center rounded-field px-2.5 py-2.75 md:py-3 lg:py-3.25',
+                      'grid items-center rounded-field px-1 py-2.75 md:py-3 lg:py-3.25',
                       gridCols,
                       ours && 'bg-tint',
                     )}
@@ -279,7 +279,7 @@ export function StandingsPanel({
                           {row.wins ?? 0}
                         </td>
                         <td
-                          className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                          className={cn(STAT, 'text-sm font-medium text-faint tabular-nums')}
                           role="cell"
                         >
                           {row.otWins ?? 0}
