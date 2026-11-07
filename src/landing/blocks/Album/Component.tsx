@@ -12,6 +12,7 @@ import { MaybeLink } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { MoreLink } from '@/landing/ui/MoreLink'
 import { PhotoTile, TileArrow } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -145,9 +146,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <Button asChild size="md" variant="dark" withArrow>
-            <Link href={routes.list.galleries}>Celé fotoalbum</Link>
-          </Button>
+          <MoreLink href={routes.list.galleries}>Celé fotoalbum</MoreLink>
         </div>
       </Reveal>
 

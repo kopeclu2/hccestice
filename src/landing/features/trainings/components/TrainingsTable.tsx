@@ -4,6 +4,8 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/landing/ui/Badge'
 import { EmptyState } from '@/landing/ui/EmptyState'
+import { Eyebrow } from '@/landing/ui/Kicker'
+import type { DateInput } from '@/lib/datetime'
 import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
@@ -19,13 +21,17 @@ import {
  * na termín. Karta i linky jsou stejné jako u výpisů zápasů (`rounded-tile`,
  * `border-line-soft`), takže se rozpis tváří jako zbytek webu.
  *
- * Mobil: nahoře den, datum a čas, pod tím skupina a místo. Od `md` sloupce
- * den | čas | skupina | místo se záhlavím. Záhlaví je jen vizuální pomůcka:
- * řádky jsou popsané samy, proto je `aria-hidden`.
+ * Místo se píše jednou: když mají všechny termíny stejné, stojí v záhlaví
+ * tabulky a z řádků zmizí (šestkrát „ZS Rychnov nad Kněžnou“ pod sebou byl
+ * šum). Rozdílné místo (turnaj jinde) se v řádku ukáže dál.
  *
- * Sloupec Skupina se kreslí, jen když skupinu má aspoň polovina termínů.
- * Rozpis bývá bez skupiny skoro celý a prázdný sloupec jen zabíral šířku;
- * ojedinělá skupina pak stojí jako štítek v řádku místa.
+ * Mobil: nahoře den, datum a čas, pod tím skupina, poznámka a případné místo.
+ * Od `md` sloupce den | čas | podrobnosti. Záhlaví je jen vizuální pomůcka:
+ * řádky jsou popsané samy, proto je `aria-hidden`; sdílené místo je ale
+ * skutečný text a čte se.
+ *
+ * Nejbližší termín nese štítek Dnes / Zítra. „Teď“ předává volající
+ * (`now`), tabulka nevolá `new Date()` sama.
  *
  * `compact` (homepage) zmenší svislé odsazení řádků.
  *
@@ -34,31 +40,43 @@ import {
 
 const GRID_BASE =
   'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-4.5 md:gap-y-0 md:px-6 lg:px-7'
-const GRID_WITH_GROUP = 'md:grid-cols-[6rem_9rem_minmax(0,1fr)_minmax(0,1fr)]'
-const GRID_NO_GROUP = 'md:grid-cols-[6rem_9rem_minmax(0,1fr)]'
+const GRID_WITH_DETAIL = 'md:grid-cols-[6rem_9rem_minmax(0,1fr)]'
+const GRID_NO_DETAIL = 'md:grid-cols-[6rem_minmax(0,1fr)]'
 
-/** Skupina je sloupec, jen když ji má aspoň polovina termínů. */
-function hasGroupColumn(months: TrainingMonthView[]): boolean {
-  const rows = months.flatMap((month) => month.rows)
-  return rows.length > 0 && rows.filter((row) => row.group).length * 2 >= rows.length
+const WHEN_LABEL = { today: 'Dnes', tomorrow: 'Zítra' } as const
+
+/** Místo, které mají všechny termíny stejné; jinak `null`. */
+function sharedVenue(months: TrainingMonthView[]): string | null {
+  const venues = new Set(months.flatMap((month) => month.rows.map((row) => row.venue)))
+  const [only] = venues
+  return venues.size === 1 && only ? only : null
+}
+
+/** Řádek má co ukázat vedle dne a času? */
+function hasDetail(row: TrainingRowView, venue: string | null): boolean {
+  return Boolean(row.group || row.note || (!venue && row.venue))
 }
 
 export function TrainingsTable({
   sessions,
   monthHeadingAs: MonthHeading = 'h3',
   compact = false,
+  now,
 }: {
   sessions: TrainingSession[]
   /** Úroveň měsíčních nadpisů: `h2` pod `h1` stránky, `h3` pod nadpisem sekce. */
   monthHeadingAs?: 'h2' | 'h3'
   /** Kompaktní řádky pro homepage; celý rozpis na `/treninky` je volnější. */
   compact?: boolean
+  /** „Teď“ pro štítek Dnes / Zítra; bez něj se štítek nekreslí. */
+  now?: DateInput
 }) {
-  const months = buildTrainingMonths(sessions)
-  const withGroup = hasGroupColumn(months)
+  const months = buildTrainingMonths(sessions, now)
+  const venue = sharedVenue(months)
+  const withDetail = months.some((month) => month.rows.some((row) => hasDetail(row, venue)))
   const grid = cn(
     GRID_BASE,
-    withGroup ? GRID_WITH_GROUP : GRID_NO_GROUP,
+    withDetail ? GRID_WITH_DETAIL : GRID_NO_DETAIL,
     compact ? 'py-2.5 md:py-3' : 'py-3.5 md:py-4',
   )
 
@@ -86,19 +104,27 @@ export function TrainingsTable({
 
   return (
     <div className="overflow-hidden rounded-tile border border-line-soft bg-surface">
-      <div
-        aria-hidden
-        className={cn(
-          GRID_BASE,
-          withGroup ? GRID_WITH_GROUP : GRID_NO_GROUP,
-          'hidden border-b border-line-soft bg-chip/50 py-3 text-eyebrow font-bold tracking-caps-md text-faint uppercase md:grid md:py-3',
-        )}
-      >
-        <span>Den</span>
-        <span>Čas</span>
-        {withGroup && <span>Skupina</span>}
-        <span>Místo</span>
-      </div>
+      {venue && (
+        <p className="flex flex-wrap items-center gap-x-2.5 border-b border-line-soft bg-chip/50 px-4.5 py-3 text-sm font-semibold text-ink-soft md:px-6 lg:px-7">
+          <Eyebrow tone="faint">Místo</Eyebrow>
+          {venue}
+        </p>
+      )}
+
+      {withDetail && (
+        <div
+          aria-hidden
+          className={cn(
+            GRID_BASE,
+            GRID_WITH_DETAIL,
+            'hidden border-b border-line-soft py-2.5 text-eyebrow font-bold tracking-caps-md text-faint uppercase md:grid',
+          )}
+        >
+          <span>Den</span>
+          <span>Čas</span>
+          <span>{venue ? 'Skupina' : 'Skupina a místo'}</span>
+        </div>
+      )}
 
       {months.map((month) => (
         <section key={month.key} aria-label={month.label}>
@@ -107,7 +133,13 @@ export function TrainingsTable({
           </MonthHeading>
           <ul className="divide-y divide-line-soft">
             {month.rows.map((row) => (
-              <TrainingRow grid={grid} key={row.id} row={row} withGroup={withGroup} />
+              <TrainingRow
+                detail={hasDetail(row, venue)}
+                grid={grid}
+                key={row.id}
+                row={row}
+                venue={venue}
+              />
             ))}
           </ul>
         </section>
@@ -119,11 +151,14 @@ export function TrainingsTable({
 function TrainingRow({
   row,
   grid,
-  withGroup,
+  venue,
+  detail,
 }: {
   row: TrainingRowView
   grid: string
-  withGroup: boolean
+  /** Sdílené místo — v řádku se nekreslí. */
+  venue: string | null
+  detail: boolean
 }) {
   const muted = row.accent ? 'text-faint-dark' : 'text-faint'
 
@@ -134,50 +169,42 @@ function TrainingRow({
         row.accent ? 'bg-contrast text-on-contrast' : 'transition-colors hover:bg-chip/40',
       )}
     >
-      <time className="flex items-baseline gap-x-2 tabular-nums" dateTime={row.dateTime}>
+      <time className="flex flex-wrap items-baseline gap-x-2 tabular-nums" dateTime={row.dateTime}>
         <span className={cn('w-6 text-xs font-semibold tracking-wider uppercase', muted)}>
           {row.weekday}
         </span>
         <span className="text-base leading-tight font-bold tracking-snug md:text-lg">
           {row.date}
         </span>
+        {row.when && (
+          <Badge className="self-center" size="xs" variant="lime">
+            {WHEN_LABEL[row.when]}
+          </Badge>
+        )}
       </time>
 
       <span className="text-right text-sm font-semibold tabular-nums md:text-left md:text-base">
         {row.time}
       </span>
 
-      {withGroup && (
-        <div className="col-span-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 md:col-span-1">
+      {detail && (
+        <div
+          className={cn(
+            'col-span-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium md:col-span-1 md:text-sm',
+            row.accent ? 'text-on-contrast-muted' : 'text-dim',
+          )}
+        >
           {row.group && (
             <Badge size="xs" variant={row.accent ? 'lime' : 'chip'}>
               {row.group}
             </Badge>
           )}
+          {!venue && row.venue && <span>{row.venue}</span>}
           {row.note && (
-            <span className={cn('text-xs', row.accent ? 'text-on-contrast-subtle' : 'text-dim')}>
-              {row.note}
-            </span>
+            <span className={row.accent ? 'text-on-contrast-subtle' : 'text-dim'}>{row.note}</span>
           )}
         </div>
       )}
-
-      <div
-        className={cn(
-          'col-span-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-medium md:col-span-1 md:text-sm',
-          row.accent ? 'text-on-contrast-muted' : 'text-dim',
-        )}
-      >
-        {!withGroup && row.group && (
-          <Badge size="xs" variant={row.accent ? 'lime' : 'chip'}>
-            {row.group}
-          </Badge>
-        )}
-        <span>{row.venue}</span>
-        {!withGroup && row.note && (
-          <span className={row.accent ? 'text-on-contrast-subtle' : 'text-dim'}>{row.note}</span>
-        )}
-      </div>
     </li>
   )
 }

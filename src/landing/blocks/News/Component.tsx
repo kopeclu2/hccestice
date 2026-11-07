@@ -1,7 +1,5 @@
-import Link from 'next/link'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
 import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
 import { fetchDefaultPostPhoto, fetchLatestPosts } from '@/landing/features/posts/data/posts'
 import type { PostCard } from '@/landing/features/posts/types'
@@ -9,6 +7,7 @@ import { toPostCard } from '@/landing/features/posts/view/posts'
 import type { Photo } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { routes } from '@/lib/routes'
@@ -68,9 +67,7 @@ function NewsView({ cards }: { cards: PostCard[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <Button asChild size="md" variant="dark" withArrow>
-            <Link href={routes.list.posts}>Všechny aktuality</Link>
-          </Button>
+          <MoreLink href={routes.list.posts}>Všechny aktuality</MoreLink>
         </div>
       </Reveal>
 

@@ -1,13 +1,12 @@
-import Link from 'next/link'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
 import { HISTORY } from '@/landing/content'
 import type { HistoryContent } from '@/landing/features/history/types'
 import { arrayOr } from '@/landing/lib/payload'
 import { Badge } from '@/landing/ui/Badge'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
+import { MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { FaceoffCircle } from '@/landing/ui/RinkMarkings'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -77,7 +76,10 @@ function HistoryView({ content }: { content: HistoryContent }) {
       <div>
         <Reveal>
           <SectionTitle className="max-w-208" size="lg">
-            {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
+            {content.headlineStart}{' '}
+            <Highlight dot marker>
+              {content.headlineHighlight}
+            </Highlight>
           </SectionTitle>
           {/* perex i doplňkový odstavec drží stejnou škálu jako hlavičky podstránek */}
           <p className="mt-6 text-lg leading-copy text-pretty text-ink-soft">{content.lead}</p>
@@ -112,12 +114,8 @@ function HistoryView({ content }: { content: HistoryContent }) {
           </div>
 
           <div className="mt-7 flex flex-wrap items-center gap-x-3.5 gap-y-3">
-            <Button asChild variant="dark" withArrow>
-              <Link href={HISTORY_HREF}>{content.ctaLabel}</Link>
-            </Button>
-            <Button asChild variant="outline" withArrow>
-              <Link href={PHOTOS_HREF}>{content.photosCtaLabel}</Link>
-            </Button>
+            <MoreLink href={HISTORY_HREF}>{content.ctaLabel}</MoreLink>
+            <MoreLink href={PHOTOS_HREF}>{content.photosCtaLabel}</MoreLink>
             <span className="text-sm font-medium text-faint">{content.metaLine}</span>
           </div>
         </Reveal>

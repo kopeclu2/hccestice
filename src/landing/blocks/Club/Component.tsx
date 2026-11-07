@@ -7,6 +7,7 @@ import { uploadToPhoto } from '@/landing/lib/media'
 import type { ClubContent } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
+import { internalArrow } from '@/landing/ui/MoreLink'
 import { PhotoTile, TileBadge } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -55,12 +56,16 @@ function ClubView({ content }: { content: ClubContent }) {
           sekce); v DOM i na mobilu zůstává text první. */}
       <Reveal className="self-center md:order-2">
         <SectionTitle size="xl">
-          {content.headlineStart} <Highlight dot>{content.headlineHighlight}</Highlight>
+          {content.headlineStart}{' '}
+          <Highlight dot marker>
+            {content.headlineHighlight}
+          </Highlight>
         </SectionTitle>
         <p className="mt-5 mb-7 text-lg leading-copy text-pretty text-dim">{content.perex}</p>
         <Button
           asChild
           className="h-11 underline decoration-lime decoration-2 underline-offset-4"
+          arrowIcon={internalArrow}
           size="clear"
           variant="link"
           withArrow

@@ -6,8 +6,8 @@ import type { ContactContent } from '@/landing/features/contact/types'
 import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { PeriodRule } from '@/landing/ui/PeriodRule'
 import { Reveal } from '@/landing/ui/Reveal'
-import { FaceoffCircle } from '@/landing/ui/RinkMarkings'
 import { telHref } from '@/lib/phone'
 import { cn } from '@/lib/utils'
 
@@ -15,7 +15,7 @@ import { ContactFormLazy } from './ContactFormLazy'
 
 /**
  * Kontaktní karta (sdílená): bílá karta s velkým e-mailem, pill údaji a odkazy na sítě,
- * uvnitř tmavá karta s formulářem. Dekorace: kruh vhazování za nadpisem.
+ * uvnitř tmavá karta s formulářem. Dekorace: zápisová čára nad štítkem.
  */
 export function ContactCard({
   content,
@@ -32,7 +32,7 @@ export function ContactCard({
   formTone?: 'dark' | 'light'
   /** Štítek, nadpis „Pojďme na led“, perex; `/kontakt` je nechce. */
   intro?: boolean
-  /** Kruh vhazování za nadpisem. */
+  /** Zápisová čára nad štítkem. */
   decor?: boolean
   /** Bílá zaoblená karta kolem obsahu; bez ní stojí obsah rovnou na pozadí stránky. */
   framed?: boolean
@@ -51,9 +51,9 @@ export function ContactCard({
           )}
         >
           {decor && (
-            /* Kruh vhazování za nadpisem „Pojďme na led“ — jediná dekorace karty.
-               Středem je nadpis, takže kruh sedí na kartě na každé šířce. */
-            <FaceoffCircle className="absolute top-6 left-1/2 hidden size-60 -translate-x-1/2 text-club/18 md:block lg:top-9 lg:size-72" />
+            /* Zápisová čára nad štítkem. Dřív tu byl kruh vhazování za nadpisem
+               a jeho lime tečka (střed kruhu) padala přes perex. */
+            <PeriodRule className="relative mx-auto mb-7 max-w-80 md:mb-9" />
           )}
 
           {intro && (

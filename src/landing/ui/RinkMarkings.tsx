@@ -3,13 +3,10 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * Hokejový motiv webu: kreslení kluziště. Jediný dekorativní prvek v landingu
- * (nahradil watermarky, záře a oblouky), proto má dvě podoby téhož kresu:
- *
- * - `FaceoffCircle` — kruh vhazování se středovou tečkou a značkami nahoře
- *   a dole; velikost i barvu (`text-*`) nese `className`.
- * - `RinkDivider` — vodorovná čára s kruhem uprostřed (středová čára
- *   kluziště); dělí sekce místo prázdného pruhu.
+ * Hokejový motiv webu: kruh vhazování se středovou tečkou a značkami nahoře
+ * a dole; velikost i barvu (`text-*`) nese `className`. Používá se jen jako
+ * rám čísla (Historie). Dělič sekcí a ostatní dekorace přebrala zápisová
+ * čára `PeriodRule`.
  *
  * Čisté SVG + CSS, serverová komponenta, bez pohybu (takže
  * `prefers-reduced-motion` nemá co měnit). Barvy jdou přes `currentColor`
@@ -39,25 +36,5 @@ export function FaceoffCircle({
       </g>
       {dot && <circle className="fill-lime" cx="100" cy="100" r="9" />}
     </svg>
-  )
-}
-
-/**
- * Středová čára s kruhem. Umísťuje se absolutně do mezery nad sekcí
- * (`SectionShell rink`), nebo samostatně v toku.
- */
-export function RinkDivider({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden
-      className={cn(
-        'pointer-events-none flex items-center gap-4 text-club/35 select-none',
-        className,
-      )}
-    >
-      <span className="h-0.5 flex-1 rounded-full bg-current opacity-45" />
-      <FaceoffCircle className="size-12 flex-none md:size-14" />
-      <span className="h-0.5 flex-1 rounded-full bg-current opacity-45" />
-    </div>
   )
 }

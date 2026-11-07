@@ -2,6 +2,8 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
+import { OUTCOME_BADGE } from '@/landing/features/matches/components/outcome'
+import { StripCountdown } from '@/landing/features/matches/components/StripCountdown'
 import { splitMatchTitle, TeamPair } from '@/landing/features/matches/components/TeamPair'
 import type { LastResult, UpcomingMatch } from '@/landing/features/matches/types'
 import { Badge } from '@/landing/ui/Badge'
@@ -14,8 +16,9 @@ import { cn } from '@/lib/utils'
  * Kompaktní proužek „Příští zápas + poslední výsledek" hned pod hero.
  *
  * Aktuální informace je tak na dosah z mobilu dřív než dlouhé sekce homepage.
- * Čistě serverový, bez klientského JS (odpočet nese hero a widget Nejbližší
- * zápas). Bez jediného zápasu (nová sezóna bez rozpisu i historie) vrací
+ * Jediný zdroj „příští zápas + poslední výsledek" na home page: odpočet nese
+ * `StripCountdown` (malý klientský ostrůvek), sekce Zápasy příští zápas
+ * neopakuje. Bez jediného zápasu (nová sezóna bez rozpisu i historie) vrací
  * `null`; s jedním ze dvou zůstane jedna buňka přes celou šířku.
  *
  * Desktop (`lg`): jeden řádek, dvě buňky vedle sebe. Mobil: dvě buňky pod
@@ -42,6 +45,7 @@ export function MatchStrip({
       >
         {upcoming && (
           <StripCell href={upcoming.href} label="Příští zápas" title={upcoming.title}>
+            <StripCountdown targetISO={upcoming.kickoffISO} />
             <span className="text-xs font-medium text-faint md:text-sm">{upcoming.subtitle}</span>
           </StripCell>
         )}
@@ -52,11 +56,11 @@ export function MatchStrip({
                 {lastResult.score}
                 {lastResult.suffix && ` ${lastResult.suffix}`}
               </span>
-              <Badge className="max-md:hidden" size="xs" variant={lastResult.won ? 'lime' : 'chip'}>
-                {lastResult.won ? 'Výhra' : 'Konečný stav'}
+              <Badge size="xs" variant={OUTCOME_BADGE[lastResult.outcome].variant}>
+                {OUTCOME_BADGE[lastResult.outcome].label}
               </Badge>
               <span className="text-xs font-medium text-faint max-md:hidden md:text-sm">
-                {lastResult.dateLabel}
+                {lastResult.side} · {lastResult.dateLabel}
               </span>
             </span>
           </StripCell>

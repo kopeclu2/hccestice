@@ -14,18 +14,39 @@ import { SectionHead, type SectionHeadVariant } from './SectionHead'
 const isUs = isOurTeam
 
 /**
- * Šablony sloupců. Rozšířená tabulka (V / VP / PP / P a skóre) potřebuje
- * místo, které je jen v plné šířce panelu: pod `md` (mobil) se skrývá,
- * od `md` má celý panel (jedna kolona) dost, na `lg` se panel zužuje do
- * pravého sloupce (~380 px) a extra sloupce by sežraly název týmu, takže
- * se vrací základní čtveřice a plné sloupce naskočí až na `2xl`.
+ * Šablony sloupců. Základní čtveřice (pořadí, tým, zápasy, body) platí pro
+ * ručně vedené sezóny. Rozšířená tabulka ze synchronizace má dvě šířky:
+ *
+ * - **kompaktní** (mobil, `lg`–`xl`, kde se panel zužuje do pravého sloupce):
+ *   navíc V / PP / P, tedy bez VP a skóre — jinak by na 320 px nezbylo místo
+ *   na název týmu,
+ * - **plná** (`md` v jedné koloně a od `2xl`): V / VP / PP / P a skóre.
+ *
+ * Skryté sloupce (`EXTRA`) mají `display: none`, takže se do mřížky
+ * nepočítají a každý stupeň má vlastní počet drah.
  */
 const GRID_BASE =
   'grid-cols-[1.75rem_minmax(0,1fr)_2rem_2.25rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.75rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_minmax(0,1fr)_3.25rem_3.25rem] lg:px-3.5'
 const GRID_EXTENDED =
-  'grid-cols-[1.75rem_minmax(0,1fr)_2rem_2.25rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2.75rem_minmax(0,1fr)_3.25rem_3.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
-/** Extra sloupce: skryté na mobilu i na `lg`–`xl`, kde je panel úzký. */
+  'grid-cols-[1.5rem_minmax(0,1fr)_1.75rem_1.5rem_1.5rem_1.5rem_2rem] md:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4.5rem_2.75rem] md:px-3 lg:grid-cols-[2rem_minmax(0,1fr)_2rem_1.75rem_1.75rem_1.75rem_2.25rem] lg:px-3.5 2xl:grid-cols-[2.25rem_minmax(0,1fr)_2.5rem_2rem_2rem_2rem_2rem_4rem_2.5rem]'
+/** Extra sloupce VP a skóre: jen v plné šířce (`md` a `2xl`). */
 const EXTRA = 'hidden text-center md:block lg:hidden 2xl:block'
+/** Sloupce V / PP / P: vidět vždy, i v kompaktní šířce. */
+const STAT = 'text-center'
+
+/** Popisky sloupců — jediný zdroj pro `abbr title` v hlavičce i pro legendu. */
+const LEGEND_BASE: Array<[string, string]> = [
+  ['Z', 'zápasy'],
+  ['B', 'body'],
+]
+const LEGEND_EXTENDED: Array<[string, string]> = [
+  ['Z', 'zápasy'],
+  ['V', 'výhry'],
+  ['VP', 'výhry po prodloužení nebo nájezdech'],
+  ['PP', 'prohry po prodloužení nebo nájezdech'],
+  ['P', 'prohry'],
+  ['B', 'body'],
+]
 
 /**
  * Zkrácení tabulky pro výřez na home page: čelo tabulky a k němu vždy
@@ -38,6 +59,8 @@ function trimRows(rows: StandingsRow[], limit: number): StandingsRow[] {
   if (head.some((row) => isUs(row.team))) return head
 
   const ours = rows.find((row) => isUs(row.team))
+  // Poslední zobrazený řádek nahradí náš; pořadí zůstává vzestupné, takže
+  // skok v pořadí (5. → 8.) je vidět a vykreslí se jako „…".
   return ours ? [...head.slice(0, limit - 1), ours] : head
 }
 
@@ -78,10 +101,18 @@ export function StandingsPanel({
   officialHref?: string | null
 }) {
   const rows = limit ? trimRows(standings.rows, limit) : standings.rows
-  // Výřez na home page (`limit`) zůstává ve čtyřech sloupcích; rozšíření
-  // se kreslí, jen když ho mají všechny řádky (ručně vedené sezóny nemají).
+  // Rozšíření se kreslí, jen když ho mají všechny řádky (ručně vedené
+  // sezóny nemají).
   const extended =
-    !limit && rows.length > 0 && rows.every((row) => row.wins != null && row.goalsFor != null)
+    rows.length > 0 &&
+    rows.every(
+      (row) =>
+        row.wins != null &&
+        row.otLosses != null &&
+        row.losses != null &&
+        row.otWins != null &&
+        row.goalsFor != null,
+    )
   const gridCols = extended ? GRID_EXTENDED : GRID_BASE
 
   return (
@@ -137,7 +168,7 @@ export function StandingsPanel({
             >
               <th className="text-left font-bold" role="columnheader" scope="col">
                 <abbr className="no-underline" title="Pořadí">
-                  P
+                  #
                 </abbr>
               </th>
               <th className="text-left font-bold" role="columnheader" scope="col">
@@ -150,7 +181,7 @@ export function StandingsPanel({
               </th>
               {extended && (
                 <>
-                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                  <th className={cn(STAT, 'font-bold')} role="columnheader" scope="col">
                     <abbr className="no-underline" title="Výhry">
                       V
                     </abbr>
@@ -160,12 +191,12 @@ export function StandingsPanel({
                       VP
                     </abbr>
                   </th>
-                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                  <th className={cn(STAT, 'font-bold')} role="columnheader" scope="col">
                     <abbr className="no-underline" title="Prohry v prodloužení / na nájezdy">
                       PP
                     </abbr>
                   </th>
-                  <th className={cn(EXTRA, 'font-bold')} role="columnheader" scope="col">
+                  <th className={cn(STAT, 'font-bold')} role="columnheader" scope="col">
                     <abbr className="no-underline" title="Prohry">
                       P
                     </abbr>
@@ -184,88 +215,116 @@ export function StandingsPanel({
           </thead>
 
           <tbody className="block" role="rowgroup">
-            {rows.map((row) => {
+            {rows.map((row, index) => {
               const ours = isUs(row.team)
+              const previous = rows[index - 1]
+              // Výřez přeskočil řádky (např. 5. → 8.): oddělovač „…" říká,
+              // že tabulka pokračuje, ne že skončila.
+              const skipped = previous !== undefined && row.pos - previous.pos > 1
               return (
-                <tr
-                  className={cn(
-                    'grid items-center rounded-field px-2.5 py-2.75 md:py-3 lg:py-3.25',
-                    gridCols,
-                    ours && 'bg-tint',
+                <React.Fragment key={`${row.pos}-${row.team}`}>
+                  {skipped && (
+                    <tr className="grid grid-cols-1" role="row">
+                      <td
+                        aria-label="Další řádky tabulky jsou vynechané"
+                        className="py-0.5 text-center text-sm leading-none font-bold tracking-widest text-faint"
+                        role="cell"
+                      >
+                        …
+                      </td>
+                    </tr>
                   )}
-                  key={`${row.pos}-${row.team}`}
-                  role="row"
-                >
-                  <td
+                  <tr
                     className={cn(
-                      'text-sm font-bold tabular-nums',
-                      ours ? 'text-ink' : 'text-faint',
+                      'grid items-center rounded-field px-2.5 py-2.75 md:py-3 lg:py-3.25',
+                      gridCols,
+                      ours && 'bg-tint',
                     )}
-                    role="cell"
+                    role="row"
                   >
-                    {row.pos}.
-                  </td>
-                  <th
-                    className={cn(
-                      // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
-                      // neříkalo, kdo to je. Delší název udělá řádek o kus
-                      // vyšší, čísla zůstanou na středu (`items-center`).
-                      'min-w-0 text-left text-sm leading-snug tracking-snug text-pretty break-words',
-                      ours ? 'font-bold' : 'font-medium',
+                    <td
+                      className={cn(
+                        'text-sm font-bold tabular-nums',
+                        ours ? 'text-ink' : 'text-faint',
+                      )}
+                      role="cell"
+                    >
+                      {row.pos}.
+                    </td>
+                    <th
+                      className={cn(
+                        // Zalomit, ne zkrátit: „Závodní hokejová Pa…" na mobilu
+                        // neříkalo, kdo to je. Delší název udělá řádek o kus
+                        // vyšší, čísla zůstanou na středu (`items-center`).
+                        'min-w-0 text-left text-sm leading-snug tracking-snug text-pretty break-words',
+                        ours ? 'font-bold' : 'font-medium',
+                      )}
+                      role="rowheader"
+                      scope="row"
+                    >
+                      {row.team}
+                    </th>
+                    <td
+                      className="text-center text-sm font-medium text-faint tabular-nums"
+                      role="cell"
+                    >
+                      {row.games}
+                    </td>
+                    {extended && (
+                      <>
+                        <td
+                          className={cn(STAT, 'text-sm font-medium text-faint tabular-nums')}
+                          role="cell"
+                        >
+                          {row.wins ?? 0}
+                        </td>
+                        <td
+                          className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                          role="cell"
+                        >
+                          {row.otWins ?? 0}
+                        </td>
+                        <td
+                          className={cn(STAT, 'text-sm font-medium text-faint tabular-nums')}
+                          role="cell"
+                        >
+                          {row.otLosses ?? 0}
+                        </td>
+                        <td
+                          className={cn(STAT, 'text-sm font-medium text-faint tabular-nums')}
+                          role="cell"
+                        >
+                          {row.losses ?? 0}
+                        </td>
+                        <td
+                          className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
+                          role="cell"
+                        >
+                          {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
+                        </td>
+                      </>
                     )}
-                    role="rowheader"
-                    scope="row"
-                  >
-                    {row.team}
-                  </th>
-                  <td
-                    className="text-center text-sm font-medium text-faint tabular-nums"
-                    role="cell"
-                  >
-                    {row.games}
-                  </td>
-                  {extended && (
-                    <>
-                      <td
-                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
-                        role="cell"
-                      >
-                        {row.wins ?? 0}
-                      </td>
-                      <td
-                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
-                        role="cell"
-                      >
-                        {row.otWins ?? 0}
-                      </td>
-                      <td
-                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
-                        role="cell"
-                      >
-                        {row.otLosses ?? 0}
-                      </td>
-                      <td
-                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
-                        role="cell"
-                      >
-                        {row.losses ?? 0}
-                      </td>
-                      <td
-                        className={cn(EXTRA, 'text-sm font-medium text-faint tabular-nums')}
-                        role="cell"
-                      >
-                        {row.goalsFor ?? 0}:{row.goalsAgainst ?? 0}
-                      </td>
-                    </>
-                  )}
-                  <td className="text-right text-sm font-bold tabular-nums" role="cell">
-                    {row.points}
-                  </td>
-                </tr>
+                    <td className="text-right text-sm font-bold tabular-nums" role="cell">
+                      {row.points}
+                    </td>
+                  </tr>
+                </React.Fragment>
               )
             })}
           </tbody>
         </table>
+      )}
+      {rows.length > 0 && (
+        <p className="mt-3 text-xs leading-relaxed text-faint">
+          {(extended ? LEGEND_EXTENDED : LEGEND_BASE).map(([abbr, meaning], index) => (
+            <React.Fragment key={abbr}>
+              {index > 0 && ' · '}
+              <span className="whitespace-nowrap">
+                <b className="font-bold text-ink-soft">{abbr}</b> {meaning}
+              </span>
+            </React.Fragment>
+          ))}
+        </p>
       )}
       {officialHref && (
         <Button asChild className="mt-4 self-start" size="sm" variant="outline">

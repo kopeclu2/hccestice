@@ -8,6 +8,7 @@ import { fetchSponsors } from '@/landing/features/sponsors/data'
 import type { Sponsor } from '@/landing/features/sponsors/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { internalArrow, MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
@@ -102,12 +103,11 @@ function SponsorsView({
             {/* Hlavní tlačítko sekce je výpis partnerů; „podpořit klub“ je
                 textový odkaz — formulář na homepage má být jediné primární
                 kontaktní místo. */}
-            <Button asChild variant="dark" withArrow>
-              <Link href="/sponzori">Všichni partneři</Link>
-            </Button>
+            <MoreLink href="/sponzori">Všichni partneři</MoreLink>
             <Button
               asChild
               className="h-11 text-ink underline decoration-lime decoration-2 underline-offset-4"
+              arrowIcon={internalArrow}
               size="clear"
               variant="link"
               withArrow

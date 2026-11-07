@@ -25,7 +25,12 @@ export type LastResult = {
   /** Přípona skóre — „sn" / „pp", jinak prázdné. */
   suffix: ScoreSuffix
   dateLabel: string
+  /** Výhra z pohledu Čestic (zkratka pro hero karty, které štítek neřeší). */
   won: boolean
+  /** Výsledek z pohledu Čestic — i prohra po prodloužení / nájezdech a remíza. */
+  outcome: Outcome
+  /** „Doma" / „Venku" z pohledu Čestic. */
+  side: string
   /** Odkaz na detail zápasu (`/zapasy/{slug}`); null = zápas bez slugu. */
   href: string | null
 }
