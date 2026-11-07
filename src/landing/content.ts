@@ -51,10 +51,8 @@ export const HERO = {
     'Historické 3. místo v play-off, sedm výher v řadě a plný zimák. Sezóna 2025/26 byla nejlepší v dějinách klubu.',
   headlineLight: 'Malý klub,',
   headlineBold: 'velká sezóna.',
-  // Primární CTA vede na zápasy a výsledky (hlavní důvod návštěvy); nábor je
-  // sekundární tlačítko `joinCta`, které blok HeroModern kreslí vedle něj.
+  // Primární CTA vede na zápasy a výsledky (hlavní důvod návštěvy).
   cta: { href: routes.list.matches, label: 'Zápasy a výsledky' },
-  joinCta: { href: '#kontakt', label: 'Přidej se k nám' },
   navCta: { href: '/kontakt', label: 'Kontakt' },
 } as const
 

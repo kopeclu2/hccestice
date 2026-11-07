@@ -130,7 +130,6 @@ function TrainingsView({
     <SectionShell
       className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)] lg:gap-14"
       id="treninky"
-      rink
       spacing={spacing}
     >
       <Reveal className="lg:sticky lg:top-28">

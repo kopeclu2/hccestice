@@ -109,9 +109,6 @@ function HeroModernView({
                 <Button asChild size="lg" variant={content.cta.variant} withArrow>
                   <Link href={content.cta.href}>{content.cta.label}</Link>
                 </Button>
-                <Button asChild size="lg" variant="glass">
-                  <Link href={HERO.joinCta.href}>{HERO.joinCta.label}</Link>
-                </Button>
               </div>
             )}
           </div>

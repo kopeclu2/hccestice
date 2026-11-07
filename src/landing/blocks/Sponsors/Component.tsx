@@ -91,7 +91,7 @@ function SponsorsView({
     sponsors.length >= TWO_ROWS_FROM ? [sponsors.slice(0, half), sponsors.slice(half)] : [sponsors]
 
   return (
-    <SectionShell id="sponzori" rink>
+    <SectionShell id="sponzori">
       <Reveal>
         <div className="max-w-208">
           <Kicker>Partneři</Kicker>

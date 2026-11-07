@@ -2,7 +2,6 @@ import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
 import React from 'react'
 
-import { PeriodRule } from '@/landing/ui/PeriodRule'
 import { cn } from '@/lib/utils'
 
 /**
@@ -57,21 +56,11 @@ const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-
 })
 
 export type SectionShellProps = React.ComponentProps<'section'> &
-  VariantProps<typeof sectionShellVariants> & {
-    /**
-     * Zápisová čára (`PeriodRule`: třetiny I · II · III) uprostřed mezery nad sekcí.
-     * Polohy jsou poloviny `landing` odsazení (28 / 40 / 60 px), proto má
-     * smysl jen s `spacing="landing"`.
-     */
-    rink?: boolean
-  }
+  VariantProps<typeof sectionShellVariants>
 
-export function SectionShell({ children, className, spacing, rink, ...props }: SectionShellProps) {
+export function SectionShell({ children, className, spacing, ...props }: SectionShellProps) {
   return (
     <section className={cn(sectionShellVariants({ spacing }), className)} {...props}>
-      {rink && (
-        <PeriodRule className="absolute inset-x-gutter -top-7 -translate-y-1/2 md:-top-10 lg:-top-15" />
-      )}
       {children}
     </section>
   )

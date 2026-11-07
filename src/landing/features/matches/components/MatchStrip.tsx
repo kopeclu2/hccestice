@@ -1,4 +1,3 @@
-import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -60,7 +59,7 @@ export function MatchStrip({
                 {OUTCOME_BADGE[lastResult.outcome].label}
               </Badge>
               <span className="text-xs font-medium text-faint max-md:hidden md:text-sm">
-                {lastResult.side} · {lastResult.dateLabel}
+                {lastResult.side} · {stripDate(lastResult.dateLabel)}
               </span>
             </span>
           </StripCell>
@@ -68,6 +67,11 @@ export function MatchStrip({
       </div>
     </SectionShell>
   )
+}
+
+/** Datum bez názvu fáze soutěže („1. 11. · Základní část“ → „1. 11.“). */
+function stripDate(dateLabel: string) {
+  return dateLabel.split(' · ')[0]
 }
 
 /** Jedna buňka proužku; odkaz na detail zápasu, bez slugu na výpis `/zapasy`. */
@@ -85,7 +89,7 @@ function StripCell({
   const parts = splitMatchTitle(title)
   return (
     <Link
-      className="group flex min-h-14 items-center justify-between gap-3 px-4.5 py-3.5 transition-colors hover:bg-chip focus-visible:bg-chip focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-club md:px-6"
+      className="group flex min-h-14 items-center gap-3 px-4.5 py-3.5 transition-colors hover:bg-chip focus-visible:bg-chip focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-club md:px-6"
       href={href ?? routes.list.matches}
     >
       <span className="flex min-w-0 flex-col gap-1 xl:flex-row xl:flex-wrap xl:items-baseline xl:gap-x-4">
@@ -100,9 +104,6 @@ function StripCell({
           </Eyebrow>
           {children}
         </span>
-      </span>
-      <span className="grid size-8 flex-none place-items-center rounded-full bg-lime text-ink transition-transform group-hover:translate-x-0.5 [&_svg]:size-4">
-        <ArrowUpRight strokeWidth={2.5} />
       </span>
     </Link>
   )

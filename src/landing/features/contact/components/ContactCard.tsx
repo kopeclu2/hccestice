@@ -6,7 +6,6 @@ import type { ContactContent } from '@/landing/features/contact/types'
 import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
-import { PeriodRule } from '@/landing/ui/PeriodRule'
 import { Reveal } from '@/landing/ui/Reveal'
 import { telHref } from '@/lib/phone'
 import { cn } from '@/lib/utils'
@@ -15,14 +14,13 @@ import { ContactFormLazy } from './ContactFormLazy'
 
 /**
  * Kontaktní karta (sdílená): bílá karta s velkým e-mailem, pill údaji a odkazy na sítě,
- * uvnitř tmavá karta s formulářem. Dekorace: zápisová čára nad štítkem.
+ * uvnitř tmavá karta s formulářem.
  */
 export function ContactCard({
   content,
   site,
   formTone = 'dark',
   intro = true,
-  decor = true,
   framed = true,
   youthContacts = [],
 }: {
@@ -32,8 +30,6 @@ export function ContactCard({
   formTone?: 'dark' | 'light'
   /** Štítek, nadpis „Pojďme na led“, perex; `/kontakt` je nechce. */
   intro?: boolean
-  /** Zápisová čára nad štítkem. */
-  decor?: boolean
   /** Bílá zaoblená karta kolem obsahu; bez ní stojí obsah rovnou na pozadí stránky. */
   framed?: boolean
   /** Osoby pro dotazy rodičů dětí (`pickYouthContacts`); prázdné = blok se nevykreslí. */
@@ -50,12 +46,6 @@ export function ContactCard({
               : 'py-4 md:py-6',
           )}
         >
-          {decor && (
-            /* Zápisová čára nad štítkem. Dřív tu byl kruh vhazování za nadpisem
-               a jeho lime tečka (střed kruhu) padala přes perex. */
-            <PeriodRule className="relative mx-auto mb-7 max-w-80 md:mb-9" />
-          )}
-
           {intro && (
             <>
               <Kicker className="relative">{content.kicker}</Kicker>

@@ -5,8 +5,7 @@ import { cn } from '@/lib/utils'
 /**
  * Hokejový motiv webu: kruh vhazování se středovou tečkou a značkami nahoře
  * a dole; velikost i barvu (`text-*`) nese `className`. Používá se jen jako
- * rám čísla (Historie). Dělič sekcí a ostatní dekorace přebrala zápisová
- * čára `PeriodRule`.
+ * rám čísla (Historie).
  *
  * Čisté SVG + CSS, serverová komponenta, bez pohybu (takže
  * `prefers-reduced-motion` nemá co měnit). Barvy jdou přes `currentColor`
