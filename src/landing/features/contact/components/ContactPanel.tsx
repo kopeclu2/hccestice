@@ -23,7 +23,6 @@ export function ContactPanel({ people, site }: { people: PersonCard[]; site: Sit
         <ContactPeopleCard people={people} />
         <ContactCard
           formTone="light"
-          decor={false}
           framed={false}
           intro={false}
           content={{

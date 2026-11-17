@@ -90,7 +90,7 @@
   --ds-ink: #0f1512; /* hlavní text */
   --ds-ink-soft: #3d4a43; /* text kickerů/pilulek */
   --ds-dim: #535f58; /* odstavce */
-  --ds-faint: #6b736e; /* popisky, meta text (AA 4,88:1 na bílé — dřív #7b837e = 3,9:1) */
+  --ds-faint: #606863; /* popisky, meta text (AA min. 4,6:1 na paper-*, tint a chip; #6b736e dával 3,9–4,4:1) */
   --ds-inactive: #c8d2cb; /* neaktivní číslo stránkování, tečka oddělovače */
   --ds-prose: #22302a; /* text těla článku (utility `article-prose`) */
 

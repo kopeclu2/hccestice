@@ -1,6 +1,6 @@
 import type { VariantProps } from 'class-variance-authority'
 import { cva } from 'class-variance-authority'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -72,7 +72,7 @@ export function CardShell({
 }
 
 /**
- * „Číst článek ↗" na spodní hraně karty.
+ * „Číst článek →" na spodní hraně karty.
  *
  * `mt-auto` drží řádek u spodní hrany, aby byl v řádku mřížky zarovnaný
  * i u kratších titulků.
@@ -87,14 +87,12 @@ export function CardCta({
   return (
     <div
       className={cn(
-        'mt-auto flex items-center gap-2 pt-4 text-xs font-semibold text-club-dark',
+        'mt-auto flex items-center gap-1.5 pt-4 text-sm font-bold text-club-dark',
         className,
       )}
     >
       {children}
-      <span className="grid size-5.5 place-items-center rounded-full bg-contrast text-lime [&_svg]:size-3">
-        <ArrowUpRight strokeWidth={2.5} />
-      </span>
+      <ArrowRight aria-hidden className="size-3.5" strokeWidth={2.5} />
     </div>
   )
 }

@@ -1,15 +1,13 @@
-import Link from 'next/link'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
 import { ArticleCard } from '@/landing/features/posts/components/ArticleCard'
 import { fetchDefaultPostPhoto, fetchLatestPosts } from '@/landing/features/posts/data/posts'
 import type { PostCard } from '@/landing/features/posts/types'
 import { toPostCard } from '@/landing/features/posts/view/posts'
 import type { Photo } from '@/landing/types'
-import { ArcLines, GlowCircle } from '@/landing/ui/Decorations'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { routes } from '@/lib/routes'
@@ -18,6 +16,9 @@ import type { LandingNewsBlock, Post } from '@/payload-types'
 
 /** Kolik karet sekce ukáže, když blok počet nemá. */
 const DEFAULT_COUNT = 5
+
+/** Kolik karet se ukáže pod `md`; další jsou schované CSS. */
+const MOBILE_CARDS = 3
 
 /**
  * Karty sekce: připnutý článek (blok) jako první, zbytek nejnovější
@@ -57,8 +58,6 @@ function NewsView({ cards }: { cards: PostCard[] }) {
 
   return (
     <SectionShell id="aktuality">
-      <GlowCircle className="-top-15 -left-65 size-175" tone="club" />
-      <ArcLines className="-top-2.5 -right-5" />
       <Reveal>
         <div className="mb-10 flex flex-wrap items-end gap-4">
           <div>
@@ -68,9 +67,7 @@ function NewsView({ cards }: { cards: PostCard[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <Button asChild size="md" variant="dark" withArrow>
-            <Link href={routes.list.posts}>Všechny aktuality</Link>
-          </Button>
+          <MoreLink href={routes.list.posts}>Všechny aktuality</MoreLink>
         </div>
       </Reveal>
 
@@ -79,7 +76,13 @@ function NewsView({ cards }: { cards: PostCard[] }) {
           const featured = index === 0 && cards.length > 1
           return (
             <Reveal
-              className={cn('h-full', featured && 'sm:col-span-2 lg:col-span-2')}
+              className={cn(
+                'h-full',
+                featured && 'sm:col-span-2 lg:col-span-2',
+                // Na mobilu stačí tři karty — zbytek je o stranu níž
+                // (`Všechny aktuality`); skrytí je jen CSS, SSG/ISR se nemění.
+                index >= MOBILE_CARDS && 'max-md:hidden',
+              )}
               delay={index * 0.08}
               key={card.id}
             >

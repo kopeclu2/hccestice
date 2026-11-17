@@ -9,14 +9,13 @@ import { relId } from '@/landing/lib/payload'
 import type { AlbumSpan, AlbumTile } from '@/landing/types'
 import { Badge } from '@/landing/ui/Badge'
 import { MaybeLink } from '@/landing/ui/CardGrid'
-import { GlowCircle } from '@/landing/ui/Decorations'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
 import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { MoreLink } from '@/landing/ui/MoreLink'
 import { PhotoTile, TileArrow } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { Watermark } from '@/landing/ui/Watermark'
 import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { LandingAlbumBlock } from '@/payload-types'
@@ -126,8 +125,7 @@ const SPAN_STYLE: Record<AlbumSpan, { grid: string; radius: string; sizes: strin
 }
 
 /**
- * Fotoalbum — hustá mozaika alb (na mobilu horizontální carousel),
- * svislý watermark „PONÍCI" u pravého okraje.
+ * Fotoalbum — hustá mozaika alb (na mobilu horizontální carousel).
  */
 function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
   // Vzor s dlaždicí 2×2 předpokládá zaplněnou mřížku; se dvěma alby by v ní
@@ -139,14 +137,6 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
 
   return (
     <SectionShell id="fotoalbum">
-      <GlowCircle className="-top-20 -right-60 size-190" tone="lime" />
-      <Watermark
-        className="top-30 -right-8 origin-top-right rotate-180 text-watermark-lg tracking-display text-club/8 [writing-mode:vertical-rl]"
-        outlined={false}
-      >
-        PONÍCI
-      </Watermark>
-
       <Reveal>
         <div className="mb-10 flex flex-wrap items-end gap-4">
           <div>
@@ -156,9 +146,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
             </SectionTitle>
           </div>
           <div className="flex-1" />
-          <Button asChild size="md" variant="dark" withArrow>
-            <Link href={routes.list.galleries}>Celé fotoalbum</Link>
-          </Button>
+          <MoreLink href={routes.list.galleries}>Celé fotoalbum</MoreLink>
         </div>
       </Reveal>
 
