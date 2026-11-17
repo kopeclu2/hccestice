@@ -61,6 +61,37 @@ describe('ahl: detail zápasu', () => {
   })
 })
 
+describe('ahl: detail zápasu - layout s tabulí (listopad 2026)', () => {
+  // ahl.cz přepracoval hlavičku: skóre je ve dvou <span>ech, termín a stadion
+  // v `.zapas_fakty`, soutěž a fáze v tabulce „Další informace".
+  const d = parseMatchDetail(fx('zapas-46742-tabule.html'), 46742)
+
+  it('čte týmy, skóre a třetiny', () => {
+    expect(d.home.name).toBe('HC Čestice')
+    expect(d.away.name).toBe('HC Stavoblock Rebels Polička')
+    expect(d.score).toEqual({ home: 6, away: 7, suffix: null })
+    expect(d.periods).toEqual([
+      { home: 2, away: 2 },
+      { home: 2, away: 2 },
+      { home: 2, away: 3 },
+    ])
+  })
+
+  it('čte termín, stadion a soutěž', () => {
+    expect(d.dateISO).toBe('2026-11-08T19:00:00')
+    expect(d.venue).toBe('Rychnov nad Kněžnou')
+    expect(d.competition).toBe('VČHL 2.ročník - ZČ')
+    expect(d.phase).toBe('regular')
+  })
+
+  it('góly a tresty se čtou beze změny', () => {
+    expect(d.hasReport).toBe(true)
+    expect(d.goals).toHaveLength(13)
+    expect(d.penalties).toHaveLength(12)
+    expect(d.penaltiesError).toBeNull()
+  })
+})
+
 describe('ahl: detail zápasu - okrajové případy', () => {
   it('zápas, který má ve výpisu neni_zapis, ale stránka nese data', () => {
     const d = parseMatchDetail(fx('zapas-46992.html'), 46992)
