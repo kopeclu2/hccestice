@@ -90,23 +90,78 @@ function parseMeta(portlet: Element, page: string) {
   if (!metaDiv || parts.length < 3) throw new AhlParseError(page, 'chybí řádek s datem a místem')
 
   const dateIdx = parts.findIndex((p) => /\d{1,2}\.\s*\d{1,2}\.\s*\d{4}/.test(p))
-  let dateISO: string | null = null
-  if (dateIdx >= 0) {
-    const dm = parts[dateIdx].match(
-      /(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})(?:,\s*(\d{1,2}):(\d{2}))?/,
-    )!
-    dateISO = `${dm[3]}-${pad2(+dm[2])}-${pad2(+dm[1])}T${dm[4] ? `${pad2(+dm[4])}:${dm[5]}` : '00:00'}:00`
-  }
+  const dateISO = dateIdx >= 0 ? toDateISO(parts[dateIdx]) : null
   const venueRaw = dateIdx >= 0 ? parts[dateIdx + 1] : undefined
   const venue = venueRaw && !/^Zápas č\./i.test(venueRaw) ? venueRaw : null
 
-  // Soutěž ve tvaru jako ve výpisech („VČHL 2.ročník - ZČ").
-  const compName = parts[0].replace(/^[A-ZČ]{2,6}\s+(?=VČHL|\S+\.ročník)/, '').trim()
   const phaseName = dateIdx > 1 ? parts[1] : ''
-  const phaseShort = /základní/i.test(phaseName) ? 'ZČ' : phaseName
-  const competition = phaseShort ? `${compName} - ${phaseShort}` : compName
+  return { dateISO, venue, competition: competitionLabel(parts[0], phaseName), phaseName }
+}
 
-  return { dateISO, venue, competition, phaseName }
+/** „Neděle 4. 10. 2026, 16:30" → `2026-10-04T16:30:00` (bez času `00:00`). */
+function toDateISO(raw: string): string | null {
+  const dm = raw.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})(?:,\s*(\d{1,2}):(\d{2}))?/)
+  if (!dm) return null
+  return `${dm[3]}-${pad2(+dm[2])}-${pad2(+dm[1])}T${dm[4] ? `${pad2(+dm[4])}:${dm[5]}` : '00:00'}:00`
+}
+
+/** Soutěž ve tvaru jako ve výpisech („VČHL 2.ročník - ZČ"). */
+function competitionLabel(rawName: string, phaseName: string): string {
+  const compName = rawName.replace(/^[A-ZČ]{2,6}\s+(?=VČHL|\S+\.ročník)/, '').trim()
+  const phaseShort = /základní/i.test(phaseName) ? 'ZČ' : phaseName
+  return phaseShort ? `${compName} - ${phaseShort}` : compName
+}
+
+/** Hodnota z řádku tabulky „Další informace" (`Soutěž`, `Fáze`…). */
+function infoTableValue(doc: ParentNode, label: string): string {
+  for (const tr of Array.from(doc.querySelectorAll('tr'))) {
+    const cells = tr.querySelectorAll('td')
+    if (cells.length >= 2 && text(cells[0]) === label) return text(cells[1])
+  }
+  return ''
+}
+
+/**
+ * Hlavička po přepracování ahl.cz (listopad 2026): tabule `.zapas_tabule`
+ * se skóre ve dvou `span`ech, fakta (termín, stadion) v `.zapas_fakty`
+ * a soutěž s fází v tabulce „Další informace".
+ */
+function parseHeaderTabule(doc: Document, portlet: Element, tabule: Element, page: string) {
+  const home = text(tabule.querySelector('.zapas_tabule_domaci .zapas_tabule_nazev'))
+  const away = text(tabule.querySelector('.zapas_tabule_hoste .zapas_tabule_nazev'))
+  if (!home || !away) throw new AhlParseError(page, 'chybí hlavička se skóre a týmy')
+
+  const homeScore = toInt(text(tabule.querySelector('.zl_score_d')))
+  const awayScore = toInt(text(tabule.querySelector('.zl_score_h')))
+  // Neodehraný zápas může mít spany prázdné; stejně jako dřív je to „0 : 0".
+  const pair = { home: homeScore ?? 0, away: awayScore ?? 0 }
+
+  const endRaw = text(tabule.querySelector('.zapas_tabule_ukonceni')).toLowerCase()
+  const suffix: AhlScoreSuffix = /prodlou|^pp$/.test(endRaw)
+    ? 'pp'
+    : /nájezd|^sn$/.test(endRaw)
+      ? 'sn'
+      : null
+
+  const periodsRaw = text(tabule.querySelector('.zapas_tabule_tretiny'))
+  const periods = Array.from(periodsRaw.matchAll(/(\d+)\s*:\s*(\d+)/g)).map((m) => ({
+    home: +m[1],
+    away: +m[2],
+  }))
+
+  const fact = (title: string) => text(portlet.querySelector(`.zapas_fakt[title="${title}"]`))
+  const dateRaw = fact('Termín')
+  const phaseName = infoTableValue(doc, 'Fáze')
+  return {
+    home,
+    away,
+    score: { ...pair, suffix },
+    periods,
+    dateISO: dateRaw ? toDateISO(dateRaw) : null,
+    venue: fact('Stadion') || null,
+    competition: competitionLabel(infoTableValue(doc, 'Soutěž'), phaseName),
+    phaseName,
+  }
 }
 
 function parseHeader(doc: Document, matchId: number) {
@@ -126,7 +181,10 @@ function parseHeader(doc: Document, matchId: number) {
     throw new AhlParseError(page, `stránka je zápas ${pageId}`)
   }
 
-  // Skóre je jediný `div` bez potomků-elementů, který vypadá jako „5 : 6".
+  const tabule = portlet.querySelector('.zapas_tabule')
+  if (tabule) return parseHeaderTabule(doc, portlet, tabule, page)
+
+  // Starý layout: skóre je jediný `div` bez potomků-elementů, který vypadá jako „5 : 6".
   const scoreDiv = Array.from(portlet.querySelectorAll('div')).find(
     (d) => d.children.length === 0 && exactScorePair(d.textContent ?? '') !== null,
   )
