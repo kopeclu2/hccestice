@@ -51,7 +51,7 @@ const contactCard = cva(
 const field = cva('min-h-11.5 rounded-field px-4 focus-visible:ring-lime/60', {
   variants: {
     tone: {
-      dark: 'border-on-contrast-glass bg-on-contrast-wash text-on-contrast placeholder:text-on-contrast-ghost',
+      dark: 'border-on-contrast-glass bg-on-contrast-wash text-on-contrast placeholder:text-on-contrast-faint',
       light: 'border-line bg-chip text-ink placeholder:text-faint',
     },
   },
@@ -108,10 +108,12 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
     handleSubmit,
     control,
     setValue,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: '', email: '', topic: topics[0] ?? '', message: '' },
+    // Téma není předvybrané — „Chci hrát“ jako výchozí hodnota nutila
+    // rodiče a sponzory přepisovat cizí odpověď; schéma ho vyžádá při odeslání.
+    defaultValues: { name: '', email: '', topic: '', message: '' },
   })
 
   // `useWatch` místo `watch()`: ten se nedá bezpečně memoizovat, takže ho
@@ -221,6 +223,11 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
                 )
               })}
             </div>
+            {errors.topic && (
+              <p className={cn('mt-1.5 text-xs', fieldError({ tone }))} role="alert">
+                {errors.topic.message}
+              </p>
+            )}
           </fieldset>
 
           <ContactField

@@ -1,4 +1,12 @@
-import { formatDate, formatDay, formatTime, formatWeekday, utcToPragueLocal } from '@/lib/datetime'
+import {
+  type DateInput,
+  formatDate,
+  formatDay,
+  formatTime,
+  formatWeekday,
+  toDate,
+  utcToPragueLocal,
+} from '@/lib/datetime'
 
 /** Jeden termín tréninku — vstup tabulky (později dokument kolekce `trainings`). */
 export type TrainingSession = {
@@ -27,6 +35,8 @@ export type TrainingRowView = {
   venue: string | null
   note: string | null
   accent: boolean
+  /** Štítek u nejbližšího termínu, jen když je dnes nebo zítra (Europe/Prague). */
+  when: 'today' | 'tomorrow' | null
 }
 
 export type TrainingMonthView = {
@@ -45,10 +55,28 @@ const monthKey = (iso: string): string => utcToPragueLocal(iso).day.slice(0, 7)
  * zadání v adminu nehraje roli. Neplatné datum se zahodí, ať jeden špatný
  * záznam nerozbije celou tabulku.
  */
-export function buildTrainingMonths(sessions: TrainingSession[]): TrainingMonthView[] {
+export function buildTrainingMonths(
+  sessions: TrainingSession[],
+  /**
+   * „Teď“ pro štítek Dnes / Zítra. Počítá ho volající **mimo** cachovanou
+   * funkci (`new Date()` by v ní zamrzlo); bez něj se štítky nekreslí.
+   */
+  now?: DateInput,
+): TrainingMonthView[] {
   const sorted = sessions
     .filter((session) => formatTime(session.startsAt) !== '')
     .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt))
+
+  const nowDate = now === undefined ? null : toDate(now)
+  const today = nowDate ? utcToPragueLocal(nowDate).day : null
+  const tomorrow = nowDate
+    ? utcToPragueLocal(new Date(nowDate.getTime() + 24 * 3_600_000)).day
+    : null
+  // Nejbližší termín = první, který dnes nebo později začíná (odehraný dnešní se přeskočí).
+  const nearestId =
+    nowDate && today
+      ? (sorted.find((session) => Date.parse(session.startsAt) >= nowDate.getTime())?.id ?? null)
+      : null
 
   const months = new Map<string, TrainingMonthView>()
   for (const session of sorted) {
@@ -66,6 +94,16 @@ export function buildTrainingMonths(sessions: TrainingSession[]): TrainingMonthV
     const from = formatTime(session.startsAt)
     const to = session.endsAt ? formatTime(session.endsAt) : ''
 
+    const day = utcToPragueLocal(session.startsAt).day
+    const when =
+      session.id === nearestId
+        ? day === today
+          ? 'today'
+          : day === tomorrow
+            ? 'tomorrow'
+            : null
+        : null
+
     month.rows.push({
       id: session.id,
       weekday: formatWeekday(session.startsAt),
@@ -76,6 +114,7 @@ export function buildTrainingMonths(sessions: TrainingSession[]): TrainingMonthV
       venue: session.venue,
       note: session.note,
       accent: session.accent,
+      when,
     })
   }
 

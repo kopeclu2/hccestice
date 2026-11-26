@@ -109,3 +109,27 @@ describe('SportsEvent', () => {
     expect(eventDescription('19. kolo', null, 'HC Čestice', 'HC Zdar')).toBe('19. kolo')
   })
 })
+
+describe('toLastResult: výsledek a strana', () => {
+  const played = (overrides: Partial<Match>) => toLastResult(baseMatch(overrides))
+
+  it('výhra doma', () => {
+    const last = played({ scoreOurs: 5, scoreOpp: 3, home: true })
+    expect(last).toMatchObject({ outcome: 'win', won: true, side: 'Doma' })
+  })
+
+  it('prohra venku: skóre je domácí:hosté, výsledek z pohledu Čestic', () => {
+    const last = played({ scoreOurs: 4, scoreOpp: 6, home: false })
+    expect(last).toMatchObject({ outcome: 'loss', won: false, side: 'Venku', score: '6:4' })
+  })
+
+  it('prohra po prodloužení je otLoss (půlený štítek)', () => {
+    const last = played({ scoreOurs: 2, scoreOpp: 3, overtime: true })
+    expect(last.outcome).toBe('otLoss')
+    expect(last.won).toBe(false)
+  })
+
+  it('remíza', () => {
+    expect(played({ scoreOurs: 2, scoreOpp: 2 }).outcome).toBe('draw')
+  })
+})
