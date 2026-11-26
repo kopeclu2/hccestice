@@ -18,9 +18,12 @@ declare global {
   }
 }
 
-function gtag(...args: unknown[]) {
+// gtag.js bere z `dataLayer` příkazy jen jako objekt `arguments`; pole z rest
+// parametrů ignoruje, takže `config` by se nikdy nevykonal.
+function gtag(..._args: unknown[]) {
   window.dataLayer = window.dataLayer ?? []
-  window.dataLayer.push(args)
+  // eslint-disable-next-line prefer-rest-params -- gtag.js vyžaduje `arguments`, ne pole
+  window.dataLayer.push(arguments)
 }
 
 let scriptLoadPromise: Promise<void> | null = null
