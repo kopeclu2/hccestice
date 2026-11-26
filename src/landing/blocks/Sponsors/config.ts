@@ -3,7 +3,7 @@ import type { Block } from 'payload'
 export const LandingSponsors: Block = {
   slug: 'landingSponsors',
   interfaceName: 'LandingSponsorsBlock',
-  labels: { singular: 'Landing — Partneři (marquee)', plural: 'Landing — Partneři (marquee)' },
+  labels: { singular: 'Landing — Partneři (mřížka)', plural: 'Landing — Partneři (mřížka)' },
   fields: [
     {
       name: 'title',

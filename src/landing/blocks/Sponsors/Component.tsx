@@ -7,7 +7,7 @@ import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/s
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import type { Sponsor } from '@/landing/features/sponsors/types'
 import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Highlight } from '@/landing/ui/Kicker'
 import { internalArrow, MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -20,8 +20,11 @@ const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partne
 
 const DEFAULT_TITLE = 'Klub drží nad vodou naši partneři'
 
-/** Od tolika partnerů se pás rozdělí na dvě protijezdné řady. */
-const TWO_ROWS_FROM = 8
+/** Kolik partnerů ukáže homepage; všichni jsou na `/sponzori`. */
+const HOME_SPONSORS = 12
+
+/** Od `md` jsou vidět všechna loga mřížky, pod ním jen první dvě řady. */
+const MOBILE_SPONSORS = 8
 
 /**
  * Rozdělení nadpisu na běžnou a lime zvýrazněnou část (vzor sekce O klubu).
@@ -63,13 +66,8 @@ export async function SponsorsBlockComponent({ block }: { block: LandingSponsors
 
 /**
  * Partneři — nadpis ve stylu sekce O klubu (kicker + velký titulek s lime
- * koncem) a pod ním nekonečné marquee log sponzorů (CSS animace, pauza
- * na hover). Sekce je bez karty, loga jsou bílé dlaždice na pozadí stránky.
- *
- * Každá řada se rendruje dvakrát za sebou a animace posouvá pás o −50 % —
- * tím vzniká plynulá smyčka bez skoku. Od `TWO_ROWS_FROM` partnerů jsou
- * řady dvě a jedou proti sobě, aby pás nebyl monotónní. Okraje pásu maskuje
- * fade, `prefers-reduced-motion` animaci zastaví.
+ * koncem) a pod ním statická mřížka log sponzorů. Sekce je bez karty, loga
+ * jsou bílé dlaždice na pozadí stránky; plný výpis je na `/sponzori`.
  */
 function SponsorsView({
   sponsors,
@@ -86,16 +84,11 @@ function SponsorsView({
 }) {
   if (sponsors.length === 0) return null
 
-  const half = Math.ceil(sponsors.length / 2)
-  const rows =
-    sponsors.length >= TWO_ROWS_FROM ? [sponsors.slice(0, half), sponsors.slice(half)] : [sponsors]
-
   return (
     <SectionShell id="sponzori">
       <Reveal>
         <div className="max-w-208">
-          <Kicker>Partneři</Kicker>
-          <SectionTitle className="mt-5" size="lg">
+          <SectionTitle size="lg">
             {titleStart ? `${titleStart} ` : ''}
             <Highlight dot>{titleHighlight}</Highlight>
           </SectionTitle>
@@ -119,11 +112,14 @@ function SponsorsView({
         </div>
       </Reveal>
 
-      {/* pás log přes celou šířku sekce (bez vnitřního odsazení) */}
       <Reveal delay={0.1}>
-        <div className="-mx-gutter mt-11 flex flex-col gap-3.5 md:mt-13">
-          {rows.map((row, index) => (
-            <MarqueeRow key={index} reverse={index % 2 === 1} sponsors={row} />
+        <div className="mt-11 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:mt-13 lg:grid-cols-4 xl:grid-cols-6">
+          {sponsors.slice(0, HOME_SPONSORS).map((sponsor, index) => (
+            <SponsorTile
+              className={cn(index >= MOBILE_SPONSORS && 'max-md:hidden')}
+              key={sponsor.id}
+              sponsor={sponsor}
+            />
           ))}
         </div>
       </Reveal>
@@ -132,39 +128,14 @@ function SponsorsView({
 }
 
 /**
- * Jedna řada pásu — duplikovaný seznam log v nekonečné smyčce.
- *
- * `overflow-hidden` (nutné pro smyčku) by ořízl nadzvednutí a stín dlaždice
- * na hover, proto má řada svislou výplň a stejně velký negativní margin —
- * hover má kam vyjet, ale rytmus sekce zůstává.
+ * Dlaždice partnera — bílá karta v mřížce. Loga jsou barevná; na hover se
+ * dlaždice nadzvedne.
  */
-function MarqueeRow({ sponsors, reverse }: { sponsors: Sponsor[]; reverse: boolean }) {
-  return (
-    <div className="-my-5 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] py-5">
-      <div
-        className={cn(
-          'flex w-max gap-3.5 hover:[animation-play-state:paused] motion-reduce:animate-none',
-          reverse ? 'animate-marquee-reverse' : 'animate-marquee',
-        )}
-      >
-        {[...sponsors, ...sponsors].map((sponsor, index) => (
-          <SponsorTile key={`${sponsor.id}-${index}`} sponsor={sponsor} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/**
- * Dlaždice partnera — bílá karta na tónovaném pásu. Logo je ve výchozím
- * stavu odbarvené (loga mají různě pestré podklady, v řadě se pak
- * neruší), na hover se rozsvítí a dlaždice se nadzvedne.
- */
-function SponsorTile({ sponsor }: { sponsor: Sponsor }) {
+function SponsorTile({ sponsor, className }: { sponsor: Sponsor; className?: string }) {
   const content = sponsor.logo ? (
     <Image
       alt={sponsor.name}
-      className="max-h-13 w-auto max-w-37.5 object-contain grayscale transition duration-300 group-hover:grayscale-0"
+      className="max-h-13 w-auto max-w-full object-contain"
       height={56}
       src={getMediaUrl(sponsor.logo.url, sponsor.logo.updatedAt)}
       width={150}
@@ -173,12 +144,14 @@ function SponsorTile({ sponsor }: { sponsor: Sponsor }) {
     <span>{sponsor.name}</span>
   )
 
-  const className =
-    'group border-line-soft hover:border-club hover:shadow-tile grid h-22 min-w-47.5 flex-none place-items-center rounded-badge border bg-surface px-6.5 text-sm md:text-base font-bold tracking-tight whitespace-nowrap transition duration-200 hover:-translate-y-0.5'
+  const tileClass = cn(
+    'group grid h-22 place-items-center rounded-badge border border-line-soft bg-surface px-5 text-center text-sm font-bold tracking-tight transition duration-200 hover:-translate-y-0.5 hover:border-club hover:shadow-tile md:text-base',
+    className,
+  )
 
   return sponsor.url ? (
     <a
-      className={className}
+      className={tileClass}
       href={sponsor.url}
       rel="noreferrer"
       target="_blank"
@@ -187,7 +160,7 @@ function SponsorTile({ sponsor }: { sponsor: Sponsor }) {
       {content}
     </a>
   ) : (
-    <span className={className} title={sponsor.name}>
+    <span className={tileClass} title={sponsor.name}>
       {content}
     </span>
   )

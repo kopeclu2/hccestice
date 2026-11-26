@@ -6,7 +6,6 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { FixturesRail } from '@/landing/features/matches/components/FixturesRail'
 import { FormStrip } from '@/landing/features/matches/components/FormStrip'
-import { MatchesCta } from '@/landing/features/matches/components/MatchesCta'
 import { MatchesHeader } from '@/landing/features/matches/components/MatchesHeader'
 import { MatchesJsonLd } from '@/landing/features/matches/components/MatchesJsonLd'
 import { ResultsList } from '@/landing/features/matches/components/ResultsList'
@@ -124,7 +123,7 @@ export default async function ZapasyPage({ searchParams }: Args) {
           (dohrané) sezóny se sekce rovnou skryje, stejně jako výřez na home
           page (viz `FixturesRail`). Bez `isLatestSeason` by "Žádný zápas na
           programu" viselo i pod loňskou sezónou, kde už žádné rozlosování
-          nepřibude. */}
+          nepřibude. * */}
       <FixturesRail
         emptyState={
           isLatestSeason ? (
@@ -175,8 +174,6 @@ export default async function ZapasyPage({ searchParams }: Args) {
         />
         <StandingsPanel officialHref={standings.fullTableUrl} standings={standings} />
       </SectionShell>
-
-      <MatchesCta />
     </SubpageShell>
   )
 }

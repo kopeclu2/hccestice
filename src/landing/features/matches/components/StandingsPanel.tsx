@@ -34,20 +34,6 @@ const EXTRA = 'hidden text-center md:block lg:hidden 2xl:block'
 /** Sloupce V / VP / PP / P: vidět vždy, i v kompaktní šířce (jinak by V + PP + P nedalo Z). */
 const STAT = 'text-center'
 
-/** Popisky sloupců — jediný zdroj pro `abbr title` v hlavičce i pro legendu. */
-const LEGEND_BASE: Array<[string, string]> = [
-  ['Z', 'zápasy'],
-  ['B', 'body'],
-]
-const LEGEND_EXTENDED: Array<[string, string]> = [
-  ['Z', 'zápasy'],
-  ['V', 'výhry'],
-  ['VP', 'výhry po prodloužení nebo nájezdech'],
-  ['PP', 'prohry po prodloužení nebo nájezdech'],
-  ['P', 'prohry'],
-  ['B', 'body'],
-]
-
 /**
  * Zkrácení tabulky pro výřez na home page: čelo tabulky a k němu vždy
  * řádek Čestic (když leží mimo, nahradí poslední zobrazený řádek).
@@ -313,18 +299,6 @@ export function StandingsPanel({
             })}
           </tbody>
         </table>
-      )}
-      {rows.length > 0 && (
-        <p className="mt-3 text-xs leading-relaxed text-faint">
-          {(extended ? LEGEND_EXTENDED : LEGEND_BASE).map(([abbr, meaning], index) => (
-            <React.Fragment key={abbr}>
-              {index > 0 && ' · '}
-              <span className="whitespace-nowrap">
-                <b className="font-bold text-ink-soft">{abbr}</b> {meaning}
-              </span>
-            </React.Fragment>
-          ))}
-        </p>
       )}
       {officialHref && (
         <Button asChild className="mt-4 self-start" size="sm" variant="outline">

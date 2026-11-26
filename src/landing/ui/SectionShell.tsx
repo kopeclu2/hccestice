@@ -24,7 +24,7 @@ const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-
   variants: {
     spacing: {
       /** Sekce home page — 56px mobil, 80px tablet, 120px desktop (dřív 72 / 112 / 160: prázdno mezi sekcemi bylo delší než jejich obsah). */
-      landing: 'mt-14 md:mt-20 lg:mt-30',
+      landing: 'mt-18 md:mt-26 lg:mt-38',
       /** Lišta hned pod herem (oznámení) — drží se nahoře. */
       bar: 'mt-8 md:mt-10',
       /**
@@ -34,20 +34,20 @@ const sectionShellVariants = cva('relative z-1 mx-auto w-full max-w-page scroll-
        */
       header: 'mt-6 md:mt-10 lg:mt-14',
       /** První obsahový blok po hlavičce podstránky. */
-      content: 'mt-12',
+      content: 'mt-14 md:mt-16',
       /** Další sekce podstránky — 72px mobil, 96px tablet, 140px desktop. */
-      section: 'mt-18 md:mt-24 lg:mt-35',
+      section: 'mt-22 md:mt-30 lg:mt-44',
       /**
        * Druhá polovina téže sekce (rozpis → výsledky v bloku Sezóna).
        * Menší odstup záměrně drží obě části pohromadě.
        */
-      split: 'mt-12 md:mt-15',
+      split: 'mt-14 md:mt-18',
       /**
        * CTA pás na konci podstránky, nad patičkou — 72px mobil, 96px tablet,
        * 120px desktop. Jediná hodnota ve škále, která mobilní stupeň neměla:
        * pás se od výpisu odrážel 120px prázdna i na 320px displeji.
        */
-      cta: 'mt-18 md:mt-24 lg:mt-30',
+      cta: 'mt-22 md:mt-28 lg:mt-36',
       /** Bez odsazení — rytmus řeší vnořené sekce samy. */
       none: '',
     },

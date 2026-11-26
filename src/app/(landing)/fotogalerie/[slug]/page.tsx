@@ -9,7 +9,6 @@ import {
   PhotoMasonry,
   type GalleryPhoto,
 } from '@/landing/features/galleries/components/PhotoMasonry'
-import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
 import { fetchGalleryBySlug, fetchGallerySlugs } from '@/landing/features/galleries/data'
 import { galleryDescription, galleryTitle } from '@/landing/features/galleries/view/galleryMeta'
 import { seasonShortLabel } from '@/landing/features/matches/data/seasons'
@@ -74,8 +73,6 @@ export default async function GalleryDetailPage({ params }: Args) {
       <div className="relative z-1 mx-auto mt-9 max-w-page px-gutter">
         <PhotoMasonry photos={photos} />
       </div>
-
-      <PhotosCta />
     </SubpageShell>
   )
 }

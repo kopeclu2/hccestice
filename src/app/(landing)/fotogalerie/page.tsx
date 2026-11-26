@@ -4,7 +4,6 @@ import React from 'react'
 
 import { GalleriesHeader } from '@/landing/features/galleries/components/GalleriesHeader'
 import { GalleryGrid } from '@/landing/features/galleries/components/GalleryGrid'
-import { PhotosCta } from '@/landing/features/galleries/components/PhotosCta'
 import { fetchGalleriesPage } from '@/landing/features/galleries/data'
 import { fetchGallerySeasons, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { PageJsonLd } from '@/landing/layout/PageJsonLd'
@@ -87,8 +86,6 @@ export default async function FotogaleriePage({ searchParams }: Args) {
           />
         )}
       </SectionShell>
-
-      <PhotosCta />
     </SubpageShell>
   )
 }

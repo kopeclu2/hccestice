@@ -59,9 +59,7 @@ export function PlayerTileJersey({
 
       <div className="absolute inset-x-0 bottom-0">
         <div aria-hidden className={`absolute inset-x-0 top-[-5px] bottom-0 bg-lime ${SLANT}`} />
-        <div
-          className={`relative bg-gradient-to-b from-pine to-pine-deep px-3 pt-5 pb-3 md:px-4 md:pt-6 md:pb-4 ${SLANT}`}
-        >
+        <div className={`relative bg-surface px-3 pt-5 pb-3 md:px-4 md:pt-6 md:pb-4 ${SLANT}`}>
           <div className="flex items-center gap-2.5 md:gap-3">
             {card.number != null && (
               <Numeral
@@ -73,12 +71,12 @@ export function PlayerTileJersey({
               </Numeral>
             )}
             <div className="flex min-w-0 flex-col gap-0.5">
-              <Eyebrow className="line-clamp-2" tight tone="lime">
+              <Eyebrow className="line-clamp-2" tight tone="club-dark">
                 {card.kicker}
               </Eyebrow>
               <CardTitle
                 as={titleAs}
-                className="line-clamp-2 text-sm leading-heading text-on-contrast md:text-lg"
+                className="line-clamp-2 text-sm leading-heading text-ink md:text-lg"
                 size="sm"
               >
                 {card.name}

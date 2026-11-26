@@ -55,7 +55,7 @@ function ClubView({ content }: { content: ClubContent }) {
       {/* Na `md+` stojí text vpravo a fotky vlevo (jiná kostra než sousední
           sekce); v DOM i na mobilu zůstává text první. */}
       <Reveal className="self-center md:order-2">
-        <SectionTitle size="xl">
+        <SectionTitle size="md">
           {content.headlineStart}{' '}
           <Highlight dot marker>
             {content.headlineHighlight}

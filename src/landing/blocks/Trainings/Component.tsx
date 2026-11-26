@@ -6,7 +6,7 @@ import { fetchTrainingSessions, trainingsNow } from '@/landing/features/training
 import type { TrainingsContent } from '@/landing/features/trainings/types'
 import type { TrainingSession } from '@/landing/features/trainings/view/trainingsTable'
 import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Highlight } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell, type SectionShellProps } from '@/landing/ui/SectionShell'
@@ -132,9 +132,8 @@ function TrainingsView({
       id="treninky"
       spacing={spacing}
     >
-      <Reveal className="lg:sticky lg:top-28">
-        {content.kicker && <Kicker>{content.kicker}</Kicker>}
-        <SectionTitle className="mt-3.5 text-pretty" size="md">
+      <Reveal>
+        <SectionTitle className="text-pretty" size="md">
           {content.headline}{' '}
           <Highlight dot={!content.headlineRest}>{content.headlineHighlight}</Highlight>{' '}
           {content.headlineRest}

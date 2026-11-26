@@ -454,7 +454,7 @@ export interface LandingNewsBlock {
    */
   pinnedPost?: (number | null) | Post;
   /**
-   * Sekce je výřez — plný výpis je na /aktuality.
+   * Sekce je výřez — plný výpis je na /aktuality. Zobrazí se 2 nebo 5 karet (plné řádky mřížky).
    */
   count?: number | null;
   /**

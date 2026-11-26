@@ -3,7 +3,6 @@ import React from 'react'
 
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { PartnerCard } from '@/landing/features/sponsors/components/PartnerCard'
-import { PartnerSlotCta } from '@/landing/features/sponsors/components/PartnerSlotCta'
 import { SponsorsHeader } from '@/landing/features/sponsors/components/SponsorsHeader'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import { PageJsonLd } from '@/landing/layout/PageJsonLd'
@@ -66,7 +65,6 @@ export default async function SponzoriPage() {
                 <PartnerCard key={sponsor.id} sponsor={sponsor} />
               ))}
             </div>
-            <PartnerSlotCta />
           </div>
         </Reveal>
       </SectionShell>

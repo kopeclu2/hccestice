@@ -167,24 +167,6 @@ export function StandingsCard({ standings }: { standings: StandingsContent }) {
             </tbody>
           </table>
 
-          <p className="mt-3 text-xs leading-relaxed text-faint">
-            <b className="font-bold text-ink-soft">Z</b> zápasy
-            {extended && (
-              <span className="max-sm:hidden">
-                {' · '}
-                <b className="font-bold text-ink-soft">V</b> výhry
-                {' · '}
-                <b className="font-bold text-ink-soft">VP</b> výhry po prodloužení nebo nájezdech
-                {' · '}
-                <b className="font-bold text-ink-soft">PP</b> prohry po prodloužení nebo nájezdech
-                {' · '}
-                <b className="font-bold text-ink-soft">P</b> prohry
-              </span>
-            )}
-            {' · '}
-            <b className="font-bold text-ink-soft">B</b> body
-          </p>
-
           <a
             className="mt-3.5 inline-block text-sm font-semibold text-club-dark hover:text-club"
             href={standings.fullTableUrl}

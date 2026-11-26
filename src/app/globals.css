@@ -50,7 +50,7 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
-  --breakpoint-nav: 90rem;
+  --breakpoint-nav: 80rem;
   /* Mikro-breakpointy pod `sm`. Dřív arbitrární `min-[22.5rem]:` (3×),
    * `max-[22.5rem]:` (7×), `min-[25rem]:` (5×) a `min-[33rem]:` (7×).
    * `3xs:` = od 360px (zúžené řádky na malých telefonech), `2xs:` = od 400px,
@@ -359,27 +359,6 @@
   --text-shadow-photo: 0 0.125rem 1.625rem --alpha(var(--color-pine-deep) / 45%);
 
   /* Animace */
-  --animate-marquee: marquee 45s linear infinite;
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  /* Druhý pás log jede proti prvnímu (sekce Partneři). */
-  --animate-marquee-reverse: marquee-reverse 55s linear infinite;
-  @keyframes marquee-reverse {
-    from {
-      transform: translateX(-50%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-
   /* Čárkovaná trajektorie puku na systémových stránkách (404, údržba).
    * Posouvá `stroke-dashoffset` v SVG user units — proto bezrozměrné číslo
    * a ne rem: rem by se počítal z font-size elementu, ne ze souřadnic path. */

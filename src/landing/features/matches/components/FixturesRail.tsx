@@ -69,7 +69,6 @@ export function FixturesRail({
   id,
   spacing = 'content',
   layout = 'cards',
-  omitNearest = false,
 }: {
   fixtures: FixtureCard[]
   moreHref?: string | null
@@ -82,24 +81,10 @@ export function FixturesRail({
   spacing?: SectionShellProps['spacing']
   /** `list` = nejbližší zápas v panelu, zbytek jako řádky pod sebou (/zapasy). */
   layout?: 'cards' | 'list'
-  /**
-   * Vynechá nejbližší zápas a zbytek ukáže jako mřížku malých karet bez
-   * tmavého panelu s odpočtem. Home page tím neopakuje příští zápas, který
-   * už nese proužek pod hero (`MatchStrip`). Zbyde-li po vynechání prázdno,
-   * ale nejbližší zápas existuje, sekce se skryje (`emptyState` by lhal
-   * „žádný zápas na programu").
-   */
-  omitNearest?: boolean
 }) {
-  const shown = omitNearest ? fixtures.slice(1) : fixtures
-  const picked: FixturesLayout<FixtureCard> = omitNearest
-    ? shown.length === 0
-      ? { kind: 'empty' }
-      : { kind: 'plain', fixtures: shown }
-    : pickLayout(fixtures, layout)
+  const picked: FixturesLayout<FixtureCard> = pickLayout(fixtures, layout)
 
   if (picked.kind === 'empty') {
-    if (omitNearest && fixtures.length > 0) return null
     if (!emptyState) return null
 
     return (

@@ -227,7 +227,7 @@ Cíl odkazu skládá `navHref(item, 'home' \| 'subpage')`
 a `PAGE_ONLY_LINKS` — druhá je derivovatelná z `anchor === null`.
 
 `navHref.ts` je oddělený od `data.ts` **záměrně**: `data.ts`
-sahá na `getPayload`, takže kdyby si klientské komponenty (`NavPills`,
+sahá na `getPayload`, takže kdyby si klientské komponenty (`SiteNav`,
 `NavMobile`) tahaly resolvery odtud, přišel by do klientského bundlu
 server-only Payload config a build spadne.
 
@@ -731,10 +731,11 @@ variant je na `/vzory/prazdne-stavy`.
 - 404 stojí na `SubpageShell`, takže si tahá navigaci a patičku z Payloadu.
   Při nedostupné databázi spadne i ona. Není to regrese (platilo to i dřív),
   ale u chybové stránky je to nešťastné.
-- `LandingNav` žije uvnitř bloku Hero (`blocks/Hero/Component.tsx`). Když
-  správce blok Hero v CMS odstraní, na homepage nebude navigace nahoře.
-  Po scrollu (480 px) se objeví `StickyNav`, kterou `GlobalNav` vykresluje
-  v `src/app/(landing)/layout.tsx`, ale horní lišta patří také tam.
+- Na homepage vykresluje horní navigaci (`SiteNav`) blok `HeroModern`
+  (`blocks/HeroModern/Component.tsx`). Když správce blok Hero v CMS odstraní,
+  na homepage nebude navigace nahoře. Po scrollu (480 px) se objeví
+  `StickyNav`, kterou `GlobalNav` vykresluje v `src/app/(landing)/layout.tsx`,
+  ale horní lišta patří také tam. Podstránky mají `SiteNav` v `ArticleNav`.
 - ~~`Dockerfile` nekopíruje `bun.lock`~~ — doplněno spolu s větví pro `bun`
   v install i build kroku; base image zvednutý na `node:24-alpine`, protože
   `payload-auditor` má `engines.node: ">=24"`.
@@ -807,15 +808,15 @@ a mezi mobil a desktop se vkládá mezistupeň. Breakpointy projektu
 | `2xs:` | 400 | |
 | `xs:` | 528 | Tréninky: karta přestane být přes celou šířku |
 | `sm:` / `md:` / `lg:` / `xl:` / `2xl:` | 640 / 768 / 1024 / 1280 / 1376 | |
-| `nav:` | 1440 | hlavní navigace: pilulky `hidden nav:flex`, burger `nav:hidden` |
+| `nav:` | 1280 | hlavní navigace: odkazy karty `hidden nav:flex`, burger `nav:hidden` |
 
 Mikro-breakpointy (`3xs`, `2xs`, `xs`) jsou jen v `@theme`, bez
 `@custom-variant`; arbitrární `min-[22.5rem]:` a spol. hlídá pravidlo
-`no-arbitrary-breakpoint`. `nav:` je na 1440 a ne na `xl`, protože deset
-položek se vedle loga a CTA vejde až tam.
+`no-arbitrary-breakpoint`. `nav:` je na 1280 (jako `xl`): textové odkazy
+karty `SiteNav` jsou užší než dřívější pilulky (ty potřebovaly ~1330 px).
 
 Pravidlo už dřív platilo pro svislý rytmus (`SectionShell`), navigaci
-(`NavPills` je `hidden nav:flex`), mřížky výpisů (`CardGrid`) a watermarky
+(odkazy `SiteNav` jsou `hidden nav:flex`), mřížky výpisů (`CardGrid`) a watermarky
 (`Watermark` od `lg`). Od 22. 8. 2026 platí i pro **vnitřní odsazení
 panelů**: každá zelená/bílá karta jede na `p-4.5 md:p-<mezistupeň>
 lg:p-<handoff>`. Dřív skákaly rovnou (`p-4.5 md:p-13`), takže si na 768px
@@ -1939,3 +1940,24 @@ Nálezy na serveru (firewall, zálohy, domény, přístup buildu k DB) se do rep
 Traefik `X-Forwarded-For` od klienta nepřebírá (bez `forwardedHeaders`), takže
 `getClientIp` dostává skutečnou IP; kdyby se před web postavila CDN nebo
 `forwardedHeaders.trustedIPs`, je potřeba `getClientIp` znovu promyslet.
+
+# Hlavní navigace: karta `SiteNav`
+
+Od 26. 11. 2026 je hlavní navigace **bílá karta v toku stránky** (`rounded-tile`
+s logem, textovými odkazy a CTA), ne pilulky přes hero fotku. Vybrali jsme ji
+z osmi variant; zbylé (a přepínač `/vzory/navigace`) jsme smazali.
+
+| díl | role |
+|---|---|
+| `src/landing/layout/SiteNav.tsx` | `NavCardBar` (karta) a `SiteNav` (obal `<nav aria-label>` s mezerou pod kartou) |
+| `ArticleNav` | podstránky: `SiteNav` nad obsahem |
+| `blocks/HeroModern/Component.tsx` | homepage: `SiteNav` nad fotkou hero (nenese už žádnou navigaci přes fotku) |
+| `StickyNav` | po scrollu (480 px) tatáž karta, fixní nahoře, `<nav aria-label="… po scrollu">` |
+
+- Aktivní odkaz a `context` (home/subpage) se berou z `usePathname()`, aby šla
+  karta použít v root layoutu bez dynamických API.
+- Do `nav:` (1280 px) je navigací burger (`NavMobile`).
+- `NavPills` a `blocks/Hero/Nav.tsx` zůstaly jen pro starší blok Hero
+  (varianta 1); `HeroModern` je nepoužívá.
+- Hero fotka nemá v `HeroModern` pod fotkou proužek zápasů ani perex; příští
+  zápas nese sekce Zápasy (`FixturesRail`).

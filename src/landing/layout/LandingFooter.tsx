@@ -46,7 +46,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
        * skok z 18px na mobilu bez jakéhokoli mezistupně. Ten je teď
        * 28/32px, desktopová hodnota začíná na `lg`.
        */}
-      <div className="relative overflow-hidden rounded-card bg-club-dark px-4.5 py-6 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
+      <div className="relative overflow-hidden rounded-card bg-club px-4.5 py-6 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
         <Watermark className="-right-10 -bottom-15 text-watermark-3xl tracking-display text-on-contrast-wash">
           HCČ
         </Watermark>
@@ -73,11 +73,19 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
              */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-linear-to-t from-club-dark/95 via-club-dark/85 to-club-dark/70"
+              className="absolute inset-0 bg-linear-to-t from-club/95 via-club/85 to-club/70"
             />
           </>
         )}
 
+        {/*
+         * `minmax(min(20rem,100%),…)`, ne `minmax(20rem,…)`: dolní hranice
+         * dráhy 320px byla širší než vnitřek panelu na 320px displeji
+         * (256px po odečtení odsazení patičky a paddingu), takže perex i
+         * pilulka „Facebook" přetékaly za pravou hranu a `overflow-hidden`
+         * je ustřihl. `min()` nechá dráhu spadnout na šířku kontejneru,
+         * když se 20rem nevejde — bez breakpointu a na každé šířce.
+         */}
         {/*
          * `minmax(min(20rem,100%),…)`, ne `minmax(20rem,…)`: dolní hranice
          * dráhy 320px byla širší než vnitřek panelu na 320px displeji
@@ -93,8 +101,8 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
             </SectionTitle>
             <p className="mt-4 mb-6.5 max-w-115 text-on-contrast">{content.perex}</p>
             {/* Pod 360 px je řádek široký 236 px: „Napiš nám" (141) + dvě ikony
-                (2 × 44) + mezery 2 × 10 se nevejdou, proto užší mezera a levý
-                okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
+                  (2 × 44) + mezery 2 × 10 se nevejdou, proto užší mezera a levý
+                  okraj tlačítka. Ikony zůstávají 44 px (dotykový cíl). */}
             <div className="flex flex-wrap gap-2.5 max-3xs:gap-2">
               <Button asChild className="max-3xs:pl-3.5" variant="light" withArrow>
                 <Link href={homeAnchorHref('#kontakt')}>Napiš nám</Link>
@@ -119,28 +127,14 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           </div>
 
           {/*
-           * Sloupce odkazů: `gap-1` + `py-3` na odkazu, ne `gap-2` bez
-           * paddingu. Řádek `text-sm` je vysoký 20px, takže tap target
-           * byl proti zbytku webu (44px, viz `components/ui/button`) poloviční.
-           * `py-3` (12px nahoře i dole) ho na mobilu zvedne na 44px. Na desktopu,
-           * kde se klika myší, se padding ruší a rozestupy jsou přesně jako
-           * v handoffu.
-           *
-           * Minimum sloupce je `6.5rem` (104px), ne `9.375rem` (150px):
-           * dva sloupce (Klub/Hokej) se s 150px minimem na mobilu (~256–306px
-           * vnitřní šířky panelu) nevešly vedle sebe, takže `auto-fit` spadl
-           * na jeden — krátké odkazy pak zůstaly nalepené k levému okraji
-           * a napravo od nich zela přes polovinu šířky panelu prázdná zelená
-           * plocha. Slova jako „Fotoalbum"/„Aktuality" se do 104px vejdou
-           * s rezervou, takže sloupce zůstávají vedle sebe i na 320px displeji.
+           * Sloupce odkazů: `gap-1` + `py-3` na odkazu (tap target 44 px na
+           * mobilu, na desktopu se padding ruší). Minimum sloupce je `6.5rem`,
+           * aby dva sloupce (Klub/Hokej) zůstaly vedle sebe i na 320px displeji.
            */}
           <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(6.5rem,100%),1fr))] gap-7 text-sm">
             {content.columns.map((column) => (
               <div className="flex flex-col gap-1" key={column.title}>
-                {/*
-                 * `white-strong` (plná bílá), ne `white` (60 %):
-                 * nadpis sloupce na zelené by jinak byl pod AA.
-                 */}
+                {/* `white-strong` (plná bílá): nadpis sloupce na zelené by jinak byl pod AA. */}
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
                   <Link
@@ -228,12 +222,27 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
           se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
       <p className="mt-4 text-center text-xs text-faint">
         <Link
-          className="inline-block py-3.5 transition-colors hover:text-club-dark md:py-1.5"
+          className="inline-flex items-center gap-1.5 py-3.5 transition-colors hover:text-club-dark md:py-1.5"
           href="https://lukaskopecky.cz"
-          rel="noreferrer"
+          rel="noopener"
           target="_blank"
         >
-          Web: Lukáš Kopecký
+          Web vytvořil
+          {/* Značka autora (pixelový duch), stejná jako v patičce elselook.cz. */}
+          <svg aria-hidden className="size-4 shrink-0" viewBox="0 0 16 16">
+            <path
+              d="M15,8v1h1v1h-1v1v1v1v1h-1v1h0h-1h-1h-1h-1h-1h-1h-1h-1h-1h-1H2.8H2.4H2.1h0v-1H1v-1v-1v-1v-1H0V9h1V8H0V7h1h0.7v-1v-1h1v-1v-1v-1h1v-1h1v1h1v1h1h1h1h1v-1h1v-1h1v1h1v1v1v1h1v1v1H15h1v1H15z"
+              // token-check-ignore: barva značky autora, ne součást designu klubu
+              fill="#9F8BE7"
+            />
+            <path
+              d="M9.7,5.9h1v1v1h-1V7V5.9z M5.2,7v1h1V7v-1h-1V7z"
+              fill="currentColor"
+              className="text-on-contrast"
+            />
+          </svg>
+          <span className="font-medium text-ink-soft">lukaskopecky.cz</span>
+          <span className="sr-only"> (otevře se v nové záložce)</span>
         </Link>
       </p>
     </footer>
