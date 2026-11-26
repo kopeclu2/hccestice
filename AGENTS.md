@@ -1847,8 +1847,8 @@ Všichni přihlášení uživatelé jsou si rovni (žádné role) — `users` z�
 # Zabezpečení: vstupy, hlavičky, nasazení
 
 Audit z 16. 10. 2026. Rozhodnutí uživatele: role se nezavádějí, surové HTML
-se sanitizuje, repo a image zatím zůstávají veřejné, server se jen
-zdokumentoval (checklist níž), nic se na něm neměnilo.
+se sanitizuje, repo zůstává veřejné (image v GHCR je od 26. 11. 2026
+privátní, viz „CI a Docker“), server se jen zdokumentoval (checklist níž).
 
 ## Závislosti
 
@@ -1927,8 +1927,13 @@ dojde na routu — chyba je v Nextu nebo `proxy.ts`, neprověřeno.
   **Výměna klíče na serveru = úprava `deploy.yml`.**
 - `DATABASE_URL`, `PAYLOAD_SECRET`, `SENTRY_AUTH_TOKEN` jdou do buildu jako
   BuildKit secrets (`RUN --mount=type=secret,…,env=…`, frontend
-  `dockerfile:1.10`), ne `ARG`/`ENV` — ty zůstávají v metadatech image, který
-  leží ve veřejném GHCR. `NEXT_PUBLIC_*` jsou veřejné a zůstávají build args.
+  `dockerfile:1.10`), ne `ARG`/`ENV` — ty zůstávají v metadatech image.
+  `NEXT_PUBLIC_*` jsou veřejné a zůstávají build args.
+- **Image v GHCR je privátní** (`ghcr.io/kopeclu2/hccestice`). Push z Actions
+  jde přes `GITHUB_TOKEN` s `packages: write`, workflow se kvůli tomu nemění.
+  Server image stahuje po `docker login ghcr.io` tokenem jen s `read:packages`;
+  token i postup drží správce mimo repo. Při jeho expiraci selže pull
+  s `unauthorized` a nasazení se zastaví.
 - Bun (`1.3.11`) a `node:24-alpine` (digest) jsou pinované; aktualizace ručně.
 - Ze `scripts/seed/data/articles.json` jsou odstraněné soukromé e-maily
   a telefony. **Git historie je dál obsahuje** a repo je veřejné.
