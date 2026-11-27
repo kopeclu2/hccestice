@@ -47,7 +47,7 @@ povinný (viz „Cache a renderovací režimy").
 | místo | co v něm je |
 |---|---|
 | `src/lib/` | izomorfní moduly: bez `server-only`, bez importu Payload configu. Smí je importovat klient, admin, hooky, seed skripty i vitest (`routes`, `club`, `teamName`, `fold`, `datetime`, `plural`, `errors`, `jsonLd`, `matchSlug`, `slugifyCs`, `indexNow`, `rateLimit`) |
-| `src/server/` | serverové utility nad Payloadem (`getDocument`, `getRedirects`, `recaptcha/verify`), všechny s `import 'server-only'` |
+| `src/server/` | serverové utility nad Payloadem (`getDocument`, `getRedirects`), všechny s `import 'server-only'` |
 | `src/landing/ui`, `layout`, `blocks`, `features`, `data`, `lib` | viz „Struktura `src/landing/`" |
 | `src/hooks/` | hooky kolekcí a globalů; revalidační stavíte přes `createRevalidateHooks` |
 | `src/collections`, `globals`, `fields`, `plugins`, `jobs`, `ahl`, `email`, `endpoints` | Payload config a serverová logika mimo frontend |
@@ -485,45 +485,53 @@ mechanismus na to Next nemá.
   vrstvy (`revalidateTag` → `cacheTag`/`cacheLife`), takže vlastní větev
   a vlastní měření.
 
-# Ochrana formulářů (reCAPTCHA v3)
+# Ochrana formulářů (Cloudflare Turnstile)
 
-Klíče: `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` a `RECAPTCHA_SECRET`. Bez nich se
-ověření **mimo produkci přeskakuje** (dev a CI nepotřebují účet u Googlu),
-v produkci se odeslání odmítne. Skóre pod `0.5` neprojde
-(`src/lib/recaptcha/config.ts` — jediný zdroj akcí i thresholdu pro
-klient, plugin i server action).
+Od 27. 11. 2026 místo reCAPTCHA v3 (Google). Důvody: Turnstile nepoužívá
+cookies ani úložiště v prohlížeči (zásady cookies nepotřebují řádek
+`_GRECAPTCHA`), nemá skóre, které by odmítalo legitimní návštěvníky, a doména
+už je u Cloudflare. reCAPTCHA navíc v produkci nebyla nastavená vůbec
+(`RECAPTCHA_SECRET` chyběl, takže kontaktní formulář každé odeslání odmítal).
 
-Dva odesílací kanály, dvě různé ochrany, protože plugin
-`payload-recaptcha-v3` ověřuje **jen operace přes REST**
-(`payloadAPI === 'REST'`, viz jeho `dist/hookBuilder.js`):
+Klíče: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (GitHub Variable, zapéká se do
+buildu) a `TURNSTILE_SECRET_KEY` (runtime env v Coolify, **ne** do repa ani
+do Variables). Bez nich se ověření **mimo produkci přeskakuje** (dev a CI
+nepotřebují účet u Cloudflaru), v produkci se odeslání odmítne. Site key a
+secret jsou z jednoho widgetu v Cloudflare → Turnstile (režim Managed,
+domény `hccestice.cz`, `www.hccestice.cz`, `localhost`).
+
+Dva odesílací kanály, dvě různé ochrany — a **nikdy obě na jeden požadavek**,
+protože token je jednorázový a druhé ověření Cloudflare odmítne:
 
 | kanál | ochrana |
 |---|---|
-| `landing/blocks/Form` → `POST /api/form-submissions` | plugin, přes `custom.recaptcha` na `formSubmissionOverrides` |
-| `landing/features/contact` → server action, local API | `verifyRecaptchaToken()` v `action.ts` |
+| `landing/blocks/Form` → `POST /api/form-submissions` (REST) | hook `hooks/verifyTurnstile` (`beforeOperation` na `form-submissions`, přes `formSubmissionOverrides.hooks`), token v hlavičce `x-turnstile-token` |
+| `landing/features/contact` → server action, local API | `verifyTurnstileToken()` v `action.ts` |
 
-Token si obě komponenty berou z hooku `useRecaptcha()`, který skript Googlu
-vkládá **líně z formuláře** (ne z layoutu, aby se nestahoval na stránkách
-bez formuláře). Když site key chybí, vrací `null` a požadavek jde bez
-hlavičky — rozhodnutí zůstává na serveru.
+Hook hlídá jen `payloadAPI === 'REST'` a přihlášené (`req.user`) pouští —
+admin panel jde taky přes REST, takže bez toho by správce nemohl s odeslanými
+formuláři pracovat.
+
+Klient: `lib/turnstile/useTurnstile` vrací `{ containerRef, getToken, reset }`.
+Skript se vkládá **líně z formuláře** (ne z layoutu), widget je
+`appearance: 'interaction-only'`, tedy neviditelný, dokud návštěvníka
+nepotřebuje vyzvat. `getToken()` čeká na vyřešenou výzvu nejvýš 10 s; bez site
+key vrací `null` a požadavek jde bez hlavičky — rozhodnutí zůstává na
+serveru. Po každém odeslání se volá `reset()`, protože token je jednorázový.
 
 Pravidla, když se toho budete dotýkat:
 
-- `reCAPTCHAv3()` musí být v `plugins` **za** `formBuilderPlugin` (čte
-  `custom.recaptcha` z kolekce, kterou formBuilder zakládá) a **před**
-  `auditor()`.
-- `skip` musí pouštět přihlášené (`Boolean(req.user)`). Admin panel jde taky
-  přes REST, takže bez toho by správce nemohl s odeslanými formuláři
-  pracovat.
-- Balíček má **rozbitý packaging**: `package.json#types` míří na
-  `dist/index.d.ts`, ale deklarace jsou v `dist/src/`. Řeší to ambientní
-  deklarace `src/types/payload-recaptcha-v3.d.ts`. Cesta přes
-  `tsconfig#paths` **nefunguje** — alias se použije i pro runtime resolution
-  (bun i turbopack), Next pak importuje `.d.ts` a celý server padá na
-  `TypeError: (void 0) is not a function`.
-- Peer dependency balíčku je `next ^15`, projekt má 16 — bun jen varuje.
-  Interní `import 'next/headers.js'` se rezolvuje, protože `next` nemá
-  `exports` mapu.
+- `lib/turnstile/verify.ts` je **bez `server-only`** záměrně: importuje ho
+  hook dosažitelný z `payload.config.ts`, a ten by mimo Next runtime shodil
+  `payload migrate` a seed skripty (viz „`server-only`"). Secret se čte jen
+  tady a nikdy se neimportuje z klientské komponenty.
+- Ověření je **fail closed**: výpadek nebo chyba siteverify odeslání odmítne
+  (timeout 5 s). Cloudflare ale nevypadává často a spam ze zablokovaného
+  formuláře je menší škoda než otevřená brána.
+- CSP (`next.config.ts`, zatím report-only): `challenges.cloudflare.com`
+  v `script-src`, `frame-src` a `connect-src`.
+- Nemá `payload-recaptcha-v3` ani ambientní deklarace; balíček z
+  `package.json` zmizel.
 
 # E-maily
 

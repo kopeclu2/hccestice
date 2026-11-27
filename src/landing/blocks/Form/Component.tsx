@@ -7,8 +7,8 @@ import { useForm, FormProvider } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { getClientSideURL } from '@/lib/getURL'
-import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
-import { useRecaptcha } from '@/lib/recaptcha/useRecaptcha'
+import { TURNSTILE_HEADER } from '@/lib/turnstile/config'
+import { useTurnstile } from '@/lib/turnstile/useTurnstile'
 
 import { fields } from './fields'
 
@@ -60,7 +60,7 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
-  const { execute: executeRecaptcha } = useRecaptcha()
+  const { containerRef: turnstileRef, getToken, reset: resetTurnstile } = useTurnstile()
 
   const onSubmit = useCallback(
     (data: FormFieldBlock[]) => {
@@ -79,10 +79,10 @@ export const FormBlock: React.FC<
         }, 1000)
 
         try {
-          // Ochrana proti spamu — token ověřuje plugin `payload-recaptcha-v3`
+          // Ochrana proti spamu — token ověřuje hook `verifyTurnstile`
           // v `beforeOperation` na kolekci `form-submissions`. Bez site key
           // (lokální dev) je token `null` a hlavička se neposílá.
-          const recaptchaToken = await executeRecaptcha(RECAPTCHA_ACTIONS.formSubmission)
+          const turnstileToken = await getToken()
 
           const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
             body: JSON.stringify({
@@ -91,10 +91,13 @@ export const FormBlock: React.FC<
             }),
             headers: {
               'Content-Type': 'application/json',
-              ...(recaptchaToken ? { 'x-recaptcha-v3': recaptchaToken } : {}),
+              ...(turnstileToken ? { [TURNSTILE_HEADER]: turnstileToken } : {}),
             },
             method: 'POST',
           })
+
+          // Token je jednorázový; po neúspěšném odeslání si formulář řekne o nový.
+          resetTurnstile()
 
           const res = await req.json()
 
@@ -132,7 +135,7 @@ export const FormBlock: React.FC<
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType, executeRecaptcha],
+    [router, formID, redirect, confirmationType, getToken, resetTurnstile],
   )
 
   return (
@@ -176,6 +179,9 @@ export const FormBlock: React.FC<
                     return null
                   })}
               </div>
+
+              {/* Turnstile v režimu „interaction-only“: bez výzvy nic nekreslí. */}
+              <div ref={turnstileRef} />
 
               <Button
                 className="h-11 w-full md:h-10 md:w-auto"

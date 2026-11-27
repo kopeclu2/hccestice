@@ -7,9 +7,9 @@ declare global {
       VERCEL_PROJECT_PRODUCTION_URL: string
       CRON_SECRET?: string
       PREVIEW_SECRET?: string
-      /** Google reCAPTCHA v3 — bez klíčů se ověření mimo produkci přeskakuje. */
-      NEXT_PUBLIC_RECAPTCHA_SITE_KEY?: string
-      RECAPTCHA_SECRET?: string
+      /** Cloudflare Turnstile — bez klíčů se ověření mimo produkci přeskakuje. */
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY?: string
+      TURNSTILE_SECRET_KEY?: string
     }
   }
 }

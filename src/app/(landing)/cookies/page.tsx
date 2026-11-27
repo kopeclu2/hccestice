@@ -78,17 +78,13 @@ export default async function CookiesPage() {
                 <td>Ukládá vaši volbu v nastavení cookies.</td>
                 <td>6 měsíců</td>
               </tr>
-              <tr>
-                <td>_GRECAPTCHA</td>
-                <td>Google (reCAPTCHA)</td>
-                <td>
-                  Ochrana kontaktního a objednávkového formuláře proti spamu a automatizovaným
-                  odesláním. Nastaví se jen při otevření formuláře.
-                </td>
-                <td>6 měsíců</td>
-              </tr>
             </tbody>
           </table>
+          <p>
+            Formuláře chrání před spamem služba Cloudflare Turnstile. Nepoužívá cookies ani jiné
+            úložiště v prohlížeči, ale při odeslání formuláře Cloudflare zpracuje vaši IP adresu a
+            technické údaje o prohlížeči, aby poznal, že formulář odesílá člověk.
+          </p>
 
           {GA_MEASUREMENT_ID && (
             <>

@@ -4,8 +4,7 @@ import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 
 import { getClientIp, isRateLimited } from '@/lib/rateLimit'
-import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
-import { verifyRecaptchaToken } from '@/server/recaptcha/verify'
+import { verifyTurnstileToken } from '@/lib/turnstile/verify'
 import configPromise from '@payload-config'
 
 import { contactSchema, type ContactResult, type ContactValues } from './schema'
@@ -19,12 +18,12 @@ const CONTACT_FORM_TITLE = 'Kontakt — landing page'
  * Vstup se validuje znovu na serveru (klientská validace je jen UX) —
  * do CMS nikdy nesmí projít nevalidní payload.
  *
- * Ochranu proti spamu tu musíme řešit sami: plugin `payload-recaptcha-v3`
- * hlídá jen REST operace, tahle action jde přes local API.
+ * Ochranu proti spamu tu musíme řešit sami: hook `verifyTurnstile` na
+ * `form-submissions` hlídá jen REST operace, tahle action jde přes local API.
  */
 export async function sendContactMessage(
   values: ContactValues,
-  recaptchaToken: string | null,
+  turnstileToken: string | null,
 ): Promise<ContactResult> {
   const parsed = contactSchema.safeParse(values)
   if (!parsed.success) {
@@ -39,16 +38,15 @@ export async function sendContactMessage(
 
   const payload = await getPayload({ config: configPromise })
 
-  const verified = await verifyRecaptchaToken({
-    token: recaptchaToken,
-    action: RECAPTCHA_ACTIONS.contact,
-    // Google čeká jednu adresu, ne celý řetěz `x-forwarded-for`.
+  const verified = await verifyTurnstileToken({
+    token: turnstileToken,
+    // Cloudflare čeká jednu adresu, ne celý řetěz `x-forwarded-for`.
     remoteIp: clientIp === 'unknown' ? null : clientIp,
   })
   if (!verified.ok) {
     payload.logger.warn(
       { reason: verified.reason },
-      'reCAPTCHA odmítla odeslání kontaktního formuláře',
+      'Turnstile odmítl odeslání kontaktního formuláře',
     )
     return { ok: false, error: 'Nepodařilo se ověřit, že nejste robot. Zkuste to prosím znovu.' }
   }
