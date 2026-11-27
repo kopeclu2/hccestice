@@ -1832,7 +1832,13 @@ Všichni přihlášení uživatelé jsou si rovni (žádné role) — `users` z�
   `hasBearerSecret`) — `CRON_SECRET`, `PREVIEW_SECRET`, `jobs.access.run`.
   Cílová cesta `/next/preview` projde přes `lib/previewPath` (open redirect).
 - **`getClientIp`** bere poslední záznam `x-forwarded-for`, záloha `x-real-ip`.
-  Traefik (Coolify) klientské hlavičky zahazuje a IP nastaví sám.
+  Traefik (Coolify) klientské hlavičky zahazuje a IP nastaví sám. Doména je
+  od 27. 11. 2026 za proxy Cloudflare, takže Traefik vidí jen jejich uzel:
+  když přímý peer patří Cloudflare (`lib/cloudflareIps`), použije se
+  `cf-connecting-ip`. Z jiné adresy se hlavička ignoruje, takže ji nepodvrhne
+  ten, kdo se připojí přímo na IP serveru. Rozsahy Cloudflare jsou ve zdroji
+  natvrdo (https://www.cloudflare.com/ips-v4, `/ips-v6`; staženo 27. 11. 2026) —
+  změní-li je, přepsat seznam.
 - **Přihlášení**: `collections/Users/hooks/guardAuthOperations.ts` — rate limit
   login (10 / 10 min / IP) a forgot-password (3 / 15 min / IP), odpověď 429;
   heslo min. 12 znaků při `create` / `update` / `resetPassword`. Hlídá se jen
@@ -1951,8 +1957,22 @@ dojde na routu — chyba je v Nextu nebo `proxy.ts`, neprověřeno.
 Nálezy na serveru (firewall, zálohy, domény, přístup buildu k DB) se do repa
 **nepíšou** — repo je veřejné. Checklist drží správce mimo repo. Pro kód platí:
 Traefik `X-Forwarded-For` od klienta nepřebírá (bez `forwardedHeaders`), takže
-`getClientIp` dostává skutečnou IP; kdyby se před web postavila CDN nebo
-`forwardedHeaders.trustedIPs`, je potřeba `getClientIp` znovu promyslet.
+`getClientIp` dostává IP přímého peera. Ten je od 27. 11. 2026 uzel Cloudflare
+a skutečnou IP návštěvníka nese `cf-connecting-ip` (viz „Zabezpečení: přístup
+a API"). Kdyby se v Traefiku zapnulo `forwardedHeaders.trustedIPs`, je potřeba
+`getClientIp` znovu promyslet.
+
+## Cloudflare (DNS a proxy)
+
+DNS zóna je u Cloudflare (nameservery `meg`/`odin`), registrátor zůstává WEDOS.
+Webové záznamy (`@`, `www`) jsou proxied, **poštovní nikdy**: `mail`, `pop3`,
+`smtp`, `webmail` a MX musí být DNS only, jinak SMTP přes proxy nejde (port 25).
+Pošta `@hccestice.cz` běží u WebsiteMasteru (eStránky), ne na tomhle serveru.
+SSL režim musí být **Full (strict)**; Flexible dá smyčku přesměrování, protože
+Traefik přesměruje HTTP na HTTPS. `www` přesměrovává na apex aplikace
+(`redirects.ts`, první pravidlo, 301), ne pravidlo v Cloudflare. Při importu
+zóny Cloudflare přebírá staré záznamy včetně wildcardu `*` a zapíná jim proxy —
+chybějící `mail` se tak projevil tím, že MX mířil na proxy.
 
 # Hlavní navigace: karta `SiteNav`
 

@@ -1,3 +1,7 @@
+import { isIP } from 'node:net'
+
+import { isCloudflareIp } from './cloudflareIps'
+
 const WINDOW_MS = 60_000
 const MAX_REQUESTS = 5
 
@@ -49,6 +53,12 @@ export function isRateLimited(
  * totéž. Poslední je robustnější, kdyby se proxy řetěz někdy prodloužil
  * nebo se nastavení Traefiku změnilo. Záloha je `x-real-ip`; bez obou
  * hlaviček (dev, testy) vrací `'unknown'`.
+ *
+ * Za proxy Cloudflare (od 27. 11. 2026) vidí Traefik jako klienta jen jejich
+ * uzel, takže ta adresa by sloučila všechny návštěvníky přes týž uzel do
+ * jednoho. Skutečnou IP nese `cf-connecting-ip` — věří se jí **jen tehdy,
+ * když přímý peer (výše určená adresa) patří Cloudflare**. Kdo se připojí
+ * přímo na IP serveru, Cloudflare není a hlavičku si tak nepodvrhne.
  */
 export function getClientIp(headers: Headers): string {
   const forwarded = headers
@@ -56,5 +66,12 @@ export function getClientIp(headers: Headers): string {
     ?.split(',')
     .map((part) => part.trim())
     .filter(Boolean)
-  return forwarded?.at(-1) || headers.get('x-real-ip')?.trim() || 'unknown'
+  const peer = forwarded?.at(-1) || headers.get('x-real-ip')?.trim()
+
+  if (peer && isCloudflareIp(peer)) {
+    const visitor = headers.get('cf-connecting-ip')?.trim()
+    if (visitor && isIP(visitor) !== 0) return visitor
+  }
+
+  return peer || 'unknown'
 }
