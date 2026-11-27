@@ -1,8 +1,7 @@
 import React from 'react'
 
 import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker, Eyebrow } from '@/landing/ui/Kicker'
-import { cn } from '@/lib/utils'
+import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
 
 /** Varianta hlavičky: linka (stránka /zapasy) nebo landing nadpis (home). */
 export type SectionHeadVariant = 'rule' | 'landing'
@@ -17,7 +16,7 @@ export type SectionHeadVariant = 'rule' | 'landing'
  *   (h3), takže dva stejně vypadající vzory měly jiný stupeň typografie
  *   a /zapasy nemělo na stránce žádné h2.
  * - `landing` (home page) — stejný vzor jako ostatní sekce landingu:
- *   kicker s popiskem, pod ním velký nadpis s lime zvýrazněním poslední
+ *   velký nadpis (bez štítku nad ním; `note` se tu nezobrazuje) s lime zvýrazněním poslední
  *   části a vpravo ovládání (proklik na /zapasy).
  */
 export function SectionHead({
@@ -42,8 +41,7 @@ export function SectionHead({
     return (
       <div className="flex flex-wrap items-end gap-x-5 gap-y-3.5">
         <div className="min-w-0">
-          {note && <Kicker>{note}</Kicker>}
-          <SectionTitle className={cn('text-pretty', note && 'mt-4')} size="md">
+          <SectionTitle className="text-pretty" size="md">
             {start ? `${start} ` : ''}
             <Highlight>{highlight}</Highlight>
           </SectionTitle>

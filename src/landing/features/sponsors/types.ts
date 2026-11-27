@@ -2,7 +2,7 @@ import type { Photo } from '@/landing/types'
 
 /** View-modely sponzorů. */
 
-/** Sponzor z CMS — marquee pás na homepage i řádková karta na /sponzori. */
+/** Sponzor z CMS — mřížka log na homepage i řádková karta na /sponzori. */
 export type Sponsor = {
   id: number
   name: string

@@ -30,7 +30,7 @@ export function PhotoTile({
    * Směr ztmavení: `bottom` pod textem dole, `bottom-soft` totéž jemněji
    * (nižší dlaždice mozaiky), `full` hero varianta, `none`.
    */
-  gradient?: 'bottom' | 'bottom-soft' | 'full' | 'none'
+  gradient?: 'bottom' | 'bottom-soft' | 'tint' | 'full' | 'none'
   /** `sizes` pro next/image podle šířky dlaždice v layoutu. */
   sizes?: string
   priority?: boolean
@@ -60,6 +60,13 @@ export function PhotoTile({
            by na ní ztmavil skoro celou fotku — handoff tu má nástup později
            a slabší konec. */
         <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-pine-deep/0 from-55% to-pine-deep/66" />
+      )}
+      {gradient === 'tint' && (
+        <>
+          {/* lehký zelený klubový filtr přes fotku + ztmavení odspodu pro text (hero) */}
+          <div className="pointer-events-none absolute inset-0 mix-blend-multiply [background:linear-gradient(160deg,--alpha(var(--color-club)/22%),--alpha(var(--color-club-dark)/12%)_60%,--alpha(var(--color-pine-deep)/10%))]" />
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-pine-deep/0 from-40% to-pine-deep/80" />
+        </>
       )}
       {gradient === 'full' && (
         <>

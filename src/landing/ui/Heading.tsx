@@ -21,11 +21,11 @@ const pageTitleVariants = cva('leading-none tracking-title', {
   variants: {
     /**
      * Hero na home page a `HeroTypo` stojí na normálním řezu s bold
-     * zvýrazněním uvnitř (`Highlight`), ostatní nadpisy jsou extrabold.
+     * zvýrazněním uvnitř (`Highlight`), ostatní nadpisy jsou bold.
      */
     weight: {
       normal: 'font-normal',
-      extrabold: 'font-extrabold',
+      bold: 'font-bold',
     },
     size: {
       /** Hero home page — největší nadpis na webu. */
@@ -56,7 +56,7 @@ const pageTitleVariants = cva('leading-none tracking-title', {
       pretty: 'text-pretty',
     },
   },
-  defaultVariants: { size: 'lg', balance: 'balance', weight: 'extrabold' },
+  defaultVariants: { size: 'lg', balance: 'balance', weight: 'bold' },
 })
 
 export type PageTitleProps = React.ComponentProps<'h1'> & VariantProps<typeof pageTitleVariants>
@@ -78,17 +78,18 @@ export function PageTitle({
 
 /* ── h2 ─────────────────────────────────────────────────────────────────── */
 
-/* Váha patří k velikosti: `md` je v celém handoffu bold, zvýrazněné
- * varianty extrabold. Nesjednocovat — je to záměrný rozdíl v důrazu. */
+/* Všechny velikosti stojí na stejné váze (semibold): dřív mělo `md` jinou
+ * váhu než `lg`/`xl` a nadpisy sekcí na jedné stránce nevypadaly jednotně.
+ * Rozdíl v důrazu drží velikost, ne váha. */
 const sectionTitleVariants = cva('', {
   variants: {
     size: {
       /** Základní nadpis sekce — 30px mobil, 36px desktop. */
-      md: 'text-3xl leading-tight font-bold tracking-tight md:text-4xl',
+      md: 'text-3xl leading-tight font-semibold tracking-tight md:text-4xl',
       /** Zvýrazněná sekce (CTA banner, hero panel) — 30px → 36px. */
-      lg: 'text-3xl leading-tight font-extrabold tracking-heading text-pretty md:text-4xl',
+      lg: 'text-3xl leading-tight font-semibold tracking-heading text-pretty md:text-4xl',
       /** Claim ve footeru — největší nadpis mimo hero, 30px → 48px. */
-      xl: 'text-3xl leading-tight font-extrabold tracking-title text-pretty md:text-5xl',
+      xl: 'text-3xl leading-tight font-semibold tracking-title text-pretty md:text-5xl',
     },
   },
   defaultVariants: { size: 'md' },
@@ -120,18 +121,18 @@ export function SectionTitle({
 
 /* ── h3 / h4 ────────────────────────────────────────────────────────────── */
 
-/* Stejně jako u `SectionTitle`: `md` je bold, ostatní extrabold. */
+/* Stejně jako u `SectionTitle`: všechny velikosti na jedné váze (semibold). */
 const cardTitleVariants = cva('', {
   variants: {
     size: {
       /** Nadpis v hustém výpisu (řádek zápasu, milník, mini dlaždice) — 18px. */
-      xs: 'text-lg leading-tight font-extrabold',
+      xs: 'text-lg leading-tight font-semibold',
       /** Nadpis karty v gridu (článek, galerie, trénink) — 20px. */
-      sm: 'text-xl leading-heading font-extrabold tracking-subheading text-pretty',
+      sm: 'text-xl leading-heading font-semibold tracking-subheading text-pretty',
       /** Základní nadpis karty — 24px. */
-      md: 'text-2xl font-bold tracking-tight',
+      md: 'text-2xl font-semibold tracking-tight',
       /** Nadpis velkého panelu — 24px mobil, 30px desktop. */
-      lg: 'text-2xl font-extrabold tracking-tight md:text-3xl',
+      lg: 'text-2xl font-semibold tracking-tight md:text-3xl',
     },
   },
   defaultVariants: { size: 'md' },

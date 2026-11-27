@@ -7,7 +7,6 @@ import { AdminBar } from '@/components/AdminBar'
 import { CookieConsentInit } from '@/components/CookieConsent/CookieConsentInit'
 import { GlobalNav } from '@/landing/layout/GlobalNav'
 import { MaintenanceNotice } from '@/landing/layout/MaintenanceNotice'
-import { PatternDevSwitcher } from '@/landing/layout/PatternDevSwitcher'
 import { LANDING_COLORS } from '@/landing/tokens'
 import { getServerSideURL } from '@/lib/getURL'
 import { defaultTwitter, mergeOpenGraph } from '@/lib/mergeOpenGraph'
@@ -75,10 +74,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             z prvního plátna mizí a web by jinak zbytek stránky
             nechal bez menu. */}
         <GlobalNav />
-        {children}
 
-        {/* DEV nástroj: plovoucí přepínač vzorů pozadí (jen ve vývoji) */}
-        {process.env.NODE_ENV === 'development' && <PatternDevSwitcher />}
+        {children}
 
         {/* Bez `NEXT_PUBLIC_GA_MEASUREMENT_ID` nabídne modál jen nezbytné
             cookies — kategorie „Analytické" se v konfiguraci vůbec nevytvoří

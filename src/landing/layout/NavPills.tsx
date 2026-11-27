@@ -17,7 +17,7 @@ import type { NavItem } from '@/landing/features/navigation/types'
  * v `navHref.ts`, sdílený s `NavMobile`) zajistí, že detail článku zvýrazní
  * „Aktuality".
  *
- * Pilulky se zapínají až na `nav` (1440px, vlastní breakpoint v
+ * Pilulky se zapínají až na `nav` (1280px, vlastní breakpoint v
  * `globals.css`), ne na `md`. Deset položek navigace potřebuje vedle loga
  * a CTA ~1330px (s `gap-1.5`); na 768px i na 1024px se
  * poslední pilulky (včetně té aktivní) schovaly za CTA a zbytek byl

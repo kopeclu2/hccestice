@@ -85,21 +85,7 @@ function HistoryView({ content }: { content: HistoryContent }) {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <blockquote className="mt-8 max-w-176">
-            <p className="text-xl leading-heading font-bold tracking-heading text-ink">
-              <span aria-hidden className="text-lime">
-                „
-              </span>
-              {content.quoteStart} <Highlight>{content.quoteHighlight}</Highlight>
-              {content.quoteEnd}
-              <span aria-hidden className="text-lime">
-                “
-              </span>
-            </p>
-            <footer className="mt-2 text-sm font-medium text-faint">{content.quoteSource}</footer>
-          </blockquote>
-
-          <div className="mt-4">
+          <div className="mt-6">
             <MoreLink href={HISTORY_HREF}>{content.ctaLabel}</MoreLink>
           </div>
         </Reveal>

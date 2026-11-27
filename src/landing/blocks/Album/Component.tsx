@@ -11,7 +11,7 @@ import { Badge } from '@/landing/ui/Badge'
 import { MaybeLink } from '@/landing/ui/CardGrid'
 import { EmptyState } from '@/landing/ui/EmptyState'
 import { CardTitle, SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Highlight } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
 import { PhotoTile, TileArrow } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
@@ -140,8 +140,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
       <Reveal>
         <div className="mb-10 flex flex-wrap items-end gap-4">
           <div>
-            <Kicker>Fotoalbum</Kicker>
-            <SectionTitle className="mt-3.5">
+            <SectionTitle>
               Sezóna očima <Highlight dot>fanoušků</Highlight>
             </SectionTitle>
           </div>

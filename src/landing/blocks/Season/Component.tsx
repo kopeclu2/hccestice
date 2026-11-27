@@ -103,7 +103,6 @@ function SeasonView({
             fixtures={fixtures}
             headVariant="landing"
             moreHref={ZAPASY_HREF}
-            omitNearest
             spacing="landing"
           />
         </Reveal>

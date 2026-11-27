@@ -26,7 +26,8 @@ export const LandingNews: Block = {
           min: 3,
           max: 5,
           admin: {
-            description: 'Sekce je výřez — plný výpis je na /aktuality.',
+            description:
+              'Sekce je výřez — plný výpis je na /aktuality. Zobrazí se 2 nebo 5 karet (plné řádky mřížky).',
           },
         },
       ],

@@ -24,7 +24,7 @@ export type GalleryPhoto = { photo: Photo; caption: string | null }
 const BATCH = 60
 
 /**
- * Mřížka fotek detailu galerie s lightboxem (yet-another-react-lightbox —
+ * Řádková galerie fotek detailu galerie s lightboxem (yet-another-react-lightbox —
  * virtualizuje slidy, u velkých alb renderuje jen sousední fotky).
  * Galerie mají až stovky fotek, proto se dlaždice zobrazují po dávkách.
  */
@@ -41,36 +41,44 @@ export function PhotoMasonry({ photos }: { photos: GalleryPhoto[] }) {
 
   return (
     <>
-      {/* Dva sloupce už na mobilu: jeden sloupec fotek přes celou šířku dělal
-          z 60fotkové dávky ~13 000px svislého scrollu. Užší mezera a menší
-          odstup pod dlaždicí drží mozaiku na 320px pohromadě. */}
-      <div className="columns-2 gap-x-2.5 md:columns-3 md:gap-x-4">
-        {photos.slice(0, visibleCount).map(({ photo }, index) => (
-          <button
-            aria-label={`Otevřít fotku ${index + 1}`}
-            className="relative mb-2.5 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-thumb bg-pine md:mb-4"
-            key={`${photo.url}-${index}`}
-            onClick={() => setOpenIndex(index)}
-            style={{ aspectRatio: String(photo.width / photo.height) }}
-            type="button"
-          >
-            {/* Jen první dlaždice je `eager` + `fetchPriority="high"` (LCP kandidát):
-                Next u každého eager obrázku přidá `<link rel="preload">`, další
-                by se s ní přetahovaly o šířku pásma. Zbytek je lazy.
-                `sizes` je psané přes `min-width`: na přesně 768px už platí
-                `md:columns-3`, ale `max-width: 48rem` tam ještě tvrdilo
-                50vw (384px) do dlaždice o ~230px. */}
-            <Image
-              alt={photo.alt}
-              className="object-cover transition-transform duration-300 hover:scale-[1.03]"
-              fetchPriority={index === 0 ? 'high' : undefined}
-              fill
-              loading={index === 0 ? 'eager' : 'lazy'}
-              sizes="(min-width: 48rem) 33vw, 50vw"
-              src={getMediaUrl(photo.url, photo.updatedAt)}
-            />
-          </button>
-        ))}
+      {/* Řádkové (justified) rozložení místo sloupcové mozaiky: každá řada má
+          stejnou výšku (`--row-h`) a fotky se v ní roztáhnou na celou šířku
+          podle poměru stran (`flex-grow`/`flex-basis` úměrné poměru). Vysoká
+          fotka tak nevisí přes dvě řady a další řady se nerozhazují. Poslední
+          řadu drží `after` s velkým `grow`, aby se jedna fotka nenatáhla přes
+          celou šířku. Řazení jde zleva doprava po řádcích. */}
+      <div className="flex flex-wrap gap-2.5 [--row-h:7.5rem] after:grow-1000 after:content-[''] md:gap-4 md:[--row-h:13rem]">
+        {photos.slice(0, visibleCount).map(({ photo }, index) => {
+          const ratio = photo.width / photo.height
+          return (
+            <button
+              aria-label={`Otevřít fotku ${index + 1}`}
+              className="relative block cursor-zoom-in overflow-hidden rounded-thumb bg-pine"
+              key={`${photo.url}-${index}`}
+              onClick={() => setOpenIndex(index)}
+              style={{
+                aspectRatio: String(ratio),
+                flexBasis: `calc(var(--row-h) * ${ratio})`,
+                flexGrow: Math.round(ratio * 100),
+              }}
+              type="button"
+            >
+              {/* Jen první dlaždice je `eager` + `fetchPriority="high"` (LCP kandidát):
+                  Next u každého eager obrázku přidá `<link rel="preload">`, další
+                  by se s ní přetahovaly o šířku pásma. Zbytek je lazy. Šířka
+                  dlaždice se řídí poměrem stran, `sizes` je proto hrubý odhad. */}
+              <Image
+                alt={photo.alt}
+                className="object-cover transition-transform duration-300 hover:scale-[1.03]"
+                fetchPriority={index === 0 ? 'high' : undefined}
+                fill
+                loading={index === 0 ? 'eager' : 'lazy'}
+                sizes="(min-width: 48rem) 40vw, 60vw"
+                src={getMediaUrl(photo.url, photo.updatedAt)}
+              />
+            </button>
+          )
+        })}
       </div>
 
       {visibleCount < photos.length && (

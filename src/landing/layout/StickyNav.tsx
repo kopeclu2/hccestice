@@ -1,43 +1,24 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
-import { ctaHref } from '@/landing/features/navigation/navHref'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
-import { LogoStamp } from '@/landing/ui/LogoStamp'
 import { cn } from '@/lib/utils'
 
-import { NavMobile } from './NavMobile'
-import { NavPills } from './NavPills'
+import { NavCardBar } from './SiteNav'
 
 /** Po kolika pixelech scrollu se lišta zjeví — zhruba půl obrazovky. */
 const SCROLL_THRESHOLD = 480
 
 /**
- * Kompaktní světlá navigace, fixní nahoře stránky, skrytá dokud
- * návštěvník nescrolluje. Doplňuje dva existující, ale nedostačující
- * zdroje navigace:
+ * Plovoucí navigace po scrollu: stejná bílá karta jako `SiteNav`, jen fixní
+ * nahoře okna a skrytá, dokud návštěvník nescrolluje. Statická karta v toku
+ * stránky totiž odscrolluje pryč a zbytek (dlouhé) stránky by zůstal bez menu.
  *
- * - plovoucí `LandingNav` v Hero fotce (homepage) — je jen `absolute`
- *   uvnitř bloku Hero, po scrollu pryč z fotky mizí úplně.
- * - statická `ArticleNav` podstránek — scrolluje pryč s obsahem, není
- *   `sticky`.
- *
- * Bez týhle lišty tak návštěvník na zbytku (dlouhé) stránky nemá až do
- * patičky žádné menu — viz `AGENTS.md`, sekce „Známé mezery".
- *
- * `context` (home/subpage) se odvozuje z `usePathname()`, ne z propu —
- * lišta žije jednou v root layoutu (`(landing)/layout.tsx`), ne na
- * každé stránce zvlášť.
+ * Žije jednou v root layoutu (`(landing)/layout.tsx`); `context` (home/subpage)
+ * si karta odvozuje z `usePathname()`.
  */
 export function StickyNav({ items, cta }: { items: NavItem[]; cta: NavCta }) {
-  const pathname = usePathname()
-  const context = pathname === '/' ? 'home' : 'subpage'
-  const href = ctaHref(cta.href, context)
-
   const [visible, setVisible] = React.useState(false)
 
   React.useEffect(() => {
@@ -51,28 +32,16 @@ export function StickyNav({ items, cta }: { items: NavItem[]; cta: NavCta }) {
     <div
       aria-hidden={!visible}
       className={cn(
-        'fixed inset-x-0 top-0 z-30 border-b border-line bg-surface/95 shadow-tile backdrop-blur-lg transition-all duration-300',
+        'fixed inset-x-0 top-0 z-30 px-gutter-tight pt-2 transition-all duration-300',
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-full opacity-0',
       )}
-      // Skrytá lišta byla jen `opacity-0`/`pointer-events-none` — vizuálně
-      // zmizí, ale odkazy uvnitř zůstávaly v tab-pořadí. Klávesnicoví
-      // uživatelé tak před viditelným obsahem procházeli přes neviditelné
-      // logo, pilulky a CTA. `inert` je vyřadí z tab-pořadí i z přístupnostního
-      // stromu úplně, dokud se lišta po scrollu nezjeví.
+      // Skrytá lišta byla jen `opacity-0`/`pointer-events-none` — odkazy uvnitř
+      // zůstávaly v tab-pořadí. `inert` je vyřadí z tab-pořadí i z přístupnostního
+      // stromu, dokud se lišta po scrollu nezjeví.
       inert={!visible}
     >
-      <nav className="mx-auto flex max-w-page items-center gap-2.5 px-gutter py-2.5">
-        <LogoStamp bordered href={context === 'home' ? '#home' : '/'} />
-
-        <NavPills items={items} />
-
-        <div className="min-w-5 flex-1" />
-
-        <Button asChild className="max-md:hidden" size="md" variant="dark" withArrow>
-          <Link href={href}>{cta.label}</Link>
-        </Button>
-
-        <NavMobile context={context} ctaHref={href} ctaLabel={cta.label} items={items} />
+      <nav aria-label="Hlavní navigace po scrollu">
+        <NavCardBar className="shadow-tile backdrop-blur-lg" cta={cta} items={items} />
       </nav>
     </div>
   )

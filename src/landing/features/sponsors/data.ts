@@ -8,9 +8,9 @@ import { uploadToPhoto } from '@/landing/lib/media'
 import { cleanPhone } from '@/lib/phone'
 import type { Sponsor as SponsorDoc } from '@/payload-types'
 
-/** Sponzoři — marquee pás, spotlight karta a stránka partnerů. */
+/** Sponzoři — mřížka na homepage, spotlight karta a stránka partnerů. */
 
-/** Aktivní sponzoři pro marquee pás i výpis na /sponzori. */
+/** Aktivní sponzoři pro mřížku na homepage i výpis na /sponzori. */
 export const fetchSponsors = cache(async (): Promise<Sponsor[]> => {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({

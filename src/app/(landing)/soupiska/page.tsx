@@ -4,7 +4,6 @@ import React from 'react'
 import { fetchAllPeople } from '@/landing/data/site'
 import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import type { RosterCard } from '@/landing/features/roster/components/PlayerTile'
-import { RosterCta } from '@/landing/features/roster/components/RosterCta'
 import { RosterHeader } from '@/landing/features/roster/components/RosterHeader'
 import { RosterSection } from '@/landing/features/roster/components/RosterSection'
 import {
@@ -124,8 +123,6 @@ export default async function SoupiskaPage() {
           />
         )}
       </SectionShell>
-
-      <RosterCta />
     </SubpageShell>
   )
 }

@@ -5,7 +5,7 @@ import React from 'react'
 import type { ContactContent } from '@/landing/features/contact/types'
 import type { PersonCard, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Highlight } from '@/landing/ui/Kicker'
 import { Reveal } from '@/landing/ui/Reveal'
 import { telHref } from '@/lib/phone'
 import { cn } from '@/lib/utils'
@@ -48,8 +48,7 @@ export function ContactCard({
         >
           {intro && (
             <>
-              <Kicker className="relative">{content.kicker}</Kicker>
-              <SectionTitle className="relative mx-auto mt-5 mb-2.5" size="xl">
+              <SectionTitle className="relative mx-auto mb-2.5" size="xl">
                 Pojďme na <Highlight dot>led</Highlight>
               </SectionTitle>
               <p className="relative mx-auto mb-9 max-w-120 leading-relaxed text-pretty text-dim">

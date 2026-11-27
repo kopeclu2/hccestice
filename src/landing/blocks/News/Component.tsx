@@ -6,7 +6,7 @@ import type { PostCard } from '@/landing/features/posts/types'
 import { toPostCard } from '@/landing/features/posts/view/posts'
 import type { Photo } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
-import { Highlight, Kicker } from '@/landing/ui/Kicker'
+import { Highlight } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -14,11 +14,18 @@ import { routes } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 import type { LandingNewsBlock, Post } from '@/payload-types'
 
-/** Kolik karet sekce ukáže, když blok počet nemá. */
-const DEFAULT_COUNT = 5
+/**
+ * Kolik karet úvodní strana nejvýš ukáže: první řádek mřížky (3 sloupce) tvoří
+ * hlavní článek přes 2 sloupce a jedna běžná karta, druhý řádek tři běžné —
+ * dohromady 5. Další články jsou na `/aktuality` („Všechny aktuality"); `count`
+ * z bloku to může jen snížit.
+ */
+const HOME_CARDS = 5
 
-/** Kolik karet se ukáže pod `md`; další jsou schované CSS. */
-const MOBILE_CARDS = 3
+/** Počet karet zaokrouhlený na plné řádky mřížky (2 nebo 5), ať nezůstane díra. */
+function fitToRows(count: number) {
+  return count >= HOME_CARDS ? HOME_CARDS : 2
+}
 
 /**
  * Karty sekce: připnutý článek (blok) jako první, zbytek nejnovější
@@ -32,7 +39,9 @@ function mapNewsCards(
 ): PostCard[] {
   const pinned = typeof block.pinnedPost === 'object' ? block.pinnedPost : null
   const posts = pinned ? [pinned, ...latest.filter((post) => post.id !== pinned.id)] : latest
-  return posts.slice(0, block.count ?? DEFAULT_COUNT).map((post) => toPostCard(post, defaultPhoto))
+  return posts
+    .slice(0, fitToRows(Math.min(block.count ?? HOME_CARDS, HOME_CARDS)))
+    .map((post) => toPostCard(post, defaultPhoto))
 }
 
 /** Aktuality: nejnovější publikované posts + volitelný pin z bloku. */
@@ -41,17 +50,16 @@ export async function NewsBlockComponent({ block }: { block: LandingNewsBlock })
   // obrázku klubu článkům bez vlastní fotky (jinak dostanou vzorovou plochu).
   const showPhoto = block.showPhoto ?? false
   // +1 navíc: připnutý článek může být starší, než sahá výpis nejnovějších
-  const latest = await fetchLatestPosts((block.count ?? DEFAULT_COUNT) + 1)
+  const latest = await fetchLatestPosts(HOME_CARDS + 1)
   const defaultPhoto = showPhoto ? await fetchDefaultPostPhoto() : null
   return <NewsView cards={mapNewsCards(block, latest, defaultPhoto)} />
 }
 
 /**
- * Aktuality — stejná mřížka jako výpis `/aktuality` (`PostsListGrid`):
- * featured karta od `lg` přes dva ze tří sloupců, s fotkou vedle textu,
- * vedle ní v prvním řádku ještě jedna běžná karta. Výchozích 5 karet proto
- * vyjde beze zbytku (2 + 1 v prvním řádku, pak trojice) — stejný poměr,
- * jaký `PostsListGrid` používá pro devět.
+ * Aktuality — stejná karta jako výpis `/aktuality` (`PostsListGrid`): hlavní
+ * karta od `lg` přes dva ze tří sloupců s fotkou vedle textu a vedle ní jedna
+ * běžná karta, dohromady jeden řádek. Sekce nemá štítek nad nadpisem; nadpis
+ * a odkaz „Všechny aktuality“ stačí.
  */
 function NewsView({ cards }: { cards: PostCard[] }) {
   if (cards.length === 0) return null
@@ -59,14 +67,10 @@ function NewsView({ cards }: { cards: PostCard[] }) {
   return (
     <SectionShell id="aktuality">
       <Reveal>
-        <div className="mb-10 flex flex-wrap items-end gap-4">
-          <div>
-            <Kicker>Aktuality</Kicker>
-            <SectionTitle className="mt-3.5">
-              Co se v klubu <Highlight>děje</Highlight>
-            </SectionTitle>
-          </div>
-          <div className="flex-1" />
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <SectionTitle>
+            Co se v klubu <Highlight>děje</Highlight>
+          </SectionTitle>
           <MoreLink href={routes.list.posts}>Všechny aktuality</MoreLink>
         </div>
       </Reveal>
@@ -79,9 +83,9 @@ function NewsView({ cards }: { cards: PostCard[] }) {
               className={cn(
                 'h-full',
                 featured && 'sm:col-span-2 lg:col-span-2',
-                // Na mobilu stačí tři karty — zbytek je o stranu níž
-                // (`Všechny aktuality`); skrytí je jen CSS, SSG/ISR se nemění.
-                index >= MOBILE_CARDS && 'max-md:hidden',
+                // Druhá karta na `sm` zabere celý řádek, ať vedle ní nezůstane
+                // prázdná půlka mřížky.
+                index === 1 && 'sm:col-span-2 lg:col-span-1',
               )}
               delay={index * 0.08}
               key={card.id}

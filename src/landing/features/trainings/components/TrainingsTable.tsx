@@ -40,8 +40,8 @@ import {
 
 const GRID_BASE =
   'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 px-4.5 md:gap-y-0 md:px-6 lg:px-7'
-const GRID_WITH_DETAIL = 'md:grid-cols-[6rem_9rem_minmax(0,1fr)]'
-const GRID_NO_DETAIL = 'md:grid-cols-[6rem_minmax(0,1fr)]'
+const GRID_WITH_DETAIL = 'md:grid-cols-[10.5rem_9rem_minmax(0,1fr)]'
+const GRID_NO_DETAIL = 'md:grid-cols-[10.5rem_minmax(0,1fr)]'
 
 const WHEN_LABEL = { today: 'Dnes', tomorrow: 'Zítra' } as const
 
@@ -169,11 +169,14 @@ function TrainingRow({
         row.accent ? 'bg-contrast text-on-contrast' : 'transition-colors hover:bg-chip/40',
       )}
     >
-      <time className="flex flex-wrap items-baseline gap-x-2 tabular-nums" dateTime={row.dateTime}>
+      <time
+        className="flex flex-wrap items-baseline gap-x-2 tabular-nums md:flex-nowrap"
+        dateTime={row.dateTime}
+      >
         <span className={cn('w-6 text-xs font-semibold tracking-wider uppercase', muted)}>
           {row.weekday}
         </span>
-        <span className="text-base leading-tight font-bold tracking-snug md:text-lg">
+        <span className="text-base leading-tight font-bold tracking-snug whitespace-nowrap md:text-lg">
           {row.date}
         </span>
         {row.when && (
