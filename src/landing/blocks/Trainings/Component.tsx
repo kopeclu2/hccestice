@@ -14,7 +14,7 @@ import { routes } from '@/lib/routes'
 import type { LandingTrainingsBlock } from '@/payload-types'
 
 /** Kolik nejbližších termínů ukáže homepage; celý rozpis je na `/treninky`. */
-const HOME_SESSIONS = 6
+const HOME_SESSIONS = 3
 
 /** Prázdný text z CMS (`''`) se má chovat jako nevyplněný, ne jako obsah. */
 const text = (value: string | null | undefined): string | null => value?.trim() || null
@@ -148,7 +148,6 @@ function TrainingsView({
           </div>
         )}
       </Reveal>
-
       <Reveal delay={0.1}>{table}</Reveal>
     </SectionShell>
   )

@@ -1,11 +1,15 @@
 import React from 'react'
 
 import { HISTORY } from '@/landing/content'
+import { fetchHistoryEras } from '@/landing/features/history/data'
 import type { HistoryContent } from '@/landing/features/history/types'
 import { arrayOr } from '@/landing/lib/payload'
+import type { Photo } from '@/landing/types'
+import { Badge } from '@/landing/ui/Badge'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow, Highlight } from '@/landing/ui/Kicker'
 import { MoreLink } from '@/landing/ui/MoreLink'
+import { PhotoTile } from '@/landing/ui/PhotoTile'
 import { Reveal } from '@/landing/ui/Reveal'
 import { FaceoffCircle } from '@/landing/ui/RinkMarkings'
 import { SectionShell } from '@/landing/ui/SectionShell'
@@ -37,41 +41,68 @@ function mapHistory(block: LandingHistoryBlock): HistoryContent {
   }
 }
 
-export function HistoryBlockComponent({ block }: { block: LandingHistoryBlock }) {
-  return <HistoryView content={mapHistory(block)} />
+/**
+ * Nejstarší milník s fotkou z `/historie-klubu` (éry jdou od nejstarší).
+ * Bez fotky v CMS vlevo zůstane kruh s letopočtem.
+ */
+async function pickArchivePhoto(): Promise<Photo | null> {
+  const eras = await fetchHistoryEras()
+  for (const era of eras) {
+    const milestone = era.milestones.find((item) => item.photo)
+    if (milestone?.photo) return milestone.photo
+  }
+  return null
+}
+
+export async function HistoryBlockComponent({ block }: { block: LandingHistoryBlock }) {
+  return <HistoryView content={mapHistory(block)} photo={await pickArchivePhoto()} />
 }
 
 /**
- * Historie — jiná kostra než ostatní sekce: vlevo letopočet založení uvnitř
- * kruhu vhazování (štítek sekce je jeho popisek), vpravo nadpis, vyprávění,
- * citát z kroniky a jediný odkaz na celou historii (pilulky milníků, druhé
- * tlačítko a `metaLine` se nekreslí — zůstávají v CMS). Letopočet je jediný „velký nápis“ na
- * homepage a nese údaj (rok založení z CMS), ne dekoraci.
+ * Historie — jiná kostra než ostatní sekce: vlevo nadpis, vyprávění
+ * a jediný odkaz na celou historii (pilulky milníků, druhé tlačítko,
+ * `metaLine` a citát se nekreslí — zůstávají v CMS), vpravo archivní fotka
+ * z milníků, nebo bez ní letopočet založení uvnitř kruhu vhazování (štítek
+ * sekce je jeho popisek). Na mobilu je médium nahoře.
  *
  * Citát má otevírací uvozovku v řádku s textem (lime, visí na začátku), ne
  * jako samostatný obří glyf — ten dřív zasahoval do prvního řádku citátu.
  */
-function HistoryView({ content }: { content: HistoryContent }) {
+function HistoryView({ content, photo }: { content: HistoryContent; photo: Photo | null }) {
+  const media = photo ? (
+    <PhotoTile
+      className="mx-auto aspect-4/3 w-full max-w-88 rounded-thumb shadow-lift"
+      gradient="bottom-soft"
+      photo={photo}
+      sizes="(max-width: 48rem) 100vw, 22rem"
+    >
+      <Badge className="absolute bottom-4 left-4" size="xs" variant="lime">
+        {content.watermark}
+      </Badge>
+    </PhotoTile>
+  ) : (
+    <figure className="relative mx-auto grid aspect-square w-full max-w-72 place-items-center md:max-w-88">
+      <FaceoffCircle className="absolute inset-0 size-full text-club/35" dot={false} />
+      <figcaption className="relative flex flex-col items-center gap-2 text-center">
+        <p className="text-score leading-none font-extrabold tracking-title-tight text-ink tabular-nums">
+          {content.watermark}
+        </p>
+        <Eyebrow className="text-ink-soft" tone="faint">
+          {content.kicker}
+        </Eyebrow>
+      </figcaption>
+    </figure>
+  )
+
   return (
     <SectionShell
-      className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16"
+      className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-16"
       id="historie"
     >
-      <Reveal>
-        <figure className="relative mx-auto grid aspect-square w-full max-w-72 place-items-center md:max-w-88">
-          <FaceoffCircle className="absolute inset-0 size-full text-club/35" dot={false} />
-          <figcaption className="relative flex flex-col items-center gap-2 text-center">
-            <p className="text-score leading-none font-extrabold tracking-title-tight text-ink tabular-nums">
-              {content.watermark}
-            </p>
-            <Eyebrow className="text-ink-soft" tone="faint">
-              {content.kicker}
-            </Eyebrow>
-          </figcaption>
-        </figure>
-      </Reveal>
-
-      <div>
+      <div className="lg:order-2">
+        <Reveal>{media}</Reveal>
+      </div>
+      <div className="lg:order-1">
         <Reveal>
           <SectionTitle className="max-w-208" size="lg">
             {content.headlineStart}{' '}
@@ -83,7 +114,6 @@ function HistoryView({ content }: { content: HistoryContent }) {
           <p className="mt-6 text-lg leading-copy text-pretty text-ink-soft">{content.lead}</p>
           <p className="mt-4 leading-relaxed text-pretty text-dim">{content.text}</p>
         </Reveal>
-
         <Reveal delay={0.1}>
           <div className="mt-6">
             <MoreLink href={HISTORY_HREF}>{content.ctaLabel}</MoreLink>

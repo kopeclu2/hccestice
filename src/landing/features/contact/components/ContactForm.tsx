@@ -86,6 +86,9 @@ type Tone = NonNullable<VariantProps<typeof contactCard>['tone']>
 /** Tlačítka témat: na tmavé kartě obrys pro tmavé plochy, na bílé běžný obrys. */
 const TOPIC_VARIANT = { dark: 'inverse', light: 'outline' } as const
 
+/** Odeslání: na tmavé kartě lime, na bílé hlavní tmavě zelené tlačítko jako jinde na webu. */
+const SUBMIT_VARIANT = { dark: 'lime', light: 'dark' } as const
+
 /**
  * Kontaktní formulář — „Poslat zprávu". `tone="dark"` (výchozí) je tmavá
  * karta na homepage; `tone="light"` je bílá varianta pro `/kontakt`, kde
@@ -266,7 +269,7 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
             disabled={isSubmitting}
             size="lg"
             type="submit"
-            variant="lime"
+            variant={SUBMIT_VARIANT[tone]}
             withArrow
           >
             {isSubmitting ? 'Odesílám…' : 'Odeslat zprávu'}

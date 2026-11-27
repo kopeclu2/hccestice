@@ -40,7 +40,7 @@ export function ClubBlockComponent({ block }: { block: LandingClubBlock }) {
 }
 
 /**
- * O klubu — fotokarty vlevo, vpravo velký nadpis, perex a CTA.
+ * O klubu — vlevo velký nadpis, perex a CTA, vpravo fotokarty.
  */
 function ClubView({ content }: { content: ClubContent }) {
   return (
@@ -52,9 +52,9 @@ function ClubView({ content }: { content: ClubContent }) {
       className="grid grid-cols-1 items-start gap-9 md:grid-cols-[repeat(auto-fit,minmax(min(21.25rem,100%),1fr))] md:gap-14"
       id="klub"
     >
-      {/* Na `md+` stojí text vpravo a fotky vlevo (jiná kostra než sousední
+      {/* Na `md+` stojí text vlevo a fotky vpravo (jiná kostra než sousední
           sekce); v DOM i na mobilu zůstává text první. */}
-      <Reveal className="self-center md:order-2">
+      <Reveal className="self-center md:order-1">
         <SectionTitle size="md">
           {content.headlineStart}{' '}
           <Highlight dot marker>
@@ -74,7 +74,7 @@ function ClubView({ content }: { content: ClubContent }) {
         </Button>
       </Reveal>
 
-      <Reveal className="md:order-1" delay={0.1}>
+      <Reveal className="md:order-2" delay={0.1}>
         {/* `sizes` kopíruje zlomy mřížky: do 768px je dlaždice na celou šířku,
             mezi 768 a 1024px si auto-fit rozdělí sloupec na polovinu a až na
             desktopu je z ní čtvrtina viewportu. Jediný zlom na 48rem tahal na
