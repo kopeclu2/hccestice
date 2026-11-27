@@ -21,15 +21,12 @@ import { cn } from '@/lib/utils'
 import type { LandingAlbumBlock } from '@/payload-types'
 
 /**
- * Rozmístění dlaždic mozaiky — 6 alb ve třech řádcích a čtyřech sloupcích:
- * dvě velké 2×2 do protilehlých rohů, kolem nich čtyři malé.
+ * Rozmístění dlaždic mozaiky — 5 alb ve čtyřech sloupcích a dvou řádcích:
+ * jedna velká 2×2 vlevo a vedle ní čtyři malé ve čtverci 2×2 (zkouška
+ * z 27. 11. 2026; předchozí vzor měl dvě velké 2×2 a čtyři malé).
  *
- * Handoff „Modern" má místo druhé velké dvě široké 2×1, do kterých se dlouhé
- * názvy zápasů z CMS nevešly.
- *
- * Pozice třetí až šesté dlaždice jsou zadané explicitně (`col-start` /
- * `row-start`): auto-placement mezeru po první velké dlaždici nezaplní
- * a `grid-flow-dense` by pořadí dlaždic přeskládal proti řazení podle data.
+ * Pozice malých dlaždic jsou zadané explicitně (`col-start` / `row-start`),
+ * aby pořadí odpovídalo řazení podle data a nezáleželo na auto-placementu.
  *
  * Čtyřsloupcová mozaika platí až od `lg` — na 768px měla malá dlaždice ~170px
  * a titulky se v ní ořezávaly. Mezistupeň na `md` jsou dva sloupce: velká
@@ -40,9 +37,8 @@ const MOSAIC_LAYOUT: Array<{ place: string; span: AlbumSpan }> = [
   { span: 'big', place: 'md:col-span-2 md:row-span-2' },
   { span: 'tile', place: 'lg:col-start-3 lg:row-start-1' },
   { span: 'tile', place: 'lg:col-start-4 lg:row-start-1' },
-  { span: 'big', place: 'md:col-span-2 md:row-span-2 lg:col-start-3 lg:row-start-2' },
-  { span: 'tile', place: 'lg:col-start-1 lg:row-start-3' },
-  { span: 'tile', place: 'lg:col-start-2 lg:row-start-3' },
+  { span: 'tile', place: 'lg:col-start-3 lg:row-start-2' },
+  { span: 'tile', place: 'lg:col-start-4 lg:row-start-2' },
 ]
 
 /**
@@ -130,7 +126,7 @@ const SPAN_STYLE: Record<AlbumSpan, { grid: string; radius: string; sizes: strin
 function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
   // Vzor s dlaždicí 2×2 předpokládá zaplněnou mřížku; se dvěma alby by v ní
   // zůstaly děravé sloupce, proto se rozpadne na pravidelné široké dlaždice.
-  const sparse = tiles.length > 0 && tiles.length < 4
+  const sparse = tiles.length > 0 && tiles.length < 5
   const layout = sparse
     ? tiles.map((tile) => ({ ...tile, span: 'wide' as const, place: null }))
     : tiles
@@ -162,7 +158,7 @@ function AlbumView({ tiles }: { tiles: AlbumTile[] }) {
                 '-mx-gutter no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto px-gutter pb-2.5 md:m-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:p-0',
                 sparse
                   ? 'md:auto-rows-[13.75rem] lg:grid-cols-3'
-                  : 'md:auto-rows-[11.25rem] lg:grid-cols-4',
+                  : 'md:auto-rows-[11.25rem] lg:auto-rows-56 lg:grid-cols-4',
               )}
             >
               {layout.map((tile) => (

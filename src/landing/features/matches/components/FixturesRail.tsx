@@ -79,10 +79,19 @@ export function FixturesRail({
   emptyState?: React.ReactNode
   id?: string
   spacing?: SectionShellProps['spacing']
-  /** `list` = nejbližší zápas v panelu, zbytek jako řádky pod sebou (/zapasy). */
-  layout?: 'cards' | 'list'
+  /**
+   * `list` = nejbližší zápas v panelu, zbytek jako řádky pod sebou (/zapasy).
+   * `row` = jen jedna řada karet bez velkého panelu (home page); nejbližší
+   * zápas nese štítek „Nejbližší“ na své kartě.
+   */
+  layout?: 'cards' | 'list' | 'row'
 }) {
-  const picked: FixturesLayout<FixtureCard> = pickLayout(fixtures, layout)
+  const picked: FixturesLayout<FixtureCard> =
+    layout === 'row'
+      ? fixtures.length > 0
+        ? { kind: 'plain', fixtures: [...fixtures] }
+        : { kind: 'empty' }
+      : pickLayout(fixtures, layout)
 
   if (picked.kind === 'empty') {
     if (!emptyState) return null

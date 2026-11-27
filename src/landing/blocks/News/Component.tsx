@@ -15,14 +15,14 @@ import { cn } from '@/lib/utils'
 import type { LandingNewsBlock, Post } from '@/payload-types'
 
 /**
- * Kolik karet úvodní strana nejvýš ukáže: první řádek mřížky (3 sloupce) tvoří
- * hlavní článek přes 2 sloupce a jedna běžná karta, druhý řádek tři běžné —
- * dohromady 5. Další články jsou na `/aktuality` („Všechny aktuality"); `count`
- * z bloku to může jen snížit.
+ * Kolik karet úvodní strana nejvýš ukáže: jeden řádek tří stejných karet.
+ * Dřív to byla hlavní karta přes dva sloupce a dva řádky (5 karet, ~920 px
+ * výšky), což byla nejvyšší sekce homepage. Další články jsou na `/aktuality`
+ * („Všechny aktuality"); `count` z bloku to může jen snížit.
  */
-const HOME_CARDS = 5
+const HOME_CARDS = 3
 
-/** Počet karet zaokrouhlený na plné řádky mřížky (2 nebo 5), ať nezůstane díra. */
+/** Počet karet zaokrouhlený na plný řádek mřížky (2 nebo 3), ať nezůstane díra. */
 function fitToRows(count: number) {
   return count >= HOME_CARDS ? HOME_CARDS : 2
 }
@@ -56,9 +56,8 @@ export async function NewsBlockComponent({ block }: { block: LandingNewsBlock })
 }
 
 /**
- * Aktuality — stejná karta jako výpis `/aktuality` (`PostsListGrid`): hlavní
- * karta od `lg` přes dva ze tří sloupců s fotkou vedle textu a vedle ní jedna
- * běžná karta, dohromady jeden řádek. Sekce nemá štítek nad nadpisem; nadpis
+ * Aktuality — stejná karta jako výpis `/aktuality` (`PostsListGrid`), tři
+ * stejné karty v jednom řádku. Sekce nemá štítek nad nadpisem; nadpis
  * a odkaz „Všechny aktuality“ stačí.
  */
 function NewsView({ cards }: { cards: PostCard[] }) {
@@ -76,34 +75,25 @@ function NewsView({ cards }: { cards: PostCard[] }) {
       </Reveal>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map((card, index) => {
-          const featured = index === 0 && cards.length > 1
-          return (
-            <Reveal
-              className={cn(
-                'h-full',
-                featured && 'sm:col-span-2 lg:col-span-2',
-                // Druhá karta na `sm` zabere celý řádek, ať vedle ní nezůstane
-                // prázdná půlka mřížky.
-                index === 1 && 'sm:col-span-2 lg:col-span-1',
-              )}
-              delay={index * 0.08}
-              key={card.id}
-            >
-              <ArticleCard
-                card={card}
-                featured={featured}
-                /* `sizes` kopíruje zlomy `CardGrid` (1 sloupec / 2 od `sm` =
-                   40rem / 3 od `lg` = 64rem), stejně jako `PostsListGrid`. */
-                sizes={
-                  featured
-                    ? '(max-width: 64rem) 100vw, 37vw'
-                    : '(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw'
-                }
-              />
-            </Reveal>
-          )
-        })}
+        {cards.map((card, index) => (
+          <Reveal
+            className={cn(
+              'h-full',
+              // Třetí karta na `sm` zabere celý řádek, ať vedle ní nezůstane
+              // prázdná půlka mřížky.
+              index === 2 && 'sm:col-span-2 lg:col-span-1',
+            )}
+            delay={index * 0.08}
+            key={card.id}
+          >
+            <ArticleCard
+              card={card}
+              /* `sizes` kopíruje zlomy `CardGrid` (1 sloupec / 2 od `sm` =
+                 40rem / 3 od `lg` = 64rem), stejně jako `PostsListGrid`. */
+              sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+            />
+          </Reveal>
+        ))}
       </div>
     </SectionShell>
   )

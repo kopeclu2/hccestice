@@ -17,8 +17,8 @@ import type { LandingSeasonBlock } from '@/payload-types'
 
 /** Výřezy sekcí na home page — plný výpis je na /zapasy. */
 const ZAPASY_HREF = '/zapasy'
-/** Včetně nejbližšího zápasu, který home vynechává (nese ho proužek pod hero). */
-const HOME_FIXTURES = 4
+/** Jedna řada karet nejbližších zápasů (včetně nejbližšího, bez velkého panelu). */
+const HOME_FIXTURES = 3
 const HOME_RESULTS = 4
 const HOME_STANDINGS = 6
 
@@ -102,6 +102,7 @@ function SeasonView({
             }
             fixtures={fixtures}
             headVariant="landing"
+            layout="row"
             moreHref={ZAPASY_HREF}
             spacing="landing"
           />

@@ -1,22 +1,16 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
 
-import { Button } from '@/components/ui/button'
-import { fetchSeason, seasonShortLabel } from '@/landing/features/matches/data/seasons'
 import { fetchSponsors } from '@/landing/features/sponsors/data'
 import type { Sponsor } from '@/landing/features/sponsors/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
-import { internalArrow, MoreLink } from '@/landing/ui/MoreLink'
+import { MoreLink } from '@/landing/ui/MoreLink'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
 import { getMediaUrl } from '@/lib/getMediaUrl'
-import { countLabel } from '@/lib/plural'
 import { cn } from '@/lib/utils'
 import type { LandingSponsorsBlock } from '@/payload-types'
-
-const PARTNER_FORMS: [string, string, string] = ['partner', 'partneři', 'partnerů']
 
 const DEFAULT_TITLE = 'Klub drží nad vodou naši partneři'
 
@@ -47,20 +41,13 @@ function splitHeadline(title: string, highlight?: string | null): [string, strin
 
 /** Partneři: aktivní sponzoři z kolekce, nadpis a CTA z bloku. */
 export async function SponsorsBlockComponent({ block }: { block: LandingSponsorsBlock }) {
-  const [sponsors, season] = await Promise.all([fetchSponsors(), fetchSeason(null)])
-  const count = countLabel(sponsors.length, PARTNER_FORMS)
+  const sponsors = await fetchSponsors()
   const [titleStart, titleHighlight] = splitHeadline(
     block.title?.trim() || DEFAULT_TITLE,
     block.titleHighlight,
   )
   return (
-    <SponsorsView
-      count={season ? `${count} v sezóně ${seasonShortLabel(season)}` : count}
-      ctaLabel={block.ctaLabel ?? undefined}
-      sponsors={sponsors}
-      titleHighlight={titleHighlight}
-      titleStart={titleStart}
-    />
+    <SponsorsView sponsors={sponsors} titleHighlight={titleHighlight} titleStart={titleStart} />
   )
 }
 
@@ -71,44 +58,24 @@ export async function SponsorsBlockComponent({ block }: { block: LandingSponsors
  */
 function SponsorsView({
   sponsors,
-  count,
   titleStart,
   titleHighlight,
-  ctaLabel = 'Chci podpořit klub',
 }: {
   sponsors: Sponsor[]
-  count: string
   titleStart: string
   titleHighlight: string
-  ctaLabel?: string
 }) {
   if (sponsors.length === 0) return null
 
   return (
     <SectionShell id="sponzori">
       <Reveal>
-        <div className="max-w-208">
-          <SectionTitle size="lg">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+          <SectionTitle className="max-w-208" size="lg">
             {titleStart ? `${titleStart} ` : ''}
             <Highlight dot>{titleHighlight}</Highlight>
           </SectionTitle>
-          <div className="mt-6.5 flex flex-wrap items-center gap-x-2.5 gap-y-3">
-            {/* Hlavní tlačítko sekce je výpis partnerů; „podpořit klub“ je
-                textový odkaz — formulář na homepage má být jediné primární
-                kontaktní místo. */}
-            <MoreLink href="/sponzori">Všichni partneři</MoreLink>
-            <Button
-              asChild
-              className="h-11 text-ink underline decoration-lime decoration-2 underline-offset-4"
-              arrowIcon={internalArrow}
-              size="clear"
-              variant="link"
-              withArrow
-            >
-              <Link href="#kontakt">{ctaLabel}</Link>
-            </Button>
-            <span className="text-sm font-medium text-faint">{count}</span>
-          </div>
+          <MoreLink href="/sponzori">Všichni partneři</MoreLink>
         </div>
       </Reveal>
 

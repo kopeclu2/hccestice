@@ -25,6 +25,8 @@ export async function ContactBlockComponent({ block }: { block: LandingContactBl
   return (
     <SectionShell id="kontakt">
       <ContactCard
+        formTone="light"
+        framed={false}
         content={mapContact(block)}
         site={site}
         youthContacts={pickYouthContacts(people)}
