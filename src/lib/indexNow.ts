@@ -22,8 +22,8 @@ const INDEXNOW_KEY = 'c4c8f2c4fb987bf31f050972b1c73c5d'
  * veřejnou cestu (`posts`, `pages`, `galleries`) — ne pro pomocné
  * dokumenty bez vlastní URL.
  *
- * Mimo produkci se přeskakuje ze stejného důvodu jako reCAPTCHA
- * (`src/lib/recaptcha/config.ts`): dev a seed běhy nemají nahlašovat
+ * Mimo produkci se přeskakuje ze stejného důvodu jako Turnstile
+ * (`src/lib/turnstile/verify.ts`): dev a seed běhy nemají nahlašovat
  * lokální/testovací URL cizím vyhledávačům. Chyby se polykají — IndexNow
  * je doplňková signalizace, nesmí shodit uložení dokumentu v adminu.
  */

@@ -5,16 +5,15 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
-import { APIError, Plugin } from 'payload'
+import { Plugin } from 'payload'
 import { navigationPlugin } from 'payload-cms-navigation-plugin'
-import reCAPTCHAv3 from 'payload-recaptcha-v3'
 
 import { notificationAddress } from '@/email/config'
 import { wrapFormEmails } from '@/email/templates/formSubmission'
 import { revalidateRedirects, revalidateRedirectsDelete } from '@/hooks/revalidateRedirects'
+import { verifyTurnstile } from '@/hooks/verifyTurnstile'
 import { brandTitle } from '@/lib/brandTitle'
 import { getClientIp, isRateLimited } from '@/lib/rateLimit'
-import { RECAPTCHA_ACTIONS, RECAPTCHA_SCORE_THRESHOLD } from '@/lib/recaptcha/config'
 import { seoPreviewUrl } from '@/lib/seoPreviewUrl'
 import { Page, Post } from '@/payload-types'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
@@ -104,9 +103,9 @@ export const plugins: Plugin[] = [
       admin: { group: 'Systém' },
       labels: { singular: 'Odeslaný formulář', plural: 'Odeslané formuláře' },
       // Kolekce má z pluginu `access.create: () => true`, tedy veřejně
-      // zapisovatelný REST endpoint. reCAPTCHA (`custom.recaptcha` níž) hlídá
-      // skóre, ne objem — rate limit brzdí hrubou silou opakované pokusy,
-      // které by skóre třeba i prošly.
+      // zapisovatelný REST endpoint. Turnstile (`verifyTurnstile` níž) hlídá,
+      // jestli odesílá člověk, ne objem — rate limit brzdí hrubou silou
+      // opakované pokusy, které by výzvu třeba i prošly.
       access: {
         create: ({ req }) => {
           if (req.user) return true
@@ -114,9 +113,11 @@ export const plugins: Plugin[] = [
           return !isRateLimited(`form-submission:${ip}`)
         },
       },
-      custom: {
-        recaptcha: [{ name: 'create', action: RECAPTCHA_ACTIONS.formSubmission }],
-      },
+      // Hlídá jen REST (blok Formulář). Plugin hooky z overrides spojuje se
+      // svými (`afterChange`, `beforeChange`), `beforeOperation` ale nemá,
+      // takže se nic nepřepisuje. Server action landing kontaktu jde přes
+      // local API a ověřuje token sama.
+      hooks: { beforeOperation: [verifyTurnstile] },
     },
   }),
   searchPlugin({
@@ -143,31 +144,6 @@ export const plugins: Plugin[] = [
   // podle `plugin.order ?? 0`; navigationPlugin `order` nemá, takže o pořadí
   // rozhoduje pozice v tomhle poli.
   navigationOverrides(),
-  /**
-   * Ochrana proti spamu na `form-submissions` (kolekce je veřejně
-   * zapisovatelná). Musí být AŽ ZA formBuilderPlugin — čte `custom.recaptcha`
-   * z kolekcí, které v tu chvíli už musí v configu být.
-   *
-   * Plugin hlídá **jen operace přes REST** (`payloadAPI === 'REST'`, viz
-   * `payload-recaptcha-v3/dist/hookBuilder.js`), takže pokrývá blok Formulář,
-   * ale ne server action landing kontaktu nad local API. Tu ověřuje
-   * `verifyRecaptchaToken` (`@/server/recaptcha/verify`).
-   */
-  reCAPTCHAv3({
-    secret: process.env.RECAPTCHA_SECRET ?? '',
-    scoreThreshold: RECAPTCHA_SCORE_THRESHOLD,
-    skip: ({ req }) =>
-      // Admin panel jde taky přes REST — bez tohohle by přihlášený správce
-      // nemohl s odeslanými formuláři pracovat.
-      Boolean(req.user) ||
-      // Dev a CI běží bez účtu u Googlu; v produkci se naopak bez secretu
-      // odesílání odmítne (`secret: ''` neprojde u siteverify).
-      (!process.env.RECAPTCHA_SECRET && process.env.NODE_ENV !== 'production'),
-    errorHandler: () => {
-      // FormBlock zobrazuje `res.errors[0].message`, proto česky.
-      throw new APIError('Nepodařilo se ověřit, že nejste robot. Zkuste to prosím znovu.', 403)
-    },
-  }),
   /**
    * Stropy `limit` a `depth` pro anonymní REST / GraphQL. Hook věší na kolekce,
    * které v configu už jsou, takže musí být až za všemi pluginy, co je

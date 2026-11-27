@@ -49,18 +49,18 @@ const ENFORCED_CSP = [
  */
 const REPORT_ONLY_CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com",
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
   [
     "frame-src 'self'",
-    // reCAPTCHA a Tag Manager, pak vložená videa, mapy a tabulky.
-    'https://www.google.com',
+    // Turnstile a Tag Manager, pak vložená videa, mapy a tabulky.
+    'https://challenges.cloudflare.com',
     'https://www.googletagmanager.com',
     ...EMBED_FRAME_SOURCES,
   ].join(' '),
-  "connect-src 'self' https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com",
+  "connect-src 'self' https://challenges.cloudflare.com https://www.google.com https://www.googletagmanager.com https://www.google-analytics.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

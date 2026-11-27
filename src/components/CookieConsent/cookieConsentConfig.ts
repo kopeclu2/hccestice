@@ -106,7 +106,7 @@ export function buildCookieConsentConfig({
               {
                 title: 'Nezbytné cookies',
                 description:
-                  'Zajišťují základní funkčnost webu (zapamatování této volby) a ochranu formulářů proti spamu. Bez nich by web nefungoval správně, proto je nelze vypnout.',
+                  'Zajišťují základní funkčnost webu (zapamatování této volby). Bez nich by web nefungoval správně, proto je nelze vypnout.',
                 linkedCategory: 'necessary',
                 cookieTable: {
                   headers: COOKIE_TABLE_HEADERS,
@@ -115,12 +115,6 @@ export function buildCookieConsentConfig({
                       name: 'cc_cookie',
                       domain: 'tento web',
                       desc: 'Ukládá vaši volbu v tomto nastavení cookies.',
-                      exp: '6 měsíců',
-                    },
-                    {
-                      name: '_GRECAPTCHA',
-                      domain: 'google.com',
-                      desc: 'Google reCAPTCHA — ochrana formulářů proti spamu. Nastaví se jen při otevření formuláře.',
                       exp: '6 měsíců',
                     },
                   ],

@@ -21,8 +21,7 @@ import { contactSchema, type ContactValues } from '@/landing/features/contact/sc
 import { GlowCircle } from '@/landing/ui/Decorations'
 import { CardTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
-import { RECAPTCHA_ACTIONS } from '@/lib/recaptcha/config'
-import { useRecaptcha } from '@/lib/recaptcha/useRecaptcha'
+import { useTurnstile } from '@/lib/turnstile/useTurnstile'
 import { cn } from '@/lib/utils'
 
 /*
@@ -102,7 +101,7 @@ const TOPIC_VARIANT = { dark: 'inverse', light: 'outline' } as const
 export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?: Tone }) {
   const [status, setStatus] = React.useState<'idle' | 'sent' | 'error'>('idle')
   const [serverError, setServerError] = React.useState<string | null>(null)
-  const { execute: executeRecaptcha } = useRecaptcha()
+  const { containerRef: turnstileRef, getToken, reset: resetTurnstile } = useTurnstile()
 
   const {
     handleSubmit,
@@ -122,8 +121,10 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null)
-    const recaptchaToken = await executeRecaptcha(RECAPTCHA_ACTIONS.contact)
-    const result = await sendContactMessage(values, recaptchaToken)
+    const turnstileToken = await getToken()
+    const result = await sendContactMessage(values, turnstileToken)
+    // Token je jednorázový; po neúspěšném odeslání si formulář řekne o nový.
+    resetTurnstile()
     if (result.ok) {
       setStatus('sent')
     } else {
@@ -252,6 +253,10 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
               {serverError}
             </p>
           )}
+
+          {/* Turnstile je v režimu „interaction-only“: bez výzvy nic nekreslí,
+              takže tu nezabírá místo. */}
+          <div ref={turnstileRef} />
 
           <Button
             arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
