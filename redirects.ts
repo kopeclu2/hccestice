@@ -1,5 +1,28 @@
 import type { NextConfig } from 'next'
 
+/**
+ * `www.<doména>` → `<doména>` (301), aby měl web jednu adresu a vyhledávače
+ * nehodnotily dva duplicitní weby. Doména se bere z `NEXT_PUBLIC_SERVER_URL`
+ * (zapéká se do buildu), takže na sslip.io ani lokálně se pravidlo nikdy
+ * nespustí (`www.localhost:3000` nikdo neotevře).
+ */
+function wwwToApexRedirect() {
+  let site: URL
+  try {
+    site = new URL(process.env.NEXT_PUBLIC_SERVER_URL ?? '')
+  } catch {
+    return null
+  }
+  if (site.hostname.startsWith('www.')) return null
+
+  return {
+    source: '/:path*',
+    has: [{ type: 'host' as const, value: `www.${site.hostname}` }],
+    destination: `${site.origin}/:path*`,
+    permanent: true,
+  }
+}
+
 export const redirects: NextConfig['redirects'] = async () => {
   const internetExplorerRedirect = {
     destination: '/ie-incompatible.html',
@@ -41,7 +64,11 @@ export const redirects: NextConfig['redirects'] = async () => {
     permanent: true,
   }
 
+  const wwwToApex = wwwToApexRedirect()
+
   return [
+    // První: `www` musí na apex dřív, než ho zachytí cokoli jiného.
+    ...(wwwToApex ? [wwwToApex] : []),
     internetExplorerRedirect,
     postsPagesToAktuality,
     postsArchiveToAktuality,
