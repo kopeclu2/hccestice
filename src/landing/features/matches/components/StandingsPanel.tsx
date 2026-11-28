@@ -102,7 +102,7 @@ export function StandingsPanel({
   const gridCols = extended ? GRID_EXTENDED : GRID_BASE
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full scroll-mt-8 flex-col" id="tabulka">
       <SectionHead
         note={standings.seasonLabel}
         noteMuted={false}

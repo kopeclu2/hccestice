@@ -131,7 +131,7 @@ function SeasonView({
           <StandingsPanel
             headVariant="landing"
             limit={HOME_STANDINGS}
-            moreHref={ZAPASY_HREF}
+            moreHref={`${ZAPASY_HREF}#tabulka`}
             standings={standings}
             title="Tabulka VČHL"
           />
