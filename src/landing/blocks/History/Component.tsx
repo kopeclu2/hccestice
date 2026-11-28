@@ -63,7 +63,7 @@ export async function HistoryBlockComponent({ block }: { block: LandingHistoryBl
  * a jediný odkaz na celou historii (pilulky milníků, druhé tlačítko,
  * `metaLine` a citát se nekreslí — zůstávají v CMS), vpravo archivní fotka
  * z milníků, nebo bez ní letopočet založení uvnitř kruhu vhazování (štítek
- * sekce je jeho popisek). Na mobilu je médium nahoře.
+ * sekce je jeho popisek). Na mobilu je médium pod textem.
  *
  * Citát má otevírací uvozovku v řádku s textem (lime, visí na začátku), ne
  * jako samostatný obří glyf — ten dřív zasahoval do prvního řádku citátu.
@@ -99,9 +99,6 @@ function HistoryView({ content, photo }: { content: HistoryContent; photo: Photo
       className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-16"
       id="historie"
     >
-      <div className="lg:order-2">
-        <Reveal>{media}</Reveal>
-      </div>
       <div className="lg:order-1">
         <Reveal>
           <SectionTitle className="max-w-208" size="lg">
@@ -119,6 +116,9 @@ function HistoryView({ content, photo }: { content: HistoryContent; photo: Photo
             <MoreLink href={HISTORY_HREF}>{content.ctaLabel}</MoreLink>
           </div>
         </Reveal>
+      </div>
+      <div className="lg:order-2">
+        <Reveal>{media}</Reveal>
       </div>
     </SectionShell>
   )
