@@ -42,7 +42,7 @@ export function ContactCard({
           className={cn(
             'relative text-center',
             framed
-              ? 'overflow-hidden rounded-card bg-surface px-4.5 py-10 md:px-8 md:pt-12 md:pb-11 lg:px-13 lg:pt-16 lg:pb-13'
+              ? 'overflow-hidden rounded-card bg-surface px-5 py-10 md:px-8 md:pt-12 md:pb-11 lg:px-13 lg:pt-16 lg:pb-13'
               : 'py-4 md:py-6',
           )}
         >
@@ -122,7 +122,7 @@ function SocialLink({ href, label }: { href: string; label: string }) {
  */
 function YouthContacts({ people }: { people: PersonCard[] }) {
   return (
-    <div className="relative mt-5 text-sm text-dim">
+    <div className="relative mt-6 text-sm text-dim">
       <p className="font-bold text-ink">Máš dítě a chceš na led? Ozvi se přímo:</p>
       <ul className="mt-1 flex flex-col items-center gap-x-6 gap-y-0 md:flex-row md:flex-wrap md:justify-center">
         {people.map((person, index) => (

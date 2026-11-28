@@ -46,7 +46,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
        * skok z 18px na mobilu bez jakéhokoli mezistupně. Ten je teď
        * 28/32px, desktopová hodnota začíná na `lg`.
        */}
-      <div className="relative overflow-hidden rounded-card bg-club px-4.5 py-6 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
+      <div className="relative overflow-hidden rounded-card bg-club px-6 py-9 text-on-contrast md:px-7 md:py-8 lg:px-11 lg:py-14">
         <Watermark className="-right-10 -bottom-15 text-watermark-3xl tracking-display text-on-contrast-wash">
           HCČ
         </Watermark>
@@ -86,15 +86,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * je ustřihl. `min()` nechá dráhu spadnout na šířku kontejneru,
          * když se 20rem nevejde — bez breakpointu a na každé šířce.
          */}
-        {/*
-         * `minmax(min(20rem,100%),…)`, ne `minmax(20rem,…)`: dolní hranice
-         * dráhy 320px byla širší než vnitřek panelu na 320px displeji
-         * (256px po odečtení odsazení patičky a paddingu), takže perex i
-         * pilulka „Facebook" přetékaly za pravou hranu a `overflow-hidden`
-         * je ustřihl. `min()` nechá dráhu spadnout na šířku kontejneru,
-         * když se 20rem nevejde — bez breakpointu a na každé šířce.
-         */}
-        <div className="relative grid grid-cols-[repeat(auto-fit,minmax(min(20rem,100%),1fr))] items-end gap-9 lg:gap-12">
+        <div className="relative grid grid-cols-[repeat(auto-fit,minmax(min(20rem,100%),1fr))] items-end gap-10 lg:gap-12">
           <div>
             <SectionTitle className="text-on-contrast" size="xl">
               {content.headline}
@@ -131,9 +123,9 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
            * mobilu, na desktopu se padding ruší). Minimum sloupce je `6.5rem`,
            * aby dva sloupce (Klub/Hokej) zůstaly vedle sebe i na 320px displeji.
            */}
-          <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(6.5rem,100%),1fr))] gap-7 text-sm">
+          <nav className="grid grid-cols-[repeat(auto-fit,minmax(min(6.5rem,100%),1fr))] gap-x-6 gap-y-8 text-sm max-md:border-t max-md:border-on-contrast-line max-md:pt-9 md:gap-7">
             {content.columns.map((column) => (
-              <div className="flex flex-col gap-1" key={column.title}>
+              <div className="flex flex-col gap-1 max-md:[&>span]:mb-1" key={column.title}>
                 {/* `white-strong` (plná bílá): nadpis sloupce na zelené by jinak byl pod AA. */}
                 <Eyebrow tone="white-strong">{column.title}</Eyebrow>
                 {column.links.map((link) => (
@@ -161,27 +153,16 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
          * 90 % bílá jen ~4,3:1, což je pod AA pro malé písmo. `bg-club` (#5e9e46)
          * dává i s plnou bílou jen 3,3:1, proto je panel na `club-dark`.
          */}
-        <div className="relative mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-on-contrast-line pt-5 text-xs text-on-contrast md:mt-10 lg:mt-11">
+        <div className="relative mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-5 border-t border-on-contrast-line pt-6 text-xs text-on-contrast md:mt-10 lg:mt-11">
           {/* Adresa sídla a stadionu z `lib/club` (táž data jako JSON-LD).
               `basis-full`: vlastní řádek nad copyrightem, ať se dlouhé řádky
               nelámou uprostřed vedle loga. */}
-          <address className="flex basis-full flex-wrap gap-x-6 gap-y-1 not-italic">
+          <address className="flex basis-full flex-wrap gap-x-6 gap-y-2 leading-relaxed not-italic">
             <span>{CLUB_SEAT_TEXT}</span>
             <span>{ARENA_HOME_TEXT}</span>
           </address>
           <span className="flex items-center gap-3.5">
-            {/* `rounded-full`: logo má neprůhledné bílé pozadí, takže by se
-                na zelené ploše kreslilo jako bílý čtverec kolem kruhového
-                znaku. Kruh čtverec vyplňuje celý, takže se odřezáním rohů
-                z loga nic neztratí. */}
-            <Image
-              alt=""
-              aria-hidden
-              className="rounded-full"
-              height={28}
-              src={CLUB_LOGO}
-              width={28}
-            />
+            <Image alt="" aria-hidden height={32} src={CLUB_LOGO} width={32} />
             {`© ${new Date().getFullYear()} ${CLUB_NAME} — TJ Sokol Čestice`}
           </span>
 
@@ -220,7 +201,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
       {/* Autorský odkaz je záměrně mimo zelený panel — na rozdíl od
           klubových odkazů výš nejde o obsah webu, ale o kredit tvůrce, ať
           se navigace čtečkou u „patičky" nezastaví ještě u tohohle. */}
-      <p className="mt-4 text-center text-xs text-faint">
+      <p className="mt-5 text-center text-xs text-faint md:mt-4">
         <Link
           className="inline-flex items-center gap-1.5 py-3.5 transition-colors hover:text-club-dark md:py-1.5"
           href="https://lukaskopecky.cz"

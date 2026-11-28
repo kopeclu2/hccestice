@@ -19,7 +19,7 @@ import { ContactPeopleCard } from './ContactPeopleCard'
 export function ContactPanel({ people, site }: { people: PersonCard[]; site: SiteLinks }) {
   return (
     <SectionShell spacing="content">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8 md:gap-6">
         <ContactPeopleCard people={people} />
         <ContactCard
           formTone="light"

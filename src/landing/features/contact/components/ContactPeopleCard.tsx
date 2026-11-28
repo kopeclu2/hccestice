@@ -27,7 +27,7 @@ export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
 
   return (
     <div>
-      <CardTitle as="h2" className="mb-4" size="xs">
+      <CardTitle as="h2" className="mb-5" size="xs">
         Napiš nebo zavolej přímo
       </CardTitle>
 
@@ -45,7 +45,7 @@ export function ContactPeopleCard({ people }: { people: PersonCard[] }) {
 
 function PersonContactTile({ person }: { person: PersonCard }) {
   return (
-    <div className="flex items-center gap-3.5 rounded-card border border-line-soft bg-surface p-4.5 md:p-5">
+    <div className="flex items-center gap-4 rounded-card border border-line-soft bg-surface p-5">
       <PhotoTile
         className="aspect-square w-14 flex-none rounded-panel md:w-16"
         photo={person.photo}
