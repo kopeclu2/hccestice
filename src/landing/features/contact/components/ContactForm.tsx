@@ -267,8 +267,10 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
           <Button
             arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
             /* Bez odsazení se tlačítko lepilo na textarea (~4px) — o stupeň víc
-               než rytmus polí (16px), aby se odsadilo od bloku formuláře. */
-            className="mt-6 w-full md:w-auto"
+               než rytmus polí (16px), aby se odsadilo od bloku formuláře.
+               `justify-between`: na mobilu je tlačítko přes celou šířku, takže
+               bez něj visel text i šipka vlevo a vpravo zůstala prázdná plocha. */
+            className="mt-6 w-full justify-between md:w-auto md:justify-start"
             disabled={isSubmitting}
             size="lg"
             type="submit"
