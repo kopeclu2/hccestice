@@ -66,6 +66,14 @@ export const SITE_NAME = CLUB_NAME
 export const CLUB_LOGO = '/logo-cestice.png'
 
 /**
+ * Totéž logo pod novým názvem souboru pro `next/image`. Optimalizované
+ * varianty žijí 31 dní a klíč cache nezná build, takže po výměně loga za
+ * průhledné (28. 11. 2026) servíroval optimalizátor dál starou verzi s bílým
+ * pozadím. Při další výměně loga zvýšit číslo (a upravit `localPatterns`).
+ */
+export const CLUB_LOGO_IMAGE = '/logo-cestice-v2.png'
+
+/**
  * Velké logo (512 × 512 px, tentýž znak jako `CLUB_LOGO`) pro strukturovaná
  * data: Google u obrázků chce aspoň 50 000 px a logo organizace s rezervou
  * nad minimem 112 px; 200 × 200 (40 000 px) to nesplňuje. Soubor je

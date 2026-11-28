@@ -1,6 +1,6 @@
 import type { Outcome } from '@/landing/features/matches/types'
 import type { Photo } from '@/landing/types'
-import { CLUB_LOGO as CLUB_LOGO_PATH, CLUB_NAME } from '@/lib/club'
+import { CLUB_LOGO_IMAGE as CLUB_LOGO_PATH, CLUB_NAME } from '@/lib/club'
 import type { Match } from '@/payload-types'
 
 /**

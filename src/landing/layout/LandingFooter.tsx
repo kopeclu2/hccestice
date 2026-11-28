@@ -9,7 +9,7 @@ import type { FooterContent, SiteLinks } from '@/landing/types'
 import { SectionTitle } from '@/landing/ui/Heading'
 import { Eyebrow } from '@/landing/ui/Kicker'
 import { Watermark } from '@/landing/ui/Watermark'
-import { ARENA_HOME_TEXT, CLUB_LOGO, CLUB_NAME, CLUB_SEAT_TEXT } from '@/lib/club'
+import { ARENA_HOME_TEXT, CLUB_LOGO_IMAGE, CLUB_NAME, CLUB_SEAT_TEXT } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 
 /**
@@ -162,7 +162,7 @@ export function LandingFooter({ content, site }: { content: FooterContent; site:
             <span>{ARENA_HOME_TEXT}</span>
           </address>
           <span className="flex items-center gap-3.5">
-            <Image alt="" aria-hidden height={32} src={CLUB_LOGO} width={32} />
+            <Image alt="" aria-hidden height={32} src={CLUB_LOGO_IMAGE} width={32} />
             {`© ${new Date().getFullYear()} ${CLUB_NAME} — TJ Sokol Čestice`}
           </span>
 
