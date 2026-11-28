@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils'
  * v `ContactFormLazy` je měřený na jedné variantě).
  */
 const contactCard = cva(
-  'relative mx-auto mt-10 max-w-170 rounded-panel p-4.5 text-left md:p-6.5 lg:p-8.5',
+  'relative mx-auto mt-10 max-w-170 rounded-panel p-6 text-left md:p-8 lg:p-10',
   {
     variants: {
       tone: {
@@ -47,7 +47,7 @@ const contactCard = cva(
 )
 
 /** Vstupní pole a textarea (přepis shadcn defaultů). */
-const field = cva('min-h-11.5 rounded-field px-4 focus-visible:ring-lime/60', {
+const field = cva('min-h-12 rounded-field px-4 focus-visible:ring-lime/60 md:min-h-11.5', {
   variants: {
     tone: {
       dark: 'border-on-contrast-glass bg-on-contrast-wash text-on-contrast placeholder:text-on-contrast-faint',
@@ -175,12 +175,13 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
             Poslat zprávu
           </CardTitle>
 
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(11.25rem,100%),1fr))] gap-3.5">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(11.25rem,100%),1fr))] gap-4">
             <ContactField control={control} id="contact-name" label="Jméno" name="name" tone={tone}>
               {(controlProps) => (
                 <Input
                   {...controlProps}
                   autoComplete="name"
+                  enterKeyHint="next"
                   className={field({ tone })}
                   placeholder="Jan Novák"
                   type="text"
@@ -198,6 +199,8 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
                 <Input
                   {...controlProps}
                   autoComplete="email"
+                  inputMode="email"
+                  spellCheck={false}
                   className={field({ tone })}
                   placeholder="jan@email.cz"
                   type="email"
@@ -206,9 +209,9 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
             </ContactField>
           </div>
 
-          <fieldset className="mt-4">
-            <legend className={cn('mb-1.5', fieldLabel({ tone }))}>Čeho se to týká</legend>
-            <div className="flex flex-wrap gap-2">
+          <fieldset className="mt-5">
+            <legend className={cn('mb-2.5', fieldLabel({ tone }))}>Čeho se to týká</legend>
+            <div className="flex flex-wrap gap-2.5 md:gap-2">
               {topics.map((topic) => {
                 const isSelected = selectedTopic === topic
                 return (
@@ -235,7 +238,7 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
           </fieldset>
 
           <ContactField
-            className="mt-4"
+            className="mt-5"
             control={control}
             id="contact-message"
             label="Zpráva"
@@ -265,7 +268,7 @@ export function ContactForm({ topics, tone = 'dark' }: { topics: string[]; tone?
             arrowIcon={isSubmitting ? <LoaderCircle className="animate-spin" /> : undefined}
             /* Bez odsazení se tlačítko lepilo na textarea (~4px) — o stupeň víc
                než rytmus polí (16px), aby se odsadilo od bloku formuláře. */
-            className="mt-5"
+            className="mt-6 w-full md:w-auto"
             disabled={isSubmitting}
             size="lg"
             type="submit"
@@ -330,7 +333,10 @@ function ContactField({
         const errorId = `${id}-error`
         return (
           <Field className={cn('block', className)} data-invalid={fieldState.invalid}>
-            <FieldLabel className={cn(fieldLabel({ tone }), 'inline leading-none')} htmlFor={id}>
+            <FieldLabel
+              className={cn(fieldLabel({ tone }), 'mb-2 inline-block leading-none')}
+              htmlFor={id}
+            >
               {label} <span aria-hidden="true">*</span>
             </FieldLabel>
             {children({
