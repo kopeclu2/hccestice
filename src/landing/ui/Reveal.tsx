@@ -26,7 +26,11 @@ export function Reveal({
       className={className}
       initial={reducedMotion ? false : { opacity: 0, y: 24 }}
       transition={{ duration: 0.55, delay, ease: 'easeOut' }}
-      viewport={{ once: true, margin: '-10% 0px' }}
+      /* Bez záporného okraje: s `-10% 0px` zůstával text, který už byl vidět
+         ve spodním či horním pásu viewportu (na telefonu desítky až stovky
+         pixelů), skrytý, dokud nezajel do „vnitřní" části. Spouští se tedy
+         při prvním viditelném pixelu. */
+      viewport={{ once: true }}
       whileInView={{ opacity: 1, y: 0 }}
     >
       {children}
