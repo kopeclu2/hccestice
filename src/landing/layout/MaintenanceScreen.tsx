@@ -48,10 +48,7 @@ export function MaintenanceScreen({
       </div>
 
       <div className="relative z-1 flex max-w-155 flex-col items-center text-center">
-        {/* `rounded-full`: `/logo-cestice.png` má neprůhledné bílé pozadí, takže
-            by na paper podkladu vykreslilo bílý blok 76×76 kolem kruhového
-            loga. Kruh čtverec vyplňuje celý, odřezání rohů tedy nic neubere. */}
-        <Image alt={CLUB_NAME} className="rounded-full" height={76} src={CLUB_LOGO} width={76} />
+        <Image alt={CLUB_NAME} height={76} src={CLUB_LOGO} width={76} />
 
         <Badge caps className="mt-6.5" size="md" variant="lime">
           Plánovaná údržba
