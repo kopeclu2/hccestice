@@ -99,6 +99,9 @@ const nextConfig: NextConfig = {
       {
         pathname: '/logo-cestice.png',
       },
+      {
+        pathname: '/logo-cestice-v2.png',
+      },
     ],
     /**
      * `qualities` tu záměrně **není**. V Next 16 defaultuje na `[75]` a

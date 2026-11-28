@@ -10,7 +10,7 @@ import { ErrorMeta } from '@/landing/ui/ErrorCode'
 import { PageTitle } from '@/landing/ui/Heading'
 import { Highlight } from '@/landing/ui/Kicker'
 import { PuckTrailLine } from '@/landing/ui/PuckTrail'
-import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
+import { CLUB_LOGO_IMAGE, CLUB_NAME } from '@/lib/club'
 
 /**
  * Údržbová stránka podle handoffu „HC Cestice Systemove Stranky".
@@ -48,7 +48,7 @@ export function MaintenanceScreen({
       </div>
 
       <div className="relative z-1 flex max-w-155 flex-col items-center text-center">
-        <Image alt={CLUB_NAME} height={76} src={CLUB_LOGO} width={76} />
+        <Image alt={CLUB_NAME} height={76} src={CLUB_LOGO_IMAGE} width={76} />
 
         <Badge caps className="mt-6.5" size="md" variant="lime">
           Plánovaná údržba

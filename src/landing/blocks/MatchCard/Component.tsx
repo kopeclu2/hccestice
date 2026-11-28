@@ -11,7 +11,7 @@ import { Kicker } from '@/landing/ui/Kicker'
 import { Numeral } from '@/landing/ui/Numeral'
 import { Reveal } from '@/landing/ui/Reveal'
 import { SectionShell } from '@/landing/ui/SectionShell'
-import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
+import { CLUB_LOGO_IMAGE, CLUB_NAME } from '@/lib/club'
 import { getMediaUrl } from '@/lib/getMediaUrl'
 import { cn } from '@/lib/utils'
 import type { MatchCardBlock } from '@/payload-types'
@@ -26,7 +26,7 @@ export async function MatchCardBlockComponent({ block }: { block: MatchCardBlock
 }
 
 function MatchCardView({ match, kicker }: { match: MatchCardData; kicker: string | null }) {
-  const our = { name: CLUB_NAME, logo: CLUB_LOGO }
+  const our = { name: CLUB_NAME, logo: CLUB_LOGO_IMAGE }
   const left = match.home ? 'ours' : 'theirs'
 
   return (

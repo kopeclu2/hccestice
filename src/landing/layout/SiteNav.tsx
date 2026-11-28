@@ -8,7 +8,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ctaHref, isNavItemActive, navHref } from '@/landing/features/navigation/navHref'
 import type { NavCta, NavItem } from '@/landing/features/navigation/types'
-import { CLUB_LOGO, CLUB_NAME } from '@/lib/club'
+import { CLUB_LOGO_IMAGE, CLUB_NAME } from '@/lib/club'
 import { cn } from '@/lib/utils'
 
 import { NavMobile } from './NavMobile'
@@ -49,7 +49,7 @@ export function NavCardBar({
         className="flex flex-none items-center gap-2.5"
         href={context === 'home' ? '#home' : '/'}
       >
-        <Image alt="" height={44} src={CLUB_LOGO} width={44} />
+        <Image alt="" height={44} src={CLUB_LOGO_IMAGE} width={44} />
         <span className="text-base font-extrabold tracking-widest whitespace-nowrap text-ink">
           {CLUB_NAME.toUpperCase()}
         </span>
